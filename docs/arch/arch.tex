@@ -1,0 +1,45 @@
+\documentclass[12pt]{article}
+\usepackage[inner=2.1cm, bottom=1.5cm, top=1.5cm, outer=2.1cm,
+  headheight=24pt, % as per the warning by fancyhdr
+  includehead,includefoot,
+  heightrounded]{geometry}
+% Set the font
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+% urls
+\usepackage[hidelinks]{hyperref}
+% disable indent
+\usepackage[skip=1em, indent=0pt]{parskip}
+% shifted environment
+\newenvironment{content}%
+  {\list{}{\leftmargin=2cm}\item[]}%
+  {\endlist}
+
+% Configure headers and footers
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\headruleskip}{4pt}
+\renewcommand{\footruleskip}{4pt}
+\fancyhead{}\fancyfoot{}
+\fancyhead[HL]{\scriptsize{\textbf{Educational Computer Architecture Platform 5} \\
+ECAP5-DPROC RISC-V processor}}
+\fancyhead[HR]{\scriptsize{Page \thepage \\
+}}
+\fancyfoot[FL]{\scriptsize{Architecture Document}}
+\fancyfoot[FR]{\scriptsize{Issue Date: \today}}
+\fancyfoot[FC]{\scriptsize{\vspace{1em}\textit{Revision 0.1.0-SNAPSHOT}}}
+
+% VARIABLES
+\def\version{1.0.0-SNAPSHOT}
+
+\begin{document}
+\input{docs/arch/00_titlepage}
+\pagestyle{fancy}
+\normalsize
+\tableofcontents
+\newpage
+\input{docs/arch/01_introduction}
+\input{docs/arch/02_features}
+\input{docs/arch/03_functional}
+\end{document}
