@@ -17,6 +17,71 @@
 \newenvironment{content}%
   {\list{}{\leftmargin=2cm}\item[]}%
   {\endlist}
+% do computations
+\usepackage{calc}
+% cell color
+\usepackage[table, dvipsnames]{xcolor}
+% advanced tables
+\usepackage{makecell}
+\usepackage{tabularx}
+\setlength{\tabcolsep}{10pt}
+\renewcommand{\arraystretch}{1.5}
+% requirement environment
+\newlength{\reqtablelength}
+\setlength{\reqtablelength}{0.9\textwidth}
+\newcommand{\reqcolor}{Orchid}
+\newcommand{\req}[5]{
+  \begin{center}
+  {
+    \vspace{0.5em}
+    \small
+    \begin{tabularx}{\reqtablelength}{|l|X|}
+      \hline
+      \cellcolor{\reqcolor!30}\textbf{ID} & \texttt{#1}\\
+      \hline
+      \cellcolor{\reqcolor!30}\textbf{Title} & #2\\
+      \hline
+      \hline
+      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
+      \hline
+      \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\makecell[l]{#4} \\
+      \hline
+      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#5} \\
+      \hline
+    \end{tabularx}
+    \vspace{0.5em}
+  }
+  \end{center}
+}
+% User requirement 
+\newlength{\ureqtablelength}
+\setlength{\ureqtablelength}{0.9\textwidth}
+\newcommand{\ureqcolor}{JungleGreen}
+\newcommand{\ureq}[5]{
+  \begin{center}
+  {
+    \vspace{0.5em}
+    \small
+    \begin{tabularx}{\ureqtablelength}{|l|X|}
+      \hline
+      \cellcolor{\ureqcolor!30}\textbf{ID} & \texttt{#1}\\
+      \hline
+      \cellcolor{\ureqcolor!30}\textbf{Title} & #2\\
+      \hline
+      \hline
+      \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}\makecell[l]{#3} \\
+      \hline
+      \cellcolor{\ureqcolor!15}\textbf{Rationale} & \cellcolor{\ureqcolor!5}\makecell[l]{#4} \\
+      \hline
+      \cellcolor{\ureqcolor!15}\textbf{Refers to} & \cellcolor{\ureqcolor!5}\makecell[l]{#5} \\
+      \hline
+    \end{tabularx}
+    \vspace{0.5em}
+  }
+  \end{center}
+}
+
+
 
 % Configure headers and footers
 \usepackage{fancyhdr}
