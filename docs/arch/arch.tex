@@ -30,7 +30,7 @@
 \newlength{\reqtablelength}
 \setlength{\reqtablelength}{0.9\textwidth}
 \newcommand{\reqcolor}{Orchid}
-\newcommand{\req}[5]{
+\newcommand{\req}[4]{
   \begin{center}
   {
     \vspace{0.5em}
@@ -39,14 +39,12 @@
       \hline
       \cellcolor{\reqcolor!30}\textbf{ID} & \texttt{#1}\\
       \hline
-      \cellcolor{\reqcolor!30}\textbf{Title} & #2\\
       \hline
+      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#2} \\
       \hline
-      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
+      \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
       \hline
-      \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\makecell[l]{#4} \\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#5} \\
+      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#4} \\
       \hline
     \end{tabularx}
     \vspace{0.5em}
@@ -57,7 +55,7 @@
 \newlength{\ureqtablelength}
 \setlength{\ureqtablelength}{0.9\textwidth}
 \newcommand{\ureqcolor}{JungleGreen}
-\newcommand{\ureq}[5]{
+\newcommand{\ureq}[2]{
   \begin{center}
   {
     \vspace{0.5em}
@@ -66,17 +64,10 @@
       \hline
       \cellcolor{\ureqcolor!30}\textbf{ID} & \texttt{#1}\\
       \hline
-      \cellcolor{\ureqcolor!30}\textbf{Title} & #2\\
       \hline
-      \hline
-      \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}\makecell[l]{#3} \\
-      \hline
-      \cellcolor{\ureqcolor!15}\textbf{Rationale} & \cellcolor{\ureqcolor!5}\makecell[l]{#4} \\
-      \hline
-      \cellcolor{\ureqcolor!15}\textbf{Refers to} & \cellcolor{\ureqcolor!5}\makecell[l]{#5} \\
+      \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}#2 \\
       \hline
     \end{tabularx}
-    \vspace{0.5em}
   }
   \end{center}
 }

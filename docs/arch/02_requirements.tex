@@ -3,84 +3,69 @@
 \subsection{User needs}
 
 \begin{content}
-This is a requirement test.
-This document targets hardware engineers who shall implement ECAP5-DPROC by refering to the described architecture. It is also intended for system engineers working on the integration of ECAP5-DPROC in ECAP5. Finally, this document shall be used as a technical reference by software engineers configuring ECAP5- DPROC through hardware-software interfaces.
+ECAP5 is the primary user for ECAP5-DPROC. ECAP5-DPROC could however be used as a standalone RISC-V processor. The following requirements define the user needs. 
 \end{content}
 
-\ureq{UREQ\_Test\_01}{
-  User Requirement title
-}{
-  This is the description of a user requirement
-}{
-  This is the rationale of the user requirement
-}{
-  This is the refers to of the user requirement
+\ureq{U\_INSTRUCTION\_SET\_01}{
+  ECAP5-DPROC shall implement the RV32I instruction set
+}
+
+\ureq{U\_MEMORY\_INTERFACE\_01}{
+  ECAP5-DPROC shall access both instructions and data through a unique memory interface
+}
+
+\ureq{U\_MEMORY\_INTERFACE\_02}{
+  ECAP5-DPROC shall implement an AXI-Lite memory interface
+}
+
+\ureq{U\_RESET\_01}{
+  ECAP5-DPROC shall be held in a reset state while the user asserts the reset signal
+}
+
+\ureq{U\_BOOT\_ADDRESS\_01}{
+  The address at which ECAP5-DPROC jumps after the reset signal is deasserted shall be hardware-configurable
+}
+
+\ureq{U\_HARDWARE\_INTERRUPT\_01}{
+  ECAP5-DPROC shall interrupt its execution flow when the \texttt{nmi} is asserted
+}
+
+\ureq{U\_HARDWARE\_INTERRUPT\_02}{
+  ECAP5-DPROC shall jump to a software-configurable address when it is interrupted
+}
+
+\ureq{U\_DEBUG\_01}{
+  ECAP5-DPROC shall 
 }
 
 \subsection{Assumptions and Dependencies}
 
+\begin{content}
 Describe what the assumptions for the product are : Targeting the ecp5 family, based around opensource toolchains.
+\end{content}
 
 \section{Requirements}
 
-\subsection{Functional Requirements}
-
-\begin{content}
-This is a requirement test.
-This document targets hardware engineers who shall implement ECAP5-DPROC by refering to the described architecture. It is also intended for system engineers working on the integration of ECAP5-DPROC in ECAP5. Finally, this document shall be used as a technical reference by software engineers configuring ECAP5- DPROC through hardware-software interfaces.
-\end{content}
-
-\req{REQ\_Test\_01}{
-  Requirement title
-}{
-  This is the description of the requirement
-}{
-  This is the rationale of the requirement
-}{
-  This is the refers to of the requirement
-}
-
-\req{REQ\_Test\_01}{
-  Requirement title
-}{
-  This is the description of the requirement
-}{
-  This is the rationale of the requirement
-}{
-  This is the refers to of the requirement
-}
-
-\req{REQ\_Test\_01}{
-  Requirement title
-}{
-  This is the description of the requirement
-}{
-  This is the rationale of the requirement
-}{
-  This is the refers to of the requirement
-}
-
-\begin{content}
-This is a requirement test.
-This document targets hardware engineers who shall implement ECAP5-DPROC by refering to the described architecture. It is also intended for system engineers working on the integration of ECAP5-DPROC in ECAP5. Finally, this document shall be used as a technical reference by software engineers configuring ECAP5- DPROC through hardware-software interfaces.
-\end{content}
-
-\req{REQ\_Test\_01}{
-  Requirement title
-}{
-  This is the description of the requirement
-}{
-  This is the rationale of the requirement
-}{
-  This is the refers to of the requirement
-}
-
 \subsection{External Interface Requirements}
 
+\begin{content}
 Describes the interface of the product.
+\end{content}
+
+\subsection{Functional Requirements}
+
+\req{REQ\_Test\_01}{
+  Requirement title
+}{
+  This is the rationale of the requirement
+}{
+  This is the refers to of the requirement
+}
 
 \subsection{Nonfunctional Requirements}
 
+\begin{content}
 These can be : performance, safety, security, usability, scalability.
+\end{content}
 
 \newpage
