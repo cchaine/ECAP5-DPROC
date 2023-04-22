@@ -68,9 +68,56 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \subsection{External Interface Requirements}
 
-\begin{content}
-Describes the interface of the product.
-\end{content}
+\begin{figure}[h!]
+    \centering
+    \input{docs/arch/figures/external-interface.tex}
+    \caption{Schematic view of the external interface of ECAP5-DPROC}
+    \label{fig:externalinterface}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \input{docs/arch/tables/control-interface.tex}
+  \caption{ECAP5-DPROC control signals}
+  \label{tab:control-interface}
+\end{table}
+
+\ireq{I\_CLK\_01}{
+  All inputs and outputs of ECAP5-DPROC shall belong to CLK's clock domain.
+}{}{}
+
+\ireq{I\_RESET\_01}{
+  The RST\_N signal shall hold ECAP5-DPROC in a reset state while asserted.
+}{}{
+  U\_RESET\_01
+}
+
+\ireq{I\_RESET\_02}{
+  RST\_N polarity shall be active low.
+}{}{}
+
+\ireq{I\_IRQ\_01}{
+  ECAP5-DPROC shall jump to a software-configurable address when input IRQ is asserted.
+}{}{
+  U\_HARDWARE\_INTERRUPT\_01, U\_HARDWARE\_INTERRUPT\_02
+}
+
+\ireq{I\_DIRQ\_01}{
+  TBD
+}{}{}
+
+\begin{table}[H]
+  \centering
+  \input{docs/arch/tables/memory-interface.tex}
+  \caption{ECAP5-DPROC memory interface signals}
+  \label{tab:memory-interface}
+\end{table}
+
+\ireq{I\_MEMORY\_INTERFACE\_01}{
+  Signals from table \ref{tab:memory-interface} shall be compliant with the AXI-Lite specification.
+}{}{
+  U\_MEMORY\_INTERFACE\_02
+}
 
 \subsection{Functional Requirements}
 

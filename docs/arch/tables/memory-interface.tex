@@ -1,0 +1,48 @@
+{
+\footnotesize
+\begin{tabularx}{\reqtablelength}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{READ ADDRESS BUS}} \\
+  \hline
+  ARADDR & O & 32 & Read address. \\
+  \hline
+  ARVALID & O & 1 & Read address valid. \\
+  \hline
+  ARREADY & I & 1 & Read address ready. \\ 
+  \hline
+  \multicolumn{4}{|l|}{\textbf{READ DATA BUS}} \\
+  \hline
+  RDATA & I & 32 & Read data. \\
+  \hline
+  RRESP & I & 2 & Read response. \\
+  \hline
+  RVALID & I & 1 & Read valid. \\
+  \hline
+  RREADY & O & 1 & Read ready. \\ 
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WRITE ADDRESS BUS}} \\
+  \hline
+  AWADDR & O & 32 & Write address. \\
+  \hline
+  AWVALID & O & 1 & Write address valid. \\
+  \hline
+  AWREADY & I & 1 & Write address ready \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WRITE DATA BUS}} \\
+  \hline
+  WDATA & O & 32 & Write data. \\
+  \hline
+  WSTRB & O & 4 & Write strobes. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WRITE RESPONSE BUS}} \\
+  \hline
+  BRESP & I & 2 & Write response. \\
+  \hline
+  BVALID & I & 1 & Write response valid. \\
+  \hline
+  BREADY & O & 1 & Response ready. \\
+  \hline
+\end{tabularx}
+}

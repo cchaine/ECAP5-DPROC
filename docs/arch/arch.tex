@@ -17,16 +17,35 @@
 \newenvironment{content}%
   {\list{}{\leftmargin=2cm}\item[]}%
   {\endlist}
-% do computations
-\usepackage{calc}
 % cell color
 \usepackage[table, dvipsnames]{xcolor}
+% drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric,angles,quotes}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{babel}
+\usetikzlibrary{fit}
+\usetikzlibrary{angles, quotes}
+\tikzset{
+% Define standard arrow tip
+>={Latex[scale=1.25]}
+}
+\usepackage{tikz-layers}
+% floating figures
+\usepackage{float}
+% do computations
+\usepackage{calc}
 % advanced tables
 \usepackage{makecell}
 \usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{graphicx}
 \setlength{\tabcolsep}{10pt}
 \renewcommand{\arraystretch}{1.5}
-% requirement environment
+% Functional requirement environment
 \newlength{\reqtablelength}
 \setlength{\reqtablelength}{0.9\textwidth}
 \newcommand{\reqcolor}{Orchid}
@@ -37,7 +56,7 @@
     \small
     \begin{tabularx}{\reqtablelength}{|l|X|}
       \hline
-      \cellcolor{\reqcolor!30}\textbf{ID} & \texttt{#1}\\
+      \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
       \hline
       \hline
       \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#2} \\
@@ -62,12 +81,37 @@
     \small
     \begin{tabularx}{\ureqtablelength}{|l|X|}
       \hline
-      \cellcolor{\ureqcolor!30}\textbf{ID} & \texttt{#1}\\
+      \cellcolor{\ureqcolor!30}\textbf{ID} & #1\\
       \hline
       \hline
       \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}#2 \\
       \hline
     \end{tabularx}
+  }
+  \end{center}
+}
+% External interface requirement
+\newlength{\ireqtablelength}
+\setlength{\ireqtablelength}{0.9\textwidth}
+\newcommand{\ireqcolor}{orange}
+\newcommand{\ireq}[4]{
+  \begin{center}
+  {
+    \vspace{0.5em}
+    \small
+    \begin{tabularx}{\ireqtablelength}{|l|X|}
+      \hline
+      \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
+      \hline
+      \hline
+      \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
+      \hline
+      \cellcolor{\ireqcolor!15}\textbf{Rationale} & \cellcolor{\ireqcolor!5}\makecell[l]{#3} \\
+      \hline
+      \cellcolor{\ireqcolor!15}\textbf{Refers to} & \cellcolor{\ireqcolor!5}\makecell[l]{#4} \\
+      \hline
+    \end{tabularx}
+    \vspace{0.5em}
   }
   \end{center}
 }
