@@ -52,7 +52,6 @@
 \newcommand{\req}[4]{
   \begin{center}
   {
-    \vspace{0.5em}
     \small
     \begin{tabularx}{\reqtablelength}{|l|X|}
       \hline
@@ -66,7 +65,6 @@
       \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#4} \\
       \hline
     \end{tabularx}
-    \vspace{0.5em}
   }
   \end{center}
 }
@@ -77,7 +75,6 @@
 \newcommand{\ureq}[2]{
   \begin{center}
   {
-    \vspace{0.5em}
     \small
     \begin{tabularx}{\ureqtablelength}{|l|X|}
       \hline
@@ -93,11 +90,27 @@
 % External interface requirement
 \newlength{\ireqtablelength}
 \setlength{\ireqtablelength}{0.9\textwidth}
-\newcommand{\ireqcolor}{orange}
-\newcommand{\ireq}[4]{
+\newcommand{\ireqcolor}{RedOrange}
+\newcommand{\ireq}[3]{
   \begin{center}
   {
-    \vspace{0.5em}
+    \small
+    \begin{tabularx}{\ireqtablelength}{|l|X|}
+      \hline
+      \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
+      \hline
+      \hline
+      \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
+      \hline
+      \cellcolor{\ireqcolor!15}\textbf{Refers to} & \cellcolor{\ireqcolor!5}\makecell[l]{#3} \\
+      \hline
+    \end{tabularx}
+  }
+  \end{center}
+}
+\newcommand{\ireqwithratio}[4]{
+  \begin{center}
+  {
     \small
     \begin{tabularx}{\ireqtablelength}{|l|X|}
       \hline
@@ -111,7 +124,6 @@
       \cellcolor{\ireqcolor!15}\textbf{Refers to} & \cellcolor{\ireqcolor!5}\makecell[l]{#4} \\
       \hline
     \end{tabularx}
-    \vspace{0.5em}
   }
   \end{center}
 }

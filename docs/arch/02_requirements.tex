@@ -82,30 +82,6 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   \label{tab:control-interface}
 \end{table}
 
-\ireq{I\_CLK\_01}{
-  All inputs and outputs of ECAP5-DPROC shall belong to CLK's clock domain.
-}{}{}
-
-\ireq{I\_RESET\_01}{
-  The RST\_N signal shall hold ECAP5-DPROC in a reset state while asserted.
-}{}{
-  U\_RESET\_01
-}
-
-\ireq{I\_RESET\_02}{
-  RST\_N polarity shall be active low.
-}{}{}
-
-\ireq{I\_IRQ\_01}{
-  ECAP5-DPROC shall jump to a software-configurable address when input IRQ is asserted.
-}{}{
-  U\_HARDWARE\_INTERRUPT\_01, U\_HARDWARE\_INTERRUPT\_02
-}
-
-\ireq{I\_DIRQ\_01}{
-  TBD
-}{}{}
-
 \begin{table}[H]
   \centering
   \input{docs/arch/tables/memory-interface.tex}
@@ -113,13 +89,43 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   \label{tab:memory-interface}
 \end{table}
 
+\ireq{I\_CLK\_01}{
+  All inputs and outputs of ECAP5-DPROC shall belong to CLK's clock domain.
+}{}
+
+\ireq{I\_RESET\_01}{
+  The RST\_N signal shall hold ECAP5-DPROC in a reset state while asserted.
+}{
+  U\_RESET\_01
+}
+
+\ireq{I\_RESET\_02}{
+  RST\_N polarity shall be active low.
+}{}
+
+\ireq{I\_IRQ\_01}{
+  ECAP5-DPROC shall jump to a software-configurable address when input IRQ is asserted.
+}{
+  U\_HARDWARE\_INTERRUPT\_01, U\_HARDWARE\_INTERRUPT\_02
+}
+
+\ireq{I\_DIRQ\_01}{
+  TBD
+}{}
+
 \ireq{I\_MEMORY\_INTERFACE\_01}{
   Signals from table \ref{tab:memory-interface} shall be compliant with the AXI-Lite specification.
-}{}{
+}{
   U\_MEMORY\_INTERFACE\_02
 }
 
+\begin{content}
+  Behavioral specification for symbols in table \ref{tab:memory-interface} is outlined in the functional requirements section, subsection \ref{spec-memory-interface}.
+\end{content}
+
 \subsection{Functional Requirements}
+
+\subsubsection{Instruction decoding}
 
 \req{REQ\_Test\_01}{
   Requirement title
@@ -128,6 +134,13 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 }{
   This is the refers to of the requirement
 }
+
+\subsubsection{Memory interface}
+\label{spec-memory-interface}
+
+\begin{content}
+  Outline requirements to be compliant with the AXI-Lite specification.
+\end{content}
 
 \subsection{Nonfunctional Requirements}
 
