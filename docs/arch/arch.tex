@@ -9,6 +9,8 @@
 % Set the font
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
+% Figure caption
+\usepackage[font=bf]{caption}
 % urls
 \usepackage[hidelinks]{hyperref}
 % disable indent
@@ -47,16 +49,15 @@
 \renewcommand{\arraystretch}{1.5}
 % Functional requirement environment
 \newlength{\reqtablelength}
-\setlength{\reqtablelength}{0.9\textwidth}
-\newcommand{\reqcolor}{Orchid}
+\setlength{\reqtablelength}{0.85\textwidth}
+\newcommand{\reqcolor}{blue!20!gray}
 \newcommand{\req}[4]{
   \begin{center}
   {
-    \small
+    \footnotesize
     \begin{tabularx}{\reqtablelength}{|l|X|}
       \hline
       \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
-      \hline
       \hline
       \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#2} \\
       \hline
@@ -70,16 +71,15 @@
 }
 % User requirement 
 \newlength{\ureqtablelength}
-\setlength{\ureqtablelength}{0.9\textwidth}
-\newcommand{\ureqcolor}{JungleGreen}
+\setlength{\ureqtablelength}{0.85\textwidth}
+\newcommand{\ureqcolor}{blue!20!gray}
 \newcommand{\ureq}[2]{
   \begin{center}
   {
-    \small
+    \footnotesize
     \begin{tabularx}{\ureqtablelength}{|l|X|}
       \hline
       \cellcolor{\ureqcolor!30}\textbf{ID} & #1\\
-      \hline
       \hline
       \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}#2 \\
       \hline
@@ -89,16 +89,15 @@
 }
 % External interface requirement
 \newlength{\ireqtablelength}
-\setlength{\ireqtablelength}{0.9\textwidth}
-\newcommand{\ireqcolor}{RedOrange}
+\setlength{\ireqtablelength}{0.85\textwidth}
+\newcommand{\ireqcolor}{blue!20!gray}
 \newcommand{\ireq}[3]{
   \begin{center}
   {
-    \small
+    \footnotesize
     \begin{tabularx}{\ireqtablelength}{|l|X|}
       \hline
       \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
-      \hline
       \hline
       \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
       \hline
@@ -111,11 +110,10 @@
 \newcommand{\ireqwithratio}[4]{
   \begin{center}
   {
-    \small
+    \footnotesize
     \begin{tabularx}{\ireqtablelength}{|l|X|}
       \hline
       \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
-      \hline
       \hline
       \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
       \hline
