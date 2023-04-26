@@ -9,8 +9,8 @@
 % Set the font
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
-% Figure caption
-\usepackage[font=bf]{caption}
+% bitfield
+\usepackage{bytefield}
 % urls
 \usepackage[hidelinks]{hyperref}
 % disable indent
@@ -51,7 +51,7 @@
 \newlength{\reqtablelength}
 \setlength{\reqtablelength}{0.85\textwidth}
 \newcommand{\reqcolor}{blue!20!gray}
-\newcommand{\req}[4]{
+\newcommand{\req}[3]{
   \begin{center}
   {
     \footnotesize
@@ -59,7 +59,23 @@
       \hline
       \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
       \hline
-      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}\makecell[l]{#2} \\
+      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}{#2} \\
+      \hline
+      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
+      \hline
+    \end{tabularx}
+  }
+  \end{center}
+}
+\newcommand{\reqwithratio}[4]{
+  \begin{center}
+  {
+    \footnotesize
+    \begin{tabularx}{\reqtablelength}{|l|X|}
+      \hline
+      \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
+      \hline
+      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}{#2} \\
       \hline
       \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
       \hline

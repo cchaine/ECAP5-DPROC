@@ -1,0 +1,45 @@
+\vspace{0.5em}
+
+\hspace{2em}
+\scalebox{0.9}{
+\begin{bytefield}[
+    bitwidth=1.1em, 
+    endianness=big, 
+    bitformatting={\scriptsize}, 
+    boxformatting={\centering\footnotesize\ttfamily},
+    rightcurly=., rightcurlyspace=5pt
+]{32}
+  \bitheader{0,6,7,11,12,14,15,19,20,24,25,31} \\
+  \begin{rightwordgroup}{\footnotesize R-type}
+    \bitbox{7}{funct7}
+    \bitbox{5}{rs2}
+    \bitbox{5}{rs1}
+    \bitbox{3}{func3}
+    \bitbox{5}{rd}
+    \bitbox{7}{opcode}
+  \end{rightwordgroup}
+  \\[2ex]
+  \begin{rightwordgroup}{\footnotesize I-type}
+    \bitbox{12}{imm[11:0]}
+    \bitbox{5}{rs1}
+    \bitbox{3}{func3}
+    \bitbox{5}{rd}
+    \bitbox{7}{opcode}
+  \end{rightwordgroup}
+  \\[2ex]
+  \begin{rightwordgroup}{\footnotesize S-type}
+    \bitbox{7}{imm[11:5]}
+    \bitbox{5}{rs2}
+    \bitbox{5}{rs1}
+    \bitbox{3}{func3}
+    \bitbox{5}{imm[4:0]}
+    \bitbox{7}{opcode}
+  \end{rightwordgroup}
+  \\[2ex]
+  \begin{rightwordgroup}{\footnotesize U-type}
+    \bitbox{20}{imm[31:12]}
+    \bitbox{5}{rd}
+    \bitbox{7}{opcode}
+  \end{rightwordgroup}
+\end{bytefield}
+}
