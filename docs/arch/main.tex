@@ -1,7 +1,9 @@
-% VARIABLES
-\def\version{1.0.0}
-
 \documentclass[12pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \usepackage[inner=2.1cm, bottom=1.5cm, top=1.5cm, outer=2.1cm,
   headheight=24pt, % as per the warning by fancyhdr
   includehead,includefoot,
@@ -46,6 +48,17 @@
 \newcolumntype{Y}{>{\centering\arraybackslash}X}
 \usepackage{multirow}
 \usepackage{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Variables %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{docs/arch/variables.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Configuration %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \setlength{\tabcolsep}{10pt}
 \renewcommand{\arraystretch}{1.5}
 % Functional requirement environment
@@ -143,8 +156,6 @@
   \end{center}
 }
 
-
-
 % Configure headers and footers
 \usepackage{fancyhdr}
 \renewcommand{\headrulewidth}{1pt}
@@ -152,22 +163,18 @@
 \renewcommand{\headruleskip}{4pt}
 \renewcommand{\footruleskip}{4pt}
 \fancyhead{}\fancyfoot{}
-\fancyhead[HL]{\scriptsize{\textbf{Educational Computer Architecture Platform 5} \\
-ECAP5-DPROC RISC-V processor}}
+\fancyhead[HL]{\scriptsize{\textbf{\parent} \\
+\project}}
 \fancyhead[HR]{\scriptsize{Page \thepage \\
 }}
-\fancyfoot[FL]{\scriptsize{Architecture Document}}
+\fancyfoot[FL]{\scriptsize{\title}}
 \fancyfoot[FR]{\scriptsize{Issue Date: \today}}
 \fancyfoot[FC]{\scriptsize{\vspace{1em}\textit{Revision \version}}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Content %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\input{docs/arch/00_titlepage}
-\pagestyle{fancy}
-\normalsize
-\tableofcontents
-\newpage
-\input{docs/arch/01_introduction}
-\input{docs/arch/02_requirements}
-\input{docs/arch/03_partitioning}
+\input{docs/arch/structure.tex}
 \end{document}
