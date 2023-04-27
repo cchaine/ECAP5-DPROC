@@ -152,36 +152,52 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
     \label{fig:instructionencoding}
 \end{figure}
 
+\begin{content}
+  Only one immediate value can be encoded in one instruction. The value can be reconstructed from fragments of the following format : \texttt{imm[x]} representing the \texttt{x}\textsuperscript{th} bit or \texttt{imm[x:y]} representing bits from the \texttt{x}\textsuperscript{th} to the \texttt{y}\textsuperscript{th} both included.
+\end{content}
+
 \req{F\_INSTR\_IMMEDIATE\_01}{
-  
+  Immediate values shall be sign-extended.
 }{U\_INSTRUCTION\_SET\_01}
 
-\req{F\_INSTR\_INPUT\_01}{
-  Instructions encoded using the R-type, I-type and S-type shall take as its first input the value stored in the register designated by the \texttt{rs1} parameter.
+\begin{content}
+  RV32I is called a Load/Store ISA, meaning that instructions inputs and outputs are passed through registers or through an instruction immediate. There are specific instructions for loading and storing data into memory.
+\end{content}
+
+\req{F\_INSTR\_FIRST\_INPUT\_01}{
+  Instructions encoded using the R-type, I-type, S-type and B-type shall take as their first input the value stored in the register designated by the \texttt{rs1} parameter.
 }{U\_INSTRUCTION\_SET\_01}
 
-\req{F\_INSTR\_INPUT\_02}{
-  Instructions encoded using the R-type and S-type shall take as its second input the value stored in the register designated by the \texttt{rs2} parameter.
+\req{F\_INSTR\_FIRST\_INPUT\_02}{
+  Instructions encoded using the U-type and J-type shall take as their first input the immediate value encoded in the instruction.
 }{U\_INSTRUCTION\_SET\_01}
 
-\req{F\_INSTR\_INPUT\_03}{
-  Instructions encoded using the I-type shall take as its second input the immediate value of parameter \texttt{imm[11:0]}.
+\req{F\_INSTR\_SECOND\_INPUT\_01}{
+  Instructions encoded using the R-type, S-type and B-type shall take as their second input the value stored in the register designated by the \texttt{rs2} parameter.
 }{U\_INSTRUCTION\_SET\_01}
 
-\req{F\_INSTR\_INPUT\_03}{
-  Instructions encoded using the U-type shall take as its first and unique input the immediate value of parameter \texttt{imm[31:12]}.
+\req{F\_INSTR\_SECOND\_INPUT\_02}{
+  Instructions encoded using the I-type shall take as its second input the immediate value encoded in the instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_INSTR\_THIRD\_INPUT\_01}{
+  Instructions encoded using the S-type and B-type shall take as their third input the immediate value encoded in the instruction.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_INSTR\_OUTPUT\_01}{
   Instructions encoded using the R-type, I-type, U-type and J-type shall store their result in the register designated by the \texttt{rd} parameter.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_INSTR\_OUTPUT\_02}{
+  Instructions encoded using the S-type and B-type do not produce any result.
+}{U\_INSTRUCTION\_SET\_01}
+
 \req{F\_INSTR\_VARIANT\_01}{
-  Instructions encoded using the R-type, I-type and S-type shall use the \texttt{func3} parameter as a behavior variant selector.
+  Instructions encoded using the R-type, I-type, S-type and B-type shall use the \texttt{func3} parameter as a behavior variant selector.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_INSTR\_VARIANT\_02}{
-  Instructions encoded using the R-type, I-type and S-type shall use the \texttt{func7} parameter as a secondary behavior variant selector.
+  Instructions encoded using the R-type shall use the \texttt{func7} parameter as a secondary behavior variant selector.
 }{U\_INSTRUCTION\_SET\_01}
 
 \subsubsection{Instructions behaviors}
