@@ -153,7 +153,7 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \end{figure}
 
 \begin{content}
-  Only one immediate value can be encoded in one instruction. The value can be reconstructed from fragments of the following format : \texttt{imm[x]} representing the \texttt{x}\textsuperscript{th} bit or \texttt{imm[x:y]} representing bits from the \texttt{x}\textsuperscript{th} to the \texttt{y}\textsuperscript{th} both included.
+  Only one immediate value can be encoded in one instruction. The value can be reconstructed from fragments of the following format : imm[x] representing the x\textsuperscript{th} bit or imm[x:y] representing bits from the x\textsuperscript{th} to the y\textsuperscript{th} both included.
 \end{content}
 
 \req{F\_INSTR\_IMMEDIATE\_01}{
@@ -198,6 +198,62 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \req{F\_INSTR\_VARIANT\_02}{
   Instructions encoded using the R-type shall use the \texttt{func7} parameter as a secondary behavior variant selector.
+}{U\_INSTRUCTION\_SET\_01}
+
+\vspace{1em}
+\begin{content}
+  Table \ref{tab:opcodemap} outlines the different opcodes values of the RV32I instruction set. Cells marked as \textit{noimp} are for opcodes that are not implemented in ECAP5-DPROC.
+\end{content}
+
+\begin{table}[H]
+  \centering
+  \input{docs/arch/tables/opcode-map.tex}
+  \caption{Opcode values for the RV32I instruction set.}
+  \label{tab:opcodemap}
+\end{table}
+
+\req{F\_OPCODE\_ENCODING\_01}{
+  Instructions which use the LUI opcode shall be decoded as an U-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_02}{
+  Instructions which use the AUIPC opcode shall be decoded as an U-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_03}{
+  Instructions which use the JAL opcode shall be decoded as a J-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_04}{
+  Instructions which use the JALR opcode shall be decoded as an I-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_05}{
+  Instructions which use the BRANCH opcode shall be decoded as a B-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_06}{
+  Instructions which use the LOAD opcode shall be decoded as an I-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_07}{
+  Instructions which use the STORE opcode shall be decoded as a S-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_08}{
+  Instructions which use the OP-IMM opcode shall be decoded as an I-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_09}{
+  Instructions which use the OP opcode shall be decoded as a R-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_10}{
+  Instructions which use the MISC-MEM opcode shall be decoded as an I-type instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OPCODE\_ENCODING\_11}{
+  Instructions which use the SYSTEM opcode shall be decoded as an I-type instruction.
 }{U\_INSTRUCTION\_SET\_01}
 
 \subsubsection{Instructions behaviors}
