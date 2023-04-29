@@ -125,7 +125,7 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \subsection{Functional Requirements}
 
-\subsubsection{Registers}
+\subsubsection{Register file}
 
 \req{F\_REGISTERS\_01}{
   ECAP5-DPROC shall implement 31 user-accessible general purpose registers ranging from \texttt{x0} to \texttt{x31}.
@@ -152,6 +152,8 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
     \label{fig:instructionencoding}
 \end{figure}
 
+\paragraph{Immediate encoding}
+
 \begin{content}
   Only one immediate value can be encoded in one instruction. The value can be reconstructed from fragments of the following format : imm[x] representing the x\textsuperscript{th} bit or imm[x:y] representing bits from the x\textsuperscript{th} to the y\textsuperscript{th} both included.
 \end{content}
@@ -163,6 +165,8 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \begin{content}
   RV32I is called a Load/Store ISA, meaning that instructions inputs and outputs are passed through registers or through an instruction immediate. There are specific instructions for loading and storing data into memory.
 \end{content}
+
+\paragraph{Instruction inputs}
 
 \req{F\_INSTR\_FIRST\_INPUT\_01}{
   Instructions encoded using the R-type, I-type, S-type and B-type shall take as their first input the value stored in the register designated by the \texttt{rs1} parameter.
@@ -184,6 +188,8 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   Instructions encoded using the S-type and B-type shall take as their third input the immediate value encoded in the instruction.
 }{U\_INSTRUCTION\_SET\_01}
 
+\paragraph{Instruction outputs}
+
 \req{F\_INSTR\_OUTPUT\_01}{
   Instructions encoded using the R-type, I-type, U-type and J-type shall store their result in the register designated by the \texttt{rd} parameter.
 }{U\_INSTRUCTION\_SET\_01}
@@ -192,6 +198,8 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   Instructions encoded using the S-type and B-type do not produce any result.
 }{U\_INSTRUCTION\_SET\_01}
 
+\paragraph{Instruction variants}
+
 \req{F\_INSTR\_VARIANT\_01}{
   Instructions encoded using the R-type, I-type, S-type and B-type shall use the \texttt{func3} parameter as a behavior variant selector.
 }{U\_INSTRUCTION\_SET\_01}
@@ -199,6 +207,8 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \req{F\_INSTR\_VARIANT\_02}{
   Instructions encoded using the R-type shall use the \texttt{func7} parameter as a secondary behavior variant selector.
 }{U\_INSTRUCTION\_SET\_01}
+
+\paragraph{Opcodes}
 
 \vspace{1em}
 \begin{content}
