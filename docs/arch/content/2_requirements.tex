@@ -268,6 +268,114 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \subsubsection{Instructions behaviors}
 
+\paragraph{LUI}
+
+\paragraph{AUIPC}
+
+\paragraph{JAL}
+
+\paragraph{JALR}
+
+\paragraph{BEQ}
+
+\paragraph{BNE}
+
+\paragraph{BLT}
+
+\paragraph{BGE}
+
+\paragraph{BLTU}
+
+\paragraph{BGEU}
+
+\paragraph{LB}
+
+\paragraph{LH}
+
+\paragraph{LW}
+
+\paragraph{LBU}
+
+\paragraph{LHU}
+
+\paragraph{SB}
+
+\paragraph{SH}
+
+\paragraph{SW}
+
+\paragraph{ADDI}
+
+\req{F\_ADDI\_01}{
+  The ADDI behavior shall be applied the opcode is OP-IMM and when func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ADDI\_02}{
+  The output of ADDI shall be the signed integer sum of its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ADDI\_03}{
+  The output of ADDI shall be truncated to 32-bits.
+}{U\_INSTRUCTION\_SET\_01}
+
+\paragraph{SLTI}
+
+\req{F\_SLTI\_01}{
+  The SLTI behavior shall be applied the opcode is OP-IMM and when func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLTI\_02}{
+  The output of SLTI shall be 1 when the signed value of its first input is lower that the signed value of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\paragraph{SLTIU}
+
+\req{F\_SLTIU\_01}{
+  The SLTIU behavior shall be applied the opcode is OP-IMM and when func3 is 0x3.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLTIU\_02}{
+  The output of SLTI shall be 1 when the unsigned value of its first input is lower that the unsigned value of its second input. It shall be 0 otherwise.
+}{U\_INSTRUCTION\_SET\_01}
+
+\paragraph{XORI}
+
+\paragraph{ORI}
+
+\paragraph{ANDI}
+
+\paragraph{SLLI}
+
+\paragraph{SRLI}
+
+\paragraph{SRAI}
+
+\paragraph{ADD}
+
+\paragraph{SUB}
+
+\paragraph{SLL}
+
+\paragraph{SLT}
+
+\paragraph{SLTU}
+
+\paragraph{XOR}
+
+\paragraph{SRL}
+
+\paragraph{SRA}
+
+\paragraph{OR}
+
+\paragraph{AND}
+
+\paragraph{FENCE}
+
+\paragraph{ECALL}
+
+\paragraph{EBREAK}
+
 \subsubsection{Exceptions}
 
 \req{F\_INSTR\_ADDR\_MISALIGNED\_01}{
