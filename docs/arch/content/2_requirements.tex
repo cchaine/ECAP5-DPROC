@@ -162,6 +162,14 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   Immediate values shall be sign-extended.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_INSTR\_IMMEDIATE\_02}{
+  The value of an instruction immediate shall be the concatenation of immediate fragments from the instruction encoding.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_INSTR\_IMMEDIATE\_03}{
+  Missing immediate fragments shall be replaced by zeros.
+}{U\_INSTRUCTION\_SET\_01}
+
 \begin{content}
   RV32I is called a Load/Store ISA, meaning that instructions inputs and outputs are passed through registers or through an instruction immediate. There are specific instructions for loading and storing data into memory.
 \end{content}
@@ -270,6 +278,16 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \paragraph{LUI}
 
+\req{F\_LUI\_01}{
+  The LUI behavior shall be applied when the opcode is LUI.
+}{U\_INSTRUCTION\_SET\_01}
+
+\reqwithratio{F\_ADDI\_02}{
+  The output of LUI shall be the value of its first input.
+}{
+  The LUI instruction shall load the 20 upper bits of the instruction immediate into the destination register and fill the remaining bits with zeros. This is the default behavior for instruction immediates as stated in F\_INSTR\_IMMEDIATE\_02 and F\_INSTR\_IMMEDIATE\_03.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{AUIPC}
 
 \paragraph{JAL}
@@ -307,7 +325,7 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \paragraph{ADDI}
 
 \req{F\_ADDI\_01}{
-  The ADDI behavior shall be applied the opcode is OP-IMM and when func3 is 0x0.
+  The ADDI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x0.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_ADDI\_02}{
@@ -321,7 +339,7 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \paragraph{SLTI}
 
 \req{F\_SLTI\_01}{
-  The SLTI behavior shall be applied the opcode is OP-IMM and when func3 is 0x2.
+  The SLTI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x2.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_SLTI\_02}{
@@ -331,7 +349,7 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 \paragraph{SLTIU}
 
 \req{F\_SLTIU\_01}{
-  The SLTIU behavior shall be applied the opcode is OP-IMM and when func3 is 0x3.
+  The SLTIU behavior shall be applied when the opcode is OP-IMM and when func3 is 0x3.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_SLTIU\_02}{
@@ -340,15 +358,75 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \paragraph{XORI}
 
+\req{F\_XORI\_01}{
+  The XORI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x4.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_XORI\_02}{
+  The output of XORI shall be the result of a bitwise xor between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{ORI}
+
+\req{F\_ORI\_01}{
+  The ORI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x6.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ORI\_02}{
+  The output of ORI shall be the result of a bitwise or between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{ANDI}
 
+\req{F\_ANDI\_01}{
+  The ANDI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x7.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ANDI\_02}{
+  The output of ANDI shall be the result of a bitwise and between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SLLI}
+
+\req{F\_SLLI\_01}{
+  The SLLI behavior shall be applied when the opcode is OP-IMM and func3 is 0x1.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLLI\_02}{
+  The output of SLLI shall be its first input shifted left by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLLI\_03}{
+  Zeros shall be inserted in the lower bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SRLI}
 
+\req{F\_SRLI\_01}{
+  The SRLI behavior shall be applied when the opcode is OP-IMM, func3 is 0x5 and the 30\textsuperscript{th} bit of its second input is 0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRLI\_02}{
+  The output of SRLI shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRLI\_03}{
+  Zeros shall be inserted in the upper bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SRAI}
+
+\req{F\_SRAI\_01}{
+  The SRAI behavior shall be applied when the opcode is OP-IMM, func3 is 0x5 and the 30\textsuperscript{th} bit of its second input is 1.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRAI\_02}{
+  The output of SRLI shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRAI\_03}{
+  The most significant bit of the first input shall be inserted in the upper bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{ADD}
 
