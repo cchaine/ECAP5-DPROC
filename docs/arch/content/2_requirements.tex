@@ -290,6 +290,18 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \paragraph{AUIPC}
 
+\req{F\_AUIPC\_01}{
+  The AUIPC behavior shall be applied when the opcode is AUIPC.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_AUIPC\_02}{
+  The output of AUIPC shall be the sum of its first input and the address of the AUIPC instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\begin{content}
+Depending on implementation details, the address of the AUIPC instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
+\end{content}
+
 \paragraph{JAL}
 
 \paragraph{JALR}
@@ -430,7 +442,23 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
 
 \paragraph{ADD}
 
+\req{F\_ADD\_01}{
+  The ADD behavior shall be applied when the opcode is OP, func3 is 0x0 and the 30\textsuperscript{th} bit of its second input is 0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ADD\_02}{
+  The output of ADD shall be the signed integer sum of its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_ADD\_03}{
+  The output of ADD shall be truncated to 32-bits.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SUB}
+
+\req{F\_SUB\_01}{
+  The SUB behavior shall be applied when the opcode is OP, func3 is 0x0 and the 30\textsuperscript{th} bit of its second input is 1.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SLL}
 
