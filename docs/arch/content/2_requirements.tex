@@ -304,35 +304,127 @@ Depending on implementation details, the address of the AUIPC instruction might 
 
 \paragraph{JAL}
 
+\req{F\_JAL\_01}{
+  The JAL behavior shall be applied when the opcode is JAL.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_JAL\_02}{
+  The \texttt{pc} register shall be updated with the sum of the address of the JAL instruction with its first input. 
+}{U\_INSTRUCTION\_SET\_01}
+
+\begin{content}
+Depending on implementation details, the address of the JAL instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
+\end{content}
+
+\reqwithratio{F\_JAL\_03}{
+  The output of JAL shall be the address of the JAL instruction incremented by 4.
+}{
+  The JAL instruction shall output the address to the following instruction for it to be used as a \textit{return address} in the case of a function call.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{JALR}
+
+\req{F\_JALR\_01}{
+  The JALR behavior shall be applied when the opcode is JALR and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_JALR\_02}{
+  The \texttt{pc} register shall be updated with the sum of the first and second inputs of the JALR instruction.
+}{U\_INSTRUCTION\_SET\_01}
+
+\reqwithratio{F\_JALR\_03}{
+  The output of JALR shall be the address of the JALR instruction incremented by 4.
+}{
+  The JALR instruction shall output the address to the following instruction for it to be used as a \textit{return address} in the case of a function call.
+}{U\_INSTRUCTION\_SET\_01}
+
+\begin{content}
+Depending on implementation details, the address of the JALR instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
+\end{content}
 
 \paragraph{BEQ}
 
+\req{F\_BEQ\_01}{
+  The BEQ behavior shall be applied when the opcode is BRANCH and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{BNE}
+
+\req{F\_BNE\_01}{
+  The BNE behavior shall be applied when the opcode is BRANCH and func3 is 0x1.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{BLT}
 
+\req{F\_BLT\_01}{
+  The BLT behavior shall be applied when the opcode is BRANCH and func3 is 0x4.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{BGE}
+
+\req{F\_BGE\_01}{
+  The BGE behavior shall be applied when the opcode is BRANCH and func3 is 0x5.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{BLTU}
 
+\req{F\_BLTU\_01}{
+  The BLTU behavior shall be applied when the opcode is BRANCH and func3 is 0x6.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{BGEU}
+
+\req{F\_BGEU\_01}{
+  The BGEU behavior shall be applied when the opcode is BRANCH and func3 is 0x7.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{LB}
 
+\req{F\_LB\_01}{
+  The LB behavior shall be applied when the opcode is LOAD and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{LH}
+
+\req{F\_LH\_01}{
+  The LH behavior shall be applied when the opcode is LOAD and func3 is 0x1.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{LW}
 
+\req{F\_LW\_01}{
+  The LW behavior shall be applied when the opcode is LOAD and func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{LBU}
+
+\req{F\_LBU\_01}{
+  The LBU behavior shall be applied when the opcode is LOAD and func3 is 0x4.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{LHU}
 
+\req{F\_LHU\_01}{
+  The LHU behavior shall be applied when the opcode is LOAD and func3 is 0x5.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SB}
+
+\req{F\_SB\_01}{
+  The SB behavior shall be applied when the opcode is STORE and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SH}
 
+\req{F\_SH\_01}{
+  The SH behavior shall be applied when the opcode is STORE and func3 is 0x1.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SW}
+
+\req{F\_SW\_01}{
+  The SW behavior shall be applied when the opcode is STORE and func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{ADDI}
 
@@ -355,7 +447,7 @@ Depending on implementation details, the address of the AUIPC instruction might 
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_SLTI\_02}{
-  The output of SLTI shall be 1 when the signed value of its first input is lower that the signed value of its second input.
+  The output of SLTI shall be 1 when the signed value of its first input is lower that the signed value of its second input. It shall be 0 otherwise.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SLTIU}
@@ -433,7 +525,7 @@ Depending on implementation details, the address of the AUIPC instruction might 
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_SRAI\_02}{
-  The output of SRLI shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
+  The output of SRAI shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_SRAI\_03}{
@@ -460,23 +552,111 @@ Depending on implementation details, the address of the AUIPC instruction might 
   The SUB behavior shall be applied when the opcode is OP, func3 is 0x0 and the 30\textsuperscript{th} bit of its second input is 1.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_SUB\_02}{
+  The output of SUB shall be the signed integer difference of its first input minus its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SUB\_03}{
+  The output of SUB shall be truncated to 32-bits.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SLL}
+
+\req{F\_SLL\_01}{
+  The SLL behavior shall be applied when the opcode is OP and func3 is 0x1.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLL\_02}{
+  The output of SLL shall be its first input shifted left by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLL\_03}{
+  Zeros shall be inserted in the lower bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SLT}
 
+\req{F\_SLT\_01}{
+  The SLT behavior shall be applied when the opcode is OP and func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLT\_02}{
+  The output of SLT shall be 1 when the signed value of its first input is lower that the signed value of its second input. It shall be 0 otherwise.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SLTU}
+
+\req{F\_SLTU\_01}{
+  The SLTU behavior shall be applied when the opcode is OP and func3 is 0x3.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SLTU\_02}{
+  The output of SLTU shall be 1 when the unsigned value of its first input is lower that the unsigned value of its second input. It shall be 0 otherwise.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{XOR}
 
+\req{F\_XOR\_01}{
+  The XOR behavior shall be applied when the opcode is OP and func3 is 0x4.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_XOR\_02}{
+  The output of XOR shall be the result of a bitwise xor between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SRL}
+
+\req{F\_SRL\_01}{
+  The SRL behavior shall be applied when the opcode is OP, func3 is 0x5 and the 30\textsuperscript{th} bit of its second input is 0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRL\_02}{
+  The output of SRL shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRL\_03}{
+  Zeros shall be inserted in the upper bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SRA}
 
+\req{F\_SRA\_01}{
+  The SRA behavior shall be applied when the opcode is OP, func3 is 0x5 and the 30\textsuperscript{th} bit of its second input is 1.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRA\_02}{
+  The output of SRA shall be its first input shifted right by the amount specified by the first 5 bits of its second input.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SRA\_03}{
+  The most significant bit of the first input shall be inserted in the upper bits when shifting.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{OR}
+
+\req{F\_OR\_01}{
+  The OR behavior shall be applied when the opcode is OP and func3 is 0x6.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_OR\_02}{
+  The output of OR shall be the result of a bitwise or between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{AND}
 
+\req{F\_AND\_01}{
+  The AND behavior shall be applied when the opcode is OP and func3 is 0x7.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_AND\_02}{
+  The output of AND shall be the result of a bitwise and between its two inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{FENCE}
+
+\req{F\_FENCE\_01}{
+  The FENCE behavior shall be applied when the opcode is MISC-MEM and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{ECALL}
 
