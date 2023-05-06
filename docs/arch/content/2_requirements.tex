@@ -298,10 +298,6 @@ Describe what the assumptions for the product are : Targeting the ecp5 family, b
   The output of AUIPC shall be the sum of its first input and the address of the AUIPC instruction.
 }{U\_INSTRUCTION\_SET\_01}
 
-\begin{content}
-Depending on implementation details, the address of the AUIPC instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
-\end{content}
-
 \paragraph{JAL}
 
 \req{F\_JAL\_01}{
@@ -309,12 +305,8 @@ Depending on implementation details, the address of the AUIPC instruction might 
 }{U\_INSTRUCTION\_SET\_01}
 
 \req{F\_JAL\_02}{
-  The \texttt{pc} register shall be updated with the sum of the address of the JAL instruction with its first input. 
+  The \texttt{pc} register shall be updated with the sum of the address of the JAL instruction with the first instruction input. 
 }{U\_INSTRUCTION\_SET\_01}
-
-\begin{content}
-Depending on implementation details, the address of the JAL instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
-\end{content}
 
 \reqwithratio{F\_JAL\_03}{
   The output of JAL shall be the address of the JAL instruction incremented by 4.
@@ -338,14 +330,14 @@ Depending on implementation details, the address of the JAL instruction might be
   The JALR instruction shall output the address to the following instruction for it to be used as a \textit{return address} in the case of a function call.
 }{U\_INSTRUCTION\_SET\_01}
 
-\begin{content}
-Depending on implementation details, the address of the JALR instruction might be different from the address found in the \texttt{pc} register at the moment of executing the instruction behavior.
-\end{content}
-
 \paragraph{BEQ}
 
 \req{F\_BEQ\_01}{
   The BEQ behavior shall be applied when the opcode is BRANCH and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_BEQ\_02}{
+  When the first and second instruction inputs are equal, the \texttt{pc} register shall be updated with the signed sum of the address of the BEQ instruction with the third input.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{BNE}
@@ -354,10 +346,18 @@ Depending on implementation details, the address of the JALR instruction might b
   The BNE behavior shall be applied when the opcode is BRANCH and func3 is 0x1.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_BNE\_02}{
+  When the first and second inputs are not equal, the \texttt{pc} register shall be updated with the signed sum of the address of the BNE instruction with the third input.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{BLT}
 
 \req{F\_BLT\_01}{
   The BLT behavior shall be applied when the opcode is BRANCH and func3 is 0x4.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_BLT\_02}{
+  When the first input is lower than the second input using a signed comparison, the \texttt{pc} register shall be updated with the signed sum of the address of the BLT instruction with the third input.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{BGE}
@@ -366,10 +366,18 @@ Depending on implementation details, the address of the JALR instruction might b
   The BGE behavior shall be applied when the opcode is BRANCH and func3 is 0x5.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_BGE\_02}{
+  When the first input is greater or equal to the second input using a signed comparison, the \texttt{pc} register shall be updated with the signed sum of the address of the BGE instruction with the third input.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{BLTU}
 
 \req{F\_BLTU\_01}{
   The BLTU behavior shall be applied when the opcode is BRANCH and func3 is 0x6.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_BLTU\_02}{
+  When the first input is lower than the second input using an unsigned comparison, the \texttt{pc} register shall be updated with the signed sum of the address of the BLTU instruction with the third input.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{BGEU}
@@ -378,10 +386,22 @@ Depending on implementation details, the address of the JALR instruction might b
   The BGEU behavior shall be applied when the opcode is BRANCH and func3 is 0x7.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_BGEU\_02}{
+  When the first input is greater or equal to the second input using an unsigned comparison, the \texttt{pc} register shall be updated with the signed sum of the address of the BGEU instruction with the third input.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{LB}
 
 \req{F\_LB\_01}{
   The LB behavior shall be applied when the opcode is LOAD and func3 is 0x0.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LB\_02}{
+  The output of LB shall be the 8-bit value stored in memory at the address determined by the signed sum of its first and second inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LB\_03}{
+  The remaining bits of the loaded value shall be filled with the value of its 7\textsuperscript{th} bit.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{LH}
@@ -390,10 +410,22 @@ Depending on implementation details, the address of the JALR instruction might b
   The LH behavior shall be applied when the opcode is LOAD and func3 is 0x1.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_LH\_02}{
+  The output of LH shall be the 16-bit value stored in memory at the address determined by the signed sum of its first and second inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LH\_03}{
+  The remaining bits of the loaded value shall be filled with the value of its 15\textsuperscript{th} bit.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{LW}
 
 \req{F\_LW\_01}{
   The LW behavior shall be applied when the opcode is LOAD and func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LW\_02}{
+  The output of LW shall be the 32-bit value stored in memory at the address determined by the signed sum of its first and second inputs.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{LBU}
@@ -402,10 +434,26 @@ Depending on implementation details, the address of the JALR instruction might b
   The LBU behavior shall be applied when the opcode is LOAD and func3 is 0x4.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_LBU\_02}{
+  The output of LBU shall be the 8-bit value stored in memory at the address determined by the signed sum of its first and second inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LBU\_03}{
+  The remaining bits of the loaded value shall be filled with zeros.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{LHU}
 
 \req{F\_LHU\_01}{
   The LHU behavior shall be applied when the opcode is LOAD and func3 is 0x5.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LHU\_02}{
+  The output of LHU shall be the 16-bit value stored in memory at the address determined by the signed sum of its first and second inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_LHU\_04}{
+  The remaining bits of the loaded value shall be filled with zeros.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{SB}
@@ -414,16 +462,28 @@ Depending on implementation details, the address of the JALR instruction might b
   The SB behavior shall be applied when the opcode is STORE and func3 is 0x0.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_SB\_02}{
+  The lowest byte of the second input of SB shall be stored in memory at the address determined by the signed sum of its first and third inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SH}
 
 \req{F\_SH\_01}{
   The SH behavior shall be applied when the opcode is STORE and func3 is 0x1.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_SH\_02}{
+  The two lowest bytes of the second input of SB shall be stored in memory at the address determined by the signed sum of its first and third inputs.
+}{U\_INSTRUCTION\_SET\_01}
+
 \paragraph{SW}
 
 \req{F\_SW\_01}{
   The SW behavior shall be applied when the opcode is STORE and func3 is 0x2.
+}{U\_INSTRUCTION\_SET\_01}
+
+\req{F\_SH\_02}{
+  The value of the second input of SB shall be stored in memory at the address determined by the signed sum of its first and third inputs.
 }{U\_INSTRUCTION\_SET\_01}
 
 \paragraph{ADDI}
@@ -654,13 +714,15 @@ Depending on implementation details, the address of the JALR instruction might b
 
 \paragraph{FENCE}
 
-\req{F\_FENCE\_01}{
-  The FENCE behavior shall be applied when the opcode is MISC-MEM and func3 is 0x0.
-}{U\_INSTRUCTION\_SET\_01}
+TBD
 
 \paragraph{ECALL}
 
+TBD
+
 \paragraph{EBREAK}
+
+TBD
 
 \subsubsection{Exceptions}
 
@@ -668,9 +730,16 @@ Depending on implementation details, the address of the JALR instruction might b
   An Instruction Address Misaligned exception shall be raised when the target address of a taken branch or an unconditional jump if not four-byte aligned.
 }{U\_INSTRUCTION\_SET\_01}
 
+\req{F\_MISALIGNED\_MEMORY\_ACCESS\_01}{
+  A Misaligned Memory Access exception shall be raised when the target address of a load/store instruction is not aligned on the referenced type size.
+}{U\_INSTRUCTION\_SET\_01}
 
 \subsubsection{Memory interface}
 \label{spec-memory-interface}
+
+\req{F\_ENDIANNESS\_01}{
+  Memory accesses shall use the little-endian format.
+}{U\_INSTRUCTION\_SET\_01}
 
 \begin{content}
   Outline requirements to be compliant with the AXI-Lite specification.
