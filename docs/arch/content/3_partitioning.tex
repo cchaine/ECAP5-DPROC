@@ -1,3 +1,56 @@
 \section{Functional Partitioning}
 
+\begin{content}
+  ECAP5-DPROC is built around a pipelined architecture with the following stages :
+  \begin{itemize}
+    \vspace{-0.5em}
+    \item The \textbf{instruction fetch} stage loads the next instruction from memory.
+    \vspace{-0.5em}
+    \item The \textbf{decode} stage handles the instruction decoding to provide the next stage with the different instruction input values. This includes reading from internal registers.
+    \vspace{-0.5em}
+    \item The \textbf{execute} stage implements instruction behaviors. This includes performing integer operations as well as accessing memory.
+    \vspace{-0.5em}
+    \item The \textbf{write-back} stage which handles storing instructions outputs to internal registers.
+  \end{itemize}
+
+  The design is split into the following functional modules :
+  \begin{itemize}
+    \vspace{-0.5em}
+    \item The \textbf{external memory module} (EMM), in charge of accessing memory and peripherals.
+    \vspace{-0.5em}
+    \item The \textbf{instruction fetch module} (IFM), in charge of implementing the instruction fetch stage.
+    \vspace{-0.5em}
+    \item The \textbf{decode module} (DECM), in charge of implementing the decode stage.
+    \vspace{-0.5em}
+    \item The \textbf{register module} (REGM), implementing the internal registers.
+    \vspace{-0.5em}
+    \item The \textbf{load-store module} (LSM), in charge of accessing memory for load and store instructions.
+    \vspace{-0.5em}
+    \item The \textbf{arithmetic-logic module} (ALM), in charge of performing integer operations.
+    \vspace{-0.5em}
+    \item The \textbf{write-back module} (WBM), in charge of implementing the write-back stage.
+  \end{itemize}
+\end{content}
+
+\newpage
+
+\section{External Memory Module}
+\newpage
+
+\section{Instruction Fetch Module}
+\newpage
+
+\section{Decode Module}
+\newpage
+
+\section{Register Module}
+\newpage
+
+\section{Load-Store Module}
+\newpage
+
+\section{Arithmetic-Logic Module}
+\newpage
+
+\section{Write-Back Module}
 \newpage

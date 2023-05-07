@@ -22,6 +22,10 @@ ECAP5 is the primary user for ECAP5-DPROC. ECAP5-DPROC could however be used as 
   ECAP5-DPROC's unique memory interface shall be compliant with the AXI-Lite specification.
 }
 
+\ureq{U\_MEMORY\_INTERFACE\_03}{
+  ECAP5-DPROC's unique memory interface shall be designed such that memory protocols can be interchanged at compile time.
+}
+
 \ureq{U\_RESET\_01}{
   ECAP5-DPROC shall provide a signal which shall hold ECAP5-DPROC in a reset state while asserted.
 }
@@ -35,7 +39,7 @@ The polarity of the reset signal mentionned in \texttt{U\_RESET\_01} is not spec
 }
 
 \begin{content}
-The address mentionned in \texttt{U\_BOOT\_ADDRESS\_01} can be either configured through hardware signals or can be selected at compile-time.
+The address mentionned in \texttt{U\_BOOT\_ADDRESS\_01} can be either configured through hardware signals or can be selected at compile time.
 \end{content}
 
 \ureq{U\_HARDWARE\_INTERRUPT\_01}{
@@ -739,13 +743,18 @@ TBD
 
 \req{F\_ENDIANNESS\_01}{
   Memory accesses shall use the little-endian format.
-}{U\_INSTRUCTION\_SET\_01}
+}{}
 
 \begin{content}
   Outline requirements to be compliant with the AXI-Lite specification.
 \end{content}
 
 \subsection{Nonfunctional Requirements}
+
+\req{N\_FORMAL\_PROOF\_01}{
+  Each part of ECAP5-DPROC shall be formally proven when possible, otherwise thouroughly tested
+}{}
+
 
 \begin{content}
 These can be : performance, safety, security, usability, scalability.
