@@ -58,7 +58,10 @@
   \draw[<->, thick] (axi.center -| extend.center) node[left=0.2cm, anchor=east]{\small AXI-Lite} -- (axi.center);
 
   % clk triangle
-  \draw[-, dashed] ([yshift=0.25cm]clk.center) -- ([xshift=0.25cm]clk.center) -- ([yshift=-0.25cm]clk.center);
+  \draw[-, dashed, draw=black] ([yshift=0.25cm]clk.center) -- ([xshift=0.25cm]clk.center) -- ([yshift=-0.25cm]clk.center);
+
+  % branch unit
+  \draw[->] ([yshift=-0.25cm]EXM.west) -- ([xshift=-0.5cm, yshift=-0.25cm]EXM.west) -- ([xshift=-0.5cm, yshift=-1.25cm]EXM.west) -- node[below=0.2cm]{\footnotesize Branch} ([xshift=0.5cm, yshift=-1.25cm]IFM.east) -- ([xshift=0.5cm, yshift=-0.25cm]IFM.east) -- ([yshift=-0.25cm]IFM.east);
 
 \end{tikzpicture}
 }
