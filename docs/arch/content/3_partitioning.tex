@@ -4,32 +4,45 @@
   ECAP5-DPROC is built around a pipelined architecture with the following stages :
   \begin{itemize}
     \vspace{-0.5em}
-    \item The \textbf{instruction fetch} stage loads the next instruction from memory.
+    \item The instruction fetch stage loads the next instruction from memory.
     \vspace{-0.5em}
-    \item The \textbf{decode} stage handles the instruction decoding to provide the next stage with the different instruction input values. This includes reading from internal registers.
+    \item The decode stage handles the instruction decoding to provide the next stage with the different instruction input values. This includes reading from internal registers.
     \vspace{-0.5em}
-    \item The \textbf{execute} stage implements instruction behaviors. This includes performing integer operations as well as accessing memory.
+    \item The execute stage implements instruction behaviors. This includes performing integer operations as well as accessing memory.
     \vspace{-0.5em}
-    \item The \textbf{write-back} stage which handles storing instructions outputs to internal registers.
+    \item The write-back stage which handles storing instructions outputs to internal registers.
   \end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \input{docs/arch/figures/architecture.tex}
+    \caption{Schematic view of the architecture of ECAP5-DPROC}
+    \label{fig:architecture}
+\end{figure}
 
   The design is split into the following functional modules :
   \begin{itemize}
     \vspace{-0.5em}
-    \item The \textbf{external memory module} (EMM), in charge of accessing memory and peripherals.
+    \item The \textbf{Top Module} (TOPM) which integrates all other modules.
+    \item The \textbf{External Memory Module} (EMM), in charge of accessing memory and peripherals.
     \vspace{-0.5em}
-    \item The \textbf{instruction fetch module} (IFM), in charge of implementing the instruction fetch stage.
+    \item The \textbf{Instruction Fetch Module} (IFM), in charge of implementing the instruction fetch stage.
     \vspace{-0.5em}
-    \item The \textbf{decode module} (DECM), in charge of implementing the decode stage.
+    \item The \textbf{Decode Module} (DECM), in charge of implementing the decode stage.
     \vspace{-0.5em}
-    \item The \textbf{register module} (REGM), implementing the internal registers.
+    \item The \textbf{Register Module} (REGM), implementing the internal registers.
     \vspace{-0.5em}
-    \item The \textbf{load-store module} (LSM), in charge of accessing memory for load and store instructions.
-    \vspace{-0.5em}
-    \item The \textbf{arithmetic-logic module} (ALM), in charge of performing integer operations.
-    \vspace{-0.5em}
-    \item The \textbf{write-back module} (WBM), in charge of implementing the write-back stage.
+    \item The \textbf{Execute Module} (EXM), in charge of implementing the execute stage.
+    \item The \textbf{Write-Back Module} (WBM), in charge of implementing the write-back stage.
   \end{itemize}
+\end{content}
+
+\newpage
+
+\section{Top Module}
+
+\begin{content}
+  Handshaking and bubbling
 \end{content}
 
 \newpage
@@ -44,13 +57,21 @@
 \newpage
 
 \section{Register Module}
+
+\begin{figure}[h!]
+    \centering
+    \input{docs/arch/figures/regm.tex}
+    \caption{Schematic view of the Register Module}
+    \label{fig:regm}
+\end{figure}
+
 \newpage
 
-\section{Load-Store Module}
-\newpage
-
-\section{Arithmetic-Logic Module}
+\section{Execute Module}
 \newpage
 
 \section{Write-Back Module}
+\newpage
+
+\section{Debug}
 \newpage
