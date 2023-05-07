@@ -4,6 +4,9 @@
   \node[rectangle, draw=black,
     minimum height = 4cm,
     minimum width = 4cm,
-    fill = gray!20] (EMM) at (6, 2.5) {EMM};
+    fill = gray!20] (BRAM) at (6, 2.5) {Block RAM};
+
+  \node[dashed, draw=black, align=center, inner sep=1cm, fit=(BRAM)] (border) {};
+  \node[anchor=north west, inner sep=0.25cm] (border-text) at (border.north west) {REGM};
 \end{tikzpicture}
 }
