@@ -65,6 +65,21 @@
     \label{fig:regm}
 \end{figure}
 
+\begin{content}
+The register module implements the 32 internal registers of ECAP5-DPROC. It has two reading port and one writing port. The signals are described in table \ref{tab:regm-interface}. 
+\end{content}
+
+\begin{table}[H]
+  \centering
+  \input{docs/arch/tables/regm.tex}
+  \caption{Register Module interface signals}
+  \label{tab:regm-interface}
+\end{table}
+
+\begin{content}
+When reading, rdata1\_i and rdata2\_i output, on the rising edge of clk\_i, the value of the register respectively selected by raddr1\_i and raddr2\_i. A register write happens on the rising edge of clk\_i when write\_i is asserted, writing the value wdata\_i in the register selected by waddr\_i.
+\end{content}
+
 \newpage
 
 \section{Execute Module}
