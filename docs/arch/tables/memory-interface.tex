@@ -4,45 +4,21 @@
   \hline
   \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{READ ADDRESS BUS}} \\
+  WB\_RST\_O & O & 1 & TBD \\
   \hline
-  ARADDR & O & 32 & Read address. \\
+  WB\_ADR\_O & O & 32 & TBD \\
   \hline
-  ARVALID & O & 1 & Read address valid. \\
+  WB\_DAT\_I & I & 32 & TBD \\
   \hline
-  ARREADY & I & 1 & Read address ready. \\ 
+  WB\_DAT\_O & O & 32 & TBD \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{READ DATA BUS}} \\
+  WB\_WE\_O & O & 1 & TBD \\
   \hline
-  RDATA & I & 32 & Read data. \\
+  WB\_STB\_O & O &  & TBD \\
   \hline
-  RRESP & I & 2 & Read response. \\
+  WB\_ACK\_I & I & 1 & TBD \\
   \hline
-  RVALID & I & 1 & Read valid. \\
-  \hline
-  RREADY & O & 1 & Read ready. \\ 
-  \hline
-  \multicolumn{4}{|l|}{\textbf{WRITE ADDRESS BUS}} \\
-  \hline
-  AWADDR & O & 32 & Write address. \\
-  \hline
-  AWVALID & O & 1 & Write address valid. \\
-  \hline
-  AWREADY & I & 1 & Write address ready \\
-  \hline
-  \multicolumn{4}{|l|}{\textbf{WRITE DATA BUS}} \\
-  \hline
-  WDATA & O & 32 & Write data. \\
-  \hline
-  WSTRB & O & 4 & Write strobes. \\
-  \hline
-  \multicolumn{4}{|l|}{\textbf{WRITE RESPONSE BUS}} \\
-  \hline
-  BRESP & I & 2 & Write response. \\
-  \hline
-  BVALID & I & 1 & Write response valid. \\
-  \hline
-  BREADY & O & 1 & Response ready. \\
+  WB\_CYC\_O & O &  & TBD \\
   \hline
 \end{tabularx}
 }
