@@ -51,6 +51,23 @@
 \newpage
 
 \section{Instruction Fetch Module}
+\begin{figure}[h!]
+    \centering
+    \input{docs/arch/figures/ifm.tex}
+    \caption{Schematic view of the Instruction Fetch Module}
+    \label{fig:regm}
+\end{figure}
+
+\begin{content}
+The instruction fetch module handles fetching from memory the instructions to be executing. The signals are described in table \ref{tab:ifm-interface}. 
+\end{content}
+
+\begin{table}[H]
+  \centering
+  \input{docs/arch/tables/ifm.tex}
+  \caption{Instruction Fetch Module interface signals}
+  \label{tab:ifm-interface}
+\end{table}
 \newpage
 
 \section{Decode Module}
