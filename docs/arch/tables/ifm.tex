@@ -6,5 +6,31 @@
   \hline
   clk\_i & I & 1 & Clock input. \\
   \hline
+  rst\_i & I & 1 & Reset input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{JUMP LOGIC}} \\
+  \hline
+  irq\_i & I & 1 &  \\
+  \hline
+  drq\_i & I & 1 &  \\
+  \hline
+  branch\_i & I & 1 &  \\
+  \hline
+  boffset\_i & I &  &  \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{INSTRUCTION READ LOGIC}} \\
+  \hline
+  addr\_o & O & 32 &  \\
+  \hline
+  valid\_o & O & 1 &  \\
+  \hline
+  ready\_i & I & 1 &  \\
+  \hline
+  data\_i & I & 32 &  \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{OUTPUT}} \\
+  \hline
+  instr\_o & O & 32 &  \\
+  \hline
 \end{tabularx}
 }
