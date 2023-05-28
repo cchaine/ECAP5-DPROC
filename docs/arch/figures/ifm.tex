@@ -68,7 +68,7 @@
   \draw[->] ([xshift=-1.5cm]lport1.center) node[left=0.2cm, anchor=east]{\small irq\_i} -- (lport1.center);
   \draw[->] ([xshift=-1.5cm]lport2.center) node[left=0.2cm, anchor=east]{\small drq\_i} -- (lport2.center);
   \draw[->] ([xshift=-1.5cm]lport3.center) node[left=0.2cm, anchor=east]{\small branch\_i} -- (lport3.center);
-  \draw[->] ([xshift=-1.5cm]lport4.center) node[left=0.2cm, anchor=east]{\small boffset\_i} -- (lport4.center);
+  \draw[->] ([xshift=-1.5cm]lport4.center) node[left=0.2cm, anchor=east]{\small boffset\_i[]} -- (lport4.center);
 
   \node (clk) at ([yshift=-0.9cm]border.north west) {};
   \draw[->] ([xshift=-1.5cm]lport3.center |- clk.center) node[left=0.2cm, anchor=east]{\small clk\_i} -- (clk.center);

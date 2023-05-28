@@ -66,9 +66,20 @@ The instruction fetch module handles fetching from memory the instructions to be
 
 \begin{content}
   \texttt{pc} stores the value of the next instruction to be loaded from memory. It is connected to the wishbone master which performs the memory read. The read data is transfered to the output logic, in charge of handling the pipeline's handshaking protocol. The value of \texttt{pc} can be either incremented by the output logic, reset by \texttt{rst\_i} or loaded with a specific value through the jump logic.
+
+  This module doesn't contain any prefetch mechanism as there is no performance requirement for revision 1.0.0. This will lead to a performance bottleneck due to the number of cycles needed for fetching instructions from memory.
 \end{content}
 
 \subsection{Jump logic}
+
+\begin{figure}[h!]
+    \centering
+    \input{docs/arch/figures/jump-logic.tex}
+    \caption{Schematic view of the interface of the Jump Logic}
+    \label{fig:jump-logic}
+\end{figure}
+
+\input{docs/arch/tables/jump-logic.tex}
 
 \subsection{Wishbone master}
 
