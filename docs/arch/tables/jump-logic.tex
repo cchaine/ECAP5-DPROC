@@ -1,0 +1,30 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Jump logic interface signals\label{tab:ifm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  rst\_i & I & 1 & Reset input. \\
+  \hline
+  irq\_i & I & 1 & External interrupt request. \\
+  \hline
+  drq\_i & I & 1 & External debug request. \\
+  \hline
+  branch\_i & I & 1 & Branch request. \\
+  \hline
+  boffset\_i & I & TBC & Branch offset. TBC \\
+  \hline
+  pc\_load\_o & O & 1 & Asserted when the pc register shall be updated. \\
+  \hline
+  npc\_o & O & 32 & Value used to update the pc register. \\
+  \hline
+\end{xltabular}
+}
