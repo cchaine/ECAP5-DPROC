@@ -72,7 +72,7 @@ The instruction fetch module handles fetching from memory the instructions to be
 
 \subsection{Jump logic}
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \input{docs/arch/figures/jump-logic.tex}
     \caption{Schematic view of the interface of the Jump Logic}
@@ -80,6 +80,13 @@ The instruction fetch module handles fetching from memory the instructions to be
 \end{figure}
 
 \input{docs/arch/tables/jump-logic.tex}
+
+\begin{figure}[H]
+    \centering
+    \input{docs/arch/figures/jump-logic-behavior.tex}
+    \caption{Activity diagram of the jump logic behavior}
+    \label{fig:jump-logic-behavior}
+\end{figure}
 
 \subsection{Wishbone master}
 
