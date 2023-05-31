@@ -79,13 +79,27 @@ The instruction fetch module handles fetching from memory the instructions to be
     \label{fig:jump-logic}
 \end{figure}
 
+\begin{content}
+  The jump logic loads a value into the \texttt{pc} register based on inputs. Its interface is described in table \ref{tab:jump-logic}.
+\end{content}
+
 \input{docs/arch/tables/jump-logic.tex}
+
+\begin{content}
+\end{content}
 
 \begin{figure}[H]
     \centering
     \input{docs/arch/figures/jump-logic-behavior.tex}
     \caption{Activity diagram of the jump logic behavior}
     \label{fig:jump-logic-behavior}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \input{docs/arch/figures/jump-logic-output.tex}
+    \caption{Timing diagram for the output port of the jump logic.}
+    \label{fig:jump-logic-output}
 \end{figure}
 
 \subsection{Wishbone master}

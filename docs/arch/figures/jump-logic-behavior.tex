@@ -19,7 +19,7 @@
     align=center,
     anchor=east,
     minimum height = 2cm,
-    minimum width = 6cm,
+    minimum width = 6.5cm,
     fill = gray!20] (box2) at ([xshift=-1cm]if1.north west) {load pc with the address \\ of the debug handler};
 
   \node[rectangle, draw=black,
@@ -33,7 +33,7 @@
     align=center,
     anchor=east,
     minimum height = 2cm,
-    minimum width = 6cm,
+    minimum width = 6.5cm,
     fill = gray!20] (box3) at ([xshift=-1cm]if2.north west) {load pc with the address \\ of the external interrupt handler};
 
   \node[rectangle, draw=black,
@@ -47,7 +47,7 @@
     align=center,
     anchor=east,
     minimum height = 2cm,
-    minimum width = 6cm,
+    minimum width = 6.5cm,
     fill = gray!20] (box4) at ([xshift=-1cm]if3.north west) {load pc with the address \\ TBC};
 
   \draw[->] (box1.south) -- (if1.north east);
@@ -74,7 +74,7 @@
   \draw[->] (box3.west) -- (cross4.center) -- (cross4.center |- cross7.west) -- (cross7.west);
   \draw[->] (box4.west) -- (cross5.center) -- (cross5.center |- cross8.west) -- (cross8.west);
 
-  \node [circle, fill=gray, minimum height = 0.5cm, minimum width = 0.5cm] (start) at ([yshift=1cm]box1.north) {};
+  \node [circle, fill=gray, minimum height = 0.25cm, minimum width = 0.25cm] (start) at ([yshift=1cm]box1.north) {};
   \draw[->] (start.south) -- (box1.north) {};
 \end{tikzpicture}
 }
