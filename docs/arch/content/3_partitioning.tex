@@ -88,6 +88,10 @@ The instruction fetch module handles fetching from memory the instructions to be
 \begin{content}
 \end{content}
 
+\begin{content}
+  Figures \ref{fig:jump-logic-behavior} and \ref{fig:jump-logic-output} describe the behavior of the jump logic. The values to be loaded in memory are hardcoded and set at compile time.
+\end{content}
+
 \begin{figure}[H]
     \centering
     \input{docs/arch/figures/jump-logic-behavior.tex}
@@ -102,7 +106,22 @@ The instruction fetch module handles fetching from memory the instructions to be
     \label{fig:jump-logic-output}
 \end{figure}
 
+\subsection{PC register}
+
 \subsection{Wishbone master}
+
+\begin{figure}[H]
+    \centering
+    \input{docs/arch/figures/ifm-wishbone-master.tex}
+    \caption{Schematic view of the interface of the Wishbone Master}
+    \label{fig:ifm-wishbone-master}
+\end{figure}
+
+\begin{content}
+  The wishbone master fetches from memory the instruction to be executed. Its interface is described in table \ref{tab:ifm-wishbone-master}.
+\end{content}
+
+\input{docs/arch/tables/ifm-wishbone-master.tex}
 
 \subsection{Output logic}
 
