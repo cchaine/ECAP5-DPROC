@@ -13,42 +13,42 @@
     minimum width = 2cm,
     rotate=45,
     fill = blue!30!gray!20] (if1) at ([yshift=-3cm]box1.center) {};
-  \node[align=center] (if1-text) at (if1.center) {drq\_i\\asserted};
+  \node[align=center] (if1-text) at (if1.center) {rst\_i\\asserted};
 
   \node[rectangle, draw=black,
     align=center,
     anchor=east,
-    minimum height = 2cm,
-    minimum width = 6.5cm,
-    fill = gray!20] (box2) at ([xshift=-1cm]if1.north west) {request pc to be loaded with \\ the address of the debug handler};
+    minimum height = 1.5cm,
+    minimum width = 5cm,
+    fill = gray!20] (box2) at ([xshift=-1cm]if1.north west) {load pc with TBC};
 
   \node[rectangle, draw=black,
     minimum height = 2cm,
     minimum width = 2cm,
     rotate=45,
     fill = blue!30!gray!20] (if2) at ([yshift=-3cm]if1.center) {};
-  \node[align=center] (if2-text) at (if2.center) {irq\_i\\asserted};
+  \node[align=center] (if2-text) at (if2.center) {pc\_load\_i\\asserted};
 
   \node[rectangle, draw=black,
     align=center,
     anchor=east,
-    minimum height = 2cm,
-    minimum width = 6.5cm,
-    fill = gray!20] (box3) at ([xshift=-1cm]if2.north west) {request pc to be loaded \\ with the address of the \\ external interrupt handler};
+    minimum height = 1.5cm,
+    minimum width = 5cm,
+    fill = gray!20] (box3) at ([xshift=-1cm]if2.north west) {load pc with the value \\ of npc\_i};
 
   \node[rectangle, draw=black,
     minimum height = 2cm,
     minimum width = 2cm,
     rotate=45,
     fill = blue!30!gray!20] (if3) at ([yshift=-3cm]if2.center) {};
-  \node[align=center] (if3-text) at (if3.center) {branch\_i\\asserted};
+  \node[align=center] (if3-text) at (if3.center) {inc\_i\\asserted};
 
   \node[rectangle, draw=black,
     align=center,
     anchor=east,
-    minimum height = 2cm,
-    minimum width = 6.5cm,
-    fill = gray!20] (box4) at ([xshift=-1cm]if3.north west) {request pc to be loaded with \\ the address TBC};
+    minimum height = 1.5cm,
+    minimum width = 5cm,
+    fill = gray!20] (box4) at ([xshift=-1cm]if3.north west) {increment pc};
 
   \draw[->] (box1.south) -- (if1.north east);
   \draw[->] (if1.south west) -- node[right=0.2cm]{\small No} (if2.north east);
