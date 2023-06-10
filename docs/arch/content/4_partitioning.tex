@@ -51,6 +51,7 @@
 \newpage
 
 \section{Instruction Fetch Module}
+
 \begin{figure}[h!]
     \centering
     \input{docs/arch/figures/ifm.tex}
@@ -58,11 +59,15 @@
     \label{fig:regm}
 \end{figure}
 
+\subsection{Interface}
+
 \begin{content}
 The instruction fetch module handles fetching from memory the instructions to be executing. The signals are described in table \ref{tab:ifm-interface}. 
 \end{content}
 
 \input{docs/arch/tables/ifm.tex}
+
+\subsection{Behavior}
 
 \begin{content}
   \texttt{pc} stores the value of the next instruction to be loaded from memory. It is connected to the wishbone master which performs the memory read. The read data is transfered to the output logic, in charge of handling the pipeline's handshaking protocol. The value of \texttt{pc} can be either incremented by the output logic, reset by \texttt{rst\_i} or loaded with a specific value through the jump logic.
@@ -70,7 +75,7 @@ The instruction fetch module handles fetching from memory the instructions to be
   This module doesn't contain any prefetch mechanism as there is no performance requirement for revision 1.0.0. This will lead to a performance bottleneck due to the number of cycles needed for fetching instructions from memory.
 \end{content}
 
-\subsection{Jump logic}
+\subsubsection{Jump logic}
 
 \begin{figure}[H]
     \centering
@@ -106,7 +111,7 @@ The instruction fetch module handles fetching from memory the instructions to be
     \label{fig:jump-logic-output}
 \end{figure}
 
-\subsection{PC register}
+\subsubsection{PC register}
 
 \begin{figure}[H]
     \centering
@@ -115,7 +120,7 @@ The instruction fetch module handles fetching from memory the instructions to be
     \label{fig:pc-behavior}
 \end{figure}
 
-\subsection{Wishbone master}
+\subsubsection{Wishbone master}
 
 \begin{figure}[H]
     \centering
@@ -147,7 +152,7 @@ The instruction fetch module handles fetching from memory the instructions to be
   \end{center}
 \end{content}
 
-\subsection{Output logic}
+\subsubsection{Output logic}
 
 \begin{figure}[H]
     \centering
@@ -169,6 +174,8 @@ The instruction fetch module handles fetching from memory the instructions to be
     \label{fig:regm}
 \end{figure}
 
+\subsection{Interface}
+
 \begin{content}
 The register module implements the 32 internal registers of ECAP5-DPROC. It has two reading port and one writing port. The signals are described in table \ref{tab:regm-interface}. 
 \end{content}
@@ -179,6 +186,8 @@ The register module implements the 32 internal registers of ECAP5-DPROC. It has 
   \caption{Register Module interface signals}
   \label{tab:regm-interface}
 \end{table}
+
+\subsection{Behavior}
 
 \begin{content}
   When reading, \texttt{rdata1\_i} and \texttt{rdata2\_i} output, on the rising edge of \texttt{clk\_i}, the value of the register respectively selected by \texttt{raddr1\_i} and \texttt{raddr2\_i}. A register write happens on the rising edge of \texttt{clk\_i} when \texttt{write\_i} is asserted, writing the value \texttt{wdata\_i} in the register selected by \texttt{waddr\_i}.
