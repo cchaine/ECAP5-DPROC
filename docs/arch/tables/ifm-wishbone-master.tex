@@ -26,11 +26,11 @@
   \hline
   wb\_ack\_i & I & 1 & Acknowledge. Indicates a normal termination of a bus cycle. \\
   \hline
-  wb\_cyc\_o & O & 1 & Cycle. Indicates that a valid bus cycle is in progress. \\
-  \hline
   \multicolumn{4}{|l|}{\textbf{OUTPUT}} \\
   \hline
   instr\_o & O & 32 & Instruction to be executed. \\
+  \hline
+  valid\_o & O & 1 & Asserted when the instruction output is valid. \\
   \hline
 \end{xltabular}
 }

@@ -126,11 +126,35 @@ The instruction fetch module handles fetching from memory the instructions to be
 
 \begin{content}
   The wishbone master fetches from memory the instruction to be executed. Its interface is described in table \ref{tab:ifm-wishbone-master}.
+  The memory port of the wishbone master is described in figure \ref{fig:ifm-wishbone-read}. 
 \end{content}
 
 \input{docs/arch/tables/ifm-wishbone-master.tex}
 
+\begin{figure}[H]
+  \centering
+  \input{docs/arch/figures/ifm-wishbone-read.tex}
+  \caption{Timing diagram for the memory port of IFM's wishbone master}
+  \label{fig:ifm-wishbone-read}
+\end{figure}
+
+\begin{content}
+  The output port of the wishbone master has the following properties:
+  \begin{center}
+    valid\_o = (wb\_stb\_o \& wb\_ack\_i)
+
+    instr\_o[31:0] = wb\_dat\_i
+  \end{center}
+\end{content}
+
 \subsection{Output logic}
+
+\begin{figure}[H]
+    \centering
+    \input{docs/arch/figures/ifm-output-logic.tex}
+    \caption{Schematic view of the interface of the Output Logic}
+    \label{fig:ifm-output-logic}
+\end{figure}
 
 \newpage
 \section{Decode Module}
