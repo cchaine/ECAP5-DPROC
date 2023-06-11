@@ -75,6 +75,8 @@ The instruction fetch module handles fetching from memory the instructions to be
   This module doesn't contain any prefetch mechanism as there is no performance requirement for revision 1.0.0. This will lead to a performance bottleneck due to the number of cycles needed for fetching instructions from memory.
 \end{content}
 
+\subsection{Design}
+
 \subsubsection{Jump logic}
 
 \begin{figure}[H]
@@ -192,6 +194,8 @@ The register module implements the 32 internal registers of ECAP5-DPROC. It has 
 \begin{content}
   When reading, \texttt{rdata1\_i} and \texttt{rdata2\_i} output, on the rising edge of \texttt{clk\_i}, the value of the register respectively selected by \texttt{raddr1\_i} and \texttt{raddr2\_i}. A register write happens on the rising edge of \texttt{clk\_i} when \texttt{write\_i} is asserted, writing the value \texttt{wdata\_i} in the register selected by \texttt{waddr\_i}.
 \end{content}
+
+\subsection{Design}
 
 \newpage
 
