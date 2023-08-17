@@ -1,0 +1,20 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Description of the parameters of figure \ref{fig:exm-behavior-store}.\label{tab:exm-behavior-output-store}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{\textwidth}{|l|l|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{VARIANTS} & \cellcolor{gray!20}\textbf{PARAMETERS} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  \multirow{1}{*}{SB} & sel[3:0] = 0b0001 & Only the lowest significant byte is selected. \\
+  \hline
+  \multirow{1}{*}{SH} & sel[3:0] = 0b0011 & Only the two lowest significant bytes are selected.  \\
+  \hline
+  \multirow{1}{*}{SW} & sel[3:0] = 0b1111 & All the bytes are selected. \\
+  \hline
+\end{xltabular}
+}

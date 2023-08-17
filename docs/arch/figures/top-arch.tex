@@ -25,6 +25,27 @@
     minimum height = 2cm,
     minimum width = 2cm,
     fill = blue!30!gray!20] (WBM) at (12, 0) {WBM};
+  \node[rectangle, draw=red,
+    anchor=north east,
+    minimum height = 1.5cm,
+    minimum width = 1.5cm,
+    fill = red!20] (HZDM) at ([xshift=-1.25cm]REGM.north west) {HZDM};
+
+  \node (hzdm-port1) at ([xshift=-0.3cm]HZDM.south) {};
+  \node (hzdm-port2) at ([xshift=-0.1cm]HZDM.south) {};
+  \node (hzdm-port3) at ([xshift=0.1cm]HZDM.south) {};
+  \node (hzdm-port4) at ([xshift=0.3cm]HZDM.south) {};
+  \node (ifm-hzd-port) at (IFM.north) {};
+  \node (decm-hzd-port) at ([xshift=-0.4cm]DECM.north) {};
+  \node (decm-hzd-port-mid) at ([yshift=0.3cm]decm-hzd-port.center) {};
+  \node (exm-hzd-port) at ([xshift=-0.4cm]EXM.north) {};
+  \node (exm-hzd-port-mid) at ([yshift=0.5cm]exm-hzd-port.center) {};
+  \node (wbm-hzd-port) at ([xshift=-0.4cm]WBM.north) {};
+  \node (wbm-hzd-port-mid) at ([yshift=0.7cm]wbm-hzd-port.center) {};
+  \draw[-, red] (hzdm-port1 |- ifm-hzd-port) -- (hzdm-port1);
+  \draw[-, red] (decm-hzd-port) -- (decm-hzd-port-mid) -- (hzdm-port2 |- decm-hzd-port-mid) -- (hzdm-port2);
+  \draw[-, red] (exm-hzd-port) -- (exm-hzd-port-mid) -- (hzdm-port3 |- exm-hzd-port-mid) -- (hzdm-port3);
+  \draw[-, red] (wbm-hzd-port) -- (wbm-hzd-port-mid) -- (hzdm-port4 |- wbm-hzd-port-mid) -- (hzdm-port4);
 
   \draw[->] (IFM.east) -- (DECM.west);
   \draw[->] (DECM.east) -- (EXM.west);
@@ -39,8 +60,7 @@
   \draw[->] (WBM.north) -- (WBM.north |- REGM.south);
 
   % surrounding rectangle
-  \node[dashed, draw=black, align=center, inner sep=0.5cm, fit=(EMM) (IFM) (DECM) (EXM) (WBM) (REGM)] (border) {};
-  \node[anchor=north west, inner sep=0.5cm] (border-text) at (border.north west) {TOPM};
+  \node[dashed, draw=black, align=center, inner sep=0.5cm, fit=(HZDM) (EMM) (IFM) (DECM) (EXM) (WBM) (REGM)] (border) {};
 
   % external interface
   \node (irq) at ([yshift=0.25cm]IFM.west) {};
@@ -55,7 +75,7 @@
   \draw[->] (rst.center -| extend.center) node[left=0.2cm, anchor=east]{\small RST\_N} -- (rst.center);
   \draw[->] (irq.center -| extend.center) node[left=0.2cm, anchor=east]{\small IRQ} -- (irq.center);
   \draw[->] (drq.center -| extend.center) node[left=0.2cm, anchor=east]{\small DRQ} -- (drq.center);
-  \draw[<->, thick] (axi.center -| extend.center) node[left=0.2cm, anchor=east]{\small AXI-Lite} -- (axi.center);
+  \draw[<->, thick] (axi.center -| extend.center) node[left=0.2cm, anchor=east]{\small Wishbone} -- (axi.center);
 
   % clk triangle
   \draw[-, dashed, draw=black] ([yshift=0.25cm]clk.center) -- ([xshift=0.25cm]clk.center) -- ([yshift=-0.25cm]clk.center);

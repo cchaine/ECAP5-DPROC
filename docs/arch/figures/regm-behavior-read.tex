@@ -1,0 +1,27 @@
+\makeatletter\gdef\dividers{}
+\begin{tikztimingtable}[%
+    scale=0.7,
+    timing/dslope=0.1,
+    timing/.style={x=5ex,y=3ex},
+    x=5ex,
+    timing/rowdist=4ex,
+    timing/name/.style={font=\footnotesize},
+    timing/u/background/.style={fill=gray!20},
+    timing/e/background/.style={fill=gray!20},
+]
+clk\_i & H 6{C C} L \\
+& \divider{First read port} \\
+raddr1\_i[4:0] &  2U 2D{0x5} 2D{0x2} 2U 2U       2D{0x0} 2U\\
+rdata1\_o[31:0] & 2U 2D{x5}  2D{x2}  2U 2U       2D{x0}  2U \\
+& \divider{Second read port} \\
+raddr2\_i[4:0] &  2U 2D{0x5} 2D{0x6} 2U 2D{0x1F} 2U      2U\\
+rdata2\_o[31:0] & 2U 2D{x5}  2D{x6}  2U 2D{x31}  2U      2U \\
+\extracode
+% grid
+\begin{pgfonlayer}{background}
+\begin{scope}[semitransparent ,semithick]
+\vertlines[darkgray,dotted]{2, 4, 6, 8, 10, 12}
+\dividers
+\end{scope}
+\end{pgfonlayer}
+\end{tikztimingtable}

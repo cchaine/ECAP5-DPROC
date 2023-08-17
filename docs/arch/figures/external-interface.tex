@@ -1,39 +1,45 @@
 \scalebox{0.85}{
 \begin{tikzpicture}[scale=1.25, draw=gray, inner sep=0, outer sep=0]
   \node[rectangle, draw=black,
-    minimum height = 5cm,
-    minimum width = 4cm,
-    fill = gray!10] (box) at (0, 0) {ECAP5-DPROC};
+    minimum height = 5.5cm,
+    minimum width = 5.5cm,
+    fill = gray!20] (block) at (0, 0) {ECAP5-DPROC};
 
   % left
-  \node (lport1) at ([yshift=0.75cm]box.west) {};
-  \node (lport2) at ([yshift=0.25cm]box.west) {};
-  \node (lport3) at ([yshift=-0.25cm]box.west) {};
-  \node (lport4) at ([yshift=-0.75cm]box.west) {};
+  \node (lport1) at ([yshift=0.2cm]block.west) {};
+  \node (lport2) at ([yshift=-0.4cm]lport1.center) {};
 
-  \draw[->] ([xshift=-1cm]lport1.center) node[left=0.2cm, anchor=east]{\footnotesize CLK} -- (lport1);
-  \draw[->] ([xshift=-1cm]lport2.center) node[left=0.2cm, anchor=east]{\footnotesize RST\_N} -- (lport2);
-  \draw[->] ([xshift=-1cm]lport3.center) node[left=0.2cm, anchor=east]{\footnotesize IRQ} -- (lport3);
-  \draw[->] ([xshift=-1cm]lport4.center) node[left=0.2cm, anchor=east]{\footnotesize DRQ} -- (lport4);
+  \draw[->] ([xshift=-1cm]lport1.center) node[left=0.2cm, anchor=east]{\footnotesize DRQ\_I} -- (lport1);
+  \draw[->] ([xshift=-1cm]lport2.center) node[left=0.2cm, anchor=east]{\footnotesize IRQ\_I} -- (lport2);
 
   % right
-  \node (rport4) at ([yshift=0.25cm]box.east) {};
-  \node (rport3) at ([yshift=0.5cm]rport4.center) {};
-  \node (rport2) at ([yshift=0.5cm]rport3.center) {};
-  \node (rport1) at ([yshift=0.5cm]rport2.center) {};
+  \node (rport5) at (block.east) {};
+  \node (rport4) at ([yshift=0.4cm]rport5.center) {};
+  \node (rport3) at ([yshift=0.4cm]rport4.center) {};
+  \node (rport2) at ([yshift=0.4cm]rport3.center) {};
+  \node (rport1) at ([yshift=0.4cm]rport2.center) {};
 
-  \node (rport5) at ([yshift=-0.25cm]box.east) {};
-  \node (rport6) at ([yshift=-0.5cm]rport5.center) {};
-  \node (rport7) at ([yshift=-0.5cm]rport6.center) {};
-  \node (rport8) at ([yshift=-0.5cm]rport7.center) {};
+  \node (rport6) at ([yshift=-0.4cm]rport5.center) {};
+  \node (rport7) at ([yshift=-0.4cm]rport6.center) {};
+  \node (rport8) at ([yshift=-0.4cm]rport7.center) {};
+  \node (rport9) at ([yshift=-0.4cm]rport8.center) {};
 
-  \draw[<-] ([xshift=1cm]rport1.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_RST\_O} -- (rport1);
-  \draw[<-] ([xshift=1cm]rport2.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_ADR\_O} -- (rport2);
-  \draw[->] ([xshift=1cm]rport3.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_DAT\_I} -- (rport3);
-  \draw[<-] ([xshift=1cm]rport4.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_DAT\_O} -- (rport4);
-  \draw[<-] ([xshift=1cm]rport5.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_WE\_O} -- (rport5);
-  \draw[<-] ([xshift=1cm]rport6.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_STB\_O} -- (rport6);
-  \draw[->] ([xshift=1cm]rport7.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_ACK\_I} -- (rport7);
-  \draw[<-] ([xshift=1cm]rport8.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_CYC\_O} -- (rport8);
+  \draw[->] ([xshift=1cm]rport1.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_CLK\_I} -- (rport1);
+  \draw[->] ([xshift=1cm]rport2.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_RST\_I} -- (rport2);
+  \draw[<-] ([xshift=1cm]rport3.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_ADR\_O} -- (rport3);
+  \draw[->] ([xshift=1cm]rport4.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_DAT\_I} -- (rport4);
+  \draw[<-] ([xshift=1cm]rport5.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_DAT\_O} -- (rport5);
+  \draw[<-] ([xshift=1cm]rport6.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_WE\_O} -- (rport6);
+  \draw[<-] ([xshift=1cm]rport7.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_STB\_O} -- (rport7);
+  \draw[->] ([xshift=1cm]rport8.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_ACK\_I} -- (rport8);
+  \draw[<-] ([xshift=1cm]rport9.center) node[right=0.2cm, anchor=west]{\footnotesize WB\_CYC\_O} -- (rport9);
+
+  \node (clk) at ([yshift=-0.5cm]block.north west) {};
+  \draw[->] ([xshift=-1.5cm]lport1.center |- clk.center) node[left=0.2cm, anchor=east]{\small clk\_i} -- (clk.center);
+  % clk triangle
+  \draw[-  , draw=black] ([yshift=0.25cm]clk.center) -- ([xshift=0.25cm]clk.center) -- ([yshift=-0.25cm]clk.center);
+
+  \node (rst) at ([yshift=-0.4cm]clk.center) {};
+  \draw[->] ([xshift=-1.5cm]rst.center) node[left=0.2cm, anchor=east]{\small rst\_i} -- (rst.center);
 \end{tikzpicture}
 }

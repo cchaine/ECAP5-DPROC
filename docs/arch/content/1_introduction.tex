@@ -17,17 +17,33 @@ This document targets hardware engineers who shall implement ECAP5-DPROC by refe
   ECAP5-DPROC is an implementation of the RISC-V instruction set architecture targetting \textit{Educational Computer Architecture Platform 5} (ECAP5). It will provide the main means of software execution in ECAP5.
 \end{content}
 
-\subsection{Definitions and Acronyms}
+\subsection{Conventions}
 
-\begin{content}
-hardware-configurable
+Requirements shall be described here.
 
-software-configurable
-\end{content}
+Requirement relationships :
+\begin{itemize}
+    \item Composition
+    \item Derivation
+    \item Refinement
+    \item Satisfy
+    \item Verify
+    \item Copy
+\end{itemize}
 
 The bit indexing shall be described somewhere.
 
 Byte size as well.
+
+Inputs missing from timing diagrams are considered low or undefined.
+
+Italic names are timing diagram parameters.
+
+\subsection{Definitions and Abbreviations}
+
+hardware-configurable
+
+software-configurable
 
 \subsection{References}
 
@@ -43,9 +59,8 @@ Byte size as well.
     \hline
     March 22, 2019 & 0.13.2 & RISC-V External Debug Support \\
     \hline
-    September 7, 2002 & B.3 & WISHBONE System-on-Chip (SoC) Interconnection Architecture for Portable IP Core \\
+    June 22, 2010 & B.4 & WISHBONE System-on-Chip (SoC) Interconnection Architecture for Portable IP Cores \\
     \hline
-%    February 22, 2013 & Issue E & AMBA AXI and ACE Protocol Specification \\
 %    \hline
   \end{tabularx}
   \vspace{0.5em}

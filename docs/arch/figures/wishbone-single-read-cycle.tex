@@ -1,23 +1,29 @@
+\makeatletter\gdef\dividers{}
 \begin{tikztimingtable}[%
-    scale=0.9,
+    scale=0.7,
     timing/dslope=0.1,
-    timing/.style={x=5ex,y=3ex},
-    x=5ex,
-    timing/rowdist=5ex,
+    timing/.style={x=6ex,y=3ex},
+    x=6ex,
+    timing/rowdist=4ex,
     timing/name/.style={font=\footnotesize},
     timing/u/background/.style={fill=gray!20},
     timing/e/background/.style={fill=gray!20},
 ]
-
 clk\_i & H 3{C C} L \\
-npc\_o & 2U 2D{new pc value} 4U  \\
-pc\_load\_o & 2L 0.2E 1.8H 0.2E 4L \\
-pc & 4D{previous pc value} 4D{new pc value} \\
+adr\_o & 2U 4D{VALID} 2U \\
+dat\_i & 2U 2U 2D{VALID} 2U \\
+dat\_o & 8U \\
+we\_o & 8L \\
+sel\_o & 2U 4D{VALID} 2U \\
+stb\_o & 2L 4H 2L \\
+ack\_i & 4L 2H 2L \\
+cyc\_o & 2L 4H 2L \\
 \extracode
 % grid
 \begin{pgfonlayer}{background}
 \begin{scope}[semitransparent ,semithick]
 \vertlines[darkgray,dotted]{2, 4, 6}
+\dividers
 \end{scope}
 \end{pgfonlayer}
 \end{tikztimingtable}

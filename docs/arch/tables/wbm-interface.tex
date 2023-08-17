@@ -1,0 +1,36 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Write-back Module interface signals\label{tab:wbm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{INPUT LOGIC}} \\
+  \hline
+  input\_ready\_o & O & 1 & Input handshaking signal asserted when ready to receive inputs. \\
+  \hline
+  input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
+  \hline
+  result\_write\_i & I & 1 & Asserted when the instruction shall output a value to a register. \\
+  \hline
+  result\_addr\_i & I & 5 & Address of the register to be written to. \\
+  \hline
+  result\_i & I & 32 & Value to be written to the register. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{REGISTER ACCESS}} \\
+  \hline
+  reg\_write\_o & 0 & 1 & Register selector for the write port. \\
+  \hline
+  reg\_waddr\_o & O & 5 & Asserted when a write to the selected register shall happen. \\
+  \hline
+  reg\_wdata\_o & O & 32 & Data to be written to the selected register. \\
+  \hline
+\end{xltabular}
+}

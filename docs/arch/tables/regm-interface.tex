@@ -1,6 +1,12 @@
 {
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Register Module interface signals\label{tab:regm-interface}
+  \end{center}
+
 \footnotesize
-\begin{tabularx}{0.9\textwidth}{|l|c|c|X|}
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
   \hline
   \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
   \hline
@@ -26,5 +32,5 @@
   \hline
   wdata\_i & I & 32 & Data to be written. \\
   \hline
-\end{tabularx}
+\end{xltabular}
 }
