@@ -1,0 +1,35 @@
+\vspace{1em}
+\scalebox{0.85}{
+\begin{tikzpicture}[scale=1.25, draw=gray, inner sep=0, outer sep=0]
+  \node[rectangle, draw=black,
+    anchor=south,
+    align=center,
+    minimum height = 4cm,
+    minimum width = 4cm,
+    fill = gray!20] (block) at (0, 0) {WBM};
+
+  \node (rport2) at (block.east) {};
+  \node (rport1) at ([yshift=0.4cm]rport2.center) {};
+  \node (rport3) at ([yshift=-0.4cm]rport2.center) {};
+  \draw[->] ([xshift=1.5cm]rport1.center) node[right=0.2cm, anchor=west]{\small reg\_write\_o} -- (rport1.center);
+  \draw[->] ([xshift=1.5cm]rport2.center) node[right=0.2cm, anchor=west]{\small reg\_waddr\_o[4:0]} -- (rport2.center);
+  \draw[->] ([xshift=1.5cm]rport3.center) node[right=0.2cm, anchor=west]{\small reg\_wdata\_o[31:0]} -- (rport3.center);
+
+  \node (lport3) at ([yshift=-0.2cm] block.west) {};
+  \node (lport2) at ([yshift=0.4cm]lport3.center) {};
+  \node (lport1) at ([yshift=0.4cm]lport2.center) {};
+  \node (lport4) at ([yshift=-0.4cm]lport3.center) {};
+  \node (lport5) at ([yshift=-0.4cm]lport4.center) {};
+
+  \draw[<-] ([xshift=-1.5cm]lport1.center) node[left=0.2cm, anchor=east]{\small input\_ready\_o} -- (lport1.center);
+  \draw[->] ([xshift=-1.5cm]lport2.center) node[left=0.2cm, anchor=east]{\small input\_valid\_i} -- (lport2.center);
+  \draw[->] ([xshift=-1.5cm]lport3.center) node[left=0.2cm, anchor=east]{\small result\_write\_i} -- (lport3.center);
+  \draw[->] ([xshift=-1.5cm]lport4.center) node[left=0.2cm, anchor=east]{\small result\_addr\_i[4:0]} -- (lport4.center);
+  \draw[->] ([xshift=-1.5cm]lport5.center) node[left=0.2cm, anchor=east]{\small result\_i[31:0]} -- (lport5.center);
+
+  \node (clk) at ([yshift=-0.5cm]block.north west) {};
+  \draw[->] ([xshift=-1.5cm]lport3.center |- clk.center) node[left=0.2cm, anchor=east]{\small clk\_i} -- (clk.center);
+  % clk triangle
+  \draw[-  , draw=black] ([yshift=0.25cm]clk.center) -- ([xshift=0.25cm]clk.center) -- ([yshift=-0.25cm]clk.center);
+\end{tikzpicture}
+}

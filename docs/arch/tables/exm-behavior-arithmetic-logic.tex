@@ -1,0 +1,34 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Description of the parameters of figure \ref{fig:exm-behavior-arithmetic-logic}.\label{tab:exm-behavior-output-arithmetic-logic}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{\textwidth}{|l|l|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{VARIANTS} & \cellcolor{gray!20}\textbf{PARAMETERS} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  \multirow{1}{*}{ADD/ADDI} & val[31:0] = param1\_i + param2\_i & The signed sum of the first and second param. \\ 
+  \hline
+  \multirow{1}{*}{SUB} & val[31:0] = param1\_i - param2\_i & The signed difference of the first param minus the second param.  \\
+  \hline
+  \multirow{1}{*}{XOR/XORI} & val[31:0] = param1\_i $\oplus$ param2\_i & The bitwise exclusive-or of the first and second params. \\
+  \hline
+  \multirow{1}{*}{OR/ORI} & val[31:0] = param1\_i $\lor$ param2\_i &  The bitwise or of the first and second params. \\
+  \hline
+  \multirow{1}{*}{AND/ANDI} & val[31:0] = param1\_i $\land$ param2\_i & The bitwise and of the first and second params. \\
+  \hline
+  \multirow{1}{*}{SLT/SLTI} & val[31:0] = if(param1\_i $<$ param2\_i) 1 else 0 & 1 when the first param is lower than the second param using a signed comparison. 0 otherwise. \\
+  \hline
+  \multirow{1}{*}{SLTU/SLTIU} & val[31:0] = if(unsigned(param1\_i) $<$ unsigned(param2\_i)) 1 else 0 & 1 when the first param is lower than the second param using an unsigned comparison. 0 otherwise. \\
+  \hline
+  \multirow{1}{*}{SLL/SLLI} & val[31:0] = \{param1\_i[31 - param2\_i[4:0] : 0], param2\_i[4:0]\{0\}\} & The first param is shifted left by the amount specified by the first 5 bits of the second param. The right bits are filled with zeros. \\
+  \hline
+  \multirow{1}{*}{SRL/SRLI} & val[31:0] = \{param2\_i[4:0]\{0\}, param1\_i[31 : param2\_i[4:0]]\} & The first param is shifted right by the amount specified by the first 5 bits of the second param. The left bits are filled with zeros. \\
+  \hline
+  \multirow{1}{*}{SRA/SRAI} & val[31:0] = \{param2\_i[4:0]\{param1\_i[31]\}, param1\_i[31 : param2\_i[4:0]]\} & The first param is shifted right by the amount specified by the first 5 bits of the second param. The left bits are filled with the sign bit of the first param. \\
+  \hline
+\end{xltabular}
+}

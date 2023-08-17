@@ -33,6 +33,9 @@
 \usetikzlibrary{babel}
 \usetikzlibrary{fit}
 \usetikzlibrary{angles, quotes}
+\usetikzlibrary{automata, arrows}
+\usetikzlibrary{decorations.pathreplacing}
+
 \tikzset{
 % Define standard arrow tip
 >={Latex[scale=1.25]}
@@ -56,113 +59,78 @@
 % no title at the end of pages
 \usepackage[nobottomtitles]{titlesec}
 % draft watermark
-\usepackage{draftwatermark}
+%\usepackage{draftwatermark}
+\usepackage{enumitem}
+% optional key arguments
+\usepackage{keyval, xargs}
+% copy paste
+\usepackage{clipboard}
+% sanitize text
+\usepackage{pdfescape}
+\usepackage{xstring}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Variables %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\input{docs/arch/variables.tex}
+\input{arch/variables.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% Configuration %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Separation of items in itemize
+\setlist{parsep=0.5em, topsep=-0.5em}
+
+% tikz-timing spacer
+\makeatletter\gdef\dividers{}
+\def\divider#1{
+    N(#1)@{
+        \g@addto@macro\dividers{
+            \path(#1)-|node(left){}(all labels.west)(#1)-|node[shift={(0,1)}](right){}(all rows.east)
+            node(banner)[fill=gray,opacity=.2,inner sep=0,fit=(left.center)(right.center)]{}
+            (banner.west)node[text=black,right](text){\scriptsize #1};
+        }
+    }
+}
+
 \setlength{\tabcolsep}{10pt}
 \renewcommand{\arraystretch}{1.5}
+
 % Functional requirement environment
 \newlength{\reqtablelength}
 \setlength{\reqtablelength}{0.9\textwidth}
 \newcommand{\reqcolor}{blue!20!gray}
-\newcommand{\req}[3]{
-  \begin{center}
-  {
-    \footnotesize
-    \begin{tabularx}{\reqtablelength}{|l|X|}
-      \hline
-      \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}{#2} \\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}\makecell[l]{#3} \\
-      \hline
-    \end{tabularx}
-  }
-  \end{center}
-}
-\newcommand{\reqwithratio}[4]{
-  \begin{center}
-  {
-    \footnotesize
-    \begin{tabularx}{\reqtablelength}{|l|X|}
-      \hline
-      \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}{#2} \\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}#3 \\
-      \hline
-      \cellcolor{\reqcolor!15}\textbf{Refers to} & \cellcolor{\reqcolor!5}#4 \\
-      \hline
-    \end{tabularx}
-  }
-  \end{center}
-}
-% User requirement 
-\newlength{\ureqtablelength}
-\setlength{\ureqtablelength}{0.9\textwidth}
-\newcommand{\ureqcolor}{blue!20!gray}
-\newcommand{\ureq}[2]{
-  \begin{center}
-  {
-    \footnotesize
-    \begin{tabularx}{\ureqtablelength}{|l|X|}
-      \hline
-      \cellcolor{\ureqcolor!30}\textbf{ID} & #1\\
-      \hline
-      \cellcolor{\ureqcolor!15}\textbf{Description} & \cellcolor{\ureqcolor!5}#2 \\
-      \hline
-    \end{tabularx}
-  }
-  \end{center}
-}
-% External interface requirement
-\newlength{\ireqtablelength}
-\setlength{\ireqtablelength}{0.9\textwidth}
-\newcommand{\ireqcolor}{blue!20!gray}
-\newcommand{\ireq}[3]{
-  \begin{center}
-  {
-    \footnotesize
-    \begin{tabularx}{\ireqtablelength}{|l|X|}
-      \hline
-      \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
-      \hline
-      \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
-      \hline
-      \cellcolor{\ireqcolor!15}\textbf{Refers to} & \cellcolor{\ireqcolor!5}\makecell[l]{#3} \\
-      \hline
-    \end{tabularx}
-  }
-  \end{center}
-}
-\newcommand{\ireqwithratio}[4]{
-  \begin{center}
-  {
-    \footnotesize
-    \begin{tabularx}{\ireqtablelength}{|l|X|}
-      \hline
-      \cellcolor{\ireqcolor!30}\textbf{ID} & #1\\
-      \hline
-      \cellcolor{\ireqcolor!15}\textbf{Description} & \cellcolor{\ireqcolor!5}#2 \\
-      \hline
-      \cellcolor{\ireqcolor!15}\textbf{Rationale} & \cellcolor{\ireqcolor!5}\makecell[l]{#3} \\
-      \hline
-      \cellcolor{\ireqcolor!15}\textbf{Refers to} & \cellcolor{\ireqcolor!5}\makecell[l]{#4} \\
-      \hline
-    \end{tabularx}
-  }
-  \end{center}
+
+\define@key{req}{rationale}{\def\pb@rationale{#1}}
+\define@key{req}{derivedfrom}{\def\pb@derivedfrom{#1}}
+\setkeys{req}{rationale=, derivedfrom=}
+\newcommandx{\req}[3][3]{
+    \begingroup
+    \setkeys{req}{#3}
+    \begin{center}
+    {
+        \footnotesize
+        \begin{tabularx}{\reqtablelength}{|p{2.5cm}|X|}
+          \hline
+          \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
+          \hline
+      \if#2 \else
+          \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}#2 \\
+          \hline
+      \fi
+      \if\pb@rationale \else
+          \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\pb@rationale \\
+              \hline
+      \fi
+      \if\pb@derivedfrom \else
+          \cellcolor{\reqcolor!15}\textbf{Derived From} & \cellcolor{\reqcolor!5}\pb@derivedfrom \\
+          \hline
+      \fi
+        \end{tabularx}
+    }
+    \end{center}
+    \endgroup
 }
 
 % Configure headers and footers
@@ -185,5 +153,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-\input{docs/arch/structure.tex}
+\input{arch/structure.tex}
 \end{document}

@@ -1,0 +1,51 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Decode Module interface signals\label{tab:decm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{INPUT LOGIC}} \\
+  \hline
+  input\_ready\_o & O & 1 & Input handshaking signal asserted when ready to re-
+ceive inputs. \\
+  \hline
+  input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
+  \hline
+  raw\_instr\_i & I & 32 & Raw instruction fetched from memory. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{REGISTER ACCESS}} \\
+  \hline
+  raddr1\_o & O & 5 & Register selector for the first read port. \\
+  \hline
+  rdata1\_i & I & 32 & Register value selected by raddr1\_o. \\
+  \hline
+  raddr2\_o & O & 5 & Register selector for the second read port. \\
+  \hline
+  rdata2\_i & I & 32 & Register value selected by raddr2\_o. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{OUTPUT LOGIC}} \\
+  \hline
+  output\_ready\_i & I & 1 & Output handshaking signal asserted when the destination is ready to receive the output. \\
+  \hline
+  output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
+  \hline
+  instr\_o & O & TBC & Decoded instruction. \\
+  \hline
+  param1\_o & O & 32 & First instruction parameter. \\
+  \hline
+  param2\_o & O & 32 & Second instruction parameter. \\
+  \hline
+  param3\_o & O & 32 & Third instruction parameter. \\
+  \hline
+  result\_addr\_o & O & 32 & Instruction result destination address. \\
+  \hline
+\end{xltabular}
+}
