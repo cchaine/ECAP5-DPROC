@@ -108,6 +108,7 @@
 \newcommandx{\req}[3][3]{
     \begingroup
     \setkeys{req}{#3}
+    \reqlabel{#1}
     \begin{center}
     {
         \footnotesize
@@ -124,13 +125,23 @@
               \hline
       \fi
       \if\pb@derivedfrom \else
-          \cellcolor{\reqcolor!15}\textbf{Derived From} & \cellcolor{\reqcolor!5}\pb@derivedfrom \\
+          \cellcolor{\reqcolor!15}\textbf{Derived From} & \cellcolor{\reqcolor!5}\reqref{\pb@derivedfrom} \\
           \hline
       \fi
         \end{tabularx}
     }
     \end{center}
     \endgroup
+}
+
+\newcommandx{\reqlabel}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \label{req:\temp}
+}
+
+\newcommandx{\reqref}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \hyperref[req:\temp]{#1}
 }
 
 % Configure headers and footers
