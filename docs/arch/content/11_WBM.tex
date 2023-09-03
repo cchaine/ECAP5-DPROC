@@ -31,19 +31,27 @@ The table \ref{tab:wbm-upstream-requirements} outlines the upstream requirements
 
 \req{D\_WBM\_WRITE\_REQUEST\_01}{
   The write-back module shall emit a register write request on the rising edge of \texttt{clk\_i} upon registration of its inputs, when \texttt{result\_write\_i} is asserted.
-}
+}[
+  derivedfrom=F\_INSTR\_RESULT\_02
+]
 
 \req{D\_WBM\_WRITE\_REQUEST\_02}{
   The \texttt{reg\_write\_o} signal shall be asserted on the rising edge of \texttt{clk\_i} when emitting a register write request.
-}
+}[
+  derivedfrom=F\_INSTR\_RESULT\_02
+]
 
 \req{D\_WBM\_WRITE\_REQUEST\_03}{
   The \texttt{reg\_waddr\_o} signal shall be set to the registered \texttt{result\_addr\_i} when emitting a register write request.
-}
+}[
+  derivedfrom=F\_INSTR\_RESULT\_02
+]
 
 \req{D\_WBM\_WRITE\_REQUEST\_04}{
   The \texttt{reg\_wdata\_o} signal shall be set to the registered \texttt{result\_i} when emitting a register write request.
-}
+}[
+  derivedfrom=F\_INSTR\_RESULT\_02
+]
 
 \subsection{Behavior}
 
