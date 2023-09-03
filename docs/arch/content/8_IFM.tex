@@ -25,12 +25,178 @@ The table \ref{tab:ifm-upstream-requirements} outlines the upstream requirements
 
 \subsubsection{Functional requirements}
 
+\paragraph{PC register}
+
 \req{D\_IFM\_PC\_REGISTER\_01}{
   The instruction fetch module shall implement a \texttt{pc} register which shall store the address of the instruction to be fetched.
 }[
   derivedfrom=F\_REGISTERS\_03
 ]
 
+\req{D\_IFM\_PC\_INCREMENT\_01}{
+  The value of the \texttt{pc} register shall be incremented by 4 on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} where asserted.
+}
+
+\req{D\_IFM\_PC\_INCREMENT\_02}{
+  The value of the \texttt{pc} register shall be incremented by the value of the \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted.
+}
+
+
+\req{D\_IFM\_PC\_LOAD\_01}{
+  The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} when \texttt{irq\_i} is asserted.
+}
+
+\req{D\_IFM\_PC\_LOAD\_02}{
+  The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} when \texttt{drq\_i} is asserted.
+}
+
+\req{D\_IFM\_PC\_REGISTER\_02}{
+  Any changes to the \texttt{pc} register shall be performed before any memory requests.
+}
+
+\paragraph{Reset}
+
+\req{D\_IFM\_RESET\_01}{
+  The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+}
+
+\req{D\_IFM\_RESET\_02}{
+  The \texttt{output\_valid\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+}
+
+\paragraph{Fetch triggering}
+
+\req{D\_IFM\_FETCH\_TRIGGER\_01}{
+  The instruction fetch module shall perform a memory request on the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
+}
+
+\req{D\_IFM\_FETCH\_TRIGGER\_02}{
+  The instruction fetch module shall perform a memory request on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} are asserted.
+}
+
+\paragraph{Memory request}
+
+\req{}{
+  Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+}
+
+\req{}{
+  Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}.
+}
+
+\req{}{
+  Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}.
+}
+
+\req{}{
+  Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}.
+}
+
+\begin{content}
+    The following requirements are extracted from the Wishbone specification for implementing the memory interface of the instruction fetch module.
+\end{content}
+
+\req{D\_IFM\_WISHBONE\_DATASHEET\_01}{
+  The memory interface shall comply with the Wishbone Datasheet provided in section TBC.
+}
+
+
+\req{D\_IFM\_WISHBONE\_RESET\_01}{
+  The memory interface shall initialize itself at the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+}
+
+
+\req{D\_IFM\_WISHBONE\_RESET\_02}{
+  The memory interface shall stay in the initialization state until the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
+}
+
+
+\req{D\_IFM\_WISHBONE\_RESET\_03}{
+  Signals \texttt{wb\_stb\_o} and \texttt{wb\_cyc\_o} shall be deasserted while the memory interface is in the initialization state. The state of all other memory interface signals are undefined in response to a reset cycle.
+}[
+]
+
+\req{D\_IFM\_WISHBONE\_TRANSFER\_CYCLE\_01}{
+  The memory interface shall assert \texttt{wb\_cyc\_o} for the entire duration of the memory access.
+}[
+  rationale=TBC what wb\_cyc\_o does.
+]
+
+\req{D\_IFM\_WISHBONE\_TRANSFER\_CYCLE\_02}{
+  Signal \texttt{wb\_cyc\_o} shall be asserted no later than the rising edge of \texttt{clk\_i} that qualifies the assertion of \texttt{wb\_stb\_o}.
+}[
+]
+
+\req{D\_IFM\_WISHBONE\_TRANSFER\_CYCLE\_03}{
+  Signal \texttt{wb\_cyc\_o} shall be deasserted no earlier than the rising edge of \texttt{clk\_i} that qualifies the deassertion of \texttt{wb\_stb\_o}.
+}[
+]
+
+\req{D\_IFM\_WISHBONE\_ACK\_01}{
+  The memory interface shall operate normally when \texttt{ack\_i} is held in the asserted state.
+}[
+]
+
+\req{D\_IFM\_WISHBONE\_STB\_01}{
+  The following signals shall be valid when \texttt{stb\_o} is asserted : \texttt{adr\_o}, \texttt{sel\_o}.
+}[
+]
+
+\req{D\_IFM\_WISHBONE\_CYCLES\_01}{
+  The memory interface shall implement the single read cycle as described in figure \ref{fig:wishbone-single-read-cycle}.
+}[
+]
+
+\vspace{0.5em}
+
+\begin{figure}[h!]
+    \centering
+    \input{arch/figures/wishbone-single-read-cycle}
+    \caption{Timing diagram of the single read cycle of the wishbone memory interface}
+    \label{fig:wishbone-single-read-cycle}
+\end{figure}
+
+\input{arch/tables/wishbone-single-read-cycle}
+
+\req{D\_IFM\_WISHBONE\_TIMING\_01}{
+  The clock input \texttt{clk\_i} shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of \texttt{clk\_i}. All input signals of the memory interface shall be stable before the rising edge of \texttt{clk\_i}.
+}[
+  rationale={As long as the memory interface is designed within the clock domain of \texttt{clk\_i}, the requirement will be satisfied by using the place and route tool.}
+]
+
+\paragraph{Output}
+
+\req{}{
+  The signal \texttt{instr\_o} shall be set to the result of the memory request on the rising edge of \texttt{clk\_i} when the memory request is completed.
+}
+
+\req{}{
+  The signal \texttt{pc\_o} shall be set asynchronously to the value of the \texttt{pc} register.
+}
+
+\req{}{
+  The signal \texttt{output\_valid\_o} shall be deasserted on the rising edge of \texttt{clk\_i} when the instruction fetch module performs an instruction fetch.
+}[
+  rationale=Refer to section \ref{control-hazard}.
+]
+
+\req{}{
+  The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when the instruction fetch is completed.
+}[
+  rationale=Refer to section \ref{control-hazard}.
+]
+
+\req{}{
+  When \texttt{output\_valid\_o} is asserted, the instruction fetch module shall hold the value of the \texttt{instr\_o} signal until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i}.
+}[
+  rationale=Refer to section \ref{pipeline-stall}.
+]
+
+\req{}{
+  When \texttt{output\_valid\_o} is asserted, the instruction fetch module shall hold the value of the \texttt{pc\_o} signal until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i}.
+}[
+  rationale=Refer to section \ref{pipeline-stall}.
+]
 
 
 \subsection{Behavior}

@@ -32,13 +32,19 @@ The table \ref{tab:regm-upstream-requirements} outlines the upstream requirement
 ]
 
 \req{D\_REGM\_READ\_PORT\_01}{
-  The register module shall provide two asynchronous reading ports for accessing registers from \texttt{x0} to \texttt{x31}.
+  The \texttt{rdata1\_o} signal shall be set asynchronously to the value of the register pointed by \texttt{raddr1\_i}.
+}[
+  derivedfrom=F\_REGISTERS\_01
+]
+
+\req{D\_REGM\_READ\_PORT\_02}{
+  The \texttt{rdata2\_o} signal shall be set asynchronously to the value of the register pointed by \texttt{raddr2\_i}.
 }[
   derivedfrom=F\_REGISTERS\_01
 ]
 
 \req{D\_REGM\_WRITE\_PORT\_01}{
-  The register module shall provide one synchronous writing port for modifying registers from \texttt{x0} to \texttt{x31}.
+  The value of the register pointed by \texttt{waddr\_i} shall be set to \texttt{wdata\_i} on the rising edge of \texttt{clk\_i} when \texttt{write\_i} is asserted.
 }[
   derivedfrom=F\_REGISTERS\_01
 ]
@@ -60,7 +66,8 @@ The table \ref{tab:regm-upstream-requirements} outlines the upstream requirement
 \subsubsection{Read behavior}
 
 \begin{content}
-  When reading, \texttt{rdata1\_i} and \texttt{rdata2\_i} output, on the rising edge of \texttt{clk\_i}, the value of the register respectively selected by \texttt{raddr1\_i} and \texttt{raddr2\_i}. 
+  When reading, \texttt{rdata1\_i} and \texttt{rdata2\_i} output, on the rising edge of \texttt{clk\_i}, the value of the register respectively selected by \texttt{raddr1\_i}
+and \texttt{raddr2\_i}.
 \end{content}
 
 \begin{figure}[H]
@@ -73,7 +80,8 @@ The table \ref{tab:regm-upstream-requirements} outlines the upstream requirement
 \subsubsection{Write behavior}
 
 \begin{content}
-A register write happens on the rising edge of \texttt{clk\_i} when \texttt{write\_i} is asserted, writing the value \texttt{wdata\_i} in the register selected by \texttt{waddr\_i}.
+A register write happens on the rising edge of \texttt{clk\_i} when \texttt{write\_i} is asserted, writing the value \texttt{wdata\_i} in the register selected by \texttt{wad
+r\_i}.
 \end{content}
 
 \begin{figure}[H]
@@ -86,9 +94,12 @@ A register write happens on the rising edge of \texttt{clk\_i} when \texttt{writ
 \subsubsection{Read-before-write behavior}
 
 \begin{content}
-    When both read and write operations are requested on the same register at the same time, the write operation happens during the next clock cycle. Considering read requests are performed during the second stage of the pipeline while write requests are performed during the fourth stage, this behavior reduces the potential hazards induces by the pipelined architecture.
+    When both read and write operations are requested on the same register at the same time, the write operation happens during the next clock cycle. Considering read request
+ are performed during the second stage of the pipeline while write requests are performed during the fourth stage, this behavior reduces the potential hazards induces by the pipe
+ined architecture.
 
-    Figure \ref{fig:regm-behavior-read-before-write} provides an example with a read request on the first port, although this behavior also applies to the second reading port.
+    Figure \ref{fig:regm-behavior-read-before-write} provides an example with a read request on the first port, although this behavior also applies to the second reading port
+
 \end{content}
 
 \begin{figure}[H]
