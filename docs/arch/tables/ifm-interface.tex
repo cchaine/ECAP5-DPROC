@@ -1,0 +1,48 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Instruction Fetch Module interface signals\label{tab:ifm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  rst\_i & I & 1 & Reset input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{JUMP LOGIC}} \\
+  \hline
+  irq\_i & I & 1 & External interrupt request. \\
+  \hline
+  drq\_i & I & 1 & External debug request. \\
+  \hline
+  branch\_i & I & 1 & Branch request. \\
+  \hline
+  boffset\_i & I & 20 & Branch offset from the pc of the instruction in the execute stage (pc - 8).  \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WISHBONE MASTER}} \\
+  \hline
+  wb\_adr\_o & O & 32 & Wishbone read address.  \\
+  \hline
+  wb\_dat\_i & I & 32 & Wishbone read data. \\
+  \hline
+  wb\_sel\_o & O & 4 & Wishbone byte selector. \\
+  \hline
+  wb\_stb\_o & O & 1 & Wishbone handshaking signal asserted when emitting a request. \\
+  \hline
+  wb\_ack\_i & I & 1 & Acknowledge. Indicates a normal termination of a bus cycle. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{OUTPUT LOGIC}} \\
+  \hline
+  output\_ready\_i & I & 1 & Output handshaking signal asserted when the destination is ready to receive the output \\
+  \hline
+  output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
+  \hline
+  instr\_o & O & 32 & Instruction output. \\
+  \hline
+\end{xltabular}
+}

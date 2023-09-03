@@ -1,0 +1,36 @@
+\makeatletter\gdef\dividers{}
+\begin{tikztimingtable}[%
+    scale=0.7,
+    timing/dslope=0.1,
+    timing/.style={x=6ex,y=3ex},
+    x=6ex,
+    timing/rowdist=4ex,
+    timing/name/.style={font=\footnotesize},
+    timing/u/background/.style={fill=gray!20},
+    timing/e/background/.style={fill=gray!20},
+]
+clk\_i & H 2{C C} L \\
+& \divider{Stage inputs} \\
+input\_ready\_o    & 2E 2H 2E \\
+input\_valid\_o    & 2E 2H 2E \\
+param1\_i          & 2U 2D{}  2U \\
+param2\_i          & 2U 2D{}  2U \\
+param3\_i          & 2U 2D{}  2U \\
+& \divider{Stage outputs} \\
+output\_ready\_i   & 2E 2H 2E \\
+output\_valid\_o   & 2.5E 2H 1.5E \\
+branch\_o          & 2.5E 2D{\textit{cond}} 1.5E \\
+boffset\_o[19:0]   & 2.5U 2D{\textit{x}} 1.5U \\
+result\_write\_o      & 2.5E 2L 1.5E\\
+\extracode
+% grid
+\begin{pgfonlayer}{background}
+\begin{scope}[semitransparent ,semithick]
+\vertlines[darkgray,dotted]{2, 4}
+\dividers
+\end{scope}
+\end{pgfonlayer}
+\end{tikztimingtable}
+\begin{center}
+  \scriptsize \textit{x : \{0x00000, param3\_i[11:0]\}}
+\end{center}

@@ -1,0 +1,64 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Execute Module interface signals\label{tab:exm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{INPUT LOGIC}} \\
+  \hline
+  input\_ready\_o & O & 1 & Input handshaking signal asserted when ready to receive inputs. \\
+  \hline
+  input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
+  \hline
+  pc\_i & I & 32 & Program counter of the current instruction. \\
+  \hline
+  instr\_i & I & TBD & Current instruction. \\
+  \hline
+  param1\_i & I & 32 & First instruction parameter. \\
+  \hline
+  param2\_i & I & 32 & Second instruction parameter. \\
+  \hline
+  param3\_i & I & 32 & Third instruction parameter. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WISHBONE MASTER}} \\
+  \hline
+  wb\_adr\_o & O & 32 & Wishbone read address.  \\
+  \hline
+  wb\_dat\_i & I & 32 & Wishbone read data. \\
+  \hline
+  wb\_dat\_o & O & 32 & Wishbone write data. \\
+  \hline
+  wb\_we\_o & O & 1 & Wishbone write-enable. \\
+  \hline
+  wb\_sel\_o & O & 4 & Wishbone byte selector. \\
+  \hline
+  wb\_stb\_o & O & 1 & Wishbone handshaking signal asserted when emitting a request. \\
+  \hline
+  wb\_ack\_i & I & 1 & Wishbone handshaking signal asserted when received data is valid. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{OUTPUT LOGIC}} \\
+  \hline
+  output\_ready\_i & I & 1 & Output handshaking signal asserted when the destination is ready to receive the output. \\
+  \hline
+  output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
+  \hline
+  result\_write\_o & O & 1 & Asserted when the instruction shall store its result. \\
+  \hline
+  result\_addr\_o & O & 5 & Address of the register where the result shall be stored. \\
+  \hline
+  result\_o & O & 32 & Instruction result. \\
+  \hline
+  branch\_o & O & 1 & Branch request. \\
+  \hline
+  boffset\_o & O & 20 & Branch offset from pc\_i \\
+  \hline
+\end{xltabular}
+}

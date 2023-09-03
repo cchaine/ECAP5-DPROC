@@ -1,0 +1,168 @@
+\documentclass[12pt]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[inner=2.1cm, bottom=1.5cm, top=1.5cm, outer=2.1cm,
+  headheight=24pt, % as per the warning by fancyhdr
+  includehead,includefoot,
+  heightrounded]{geometry}
+% Set the font
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+% bitfield
+\usepackage{bytefield}
+% urls
+\usepackage[hidelinks]{hyperref}
+% disable indent
+\usepackage[skip=1em, indent=0pt]{parskip}
+% shifted environment
+\newenvironment{content}%
+  {\list{}{\leftmargin=1.5cm}\item[]}%
+  {\endlist}
+% cell color
+\usepackage[table, dvipsnames]{xcolor}
+% drawings
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric,angles,quotes}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{positioning}
+\usetikzlibrary{babel}
+\usetikzlibrary{fit}
+\usetikzlibrary{angles, quotes}
+\usetikzlibrary{automata, arrows}
+\usetikzlibrary{decorations.pathreplacing}
+
+\tikzset{
+% Define standard arrow tip
+>={Latex[scale=1.25]}
+}
+\usepackage{tikz-layers}
+\usepackage{tikz-timing}
+\usetikztiminglibrary[rising arrows]{clockarrows}
+\usetikztiminglibrary{either}
+\usetikztiminglibrary{overlays}
+% floating figures
+\usepackage{float}
+% do computations
+\usepackage{calc}
+% advanced tables
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{xltabular}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\usepackage{multirow}
+\usepackage{graphicx}
+% no title at the end of pages
+\usepackage[nobottomtitles]{titlesec}
+% draft watermark
+%\usepackage{draftwatermark}
+\usepackage{enumitem}
+% optional key arguments
+\usepackage{keyval, xargs}
+% copy paste
+\usepackage{clipboard}
+% sanitize text
+\usepackage{pdfescape}
+\usepackage{xstring}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Variables %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{arch/variables.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Configuration %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Separation of items in itemize
+\setlist{parsep=0.5em, topsep=-0.5em}
+
+% tikz-timing spacer
+\makeatletter\gdef\dividers{}
+\def\divider#1{
+    N(#1)@{
+        \g@addto@macro\dividers{
+            \path(#1)-|node(left){}(all labels.west)(#1)-|node[shift={(0,1)}](right){}(all rows.east)
+            node(banner)[fill=gray,opacity=.2,inner sep=0,fit=(left.center)(right.center)]{}
+            (banner.west)node[text=black,right](text){\scriptsize #1};
+        }
+    }
+}
+
+\setlength{\tabcolsep}{10pt}
+\renewcommand{\arraystretch}{1.5}
+
+% Functional requirement environment
+\newlength{\reqtablelength}
+\setlength{\reqtablelength}{0.9\textwidth}
+\newcommand{\reqcolor}{blue!20!gray}
+
+\define@key{req}{rationale}{\def\pb@rationale{#1}}
+\define@key{req}{derivedfrom}{\def\pb@derivedfrom{#1}}
+\setkeys{req}{rationale=, derivedfrom=}
+\newcommandx{\req}[3][3]{
+    \begingroup
+    \setkeys{req}{#3}
+    \reqlabel{#1}
+    \begin{center}
+    {
+        \footnotesize
+        \begin{tabularx}{\reqtablelength}{|p{2.5cm}|X|}
+          \hline
+          \cellcolor{\reqcolor!30}\textbf{ID} & #1\\
+          \hline
+      \if#2 \else
+          \cellcolor{\reqcolor!15}\textbf{Description} & \cellcolor{\reqcolor!5}#2 \\
+          \hline
+      \fi
+      \if\pb@rationale \else
+          \cellcolor{\reqcolor!15}\textbf{Rationale} & \cellcolor{\reqcolor!5}\pb@rationale \\
+              \hline
+      \fi
+      \if\pb@derivedfrom \else
+          \cellcolor{\reqcolor!15}\textbf{Derived From} & \cellcolor{\reqcolor!5}\reqref{\pb@derivedfrom} \\
+          \hline
+      \fi
+        \end{tabularx}
+    }
+    \end{center}
+    \endgroup
+}
+
+\newcommandx{\reqlabel}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \label{req:\temp}
+}
+
+\newcommandx{\reqref}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \hyperref[req:\temp]{#1}
+}
+
+% Configure headers and footers
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+\renewcommand{\headruleskip}{4pt}
+\renewcommand{\footruleskip}{4pt}
+\fancyhead{}\fancyfoot{}
+\fancyhead[HL]{\scriptsize{\textbf{\parent} \\
+\project}}
+\fancyhead[HR]{\scriptsize{Page \thepage \\
+}}
+\fancyfoot[FL]{\scriptsize{\title}}
+\fancyfoot[FR]{\scriptsize{Issue Date: \today}}
+\fancyfoot[FC]{\scriptsize{\vspace{1em}\textit{Revision \version}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% Content %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\input{arch/structure.tex}
+\end{document}
