@@ -1,0 +1,36 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Register Module interface signals\label{tab:regm-interface}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|c|c|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  clk\_i & I & 1 & Clock input. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{FIRST READING PORT}} \\
+  \hline
+  raddr1\_i & I & 5 & Register selector. \\
+  \hline
+  rdata1\_o & O & 32 & Selected register value. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{SECOND READING PORT}} \\
+  \hline
+  raddr2\_i & I & 5 & Register selector. \\
+  \hline
+  rdata2\_o & O & 32 & Selected register value. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{WRITING PORT}} \\
+  \hline
+  waddr\_i & I & 5 & Register selector. \\
+  \hline
+  write\_i & I & 1 & Asserted to indicate a write. \\
+  \hline
+  wdata\_i & I & 32 & Data to be written. \\
+  \hline
+\end{xltabular}
+}

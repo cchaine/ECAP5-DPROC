@@ -1,0 +1,45 @@
+\makeatletter\gdef\dividers{}
+\begin{tikztimingtable}[%
+    scale=0.7,
+    timing/dslope=0.1,
+    timing/.style={x=5ex,y=3ex},
+    x=5ex,
+    timing/rowdist=4ex,
+    timing/name/.style={font=\footnotesize},
+    timing/u/background/.style={fill=gray!20},
+    timing/e/background/.style={fill=gray!20},
+]
+clk\_i & H 7{C C} L \\
+rst\_i & 2E 12L 2E\\
+& \divider{Stage 1} \\
+stage1\_instr         & 2U 2D{a} 2D{b} 6D{c}             2D{d} 2U \\
+stage1\_output\_valid & 2.5E 2H    2H    2H    2H    2H    2H    1.5E \\
+stage2\_input\_ready  & 2.5E 2H    2H    2L    2L    2H    2H    1.5E \\
+& \divider{Stage 2} \\
+stage2\_instr         & 2U 2U    2D{a} 6D{b}             2D{c} 2D{d} \\
+stage2\_output\_valid & 2.5E 2H    2H    2H    2H    2H    2H    1.5H \\
+stage3\_input\_ready  & 2.5E 2H    2H    2L    2L    2H    2H    1.5H \\
+& \divider{Stage 3} \\
+stage3\_instr         & 2U 2U    2U    6D{a}             2D{b} 2D{c} \\
+stage3\_output\_valid & 2.5E 2H    2H    2L    2L    2H    2H    1.5H \\
+stage4\_input\_ready  & 2.5E 2H    2H    2H    2H    2H    2H    1.5H \\
+& \divider{Stage 4} \\
+stage4\_instr         & 2U 2U    2U  2U  4D{nop}           2D{a} 2D{b} \\
+stage4\_output\_valid & 2.5E 2H    2H    2H    2H    2H    2H    1.5H \\
+stage5\_input\_ready  & 2.5E 2H    2H    2H    2H    2H    2H    1.5H \\
+& \divider{Stage 5} \\
+stage5\_instr         & 2U 2U    2U    2U  2U  4D{nop}           2D{a} \\
+\extracode
+% grid
+\begin{pgfonlayer}{background}
+\begin{scope}[semitransparent ,semithick]
+\vertlines[darkgray,dotted]{2, 4, 6, 8, 10, 12, 14}
+
+\draw[decorate, decoration = {brace, amplitude=5pt}] (2, 3.5) -- node[above=0.3cm]{\footnotesize{Normal}} (5.8, 3.5);
+\draw[decorate, decoration = {brace, amplitude=5pt}] (6.2, 3.5) -- node[above=0.3cm]{\footnotesize{Stall}} (9.8, 3.5);
+\draw[decorate, decoration = {brace, amplitude=5pt}] (10.2, 3.5) -- node[above=0.3cm]{\footnotesize{Normal}} (14, 3.5);
+
+\dividers 
+\end{scope}
+\end{pgfonlayer}
+\end{tikztimingtable}

@@ -1,0 +1,34 @@
+\makeatletter\gdef\dividers{}
+\begin{tikztimingtable}[%
+    scale=0.7,
+    timing/dslope=0.1,
+    timing/.style={x=5ex,y=3ex},
+    x=5ex,
+    timing/rowdist=4ex,
+    timing/name/.style={font=\footnotesize},
+    timing/u/background/.style={fill=gray!20},
+    timing/e/background/.style={fill=gray!20},
+]
+clk\_i & H 7{C C} L \\
+rst\_i & 2E 12L 2E\\
+& \divider{Memory access} \\
+wb\_clk\_i & H 7{C C} L \\
+wb\_adr\_o[31:0] & 2.5U 4D{pc} 8D{pc + 4} 1.5U \\
+wb\_dat\_i[31:0] & 4U 2D{mem[pc]} 2U 2U 2U 2D{mem[pc + 4]} 2U \\
+wb\_stb\_o & 2.5E 12H 1.5E \\
+wb\_ack\_i & 2E 2L 2H 2L 2L 2L 2H 2E \\
+& \divider{Stage outputs} \\
+ready\_i & 2E 12H 2E \\
+valid\_o & 2.5E 2L 2H 2L 2L 2L 2H 1.5E\\
+instr\_o[31:0] & 4.5U 2D{mem[pc]} 2U 2U 2U 2D{mem[pc + 4]} 1.5U \\
+& \divider{Internal pc value} \\
+pc & 2U 4D{pc} 8D{pc + 4} 2U \\
+\extracode
+% grid
+\begin{pgfonlayer}{background}
+\begin{scope}[semitransparent ,semithick]
+\vertlines[darkgray,dotted]{2, 4, 6, 8, 10, 12, 14}
+\dividers
+\end{scope}
+\end{pgfonlayer}
+\end{tikztimingtable}
