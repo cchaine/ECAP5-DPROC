@@ -76,19 +76,19 @@ The table \ref{tab:ifm-upstream-requirements} outlines the upstream requirements
 
 \paragraph{Memory request}
 
-\req{}{
+\req{D\_IFM\_REQUEST\_CANCEL\_01}{
   Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
 }
 
-\req{}{
+\req{D\_IFM\_REQUEST\_CANCEL\_02}{
   Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}.
 }
 
-\req{}{
+\req{D\_IFM\_REQUEST\_CANCEL\_03}{
   Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}.
 }
 
-\req{}{
+\req{D\_IFM\_REQUEST\_CANCEL\_04}{
   Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}.
 }
 
@@ -166,33 +166,33 @@ The table \ref{tab:ifm-upstream-requirements} outlines the upstream requirements
 
 \paragraph{Output}
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_01}{
   The signal \texttt{instr\_o} shall be set to the result of the memory request on the rising edge of \texttt{clk\_i} when the memory request is completed.
 }
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_02}{
   The signal \texttt{pc\_o} shall be set asynchronously to the value of the \texttt{pc} register.
 }
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_HANDSHAKE\_01}{
   The signal \texttt{output\_valid\_o} shall be deasserted on the rising edge of \texttt{clk\_i} when the instruction fetch module performs an instruction fetch.
 }[
   rationale=Refer to section \ref{control-hazard}.
 ]
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_HANDSHAKE\_02}{
   The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when the instruction fetch is completed.
 }[
   rationale=Refer to section \ref{control-hazard}.
 ]
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_HANDSHAKE\_03}{
   When \texttt{output\_valid\_o} is asserted, the instruction fetch module shall hold the value of the \texttt{instr\_o} signal until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i}.
 }[
   rationale=Refer to section \ref{pipeline-stall}.
 ]
 
-\req{}{
+\req{D\_IFM\_OUTPUT\_HANDSHAKE\_04}{
   When \texttt{output\_valid\_o} is asserted, the instruction fetch module shall hold the value of the \texttt{pc\_o} signal until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i}.
 }[
   rationale=Refer to section \ref{pipeline-stall}.
