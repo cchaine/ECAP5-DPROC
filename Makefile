@@ -36,6 +36,7 @@ VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing
 
 builddir:
 	mkdir -p ${BUILD_DIR}
+	mkdir -p ${BUILD_DIR}/waves
 
 docs: builddir
 	cd docs/ && pdflatex --interaction=nonstopmode -halt-on-error -output-directory ../${BUILD_DIR} arch/main.tex 

@@ -22,7 +22,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <verilated.h>
+#include <verilated_vcd_c.h>
+
+#include "Vregm.h"
 
 int main(int argc, char ** argv, char ** env) {
-  exit(EXIT_FAILURE);
+  Vregm *dut = new Vregm;
+
+  Verilated::traceEverOn(true);
+  VerilatedVcdC *m_trace = new VerilatedVcdC;
+  dut->trace(m_trace, 5);
+  m_trace->open("waves/regm.vcd");
+
+  m_trace->close();
+  dut->final();
+  delete dut;
+  exit(EXIT_SUCCESS);
 }
