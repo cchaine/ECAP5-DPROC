@@ -29,7 +29,7 @@ SOURCES = $(shell find $(SRC_DIR) -name '*.v')
 SOURCES := $(addprefix $(PROJECT_ROOT), $(SOURCES))
 
 TOP_MODULE = top
-MODULES = regm
+MODULES = regm ifm
 
 VERILATOR_OPTS = --cc --trace
 VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing
