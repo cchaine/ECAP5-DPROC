@@ -121,7 +121,7 @@ void monitor(Vregm * dut, int sim_time) {
 }
 
 #define START_SIM_TIME 0
-#define MAX_SIM_TIME 2*NUM_TESTCASES
+#define MAX_SIM_TIME (START_SIM_TIME + 2*NUM_TESTCASES)
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
 
