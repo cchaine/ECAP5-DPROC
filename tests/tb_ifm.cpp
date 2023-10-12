@@ -44,15 +44,10 @@ uint32_t random(uint32_t max) {
 // *   f. Two reads at the same address, write at the same address
 // *   g. Write to x0
 // */
-//uint8_t   tc_raddr1[6] = {               0x1,                0x5,                0x7,                0x2,               0x1D,               0x1E};
-//uint8_t   tc_raddr2[6] = {               0xC,                0x5,               0x1B,               0x1F,               0x1D,               0x1E};
-//uint8_t   tc_waddr[6]  = {        random(32),         random(32),               0x10,                0x2,                0x9,               0x1E};
-//uint32_t  tc_wdata[6]  = {random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF)};
-//bool      tc_write[6]  = {                 0,                  0,                  1,                  1,                  1,                  1};
 
-bool tc_interrupt[4]         = {1, 0,  0};
-bool tc_debug[4]             = {0, 1,  0};
-bool tc_branch[4]            = {0, 0,  1};
+bool tc_interrupt[4]         = {0, 0,  0};
+bool tc_debug[4]             = {0, 0,  0};
+bool tc_branch[4]            = {0, 0,  0};
 uint32_t tc_branch_offset[4] = {0, 0, 18};
 
 struct ifm_in_t {
@@ -60,6 +55,7 @@ struct ifm_in_t {
   bool      debug;
   bool      branch;
   uint32_t  branch_offset;
+
 }; 
 
 struct ifm_out_t {
@@ -86,6 +82,13 @@ void drive(Vifm * dut, struct ifm_in_t * tx) {
   dut->branch_i   =  tx->branch;
   dut->boffset_i  =  tx->branch_offset;
 
+  if(dut->wb_cyc_o && dut->wb_stb_o) {
+    dut->wb_dat_i = 0xCAFECAFE;
+    dut->wb_ack_i = 1;
+  } else {
+    dut->wb_ack_i = 0;
+  }
+
   dut->eval();
 }
 
@@ -109,7 +112,6 @@ int main(int argc, char ** argv, char ** env) {
   while(sim_time < MAX_SIM_TIME) {
     dut->clk_i ^= 1;
     dut->rst_i = (sim_time < START_SIM_TIME);
-    dut->eval();
 
     if(dut->clk_i == 1) {
       if(START_SIM_TIME <= sim_time) {
@@ -119,6 +121,8 @@ int main(int argc, char ** argv, char ** env) {
 
         monitor(dut, sim_time);
       }
+    } else {
+      dut->eval();
     }
 
     m_trace->dump(sim_time);

@@ -23,20 +23,27 @@ PROJECT_ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 BUILD_DIR  =  build
 SRC_DIR    =  src
+INC_DIR    =  src/include
 TEST_DIR   =  tests
 
 SOURCES = $(shell find $(SRC_DIR) -name '*.v')
 SOURCES := $(addprefix $(PROJECT_ROOT), $(SOURCES))
 
+INCLUDES = $(shell find $(INC_DIR) -name '*.svh')
+INCLUDES := $(addprefix $(PROJECT_ROOT), $(INCLUDES))
+
+TEST_PERIPHERALS = $(shell find $(TEST_DIR)/peripherals -name '*.v')
+TEST_PERIPHERALS := $(addprefix $(PROJECT_ROOT), $(TEST_PERIPHERALS))
+
 TOP_MODULE = top
-MODULES = regm ifm
+MODULES = ifm
 
 VERILATOR_OPTS = --cc --trace
-VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing
+VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing -Wno-caseincomplete
 
 builddir:
-	mkdir -p ${BUILD_DIR}
-	mkdir -p ${BUILD_DIR}/waves
+	@mkdir -p ${BUILD_DIR}
+	@mkdir -p ${BUILD_DIR}/waves
 
 docs: builddir
 	cd docs/ && pdflatex --interaction=nonstopmode -halt-on-error -output-directory ../${BUILD_DIR} arch/main.tex 
@@ -48,22 +55,23 @@ synth:
 	yosys -s config/synth.conf
 
 lint:
-	verilator \
+	@verilator \
 		--lint-only \
-		${VERILATOR_WARNINGS} \
-		${SOURCES} \
+		-Wall \
+		${INCLUDES}	${SOURCES} \
 		--top-module ${TOP_MODULE}
 
 tests: $(MODULES)
 
 $(MODULES): builddir
-	@echo "Testing $@..."
-	verilator \
+	@echo "[$@] Compiling..."
+	@verilator \
 		${VERILATOR_OPTS} ${VERILATOR_WARNINGS} \
 		--Mdir $(BUILD_DIR)/ \
-		-exe $(SRC_DIR)/$@.v $(PROJECT_ROOT)$(TEST_DIR)/tb_$@.cpp \
+		-exe $(INCLUDES) $(SRC_DIR)/$@.v $(PROJECT_ROOT)$(TEST_DIR)/tb_$@.cpp \
 		--top-module $@ --prefix V$@ \
 		-CFLAGS -g
-	make -C $(BUILD_DIR) -f V$@.mk V$@ > /dev/null
-	cd $(BUILD_DIR)/ && ./V$@
+	@make -C $(BUILD_DIR) -f V$@.mk V$@ > /dev/null
+	@echo "[$@] Testing..."
+	@cd $(BUILD_DIR)/ && ./V$@
 	
