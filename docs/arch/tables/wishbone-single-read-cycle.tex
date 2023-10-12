@@ -16,12 +16,13 @@
   & The memory interface asserts \texttt{cyc\_o} to indicate the start of the cycle. \\
   & The memory interface asserts stb\_o to indicate the start of the phase. \\
   \hline
-  \multirow{2}{*}{1} & Valid data is provided on \texttt{dat\_i}. \\
-  & \texttt{ack\_i} is asserted to indicate valid data. It shall be noted that wait states may be inserted before asserting \texttt{ack\_i}, thereby allowing it to throttle the cycle speed. Any number of wait states may be added. \\
+  \multirow{3}{*}{1} & Valid data is provided on \texttt{dat\_i}. \\
+  & \texttt{ack\_i} is asserted to indicate valid data. \\
+  & The memory interface deasserts \texttt{stb\_o} to indicate end of data phase. \\
   \hline
   \multirow{3}{*}{2} & The memory interface latches data on \texttt{dat\_i}. \\
-  & The memory interface deasserts \texttt{stb\_o} and \texttt{cyc\_o} to indicate the end of the cycle. \\
-  & The \texttt{ack\_i} signal is deasserted in response to the deassertion of \texttt{stb\_o}.\\
+  & The memory interface deasserts \texttt{cyc\_o} to indicate the end of the cycle. \\
+  & \texttt{ack\_i} is deasserted. \\
   \hline
 \end{xltabular}
 }

@@ -20,7 +20,8 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module ifm (
+module ifm
+(
   input   logic        clk_i,
   input   logic        rst_i,
   // Jump logic
@@ -34,32 +35,35 @@ module ifm (
   output  logic[3:0]   wb_sel_o,
   output  logic        wb_stb_o,
   input   logic        wb_ack_i,
+  output  logic        wb_cyc_o,
   // Output logic
   input   logic        output_ready_i,
   output  logic        output_valid_o,
   output  logic[31:0]  instr_o
 );
+import ecap5_dproc_pkg::*; 
 
-localparam NUM_STATES = 3;
-localparam IDLE = 0,
-  FETCHING = 1;
-
-localparam STATE_SIZE = $clog2(NUM_STATES);
-logic [STATE_SIZE-1:0] state_d, state_q;
+enum logic [2:0] {
+  INIT,     // 0
+  FETCHING, // 1
+  WAIT_RES, // 2
+  DONE
+} state_d, state_q;
 
 logic[31:0] pc_d, pc_q;
-logic output_valid_d, output_valid_q;
 
-//always_comb begin : 
-//  state_d = state_q;
-//  case (state_q)
-//    IDLE: begin
-//
-//    end
-//    FETCHING: begin
-//
-//    end 
-//end
+always_comb begin : wishbone_read
+  state_d = state_q;
+  case(state_q)
+    INIT: begin
+      if(rst_i == 1'b0) begin
+        state_d = FETCHING;
+      end
+    end
+    FETCHING: begin
+    end
+  endcase
+end
 
 /*
  * The next value of PC comes from (in order of precedence):
@@ -71,7 +75,7 @@ logic output_valid_d, output_valid_q;
 always_comb begin : pc_update
   pc_d = pc_q;
   // 0. Default increment
-  if (output_valid_q) begin
+  if ((state_q == WAIT_RES) && (wb_ack_i == 1)) begin
     pc_d = pc_q + 4;
   end
   // 1. Control flow change request
@@ -80,36 +84,29 @@ always_comb begin : pc_update
   end
   // 2. External interrupt
   if (irq_i) begin
-    pc_d = 1;
+    pc_d = ecap5_dproc_pkg::interrupt_address[31:0];
   end
   // 3. Debug
   if (drq_i) begin
-    pc_d = 2;
+    pc_d = ecap5_dproc_pkg::debug_address[31:0];
   end
-end
-
-always_comb begin
-  state_d = state_q;
-  output_valid_d = output_valid_q;
 end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    state_q         <=  IDLE;
-    pc_q            <=  0;
-    output_valid_q  <=  0;
+    state_q         <=  INIT;
+    pc_q            <=  ecap5_dproc_pkg::boot_address[31:0];
   end else begin
     state_q         <=  state_d;
     pc_q            <=  pc_d;
-    output_valid_q  <=  output_valid_d;
   end
 end
 
-assign output_valid_o = output_valid_q;
-
 assign wb_adr_o = 0;
-assign wb_sel_o = 0;
 assign wb_stb_o = 0;
-assign instr_o = 32'h0;
+assign wb_cyc_o = 0;
+assign wb_sel_o = 0;
+assign output_valid_o = 0;
+assign instr_o = 0;
 
 endmodule // ifm

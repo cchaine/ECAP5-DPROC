@@ -28,7 +28,7 @@
 
 #include "Vregm.h"
 
-#define NUM_TESTCASES 6
+#define NUM_TESTCASES 8
 
 uint32_t random(uint32_t max) {
   return rand() % max;
@@ -43,12 +43,13 @@ uint32_t random(uint32_t max) {
  *   e. Two reads at the same address, write at a different address
  *   f. Two reads at the same address, write at the same address
  *   g. Write to x0
+ *   h. Read x0
  */
-uint8_t   tc_raddr1[6] = {               0x1,                0x5,                0x7,                0x2,               0x1D,               0x1E};
-uint8_t   tc_raddr2[6] = {               0xC,                0x5,               0x1B,               0x1F,               0x1D,               0x1E};
-uint8_t   tc_waddr[6]  = {        random(32),         random(32),               0x10,                0x2,                0x9,               0x1E};
-uint32_t  tc_wdata[6]  = {random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF)};
-bool      tc_write[6]  = {                 0,                  0,                  1,                  1,                  1,                  1};
+uint8_t   tc_raddr1[8] = {               0x1,                0x5,                0x7,                0x2,               0x1D,               0x1E,         random(32),                  0};
+uint8_t   tc_raddr2[8] = {               0xC,                0x5,               0x1B,               0x1F,               0x1D,               0x1E,         random(32),         random(32)};
+uint8_t   tc_waddr[8]  = {        random(32),         random(32),               0x10,                0x2,                0x9,               0x1E,                  0,         random(32)};
+uint32_t  tc_wdata[8]  = {random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF), random(0xFFFFFFFF)};
+bool      tc_write[8]  = {                 0,                  0,                  1,                  1,                  1,                  1,                  1,                  0};
 
 struct reg_in_t {
   uint8_t   raddr1;
