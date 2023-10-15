@@ -32,10 +32,10 @@ module ifm
   // Wishbone master
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i,
-  output  logic[3:0]   wb_sel_o,
   output  logic        wb_stb_o,
   input   logic        wb_ack_i,
   output  logic        wb_cyc_o,
+  input   logic        wb_stall_i,
   // Output logic
   input   logic        output_ready_i,
   output  logic        output_valid_o,
@@ -43,17 +43,26 @@ module ifm
 );
 import ecap5_dproc_pkg::*; 
 
-enum logic [2:0] {
+enum logic [1:0] {
   INIT,     // 0
   FETCHING, // 1
-  WAIT_RES, // 2
-  DONE
+  WAITRES   // 2
 } state_d, state_q;
 
 logic[31:0] pc_d, pc_q;
+logic[31:0] instr_d, instr_q;
+logic output_valid_d, output_valid_q;
 
 always_comb begin : wishbone_read
   state_d = state_q;
+  instr_d = instr_q;
+
+  wb_adr_o = 0;
+  wb_stb_o = 0;
+  wb_cyc_o = 0;
+
+  output_valid_d = 0;
+
   case(state_q)
     INIT: begin
       if(rst_i == 1'b0) begin
@@ -61,6 +70,23 @@ always_comb begin : wishbone_read
       end
     end
     FETCHING: begin
+      wb_adr_o = pc_q;
+      wb_stb_o = 1;
+      wb_cyc_o = 1;
+      if(wb_ack_i) begin
+        instr_d = wb_dat_i;
+        output_valid_d = 1;
+        state_d = FETCHING;
+      end else if(wb_stall_i == 1'b0) begin
+        state_d = WAITRES;
+      end
+    end
+    WAITRES: begin
+      if(wb_ack_i) begin
+        instr_d = wb_dat_i;
+        output_valid_d = 1;
+        state_d = FETCHING;
+      end
     end
   endcase
 end
@@ -75,7 +101,7 @@ end
 always_comb begin : pc_update
   pc_d = pc_q;
   // 0. Default increment
-  if ((state_q == WAIT_RES) && (wb_ack_i == 1)) begin
+  if (output_valid_q) begin
     pc_d = pc_q + 4;
   end
   // 1. Control flow change request
@@ -96,17 +122,17 @@ always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <=  INIT;
     pc_q            <=  ecap5_dproc_pkg::boot_address[31:0];
+    instr_q         <=  0;
+    output_valid_q  <=  0;
   end else begin
     state_q         <=  state_d;
     pc_q            <=  pc_d;
+    instr_q         <=  instr_d;
+    output_valid_q  <=  output_valid_d;
   end
 end
 
-assign wb_adr_o = 0;
-assign wb_stb_o = 0;
-assign wb_cyc_o = 0;
-assign wb_sel_o = 0;
-assign output_valid_o = 0;
-assign instr_o = 0;
+assign instr_o = instr_q;
+assign output_valid_o = output_valid_q;
 
 endmodule // ifm
