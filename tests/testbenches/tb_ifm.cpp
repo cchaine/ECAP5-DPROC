@@ -27,8 +27,9 @@
 #include <verilated_vcd_c.h>
 
 #include "Vifm.h"
+#include "Vifm_tb_ifm.h"
 
-#define NUM_TESTCASES 3
+#define NUM_TESTCASES 12
 
 uint32_t random(uint32_t max) {
   return rand() % max;
@@ -45,10 +46,15 @@ uint32_t random(uint32_t max) {
 // *   g. Write to x0
 // */
 
-bool tc_interrupt[4]         = {0, 0,  0};
-bool tc_debug[4]             = {0, 0,  0};
-bool tc_branch[4]            = {0, 0,  0};
-uint32_t tc_branch_offset[4] = {0, 0, 18};
+bool tc_interrupt[12]         = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_debug[12]             = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_branch[12]            = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint32_t tc_branch_offset[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+uint32_t memory[16] = {
+  0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1005, 0x1006, 0x1007,
+  0x1008, 0x1009, 0x100A, 0x100B, 0x100C, 0x100D, 0x100E, 0x100F
+};
 
 struct ifm_in_t {
   bool      interrupt;
@@ -82,17 +88,14 @@ void drive(Vifm * dut, struct ifm_in_t * tx) {
   dut->branch_i   =  tx->branch;
   dut->boffset_i  =  tx->branch_offset;
 
-  if(dut->wb_cyc_o && dut->wb_stb_o) {
-    dut->wb_dat_i = 0xCAFECAFE;
-    dut->wb_ack_i = 1;
-  } else {
-    dut->wb_ack_i = 0;
-  }
-
-  dut->eval();
+  dut->eval_step();
 }
 
 void monitor(Vifm * dut, int sim_time) {
+  printf("stb = %d\n", dut->tb_ifm->wb_stb_o);
+}
+
+void loadmem() {
 }
 
 #define START_SIM_TIME 4
@@ -106,6 +109,13 @@ int main(int argc, char ** argv, char ** env) {
   VerilatedVcdC *m_trace = new VerilatedVcdC;
   dut->trace(m_trace, 5);
   m_trace->open("waves/ifm.vcd");
+
+  // initialize memory
+  svScope scope = svGetScopeFromName("TOP.tb_ifm.mem");
+  svSetScope(scope);
+  for(int i = 0; i < 16; i++) {
+    dut->loadmem((svLogicVecVal*)&i, (svLogicVecVal*)&memory[i]);
+  }
 
   int sim_time = 0;
   struct ifm_in_t tx;
@@ -121,13 +131,13 @@ int main(int argc, char ** argv, char ** env) {
 
         monitor(dut, sim_time);
       }
-    } else {
-      dut->eval();
     }
 
+    dut->eval_step();
+
+    dut->eval_end_step();
     m_trace->dump(sim_time);
     sim_time++;
-
   }
 
   m_trace->close();
