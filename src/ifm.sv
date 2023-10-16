@@ -44,9 +44,9 @@ module ifm
 import ecap5_dproc_pkg::*; 
 
 enum logic [1:0] {
-  INIT,     // 0
-  FETCHING, // 1
-  WAITRES   // 2
+  INIT,    // 0
+  REQUEST, // 1
+  RESPONSE // 2
 } state_d, state_q;
 
 logic[31:0] pc_d, pc_q;
@@ -66,26 +66,23 @@ always_comb begin : wishbone_read
   case(state_q)
     INIT: begin
       if(rst_i == 1'b0) begin
-        state_d = FETCHING;
+        state_d = REQUEST;
       end
     end
-    FETCHING: begin
+    REQUEST: begin
       wb_adr_o = pc_q;
       wb_stb_o = 1;
       wb_cyc_o = 1;
-      if(wb_ack_i) begin
-        instr_d = wb_dat_i;
-        output_valid_d = 1;
-        state_d = FETCHING;
-      end else if(wb_stall_i == 1'b0) begin
-        state_d = WAITRES;
+      if(wb_stall_i == 1'b0) begin
+        state_d = RESPONSE;
       end
     end
-    WAITRES: begin
+    RESPONSE: begin
       if(wb_ack_i) begin
         instr_d = wb_dat_i;
         output_valid_d = 1;
-        state_d = FETCHING;
+        wb_cyc_o = 1;
+        state_d = REQUEST;
       end
     end
   endcase
@@ -101,7 +98,7 @@ end
 always_comb begin : pc_update
   pc_d = pc_q;
   // 0. Default increment
-  if (output_valid_q) begin
+  if (output_valid_d) begin
     pc_d = pc_q + 4;
   end
   // 1. Control flow change request

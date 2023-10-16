@@ -26,17 +26,17 @@ SRC_DIR    =  src
 INC_DIR    =  src/include
 TEST_DIR   =  tests
 
-SOURCES = $(shell find $(SRC_DIR) -name '*.v')
+SOURCES = $(shell find $(SRC_DIR) -name '*.sv')
 SOURCES := $(addprefix $(PROJECT_ROOT), $(SOURCES))
 
 INCLUDES = $(shell find $(INC_DIR) -name '*.svh')
 INCLUDES := $(addprefix $(PROJECT_ROOT), $(INCLUDES))
 
-TEST_PERIPHERALS = $(shell find $(TEST_DIR)/peripherals -name '*.v')
-TEST_PERIPHERALS := $(addprefix $(PROJECT_ROOT), $(TEST_PERIPHERALS))
+PERIPHERALS = $(shell find $(TEST_DIR)/peripherals/ -name '*.sv')
+PERIPHERALS := $(addprefix $(PROJECT_ROOT), $(PERIPHERALS))
 
 TOP_MODULE = top
-MODULES = ifm
+MODULES = regm ifm
 
 VERILATOR_OPTS = --cc --trace
 VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing -Wno-caseincomplete
@@ -68,10 +68,9 @@ $(MODULES): builddir
 	@verilator \
 		${VERILATOR_OPTS} ${VERILATOR_WARNINGS} \
 		--Mdir $(BUILD_DIR)/ \
-		-exe $(INCLUDES) $(SRC_DIR)/$@.v $(PROJECT_ROOT)$(TEST_DIR)/tb_$@.cpp \
-		--top-module $@ --prefix V$@ \
+		-exe $(INCLUDES) $(PERIPHERALS) $(SRC_DIR)/$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.cpp \
+		--top-module tb_$@ --prefix V$@ \
 		-CFLAGS -g
 	@make -C $(BUILD_DIR) -f V$@.mk V$@ > /dev/null
 	@echo "[$@] Testing..."
 	@cd $(BUILD_DIR)/ && ./V$@
-	
