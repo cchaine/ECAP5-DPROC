@@ -27,13 +27,15 @@ module wishbone_slave (
   input   logic        wb_stb_i,
   output  logic        wb_ack_o,
   input   logic        wb_cyc_i,
-  output  logic        wb_stall_o
+  output  logic        wb_stall_o,
+  input   logic        stall_request_i
 );
 
 logic[31:0] memory[0:15];
 
 enum logic[1:0] {
-  WAITREQ, 
+  WAITREQ,
+  STALL, 
   RESPONSE
 } state_d, state_q;
 logic[31:0] dat_d, dat_q;
@@ -45,6 +47,16 @@ always_comb begin
   case(state_q)
     WAITREQ: begin
       if(wb_stb_i) begin
+        if(stall_request_i) begin
+          state_d = STALL;
+        end else begin
+          state_d = RESPONSE;
+          dat_d = memory[wb_adr_i];
+        end
+      end
+    end
+    STALL: begin
+      if(!stall_request_i) begin
         state_d = RESPONSE;
         dat_d = memory[wb_adr_i];
       end
@@ -61,7 +73,7 @@ always_ff @(posedge clk_i) begin
   dat_q    <=  dat_d;
 end
 
-assign wb_stall_o = 0;
+assign wb_stall_o = stall_request_i;
 assign wb_dat_o = dat_q;
 
 // This task is used by Verilator to load

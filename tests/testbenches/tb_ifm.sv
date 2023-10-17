@@ -29,7 +29,8 @@ module tb_ifm (
   input   logic[19:0]  boffset_i,
   input   logic        output_ready_i,
   output  logic        output_valid_o,
-  output  logic[31:0]  instr_o
+  output  logic[31:0]  instr_o,
+  input   logic        stall_request_i
 );
 
 logic[31:0]  wb_adr_o   /* verilator public */ ; 
@@ -59,12 +60,13 @@ ifm dut (
 
 wishbone_slave mem (
   .clk_i  (clk_i),
-  .wb_adr_i        ({1'b0, wb_adr_o[31:1]}),
+  .wb_adr_i        ({2'b0, wb_adr_o[31:2]}),
   .wb_dat_o        (wb_dat_i),
   .wb_stb_i        (wb_stb_o),
   .wb_ack_o        (wb_ack_i),
   .wb_cyc_i        (wb_cyc_o),
-  .wb_stall_o      (wb_stall_i)
+  .wb_stall_o      (wb_stall_i),
+  .stall_request_i (stall_request_i)
 );
 
 endmodule // top
