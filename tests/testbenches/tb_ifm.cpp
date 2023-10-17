@@ -29,7 +29,7 @@
 #include "Vifm.h"
 #include "Vifm_tb_ifm.h"
 
-#define NUM_TESTCASES 12
+#define NUM_TESTCASES 14
 
 uint32_t random(uint32_t max) {
   return rand() % max;
@@ -46,10 +46,11 @@ uint32_t random(uint32_t max) {
 // *   g. Write to x0
 // */
 
-bool tc_interrupt[12]         = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-bool tc_debug[12]             = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-bool tc_branch[12]            = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint32_t tc_branch_offset[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_interrupt[]         = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_debug[]             = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_branch[]            = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint32_t tc_branch_offset[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_memory_stall[]      = {0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0};
 
 uint32_t memory[16] = {
   0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1005, 0x1006, 0x1007,
@@ -61,7 +62,7 @@ struct ifm_in_t {
   bool      debug;
   bool      branch;
   uint32_t  branch_offset;
-
+  bool      memory_stall;
 }; 
 
 struct ifm_out_t {
@@ -76,6 +77,7 @@ struct ifm_in_t generate_tx() {
   tx.debug          =  tc_debug[i];
   tx.branch         =  tc_branch[i];
   tx.branch_offset  =  tc_branch_offset[i];
+  tx.memory_stall   =  tc_memory_stall[i];
 
   i += 1;
 
@@ -87,6 +89,7 @@ void drive(Vifm * dut, struct ifm_in_t * tx) {
   dut->drq_i      =  tx->debug;
   dut->branch_i   =  tx->branch;
   dut->boffset_i  =  tx->branch_offset;
+  dut->stall_request_i = tx->memory_stall;
 
   dut->eval_step();
 }

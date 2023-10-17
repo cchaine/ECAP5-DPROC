@@ -23,7 +23,7 @@
 package ecap5_dproc_pkg;
 
 localparam  logic[31:0]  boot_address       =  32'h00000000;
-localparam  logic[31:0]  interrupt_address  =  32'h0000000A;
-localparam  logic[31:0]  debug_address      =  32'h0000000B;
+localparam  logic[31:0]  interrupt_address  =  32'hFF00000A;
+localparam  logic[31:0]  debug_address      =  32'hFF00000B;
 
 endpackage
