@@ -44,8 +44,8 @@ module ifm
 import ecap5_dproc_pkg::*; 
 
 enum logic [1:0] {
-  INIT,    // 0
-  REQUEST, // 1
+  INIT,     // 0
+  REQUEST,  // 1
   RESPONSE // 2
 } state_d, state_q;
 

@@ -36,7 +36,7 @@ PERIPHERALS = $(shell find $(TEST_DIR)/peripherals/ -name '*.sv')
 PERIPHERALS := $(addprefix $(PROJECT_ROOT), $(PERIPHERALS))
 
 TOP_MODULE = top
-MODULES = regm ifm
+MODULES = regm ifm exm
 
 VERILATOR_OPTS = --cc --trace
 VERILATOR_WARNINGS = -Wall -Wno-unused -Wno-pinmissing -Wno-caseincomplete
