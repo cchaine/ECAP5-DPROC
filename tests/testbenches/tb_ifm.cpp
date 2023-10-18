@@ -29,7 +29,7 @@
 #include "Vifm.h"
 #include "Vifm_tb_ifm.h"
 
-#define NUM_TESTCASES 14
+#define NUM_TESTCASES 22
 
 uint32_t random(uint32_t max) {
   return rand() % max;
@@ -46,11 +46,11 @@ uint32_t random(uint32_t max) {
 // *   g. Write to x0
 // */
 
-bool tc_interrupt[]         = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-bool tc_debug[]             = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-bool tc_branch[]            = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-uint32_t tc_branch_offset[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-bool tc_memory_stall[]      = {0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0};
+bool tc_interrupt[]         = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_debug[]             = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_branch[]            = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+uint32_t tc_branch_offset[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+bool tc_memory_stall[]      = {0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 uint32_t memory[16] = {
   0x1000, 0x1001, 0x1002, 0x1003, 0x1004, 0x1005, 0x1006, 0x1007,

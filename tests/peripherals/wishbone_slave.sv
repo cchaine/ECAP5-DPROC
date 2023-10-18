@@ -51,14 +51,14 @@ always_comb begin
           state_d = STALL;
         end else begin
           state_d = RESPONSE;
-          dat_d = memory[wb_adr_i];
+          dat_d = {wb_adr_i[29:0], 2'b0};
         end
       end
     end
     STALL: begin
       if(!stall_request_i) begin
         state_d = RESPONSE;
-        dat_d = memory[wb_adr_i];
+        dat_d = {wb_adr_i[29:0], 2'b0};
       end
     end
     RESPONSE: begin

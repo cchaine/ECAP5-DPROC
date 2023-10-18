@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
+[*] Wed Oct 18 09:07:39 2023
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/build/waves/exm.vcd"
+[dumpfile_mtime] "Wed Oct 18 09:06:06 2023"
+[dumpfile_size] 9845
+[savefile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/config/exm.gtkw"
+[timestart] 0
+[size] 1800 995
+[pos] -1 -1
+*-1.795433 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.tb_exm.
+[sst_width] 193
+[signals_width] 159
+[sst_expanded] 1
+[sst_vpaned_height] 306
+@28
+TOP.tb_exm.dut.clk_i
+@2028
+[color] 2
+^1 /Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/filters/instr_t_filter.gtkw
+TOP.tb_exm.dut.instr_i[5:0]
+@22
+TOP.tb_exm.dut.param1_i[31:0]
+TOP.tb_exm.dut.param2_i[31:0]
+TOP.tb_exm.dut.param3_i[31:0]
+TOP.tb_exm.dut.pc_i[31:0]
+@23
+TOP.tb_exm.dut.result_d[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
