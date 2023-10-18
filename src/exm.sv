@@ -24,13 +24,16 @@ module exm import ecap5_dproc_pkg::*;
 (
   input   logic        clk_i,
   // Input logic
-  input   logic        input_ready_o,
+  output  logic        input_ready_o,
   input   logic        input_valid_i,
   input   logic[31:0]  pc_i,
   input   instr_t      instr_i,
   input   logic[31:0]  param1_i,
   input   logic[31:0]  param2_i,
   input   logic[31:0]  param3_i,
+  input   logic        has_memory_read_i,
+  input   logic        has_memory_write_i,
+  input   logic        has_result_i,
   // Wishbone master
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i,
@@ -52,6 +55,28 @@ module exm import ecap5_dproc_pkg::*;
 
 logic[31:0] result_d, result_q;
 logic[31:0] load_result = 32'hCAFE0000;
+enum {
+ INIT, REQUEST_WRITE, REQUEST_READ, RESPONSE
+} state_d, state_q;
+logic[31:0] shifted_result;
+
+always_comb begin : wishbone_master
+  state_d = state_q;
+  case(state_q) 
+    INIT: begin
+
+    end
+    REQUEST_READ: begin
+      state_d = RESPONSE; 
+    end
+    RESPONSE: begin
+      state_d = INIT;
+    end
+    REQUEST_WRITE: begin
+      state_d = INIT;
+    end
+  endcase
+end
 
 always_comb begin : result_computation
   result_d = 0;
@@ -67,18 +92,50 @@ always_comb begin : result_computation
     AND, ANDI:            result_d = param1_i & param2_i;
     SLT, SLTI:            result_d = (signed'(param1_i) < signed'(param2_i)) ? 1 : 0;
     SLTU, SLTIU:          result_d = (param1_i < param2_i) ? 1 : 0;
-//    SLL, SLLI:            result_d = {param1_i[31 - param2_i[4:0] : 0], param2_i[4:0]{0}};
-//    SRL, SRLI:            result_d = {param2_i[4:0]{0}, param1_i[31 : param2_i[4:0]};
+    SLL, SLLI:            result_d = shifted_result;
+    SRL, SRLI:            result_d = shifted_result;
 //    SRA, SRAI:            result_d = {param2_i[4:0]{param1_i[31]}, param1_i[31 : param2_i[4:0]]};
   endcase
 end
 
 always_comb begin : barrel_shifter
+  logic[31:0] shift0, shift1, shift2, shift3, shift4;
+  logic[31:0] data;
+
+  if((instr_i == SLL) || (instr_i == SLLI)) begin
+    data = {<<{param1_i}};
+  end else begin
+    data = param1_i;
+  end
+
+  shift0       =  param2_i[0]  ?  {data[0],   data[31:1]}  :  data;
+  shift1       =  param2_i[1]  ?  {shift0[1:0],   shift0[31:2]}    :  shift0;
+  shift2       =  param2_i[2]  ?  {shift1[3:0],   shift1[31:4]}    :  shift1;
+  shift3       =  param2_i[3]  ?  {shift2[7:0],   shift2[31:8]}    :  shift2;
+  shift4       =  param2_i[4]  ?  {shift3[15:0],  shift3[31:16]}   :  shift3;
+
+  if(param2_i > 5'b11111) begin
+    shift4 = 0;
+  end
   
+  if((instr_i == SLL) || (instr_i == SLLI)) begin
+    shifted_result = {<<{shift4}};
+  end else begin
+    shifted_result = shift4;
+  end
 end
 
 always_ff @(posedge clk_i) begin
-  result_q <= result_d;
+  if(has_memory_read_i) begin
+    state_q <= REQUEST_READ;
+    input_ready_o <= 0;
+  end else if(has_memory_write_i) begin
+    state_q <= REQUEST_WRITE;
+    input_ready_o <= 0;
+  end else begin
+    result_q <= result_d;
+    input_ready_o <= 1;
+  end 
 end
 
   assign wb_adr_o = 0;
