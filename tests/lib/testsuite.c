@@ -1,4 +1,4 @@
-#include "parse.h"
+#include "testsuite.h"
 
 
 void print_token(jsmntok_t t) {
@@ -32,7 +32,7 @@ char * get_token_val(char * s, jsmntok_t * t) {
   return content;
 }
 
-void print_testsuite(struct testsuite_t ts) {
+void testsuite_print(struct testsuite_t ts) {
   printf("testsuite: %d testcases\n", ts.num_testcases);
   for(int i = 0; i < ts.num_testcases; i++) {
     if(ts.testcases == NULL) {
@@ -61,7 +61,7 @@ void print_testsuite(struct testsuite_t ts) {
   }
 }
 
-void delete_testsuite(struct testsuite ts) {
+void testsuite_delete(struct testsuite_t ts) {
   if(ts.testcases != NULL) {
     for(int i = 0; i < ts.num_testcases; i++) {
       struct testcase_t tc = ts.testcases[i];
@@ -74,7 +74,7 @@ void delete_testsuite(struct testsuite ts) {
           if(p.name != NULL) {
             free(p.name);
           }
-          if(values != NULL) {
+          if(p.values != NULL) {
             free(p.values);
           }
         }
@@ -83,7 +83,7 @@ void delete_testsuite(struct testsuite ts) {
   }
 }
 
-struct testsuite_t parse(char * path) {
+struct testsuite_t testsuite_init(char * path) {
   // Open the json testcase file
   FILE *fptr;
   fptr = fopen(path, "rb");
@@ -205,8 +205,6 @@ struct testsuite_t parse(char * path) {
     } 
     token_index += 1;
   }
-
-  print_testsuite(testsuite);
 
   free(s);
 

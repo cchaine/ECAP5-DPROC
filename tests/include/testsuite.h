@@ -24,6 +24,8 @@ struct parameter_t {
   int num_values;
 };
 
-struct testsuite_t parse(char * s);
+struct testsuite_t testsuite_init(char * s);
+void testsuite_print(struct testsuite_t ts);
+void testsuite_delete(struct testsuite_t ts);
 
 #endif
