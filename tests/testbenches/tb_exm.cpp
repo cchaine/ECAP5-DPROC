@@ -26,6 +26,8 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
+#include "parse.h"
+
 #include "Vexm.h"
 
 #define NUM_TESTCASES 2
@@ -91,6 +93,8 @@ void monitor(Vexm * dut, int sim_time) {
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
 
+  struct testsuite_t testsuite = parse(argv[1]);
+
   Vexm *dut = new Vexm;
 
   Verilated::traceEverOn(true);
@@ -123,5 +127,6 @@ int main(int argc, char ** argv, char ** env) {
   m_trace->close();
   dut->final();
   delete dut;
+  delete_testsuite(testsuite);
   exit(EXIT_SUCCESS);
 }
