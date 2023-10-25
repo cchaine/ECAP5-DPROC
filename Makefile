@@ -25,6 +25,7 @@ BUILD_DIR  =  build
 SRC_DIR    =  src
 INC_DIR    =  src/include
 TEST_DIR   =  tests
+LIB_DIR    =  tests/lib
 
 SOURCES = $(shell find $(SRC_DIR) -name '*.sv')
 SOURCES := $(addprefix $(PROJECT_ROOT), $(SOURCES))
@@ -34,6 +35,9 @@ INCLUDES := $(addprefix $(PROJECT_ROOT), $(INCLUDES))
 
 PERIPHERALS = $(shell find $(TEST_DIR)/peripherals/ -name '*.sv')
 PERIPHERALS := $(addprefix $(PROJECT_ROOT), $(PERIPHERALS))
+
+LIB_SOURCES = $(shell find $(LIB_DIR)/ -name '*.c')
+LIB_SOURCES := $(addprefix $(PROJECT_ROOT), $(LIB_SOURCES))
 
 TOP_MODULE = top
 MODULES = regm ifm exm
@@ -68,9 +72,9 @@ $(MODULES): builddir
 	@verilator \
 		${VERILATOR_OPTS} ${VERILATOR_WARNINGS} \
 		--Mdir $(BUILD_DIR)/ \
-		-exe $(INCLUDES) $(PERIPHERALS) $(SRC_DIR)/$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.cpp \
+		-exe $(INCLUDES) $(LIB_SOURCES) $(PERIPHERALS) $(SRC_DIR)/$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.sv $(PROJECT_ROOT)$(TEST_DIR)/testbenches/tb_$@.cpp \
 		--top-module tb_$@ --prefix V$@ \
-		-CFLAGS -g
+		-CFLAGS -g -CFLAGS -I$(PROJECT_ROOT)$(TEST_DIR)/include/
 	@make -C $(BUILD_DIR) -f V$@.mk V$@ > /dev/null
 	@echo "[$@] Testing..."
-	@cd $(BUILD_DIR)/ && ./V$@
+	@cd $(BUILD_DIR)/ && ./V$@ ../tests/testdata/tb_exm.json
