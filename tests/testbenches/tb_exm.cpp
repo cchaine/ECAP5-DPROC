@@ -26,7 +26,7 @@
 #include <verilated.h>
 #include <verilated_vcd_c.h>
 
-#include "parse.h"
+#include "testsuite.h"
 
 #include "Vexm.h"
 
@@ -93,7 +93,8 @@ void monitor(Vexm * dut, int sim_time) {
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
 
-  struct testsuite_t testsuite = parse(argv[1]);
+  struct testsuite_t testsuite = testsuite_init(argv[1]);
+  testsuite_print(testsuite);
 
   Vexm *dut = new Vexm;
 
@@ -127,6 +128,6 @@ int main(int argc, char ** argv, char ** env) {
   m_trace->close();
   dut->final();
   delete dut;
-  delete_testsuite(testsuite);
+  testsuite_delete(testsuite);
   exit(EXIT_SUCCESS);
 }
