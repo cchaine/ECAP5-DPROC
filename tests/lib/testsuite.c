@@ -47,14 +47,24 @@ void testsuite_print(struct testsuite_t ts) {
     }
     for(int j = 0; j < tc.num_parameters; j++) {
       struct parameter_t f = tc.parameters[j];
-      printf("    parameter: %s, %d values\n", f.name, f.num_values);
+      printf("    parameter: %s, type %d with %d values\n", f.name, f.type, f.num_values);
       if(f.values == NULL) {
         printf("      NULL\n");
         continue;
       }
       printf("      ");
       for(int k = 0; k < f.num_values; k++) {
-        printf("%x ", ((unsigned int*)f.values)[k]);
+        switch(f.type) {
+          case STRING:
+            printf("\"%s\" ", ((char **)f.values)[k]);
+            break;
+          case BOOLEAN:
+            printf("%d ", ((bool *)f.values)[k]);
+            break;
+          case NUMBER:
+            printf("%x ", ((unsigned int*)f.values)[k]);
+            break;
+        }
       }
       printf("\n");
     }
@@ -75,6 +85,12 @@ void testsuite_delete(struct testsuite_t ts) {
             free(p.name);
           }
           if(p.values != NULL) {
+            if(p.type == STRING) {
+              for(int k = 0; k < p.num_values; k++) {
+                char ** ptr = (char **)(p.values);
+                free(ptr[k]);
+              }
+            }
             free(p.values);
           }
         }
@@ -132,6 +148,11 @@ struct testsuite_t testsuite_init(char * path) {
   int testcase_index = 0;
   int parameter_index = 0;
   int parameter_value_index = 0;
+  struct testcase_t * testcase;
+  struct parameter_t * parameter;
+  char ** string_values;
+  bool * boolean_values;
+  int * number_values;
   while(token_index < r) {
     tok = &t[token_index];
     switch(level) {
@@ -141,6 +162,8 @@ struct testsuite_t testsuite_init(char * path) {
           // if we dealt with every testcase, we skip the remaining tokens and leave the loop
           token_index = r;
         } else {
+          testcase = &testsuite.testcases[testcase_index];
+
           // get the key
           char * key = get_token_val(s, tok);
 
@@ -149,13 +172,13 @@ struct testsuite_t testsuite_init(char * path) {
             token_index += 1;
             tok = &t[token_index];
             char * name = get_token_val(s, tok);
-            testsuite.testcases[testcase_index].name = get_token_val(s, tok);
+            testcase->name = get_token_val(s, tok);
           } else if(strncmp("parameters", key, tok->end - tok->start) == 0) {
             // process the parameter's array
             token_index += 1;
             tok = &t[token_index];
-            testsuite.testcases[testcase_index].parameters = (struct parameter_t *) malloc((tok->size) * sizeof(struct parameter_t));
-            testsuite.testcases[testcase_index].num_parameters = tok->size;
+            testcase->parameters = (struct parameter_t *) malloc((tok->size) * sizeof(struct parameter_t));
+            testcase->num_parameters = tok->size;
 
             // switch to handling the content of the parameters
             parameter_index = 0;
@@ -171,20 +194,22 @@ struct testsuite_t testsuite_init(char * path) {
       }
       // handle content of parameter_t objects
       case 1: {
-        if(parameter_index == testsuite.testcases[testcase_index].num_parameters) {
+        if(parameter_index == testcase->num_parameters) {
           // if we dealt with every parameter, we go up a level and handle the next testcase
           testcase_index += 1;
           level -= 1;
         } else {
+          parameter = &testcase->parameters[parameter_index];
+
           // handle parameter name
           char * name = get_token_val(s, tok);
-          testsuite.testcases[testcase_index].parameters[parameter_index].name = name;
+          parameter->name = name;
 
           // handle parameter value array
           token_index += 1;
           tok = &t[token_index];
-          testsuite.testcases[testcase_index].parameters[parameter_index].values = NULL;
-          testsuite.testcases[testcase_index].parameters[parameter_index].num_values = tok->size;
+          parameter->values = NULL;
+          parameter->num_values = tok->size;
 
           // switch to handling the values of the parameter
           parameter_value_index = 0;
@@ -194,6 +219,83 @@ struct testsuite_t testsuite_init(char * path) {
       }
       // handle values of parameter_t objects
       case 2: {
+        char * data = get_token_val(s, tok);
+        // get the type of data
+        enum parameter_type_t type;
+        if(tok->type == JSMN_STRING) {
+          type = STRING;
+        } else if(tok->type == JSMN_PRIMITIVE) {
+          if((data[0] == 't') || (data[0] == 'f')) {
+            type = BOOLEAN;
+          } else if((data[0] == '-') || ('0' <= data[0] && data[0] <= '9')) {
+            type = NUMBER;
+          } else {
+            printf("[ERROR]: Unknown primitive data type for \"%s\"\n", data);
+            return {0};
+          }
+        } else {
+          printf("[ERROR]: Unexpected token type %d for \"%s\"\n", tok->type, data);
+          return {0};
+        }
+        
+        // initialize the table of values
+        if(parameter->values == NULL) {
+          parameter->type = type;
+          switch(type) {
+            case STRING:
+              string_values = (char **) malloc(parameter->num_values * sizeof(char *));
+              parameter->values = string_values;
+              break;
+            case BOOLEAN:
+              boolean_values = (bool *) malloc(parameter->num_values * sizeof(bool));
+              parameter->values = boolean_values;
+              break;
+            case NUMBER:
+              number_values = (int *) malloc(parameter->num_values * sizeof(int));
+              parameter->values = number_values;
+              break;
+          }
+        }
+
+        // check for type consistency
+        if(type != parameter->type) {
+          printf("[ERROR]: Data type inconsistencies, got %d but expected %d\n", type, parameter->type);
+          return {0};
+        }
+
+        // store the data
+        switch(type) {
+          case STRING:
+            string_values[parameter_value_index] = data;
+            break;
+          case BOOLEAN:
+            if(strncmp("true", data, 4) == 0) {
+              boolean_values[parameter_value_index] = true;
+            } else if(strncmp("false", data, 5) == 0) {
+              boolean_values[parameter_value_index] = false;
+            } else {
+              printf("[ERROR]: malformed boolean value for \"%s\"\n", data);
+              return {0};
+            }
+            free(data);
+            break;
+          case NUMBER:
+            char * last_char = data + strlen(data);
+            char * end;
+            long converted_data = strtol(data, &end, 0); 
+            if(end != last_char) {
+              printf("[ERROR]: the value \"%s\" cannot be converted to a number\n", data);
+              return {0};
+            }
+            if(converted_data > 0xFFFFFFFF) {
+              printf("[ERROR]: only 32-bit values are supported, received %ld\n", converted_data);
+              return {0};
+            }
+            number_values[parameter_value_index] = (int)converted_data;
+            free(data);
+            break;
+        }
+
         parameter_value_index += 1;
         if(parameter_value_index == testsuite.testcases[testcase_index].parameters[parameter_index].num_values) {
           // if we dealt with every value of the parameter, we go up a level and handle the next parameter

@@ -18,10 +18,17 @@ struct testcase_t {
   int num_parameters;
 };
 
+enum parameter_type_t {
+  STRING,
+  BOOLEAN,
+  NUMBER
+};
+
 struct parameter_t {
   char * name;
   void * values;
   int num_values;
+  enum parameter_type_t type;
 };
 
 struct testsuite_t testsuite_init(char * s);
