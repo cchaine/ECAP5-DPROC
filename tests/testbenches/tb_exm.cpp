@@ -30,24 +30,32 @@
 
 #include "Vexm.h"
 
-#define NUM_TESTCASES 2
+#define RESET_DURATION 5
+#define NUM_INSTRUCTIONS 37
 
-uint32_t random(uint32_t max) {
-  return rand() % max;
+enum instr_t { 
+  LUI, AUIPC, JAL, JALR, BEQ, BNE, BLT, BLTU, BGE, BGEU, LB, LH, LW, LBU, LHU, SB, SH, SW, ADD, ADDI, SUB, XOR, XORI, OR, ORI, AND, ANDI, SLT, SLTI, SLTU, SLTIU, SLL, SLLI, SRL, SRLI, SRA, SRAI
+};
+
+enum instr_t str_to_instr(char * str) {
+  char * instructions[] = {
+    "LUI", "AUIPC", "JAL", "JALR", "BEQ", "BNE", "BLT", "BLTU", "BGE", "BGEU", "LB", "LH", "LW", "LBU", "LHU", "SB", "SH", "SW", "ADD", "ADDI", "SUB", "XOR", "XORI", "OR", "ORI", "AND", "ANDI", "SLT", "SLTI", "SLTU", "SLTIU", "SLL", "SLLI", "SRL", "SRLI", "SRA", "SRAI"
+  };
+  int result = 0;
+  int index = 0;
+  bool found = false;
+  while(!found && (index < NUM_INSTRUCTIONS)) {
+    found = (strncmp(instructions[index], str, 5) == 0);
+    index += (found ? 0 : 1);
+  }
+  if(!found) {
+    printf("[ERROR]: Unknown instruction %s\n", str);
+  }
+  return (enum instr_t)index; 
 }
 
-typedef enum { 
-  LUI, AUIPC, JAL, JALR, BEQ, BNE, BLT, BLTU, BGE, BGEU, LB, LH, LW, LBU, LHU, SB, SH, SW, ADD, ADDI, SUB, XOR, XORI, OR, ORI, AND, ANDI, SLT, SLTI, SLTU, SLTIU, SLL, SLLI, SRL, SRLI, SRA, SRAI
-} instr_t;
-
-
-uint32_t  tc_pc[]         =  {0x0, 0x0, 0x0};
-instr_t   tc_instr[]      =  {SRL, SLL, SLL};
-uint32_t  tc_param1[]     =  {0x4, 0xF, 0xFFFFFFFF};
-uint32_t  tc_param2[]     =  {2, 3, 0xFF};
-uint32_t  tc_param3[]     =  {0, 0, 0};
-
-struct exm_in_t {
+struct input_vector_t {
+  bool reset;
   uint32_t pc;
   instr_t instr;
   uint32_t param1;
@@ -55,46 +63,63 @@ struct exm_in_t {
   uint32_t param3;
 }; 
 
-struct exm_out_t {
+struct output_vector_t {
 
 }; 
 
-struct exm_in_t generate_tx() {
-  static int i = 0;
+void initialize_testdata(struct testsuite_t testsuite) {
 
-  struct exm_in_t tx;
-  tx.pc = tc_pc[i];
-  tx.instr = tc_instr[i];
-  tx.param1 = tc_param1[i];
-  tx.param2 = tc_param2[i];
-  tx.param3 = tc_param3[i];
-
-  i += 1;
-
-  return tx;
 }
 
-void drive(Vexm * dut, struct exm_in_t * tx) {
-  dut->input_valid_i = 1;
-  dut->pc_i = tx->pc;
-  dut->instr_i = tx->instr;
-  dut->param1_i = tx->param1;
-  dut->param2_i = tx->param2;
-  dut->param3_i = tx->param3;
+bool get_input_vector(struct testcase_t * testcase, struct input_vector_t * out) {
+  static int reset_count = 0;
+  static int iteration_index = 0;
+  bool done = false;
 
-  dut->eval_step();
+  int err;
+  struct input_vector_t iv;
+  if(reset_count < RESET_DURATION) {
+    iv.reset = 1;
+    iv.pc = 0;
+    iv.param1 = 0;
+    iv.param2 = 0;
+    iv.param3 = 0;
+    iv.instr = (enum instr_t)0;
+  } else {
+    iv.reset = 0;
+    iv.pc = testcase_get_unsigned_int_value(testcase, "pc", iteration_index, &err);
+    iv.param1 = testcase_get_unsigned_int_value(testcase, "param1", iteration_index, &err);
+    iv.param2 = testcase_get_unsigned_int_value(testcase, "param2", iteration_index, &err);
+    iv.param3 = testcase_get_unsigned_int_value(testcase, "param3", iteration_index, &err);
+    char * instr_str = testcase_get_string_value(testcase, "instr", iteration_index, &err);
+    iv.instr = str_to_instr(instr_str);
+  }
+   
+  if(reset_count < RESET_DURATION) {
+    reset_count += 1;
+  } else {
+    iteration_index += 1;
+  }
+  if(iteration_index == testcase->parameters[0].num_values) {
+    reset_count = 0;
+    iteration_index = 0;
+    done = true;
+  }
+  return done;
 }
 
-void monitor(Vexm * dut, int sim_time) {
+void drive_input_vector(struct input_vector_t iv) {
+
 }
 
-#define START_SIM_TIME 0
-#define MAX_SIM_TIME (START_SIM_TIME + 2*NUM_TESTCASES + 3)
+void monitor_output_vector() {
+
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
 
   struct testsuite_t testsuite = testsuite_init(argv[1]);
-  testsuite_print(testsuite);
 
   Vexm *dut = new Vexm;
 
@@ -104,17 +129,22 @@ int main(int argc, char ** argv, char ** env) {
   m_trace->open("waves/exm.vcd");
 
   int sim_time = 0;
-  struct exm_in_t tx;
-  while(sim_time < MAX_SIM_TIME) {
+  bool testsuite_done = false;
+  int testcase_index = 0;
+  while(!testsuite_done) {
     dut->clk_i ^= 1;
 
     if(dut->clk_i == 1) {
-      if(START_SIM_TIME <= sim_time) {
-        tx = generate_tx();
-
-        drive(dut, &tx);
-
-        monitor(dut, sim_time);
+      struct input_vector_t iv;
+      bool last_vector = get_input_vector(&testsuite.testcases[testcase_index], &iv);
+//    drive_input_vector(iv);
+//    monitor_output_vector();
+//
+      if(last_vector) {
+        testcase_index += 1;
+        if(testcase_index == testsuite.num_testcases) {
+          testsuite_done = true;
+        }
       }
     }
 

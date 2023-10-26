@@ -11,7 +11,7 @@
       }
     },
     {
-      "name": "case2",
+      "name": "SRL",
       "parameters": {
         "pc":      [0,           0,           0,           0],
         "instr":   ["SRL",       "SRL",       "SRL",       "SRL"],
@@ -21,17 +21,7 @@
       }
     },
     {
-      "name": "case3",
-      "parameters": {
-        "pc":      [0,           0,           0,           0],
-        "instr":   ["SRL",       "SRL",       "SRL",       "SRL"],
-        "param1":  [0xAA5500FF,  0xFF55AA00,  0xFFFFFFFF,  0x12345678],
-        "param2":  [0,           1,           10,          100],
-        "param3":  [0,           0,           0,           0]
-      }
-    },
-    {
-      "name": "case4",
+      "name": "SRL",
       "parameters": {
         "pc":      [0,           0,           0,           0],
         "instr":   ["SRL",       "SRL",       "SRL",       "SRL"],
