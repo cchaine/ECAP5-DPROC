@@ -22,6 +22,7 @@
 
 module tb_exm import ecap5_dproc_pkg::*; (
   input   logic        clk_i,
+  input   logic        rst_i,
   // Input logic
   output  logic        input_ready_o,
   input   logic        input_valid_i,

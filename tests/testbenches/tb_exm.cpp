@@ -38,7 +38,7 @@ enum instr_t {
 };
 
 enum instr_t str_to_instr(char * str) {
-  char * instructions[] = {
+  const char * instructions[] = {
     "LUI", "AUIPC", "JAL", "JALR", "BEQ", "BNE", "BLT", "BLTU", "BGE", "BGEU", "LB", "LH", "LW", "LBU", "LHU", "SB", "SH", "SW", "ADD", "ADDI", "SUB", "XOR", "XORI", "OR", "ORI", "AND", "ANDI", "SLT", "SLTI", "SLTU", "SLTIU", "SLL", "SLLI", "SRL", "SRLI", "SRA", "SRAI"
   };
   int result = 0;
@@ -71,10 +71,10 @@ void initialize_testdata(struct testsuite_t testsuite) {
 
 }
 
-bool get_input_vector(struct testcase_t * testcase, struct input_vector_t * out) {
+struct input_vector_t get_input_vector(struct testcase_t * testcase, bool * last_vector) {
   static int reset_count = 0;
   static int iteration_index = 0;
-  bool done = false;
+  *last_vector = false;
 
   int err;
   struct input_vector_t iv;
@@ -103,13 +103,20 @@ bool get_input_vector(struct testcase_t * testcase, struct input_vector_t * out)
   if(iteration_index == testcase->parameters[0].num_values) {
     reset_count = 0;
     iteration_index = 0;
-    done = true;
+    *last_vector = true;
   }
-  return done;
+
+  return iv;
 }
 
-void drive_input_vector(struct input_vector_t iv) {
-
+void drive_input_vector(Vexm * dut, struct input_vector_t iv) {
+  dut->rst_i = iv.reset;
+  dut->input_valid_i = 1;
+  dut->pc_i = iv.pc;
+  dut->instr_i = iv.instr;
+  dut->param1_i = iv.param1;
+  dut->param2_i = iv.param2;
+  dut->param3_i = iv.param3;
 }
 
 void monitor_output_vector() {
@@ -131,13 +138,13 @@ int main(int argc, char ** argv, char ** env) {
   int sim_time = 0;
   bool testsuite_done = false;
   int testcase_index = 0;
+  bool last_vector;
   while(!testsuite_done) {
     dut->clk_i ^= 1;
 
     if(dut->clk_i == 1) {
-      struct input_vector_t iv;
-      bool last_vector = get_input_vector(&testsuite.testcases[testcase_index], &iv);
-//    drive_input_vector(iv);
+      struct input_vector_t iv = get_input_vector(&testsuite.testcases[testcase_index], &last_vector);
+      drive_input_vector(dut, iv);
 //    monitor_output_vector();
 //
       if(last_vector) {
