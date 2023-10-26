@@ -34,5 +34,9 @@ struct parameter_t {
 struct testsuite_t testsuite_init(char * s);
 void testsuite_print(struct testsuite_t ts);
 void testsuite_delete(struct testsuite_t ts);
+char * testcase_get_string_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err);
+bool testcase_get_bool_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err);
+int testcase_get_int_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err);
+unsigned int testcase_get_unsigned_int_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err);
 
 #endif

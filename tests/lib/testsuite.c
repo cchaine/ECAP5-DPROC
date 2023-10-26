@@ -66,7 +66,7 @@ void testsuite_print(struct testsuite_t ts) {
             break;
         }
       }
-      printf("\n");
+      printf(", @ %p\n", f.values);
     }
   }
 }
@@ -311,4 +311,77 @@ struct testsuite_t testsuite_init(char * path) {
   free(s);
 
   return testsuite;
+}
+
+int find_testcase_parameter(struct testcase_t * tc, char * parameter_name) {
+  int index = 0;
+  bool found = false;
+  while(!found && (index < tc->num_parameters)) {
+    found = (strcmp(tc->parameters[index].name, parameter_name) == 0);
+    index += (found ? 0 : 1);
+  }
+  if(!found) {
+    index = -1;
+  }
+  return index;
+}
+
+char * testcase_get_string_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err) {
+  char * result = NULL; 
+  *err = 1;
+
+  int index = find_testcase_parameter(tc, parameter_name);
+  char ** values = (char **)tc->parameters[index].values;
+  if(index != -1) {
+    if(value_index < tc->parameters[index].num_values) {
+      result = values[value_index]; 
+      *err = 0;
+    }
+  }
+  return result;
+}
+
+bool testcase_get_boolean_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err) {
+  bool result = false; 
+  *err = 1;
+
+  int index = find_testcase_parameter(tc, parameter_name);
+  bool * values = (bool*)tc->parameters[index].values;
+  if(index != -1) {
+    if(value_index < tc->parameters[index].num_values) {
+      result = values[value_index]; 
+      *err = 0;
+    }
+  }
+  return result;
+}
+
+int testcase_get_int_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err) {
+  int result = 0; 
+  *err = 1;
+
+  int index = find_testcase_parameter(tc, parameter_name);
+  int * values = (int*)tc->parameters[index].values;
+  if(index != -1) {
+    if(value_index < tc->parameters[index].num_values) {
+      result = values[value_index]; 
+      *err = 0;
+    }
+  }
+  return result;
+}
+
+unsigned int testcase_get_unsigned_int_value(struct testcase_t * tc, char * parameter_name, int value_index, int * err) {
+  unsigned int result = 0; 
+  *err = 1;
+
+  int index = find_testcase_parameter(tc, parameter_name);
+  unsigned int * values = (unsigned int*)tc->parameters[index].values;
+  if(index != -1) {
+    if(value_index < tc->parameters[index].num_values) {
+      result = values[value_index]; 
+      *err = 0;
+    }
+  }
+  return result;
 }
