@@ -27,6 +27,7 @@
 #include <verilated_vcd_c.h>
 
 #include "Vregm.h"
+//#include "Vregm__Dpi.h"
 #include "testbench.h"
 
 struct testbench_t testbench_init() {
@@ -43,8 +44,19 @@ Vregm * testbench_get_core(struct testbench_t * tb) {
 void testbench_delete(struct testbench_t * tb) {
   Vregm * core = testbench_get_core(tb);
   core->final();
+  tb->trace->close();
+  tb->trace = NULL;
   delete core;
   tb->core = NULL;
+}
+
+void testbench_open_trace(struct testbench_t * tb, const char *path) {
+  if(tb->trace == NULL) {
+    tb->trace = new VerilatedVcdC;
+    Vregm * core = testbench_get_core(tb);
+    core->trace(tb->trace, 99);
+    tb->trace->open(path);
+  }
 }
 
 void testbench_tick(struct testbench_t * tb) {
@@ -53,33 +65,50 @@ void testbench_tick(struct testbench_t * tb) {
 
   core->clk_i = 0;
   core->eval();
+  if(tb->trace) {
+    tb->trace->dump(10 * tb->tickcount - 2);
+  }
 
   core->clk_i = 1;
   core->eval();
+  if(tb->trace) {
+    tb->trace->dump(10 * tb->tickcount);
+  }
 
   core->clk_i = 0;
   core->eval();
+  if(tb->trace) {
+    tb->trace->dump(10 * tb->tickcount+5);
+    tb->trace->flush();
+  }
 }
 
 bool testbench_done(struct testbench_t * tb) {
   return (tb->tickcount > 10);
 }
 
+void testbench_read_test(struct testbench_t * tb, uint8_t raddr) {
+  //Vregm * core = testbench_get_core(tb);
+}
+
+void set_register(struct testbench_t * tb, uint8_t addr, uint32_t value) {
+  //const svScope scope = svGetScopeFromName("TOP.dut");
+  //assert(scope);
+  //svSetScope(scope);
+  //Vregm::set_register_value(addr, value); 
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
-
-  //Verilated::traceEverOn(true);
-  //VerilatedVcdC *m_trace = new VerilatedVcdC;
-  //dut->trace(m_trace, 5);
-  //m_trace->open("waves/regm.vcd");
+  Verilated::traceEverOn(true);
 
   struct testbench_t tb = testbench_init();
+  testbench_open_trace(&tb, "waves/regm.vcd");
 
   while(!testbench_done(&tb)) {
     testbench_tick(&tb);
   }
 
-  //m_trace->close();
   testbench_delete(&tb);
   exit(EXIT_SUCCESS);
 }

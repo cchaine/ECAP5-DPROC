@@ -23,4 +23,5 @@
 struct testbench_t {
   unsigned long tickcount;
   void * core;
+  VerilatedVcdC * trace;
 };
