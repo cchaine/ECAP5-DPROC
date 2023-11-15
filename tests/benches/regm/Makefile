@@ -31,7 +31,7 @@
 BENCHES = tb_regm
 BENCH_BINARIES = $(addprefix $(BUILD_DIR)/, $(BENCHES))
 
-CFLAGS = -Wall -Og -g -I$(VERILATOR_ROOT)/include
+CFLAGS = -Wall -Og -g -I$(VERILATOR_ROOT)/include -I$(VERILATOR_ROOT)/include/vltstd
 
 INCLUDES = $(shell find $(INC_DIR) -name '*.svh')
 
@@ -55,4 +55,4 @@ $(BUILD_TEST_DIR)/V%.cpp $(BUILD_TEST_DIR)/V%.h: $(BUILD_TEST_DIR)/V%.mk ;
 TEST_LIBRARIES_LINK_ARGS = $(addprefix "-l:", $(TEST_LIBRARIES))
 $(BENCH_BINARIES): $(BUILD_DIR)/% : $(BUILD_SRC_DIR)/Vregm__ALL.a $(BUILD_TEST_DIR)/V%__ALL.a $(BUILD_DIR)/verilator.a $(TEST_LIBRARIES_BINARIES) %.cpp
 	$(CXX) $(CFLAGS) $*.cpp -L$(BUILD_SRC_DIR) -L$(BUILD_TEST_DIR) -L$(BUILD_LIBS_DIR) -L$(BUILD_DIR) -l:Vregm__ALL.a -l:V$*__ALL.a -l:verilator.a $(TEST_LIBRARIES_LINK_ARGS) -I$(BUILD_SRC_DIR) -I$(TEST_INC_DIR) -o $@
-	$@ 
+	cd $(BUILD_DIR) ; $@ 
