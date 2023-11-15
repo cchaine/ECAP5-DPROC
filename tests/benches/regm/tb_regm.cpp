@@ -30,205 +30,171 @@
 #include "Vregm.h"
 #include "testbench.h"
 
-struct testbench_t testbench_init() {
-  struct testbench_t tb;
-  tb.tickcount = 0;
-  tb.core = new Vregm; 
-  return tb;
-}
-
-Vregm * testbench_get_core(struct testbench_t * tb) {
-  return (Vregm*)tb->core;
-}
-
-void testbench_delete(struct testbench_t * tb) {
-  Vregm * core = testbench_get_core(tb);
-  core->final();
-  tb->trace->close();
-  tb->trace = NULL;
-  delete core;
-  tb->core = NULL;
-}
-
-void testbench_open_trace(struct testbench_t * tb, const char *path) {
-  if(tb->trace == NULL) {
-    tb->trace = new VerilatedVcdC;
-    Vregm * core = testbench_get_core(tb);
-    core->trace(tb->trace, 99);
-    tb->trace->open(path);
+class TB_Regm : public Testbench<Vregm> {
+public:
+  void set_register(uint8_t addr, uint32_t value) {
+    const svScope scope = svGetScopeFromName("TOP.regm");
+    assert(scope);
+    svSetScope(scope);
+    this->core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
   }
-}
+};
 
-void testbench_tick(struct testbench_t * tb) {
-  Vregm * core = testbench_get_core(tb);
-  tb->tickcount += 1;
-
-  core->clk_i = 0;
-  core->eval();
-  if(tb->trace) {
-    tb->trace->dump(10 * tb->tickcount - 2);
-  }
-
-  core->clk_i = 1;
-  core->eval();
-  if(tb->trace) {
-    tb->trace->dump(10 * tb->tickcount);
-  }
-
-  core->clk_i = 0;
-  core->eval();
-  if(tb->trace) {
-    tb->trace->dump(10 * tb->tickcount+5);
-    tb->trace->flush();
-  }
-}
-
-bool testbench_done(struct testbench_t * tb) {
-  return (tb->tickcount > 10);
-}
-
-void testbench_set_register(struct testbench_t * tb, uint8_t addr, uint32_t value) {
-  const svScope scope = svGetScopeFromName("TOP.regm");
-  assert(scope);
-  svSetScope(scope);
-  Vregm * core = testbench_get_core(tb);
-  core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
-}
-
-int main(int argc, char ** argv, char ** env) {
-  srand(time(NULL));
-  Verilated::traceEverOn(true);
-
-  struct testbench_t tb = testbench_init();
-  testbench_open_trace(&tb, "waves/regm.vcd");
-
-  Vregm * core = testbench_get_core(&tb);
-
-  /*************************************************************
-   * testbench:   tb_regm_read_port_a
-   * description: 
-   *  Read each register through port A
-   ************************************************************/
+void tb_regm_read_port_a(TB_Regm * tb) {
+  Vregm * core = tb->core;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
     uint32_t value = rand();
-    testbench_set_register(&tb, i, value); 
+    tb->set_register(i, value); 
 
     // set core inputs
     core->raddr1_i = i;
     core->write_i = 0;
-    testbench_tick(&tb);
+    tb->tick();
 
     if(core->rdata1_o != value) {
       printf("[tb_regm_read_port_a]: Reading from register %d on port A. expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
     }
   }
-  
-  /*************************************************************
-   * testbench:   tb_regm_read_port_b
-   * description: 
-   *  Read each register through port B
-   ************************************************************/
+
+  // reset register x0
+  tb->set_register(0, 0);
+}
+
+void tb_regm_read_port_b(TB_Regm * tb) {
+  Vregm * core = tb->core;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
     uint32_t value = rand();
-    testbench_set_register(&tb, i, value); 
+    tb->set_register(i, value); 
 
     // set core inputs
     core->raddr2_i = i;
     core->write_i = 0;
-    testbench_tick(&tb);
+    tb->tick();
 
     if(core->rdata2_o != value) {
       printf("[tb_regm_read_port_b]: Reading from register %d on port B. expected 0x%x, got 0x%x\n", i, value, core->rdata2_o);
     }
   }
-  
-  // reset register x0
-  testbench_set_register(&tb, 0, 0);
 
-  /*************************************************************
-   * testbench:   tb_regm_write_x0
-   * description: 
-   *  Write to the x0 register
-   ************************************************************/
+  // reset register x0
+  tb->set_register(0, 0);
+}
+
+void tb_regm_write_x0(TB_Regm * tb) {
+  Vregm * core = tb->core;
+  // write to x0
   core->waddr_i = 0;
   core->wdata_i = rand();
   core->write_i = 1;
-  testbench_tick(&tb);
+  tb->tick();
+
   // read back x0
   core->raddr1_i = 0;
   core->write_i = 0;
-  testbench_tick(&tb);
+  tb->tick();
+
   if(core->rdata1_o != 0) {
     printf("[tb_regm_write_x0]: While writing into register x0. Reading back, expected 0x0, got 0x%x\n", core->rdata1_o);
   }
+}
 
-  /*************************************************************
-   * testbench:   tb_regm_write
-   * description: 
-   *  Write to the each register then read back from them
-   ************************************************************/
+void tb_regm_write(TB_Regm * tb) {
+  Vregm * core = tb->core;
   for(int i = 1; i < 32; i++) {
+    // write a random value
     uint32_t value = rand();
     core->waddr_i = i;
     core->wdata_i = value;
     core->write_i = 1;
-    testbench_tick(&tb);
+    tb->tick();
 
+    // read back the register
     core->raddr1_i = i;
     core->write_i = 0;
-    testbench_tick(&tb);
+    tb->tick();
 
     if(core->rdata1_o != value) {
       printf("[tb_regm_write]: While writing into register %i. Reading back, expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
     }
   }
+}
 
-  /*************************************************************
-   * testbench:   tb_regm_parallel_read
-   * description: 
-   *  Read the same register from both ports
-   ************************************************************/
+void tb_regm_parallel_read(TB_Regm * tb) {
+  Vregm * core = tb->core;
+  // set a random value before reading back
   uint32_t value = rand();
-  testbench_set_register(&tb, 5, value);
+  tb->set_register(5, value);
+
+  // reading the same register from both ports
   core->raddr1_i = 5;
   core->raddr2_i = 5;
   core->write_i = 0;
-  testbench_tick(&tb);
+  tb->tick();
+
   if(core->rdata1_o != value) {
     printf("[tb_regm_parallel_read]: Failed reading from port A. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
   }
   if(core->rdata2_o != value) {
     printf("[tb_regm_parallel_read]: Failed reading from port B. expected 0x%x, got 0x%x\n", value, core->rdata2_o);
   }
+}
 
-  /*************************************************************
-   * testbench:   tb_regm_read_before_write
-   * description: 
-   *  Read and write to the same register
-   ************************************************************/
+void tb_regm_read_before_write(TB_Regm * tb) {
+  Vregm * core = tb->core;
+  // write a value in the register
   uint32_t previous_value = rand();
-  value = rand();
-  testbench_set_register(&tb, 5, previous_value);
+  tb->set_register(5, previous_value);
+
+  // read and write to the same register
+  uint32_t value = rand();
   core->raddr1_i = 5;
   core->waddr_i = 5;
   core->wdata_i = value;
   core->write_i = 1;
-  testbench_tick(&tb);
+  tb->tick();
+
+  // check that the read result is the value set at the start
   if(core->rdata1_o != previous_value) {
     printf("[tb_regm_read_before_write]: Failed reading previous value. expected 0x%x, got 0x%x\n", previous_value, core->rdata1_o);
   }
+
+  // read again
   core->write_i = 0;
-  testbench_tick(&tb);
+  tb->tick();
+
+  // check that the read result is the new written value
   if(core->rdata1_o != value) {
     printf("[tb_regm_read_before_write]: Failed reading written value. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
   }
+}
+
+int main(int argc, char ** argv, char ** env) {
+  srand(time(NULL));
+  Verilated::traceEverOn(true);
+
+  TB_Regm * tb = new TB_Regm;
+  tb->open_trace("waves/regm.vcd");
 
   /************************************************************/
 
-  printf("[DONE]\n");
+  tb_regm_read_port_a(tb);
+  
+  tb_regm_read_port_b(tb);
 
-  testbench_delete(&tb);
+  tb_regm_write_x0(tb);
+
+  tb_regm_write(tb);
+
+  tb_regm_parallel_read(tb);
+
+  tb_regm_read_before_write(tb);
+
+  /************************************************************/
+
+  printf("[REGM]: Done\n");
+
+  delete tb;
   exit(EXIT_SUCCESS);
 }
