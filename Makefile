@@ -81,14 +81,14 @@ $(BUILD_LIBS_DIR)/V%.cpp $(BUILD_LIBS_DIR)/V%.h: $(BUILD_LIBS_DIR)/V%.mk ;
 #
 # ================ Compile Verilator C libraries ================
 # 
-VERILATOR_LIBS = verilated verilated_vcd_c verilated_threads
+VERILATOR_LIBS = verilated verilated_vcd_c verilated_threads verilated_dpi
 VERILATOR_LIBS_OBJECTS = $(addsuffix .o, $(VERILATOR_LIBS))
 VERILATOR_LIBS_OBJECTS := $(addprefix $(BUILD_DIR)/, $(VERILATOR_LIBS_OBJECTS))
 $(BUILD_DIR)/verilator.a: $(VERILATOR_LIBS_OBJECTS)
 	ar rcs $@ $(VERILATOR_LIBS_OBJECTS)
 
 $(VERILATOR_LIBS_OBJECTS): $(BUILD_DIR)/%.o : $(VERILATOR_ROOT)/include/%.cpp
-	$(CXX) -Wall -Og -g -I$(VERILATOR_ROOT)/include $^ -c -o $@
+	$(CXX) -Wall -Og -g -I$(VERILATOR_ROOT)/include -I$(VERILATOR_ROOT)/include/vltstd $^ -c -o $@
 
 #
 # ================= Test compilation =================

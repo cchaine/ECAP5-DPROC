@@ -48,9 +48,8 @@ always @ (posedge clk_i) begin
 end
 
 `ifdef VERILATOR
-  task set_register_value;
-    input logic[4:0] addr;
-    input logic[31:0] value;
+  export "DPI-C" task set_register_value;
+  task set_register_value(input logic[4:0] addr, input logic[31:0] value);
     registers[addr] = value;
   endtask
 `endif

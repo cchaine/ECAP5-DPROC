@@ -25,9 +25,9 @@
 #include <time.h>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
+#include <svdpi.h>
 
 #include "Vregm.h"
-//#include "Vregm__Dpi.h"
 #include "testbench.h"
 
 struct testbench_t testbench_init() {
@@ -87,15 +87,12 @@ bool testbench_done(struct testbench_t * tb) {
   return (tb->tickcount > 10);
 }
 
-void testbench_read_test(struct testbench_t * tb, uint8_t raddr) {
-  //Vregm * core = testbench_get_core(tb);
-}
-
-void set_register(struct testbench_t * tb, uint8_t addr, uint32_t value) {
-  //const svScope scope = svGetScopeFromName("TOP.dut");
-  //assert(scope);
-  //svSetScope(scope);
-  //Vregm::set_register_value(addr, value); 
+void testbench_set_register(struct testbench_t * tb, uint8_t addr, uint32_t value) {
+  const svScope scope = svGetScopeFromName("TOP.regm");
+  assert(scope);
+  svSetScope(scope);
+  Vregm * core = testbench_get_core(tb);
+  core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -105,9 +102,132 @@ int main(int argc, char ** argv, char ** env) {
   struct testbench_t tb = testbench_init();
   testbench_open_trace(&tb, "waves/regm.vcd");
 
-  while(!testbench_done(&tb)) {
+  Vregm * core = testbench_get_core(&tb);
+
+  /*************************************************************
+   * testbench:   tb_regm_read_port_a
+   * description: 
+   *  Read each register through port A
+   ************************************************************/
+  for(int i = 0; i < 32; i++) {
+    // set a random value inside the register to be read
+    uint32_t value = rand();
+    testbench_set_register(&tb, i, value); 
+
+    // set core inputs
+    core->raddr1_i = i;
+    core->write_i = 0;
     testbench_tick(&tb);
+
+    if(core->rdata1_o != value) {
+      printf("[tb_regm_read_port_a]: Reading from register %d on port A. expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
+    }
   }
+  
+  /*************************************************************
+   * testbench:   tb_regm_read_port_b
+   * description: 
+   *  Read each register through port B
+   ************************************************************/
+  for(int i = 0; i < 32; i++) {
+    // set a random value inside the register to be read
+    uint32_t value = rand();
+    testbench_set_register(&tb, i, value); 
+
+    // set core inputs
+    core->raddr2_i = i;
+    core->write_i = 0;
+    testbench_tick(&tb);
+
+    if(core->rdata2_o != value) {
+      printf("[tb_regm_read_port_b]: Reading from register %d on port B. expected 0x%x, got 0x%x\n", i, value, core->rdata2_o);
+    }
+  }
+  
+  // reset register x0
+  testbench_set_register(&tb, 0, 0);
+
+  /*************************************************************
+   * testbench:   tb_regm_write_x0
+   * description: 
+   *  Write to the x0 register
+   ************************************************************/
+  core->waddr_i = 0;
+  core->wdata_i = rand();
+  core->write_i = 1;
+  testbench_tick(&tb);
+  // read back x0
+  core->raddr1_i = 0;
+  core->write_i = 0;
+  testbench_tick(&tb);
+  if(core->rdata1_o != 0) {
+    printf("[tb_regm_write_x0]: While writing into register x0. Reading back, expected 0x0, got 0x%x\n", core->rdata1_o);
+  }
+
+  /*************************************************************
+   * testbench:   tb_regm_write
+   * description: 
+   *  Write to the each register then read back from them
+   ************************************************************/
+  for(int i = 1; i < 32; i++) {
+    uint32_t value = rand();
+    core->waddr_i = i;
+    core->wdata_i = value;
+    core->write_i = 1;
+    testbench_tick(&tb);
+
+    core->raddr1_i = i;
+    core->write_i = 0;
+    testbench_tick(&tb);
+
+    if(core->rdata1_o != value) {
+      printf("[tb_regm_write]: While writing into register %i. Reading back, expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
+    }
+  }
+
+  /*************************************************************
+   * testbench:   tb_regm_parallel_read
+   * description: 
+   *  Read the same register from both ports
+   ************************************************************/
+  uint32_t value = rand();
+  testbench_set_register(&tb, 5, value);
+  core->raddr1_i = 5;
+  core->raddr2_i = 5;
+  core->write_i = 0;
+  testbench_tick(&tb);
+  if(core->rdata1_o != value) {
+    printf("[tb_regm_parallel_read]: Failed reading from port A. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
+  }
+  if(core->rdata2_o != value) {
+    printf("[tb_regm_parallel_read]: Failed reading from port B. expected 0x%x, got 0x%x\n", value, core->rdata2_o);
+  }
+
+  /*************************************************************
+   * testbench:   tb_regm_read_before_write
+   * description: 
+   *  Read and write to the same register
+   ************************************************************/
+  uint32_t previous_value = rand();
+  value = rand();
+  testbench_set_register(&tb, 5, previous_value);
+  core->raddr1_i = 5;
+  core->waddr_i = 5;
+  core->wdata_i = value;
+  core->write_i = 1;
+  testbench_tick(&tb);
+  if(core->rdata1_o != previous_value) {
+    printf("[tb_regm_read_before_write]: Failed reading previous value. expected 0x%x, got 0x%x\n", previous_value, core->rdata1_o);
+  }
+  core->write_i = 0;
+  testbench_tick(&tb);
+  if(core->rdata1_o != value) {
+    printf("[tb_regm_read_before_write]: Failed reading written value. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
+  }
+
+  /************************************************************/
+
+  printf("[DONE]\n");
 
   testbench_delete(&tb);
   exit(EXIT_SUCCESS);
