@@ -85,6 +85,8 @@ always_comb begin : wishbone_read
         state_d = REQUEST;
       end
     end
+    default: begin
+    end
   endcase
 end
 

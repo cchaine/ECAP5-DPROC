@@ -36,15 +36,15 @@ module regm (
 
 logic[31:0] registers [31:0];
 
-assign rdata1_o = registers[raddr1_i];
-assign rdata2_o = registers[raddr2_i];
-
 always @ (posedge clk_i) begin
   if (write_i & (waddr_i != 0)) begin
     registers[waddr_i] <= wdata_i;
   end else begin
     registers[waddr_i] <= registers[waddr_i];
   end
+
+  rdata1_o <= registers[raddr1_i];
+  rdata2_o <= registers[raddr2_i];
 end
 
 `ifdef VERILATOR

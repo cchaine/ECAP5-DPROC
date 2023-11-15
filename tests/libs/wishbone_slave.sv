@@ -65,6 +65,8 @@ always_comb begin
       state_d = WAITREQ;
       wb_ack_o = 1;
     end
+    default: begin
+    end
   endcase
 end
 
