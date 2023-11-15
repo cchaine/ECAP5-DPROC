@@ -20,8 +20,53 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-struct testbench_t {
+template<class Module> class Testbench {
+public:
   unsigned long tickcount;
-  void * core;
+  Module * core;
   VerilatedVcdC * trace;
+
+  Testbench() {
+    this->tickcount = 0;
+    this->core = new Module;
+  }
+
+  ~Testbench() {
+    this->core->final();
+    this->trace->close();
+    this->trace = NULL;
+    delete this->core;
+    this->core = NULL;
+  }
+
+  void open_trace(const char * path) {
+    if(this->trace == NULL) {
+      this->trace = new VerilatedVcdC;
+      this->core->trace(this->trace, 99);
+      this->trace->open(path);
+    }
+  }
+
+  void tick() {
+    this->tickcount += 1;
+
+    core->clk_i = 0;
+    core->eval();
+    if(this->trace) {
+      this->trace->dump(10 * this->tickcount - 2);
+    }
+
+    core->clk_i = 1;
+    core->eval();
+    if(this->trace) {
+      this->trace->dump(10 * this->tickcount);
+    }
+
+    core->clk_i = 0;
+    core->eval();
+    if(this->trace) {
+      this->trace->dump(10 * this->tickcount+5);
+      this->trace->flush();
+    }
+  }
 };
