@@ -25,61 +25,35 @@
 #include <time.h>
 #include <verilated.h>
 #include <verilated_vcd_c.h>
+#include <svdpi.h>
 
 #include "Vifm.h"
 #include "testbench.h"
 
-struct testbench_t testbench_init() {
-  struct testbench_t tb;
-  tb.tickcount = 0;
-  tb.core = new Vifm; 
-  return tb;
-}
-
-Vifm * testbench_get_core(struct testbench_t * tb) {
-  return (Vifm*)tb->core;
-}
-
-void testbench_delete(struct testbench_t * tb) {
-  Vifm * core = testbench_get_core(tb);
-  core->final();
-  delete core;
-  tb->core = NULL;
-}
-
-void testbench_tick(struct testbench_t * tb) {
-  Vifm * core = testbench_get_core(tb);
-  tb->tickcount += 1;
-
-  core->clk_i = 0;
-  core->eval();
-
-  core->clk_i = 1;
-  core->eval();
-
-  core->clk_i = 0;
-  core->eval();
-}
-
-bool testbench_done(struct testbench_t * tb) {
-  return (tb->tickcount > 10);
-}
+class TB_Ifm : public Testbench<Vifm> {
+public:
+  void reset() {
+    this->core->rst_i = 1;
+    for(int i = 0; i < 5; i++) {
+      this->tick();
+    }
+  }
+};
 
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
+  Verilated::traceEverOn(true);
 
-  //Verilated::traceEverOn(true);
-  //VerilatedVcdC *m_trace = new VerilatedVcdC;
-  //dut->trace(m_trace, 5);
-  //m_trace->open("waves/ifm.vcd");
+  TB_Ifm * tb = new TB_Ifm;
+  tb->open_trace("waves/ifm.vcd");
 
-  struct testbench_t tb = testbench_init();
+  /************************************************************/
 
-  while(!testbench_done(&tb)) {
-    testbench_tick(&tb);
-  }
 
-  //m_trace->close();
-  testbench_delete(&tb);
+  /************************************************************/
+
+  printf("[IFM]: Done\n");
+
+  delete tb;
   exit(EXIT_SUCCESS);
 }
