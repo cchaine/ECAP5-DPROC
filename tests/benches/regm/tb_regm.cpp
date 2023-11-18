@@ -33,7 +33,7 @@
 class TB_Regm : public Testbench<Vtb_regm> {
 public:
   void set_register(uint8_t addr, uint32_t value) {
-    const svScope scope = svGetScopeFromName("TOP.regm");
+    const svScope scope = svGetScopeFromName("TOP.tb_regm.dut");
     assert(scope);
     svSetScope(scope);
     this->core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
