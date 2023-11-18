@@ -27,18 +27,97 @@
 #include <verilated_vcd_c.h>
 #include <svdpi.h>
 
-#include "Vifm.h"
+#include "Vtb_ifm.h"
 #include "testbench.h"
+#include "Vtb_ifm_tb_ifm.h"
+#include "Vifm_ecap5_dproc_pkg.h"
 
-class TB_Ifm : public Testbench<Vifm> {
+class TB_Ifm : public Testbench<Vtb_ifm> {
 public:
   void reset() {
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
     }
+    this->core->rst_i = 0;
   }
 };
+
+void tb_ifm_no_stall(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
+  tb->reset();
+  core->irq_i = 0;
+  core->drq_i = 0;
+  core->branch_i = 0;
+  core->output_ready_i = 1;
+  tb->tick();
+  // check the boot address
+  tb->check("tb_ifm_no_stall_01",
+      core->tb_ifm->wb_adr_o == Vifm_ecap5_dproc_pkg::boot_address,
+      "Failed to initialize pc after reset");
+
+  // check the memory read request
+  tb->check("tb_ifm_no_stall_02",
+    (core->tb_ifm->wb_stb_o == 1) && (core->tb_ifm->wb_cyc_o == 1),
+    "Failed to perform the memory request");
+
+  // set the injected data
+  uint32_t data = rand();
+  core->injected_data_i = data;
+  // the memory shall have acknowledged the request 
+  tb->tick();
+
+  // check that the request is done and the value is outputed
+  tb->check("tb_ifm_no_stall_03",
+    (core->tb_ifm->wb_stb_o == 0) && (core->tb_ifm->wb_cyc_o == 0),
+    "Failed to end the memory read request");
+
+  // check the stage output
+  tb->check("tb_ifm_no_stall_04",
+    core->output_valid_o == 1,
+    "Failed to output the instruction");
+  
+  // check the stage output instruction
+  tb->check("tb_ifm_no_stall_05",
+    core->instr_o == data,
+    "Wrong outputed instruction");
+
+  tb->tick();
+
+  // check the incremented address
+  tb->check("tb_ifm_no_stall_06",
+    core->tb_ifm->wb_adr_o == (Vifm_ecap5_dproc_pkg::boot_address + 4),
+    "Failed to increment pc");
+  
+  // check the memory read request
+  tb->check("tb_ifm_no_stall_07",
+    (core->tb_ifm->wb_stb_o == 1) && (core->tb_ifm->wb_cyc_o == 1),
+    "Failed to perform the subsequent memory request");
+}
+
+void tb_ifm_memory_stall(TB_Ifm * tb) {
+  tb->reset();
+}
+
+void tb_ifm_memory_wait_state(TB_Ifm * tb) {
+  tb->reset();
+}
+
+void tb_ifm_pipeline_stall(TB_Ifm * tb) {
+  tb->reset();
+}
+
+void tb_ifm_branch(TB_Ifm * tb) {
+  tb->reset();
+}
+
+void tb_ifm_interrupt(TB_Ifm * tb) {
+  tb->reset();
+}
+
+void tb_ifm_debug(TB_Ifm * tb) {
+  tb->reset();
+}
 
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
@@ -48,11 +127,29 @@ int main(int argc, char ** argv, char ** env) {
   tb->open_trace("waves/ifm.vcd");
 
   /************************************************************/
+  
+  tb_ifm_no_stall(tb);
 
+  tb_ifm_memory_stall(tb);
+
+  tb_ifm_memory_wait_state(tb);
+  
+  tb_ifm_pipeline_stall(tb);
+
+  tb_ifm_branch(tb);
+
+  tb_ifm_interrupt(tb);
+
+  tb_ifm_debug(tb);
 
   /************************************************************/
 
-  printf("[IFM]: Done\n");
+  printf("[IFM]: ");
+  if(tb->success) {
+    printf("Done\n");
+  } else {
+    printf("Failed\n");
+  }
 
   delete tb;
   exit(EXIT_SUCCESS);

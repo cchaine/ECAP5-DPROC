@@ -30,7 +30,8 @@ module tb_ifm (
   input   logic        output_ready_i,
   output  logic        output_valid_o,
   output  logic[31:0]  instr_o,
-  input   logic        stall_request_i
+  input   logic        stall_request_i,
+  input   logic[31:0]  injected_data_i
 );
 
 logic[31:0]  wb_adr_o   /* verilator public */ ; 
@@ -66,7 +67,8 @@ wishbone_slave mem (
   .wb_ack_o        (wb_ack_i),
   .wb_cyc_i        (wb_cyc_o),
   .wb_stall_o      (wb_stall_i),
-  .stall_request_i (stall_request_i)
+  .stall_request_i (stall_request_i),
+  .injected_data_i (injected_data_i)
 );
 
 endmodule // top

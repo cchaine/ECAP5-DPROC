@@ -20,15 +20,20 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef TESTBENCH_H
+#define TESTBENCH_H
+
 template<class Module> class Testbench {
 public:
   unsigned long tickcount;
   Module * core;
   VerilatedVcdC * trace;
+  bool success;
 
   Testbench() {
     this->tickcount = 0;
     this->core = new Module;
+    this->success = true;
   }
 
   ~Testbench() {
@@ -69,4 +74,16 @@ public:
       this->trace->flush();
     }
   }
+
+  void check(const char * testbench, bool condition, const char * msg) {
+    printf("[%s]: ", testbench);
+    if(condition) {
+      printf("OK\n");
+    } else {
+      printf("%s\n", msg);
+      this->success = false;
+    }
+  }
 };
+
+#endif

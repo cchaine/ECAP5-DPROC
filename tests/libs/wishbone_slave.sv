@@ -28,21 +28,18 @@ module wishbone_slave (
   output  logic        wb_ack_o,
   input   logic        wb_cyc_i,
   output  logic        wb_stall_o,
-  input   logic        stall_request_i
+  input   logic        stall_request_i,
+  input   logic[31:0]  injected_data_i
 );
-
-logic[31:0] memory[0:15];
 
 enum logic[1:0] {
   WAITREQ,
   STALL, 
   RESPONSE
 } state_d, state_q;
-logic[31:0] dat_d, dat_q;
 
 always_comb begin
   state_d = state_q;
-  dat_d = dat_q;
   wb_ack_o = 0;
   case(state_q)
     WAITREQ: begin
@@ -51,14 +48,12 @@ always_comb begin
           state_d = STALL;
         end else begin
           state_d = RESPONSE;
-          dat_d = {wb_adr_i[29:0], 2'b0};
         end
       end
     end
     STALL: begin
       if(!stall_request_i) begin
         state_d = RESPONSE;
-        dat_d = {wb_adr_i[29:0], 2'b0};
       end
     end
     RESPONSE: begin
@@ -72,17 +67,9 @@ end
 
 always_ff @(posedge clk_i) begin
   state_q  <=  state_d;
-  dat_q    <=  dat_d;
 end
 
 assign wb_stall_o = stall_request_i;
-assign wb_dat_o = dat_q;
-
-// This task is used by Verilator to load
-// the memory during test
-export "DPI-C" task loadmem;
-task loadmem (input logic[3:0] index, input logic[31:0] dat);
-  memory[index] = dat; 
-endtask;
+assign wb_dat_o = injected_data_i;
 
 endmodule

@@ -32,13 +32,13 @@ The table \ref{tab:regm-upstream-requirements} outlines the upstream requirement
 ]
 
 \req{D\_REGM\_READ\_PORT\_01}{
-  The \texttt{rdata1\_o} signal shall be set asynchronously to the value of the register pointed by \texttt{raddr1\_i}.
+  The \texttt{rdata1\_o} signal shall be set synchronously to the value of the register pointed by \texttt{raddr1\_i}.
 }[
   derivedfrom=F\_REGISTERS\_01
 ]
 
 \req{D\_REGM\_READ\_PORT\_02}{
-  The \texttt{rdata2\_o} signal shall be set asynchronously to the value of the register pointed by \texttt{raddr2\_i}.
+  The \texttt{rdata2\_o} signal shall be set synchronously to the value of the register pointed by \texttt{raddr2\_i}.
 }[
   derivedfrom=F\_REGISTERS\_01
 ]

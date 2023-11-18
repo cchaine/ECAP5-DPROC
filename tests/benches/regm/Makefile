@@ -53,6 +53,7 @@ $(BUILD_TEST_DIR)/V%.cpp $(BUILD_TEST_DIR)/V%.h: $(BUILD_TEST_DIR)/V%.mk ;
 # ================ Compile tests ================
 # 
 TEST_LIBRARIES_LINK_ARGS = $(addprefix "-l:", $(TEST_LIBRARIES))
-$(BENCH_BINARIES): $(BUILD_DIR)/% : $(BUILD_SRC_DIR)/Vregm__ALL.a $(BUILD_TEST_DIR)/V%__ALL.a $(BUILD_DIR)/verilator.a $(TEST_LIBRARIES_BINARIES) %.cpp
+TEST_INCLUDE_FILES = $(shell find $(TEST_INC_DIR) -name '*')
+$(BENCH_BINARIES): $(BUILD_DIR)/% : $(BUILD_SRC_DIR)/Vregm__ALL.a $(BUILD_TEST_DIR)/V%__ALL.a $(BUILD_DIR)/verilator.a $(TEST_LIBRARIES_BINARIES) $(TEST_INCLUDE_FILES) %.cpp
 	$(CXX) $(CFLAGS) $*.cpp -L$(BUILD_SRC_DIR) -L$(BUILD_TEST_DIR) -L$(BUILD_LIBS_DIR) -L$(BUILD_DIR) -l:Vregm__ALL.a -l:V$*__ALL.a -l:verilator.a $(TEST_LIBRARIES_LINK_ARGS) -I$(BUILD_SRC_DIR) -I$(TEST_INC_DIR) -o $@
 	cd $(BUILD_DIR) ; $@ 
