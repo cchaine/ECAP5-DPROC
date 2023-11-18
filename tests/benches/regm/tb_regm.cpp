@@ -27,10 +27,10 @@
 #include <verilated_vcd_c.h>
 #include <svdpi.h>
 
-#include "Vregm.h"
+#include "Vtb_regm.h"
 #include "testbench.h"
 
-class TB_Regm : public Testbench<Vregm> {
+class TB_Regm : public Testbench<Vtb_regm> {
 public:
   void set_register(uint8_t addr, uint32_t value) {
     const svScope scope = svGetScopeFromName("TOP.regm");
@@ -41,7 +41,8 @@ public:
 };
 
 void tb_regm_read_port_a(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
+  bool success = true;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
     uint32_t value = rand();
@@ -53,16 +54,21 @@ void tb_regm_read_port_a(TB_Regm * tb) {
     tb->tick();
 
     if(core->rdata1_o != value) {
-      printf("[tb_regm_read_port_a]: Reading from register %d on port A. expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
+      success = false;
     }
   }
+
+  tb->check("tb_regm_read_port_a",
+    success,
+    "Failed to read registers from port A");
 
   // reset register x0
   tb->set_register(0, 0);
 }
 
 void tb_regm_read_port_b(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
+  bool success = true;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
     uint32_t value = rand();
@@ -74,16 +80,20 @@ void tb_regm_read_port_b(TB_Regm * tb) {
     tb->tick();
 
     if(core->rdata2_o != value) {
-      printf("[tb_regm_read_port_b]: Reading from register %d on port B. expected 0x%x, got 0x%x\n", i, value, core->rdata2_o);
+      success = false;
     }
   }
+
+  tb->check("tb_regm_read_port_b",
+    success,
+    "Failed to read registers from port B");
 
   // reset register x0
   tb->set_register(0, 0);
 }
 
 void tb_regm_write_x0(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
   // write to x0
   core->waddr_i = 0;
   core->wdata_i = rand();
@@ -95,13 +105,14 @@ void tb_regm_write_x0(TB_Regm * tb) {
   core->write_i = 0;
   tb->tick();
 
-  if(core->rdata1_o != 0) {
-    printf("[tb_regm_write_x0]: While writing into register x0. Reading back, expected 0x0, got 0x%x\n", core->rdata1_o);
-  }
+  tb->check("tb_regm_write_x0",
+    core->rdata1_o == 0,
+    "Failed to prevent writing to x0");
 }
 
 void tb_regm_write(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
+  bool success = true;
   for(int i = 1; i < 32; i++) {
     // write a random value
     uint32_t value = rand();
@@ -116,13 +127,17 @@ void tb_regm_write(TB_Regm * tb) {
     tb->tick();
 
     if(core->rdata1_o != value) {
-      printf("[tb_regm_write]: While writing into register %i. Reading back, expected 0x%x, got 0x%x\n", i, value, core->rdata1_o);
+      success = false;
     }
   }
+
+  tb->check("tb_regm_write",
+    success,
+    "Failed writing to registers");
 }
 
 void tb_regm_parallel_read(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
   // set a random value before reading back
   uint32_t value = rand();
   tb->set_register(5, value);
@@ -133,16 +148,17 @@ void tb_regm_parallel_read(TB_Regm * tb) {
   core->write_i = 0;
   tb->tick();
 
-  if(core->rdata1_o != value) {
-    printf("[tb_regm_parallel_read]: Failed reading from port A. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
-  }
-  if(core->rdata2_o != value) {
-    printf("[tb_regm_parallel_read]: Failed reading from port B. expected 0x%x, got 0x%x\n", value, core->rdata2_o);
-  }
+  tb->check("tb_regm_parallel_read_01",
+    core->rdata1_o == value,
+    "Failed reading from port A");
+
+  tb->check("tb_regm_parallel_read_02",
+    core->rdata1_o == value,
+    "Failed reading from port B");
 }
 
 void tb_regm_read_before_write(TB_Regm * tb) {
-  Vregm * core = tb->core;
+  Vtb_regm * core = tb->core;
   // write a value in the register
   uint32_t previous_value = rand();
   tb->set_register(5, previous_value);
@@ -156,18 +172,18 @@ void tb_regm_read_before_write(TB_Regm * tb) {
   tb->tick();
 
   // check that the read result is the value set at the start
-  if(core->rdata1_o != previous_value) {
-    printf("[tb_regm_read_before_write]: Failed reading previous value. expected 0x%x, got 0x%x\n", previous_value, core->rdata1_o);
-  }
+  tb->check("tb_regm_read_before_write_01",
+    core->rdata1_o == previous_value,
+    "Failed reading previous value");
 
   // read again
   core->write_i = 0;
   tb->tick();
 
   // check that the read result is the new written value
-  if(core->rdata1_o != value) {
-    printf("[tb_regm_read_before_write]: Failed reading written value. expected 0x%x, got 0x%x\n", value, core->rdata1_o);
-  }
+  tb->check("tb_regm_read_before_write_02",
+    core->rdata1_o == value,
+    "Failed reading the written value");
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -193,7 +209,12 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
-  printf("[REGM]: Done\n");
+  printf("[REGM]: ");
+  if(tb->success) {
+    printf("Done\n");
+  } else {
+    printf("Failed\n");
+  }
 
   delete tb;
   exit(EXIT_SUCCESS);

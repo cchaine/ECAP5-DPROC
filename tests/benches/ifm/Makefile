@@ -46,13 +46,14 @@ all: $(BENCH_BINARIES)
 $(BUILD_TEST_DIR)/V%__ALL.a: $(BUILD_SRC_DIR)/Vifm__ALL.a $(BUILD_TEST_DIR)/V%.cpp $(BUILD_TEST_DIR)/V%.h $(BUILD_TEST_DIR)/V%.mk
 	make -C $(BUILD_TEST_DIR) -f V$*.mk
 $(BUILD_TEST_DIR)/V%.mk: %.sv
-	verilator $(VERILATOR_OPTS) $(VERILATOR_WARNINGS) -I$(PROJECT_ROOT)/src -I$(TEST_LIBS_DIR) --Mdir $(BUILD_TEST_DIR) --prefix V$* -cc $(INCLUDES) $*.sv
+	verilator --trace $(VERILATOR_WARNINGS) -I$(PROJECT_ROOT)/src -I$(TEST_LIBS_DIR) --Mdir $(BUILD_TEST_DIR) --prefix V$* -cc $(INCLUDES) $*.sv
 $(BUILD_TEST_DIR)/V%.cpp $(BUILD_TEST_DIR)/V%.h: $(BUILD_TEST_DIR)/V%.mk ;
 
 #
 # ================ Compile tests ================
 # 
 TEST_LIBRARIES_LINK_ARGS = $(addprefix "-l:", $(TEST_LIBRARIES))
-$(BENCH_BINARIES): $(BUILD_DIR)/% : $(BUILD_SRC_DIR)/Vifm__ALL.a $(BUILD_TEST_DIR)/V%__ALL.a $(BUILD_DIR)/verilator.a $(TEST_LIBRARIES_BINARIES) %.cpp
-	$(CXX) $(CFLAGS) $*.cpp -L$(BUILD_SRC_DIR) -L$(BUILD_TEST_DIR) -L$(BUILD_LIBS_DIR) -L$(BUILD_DIR) -l:Vifm__ALL.a -l:V$*__ALL.a -l:verilator.a $(TEST_LIBRARIES_LINK_ARGS) -I$(BUILD_SRC_DIR) -I$(TEST_INC_DIR) -o $@
+TEST_INCLUDE_FILES = $(shell find $(TEST_INC_DIR) -name '*')
+$(BENCH_BINARIES): $(BUILD_DIR)/% : $(BUILD_SRC_DIR)/Vifm__ALL.a $(BUILD_TEST_DIR)/V%__ALL.a $(BUILD_DIR)/verilator.a $(TEST_LIBRARIES_BINARIES) $(TEST_INCLUDE_FILES) %.cpp
+	$(CXX) $(CFLAGS) $*.cpp -L$(BUILD_SRC_DIR) -L$(BUILD_TEST_DIR) -L$(BUILD_LIBS_DIR) -L$(BUILD_DIR) -l:Vifm__ALL.a -l:V$*__ALL.a -l:verilator.a $(TEST_LIBRARIES_LINK_ARGS) -I$(BUILD_SRC_DIR) -I$(BUILD_TEST_DIR) -I$(TEST_INC_DIR) -o $@
 	cd $(BUILD_DIR) ; $@ 

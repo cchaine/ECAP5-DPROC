@@ -49,7 +49,7 @@ enum logic [1:0] {
   RESPONSE // 2
 } state_d, state_q;
 
-logic[31:0] pc_d, pc_q;
+logic[31:0] pc_d, pc_q /* verilator public */;
 logic[31:0] instr_d, instr_q;
 logic output_valid_d, output_valid_q;
 
