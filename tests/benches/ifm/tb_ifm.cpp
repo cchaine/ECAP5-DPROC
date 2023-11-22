@@ -30,7 +30,7 @@
 #include "Vtb_ifm.h"
 #include "testbench.h"
 #include "Vtb_ifm_tb_ifm.h"
-#include "Vifm_ecap5_dproc_pkg.h"
+#include "Vtb_ifm_ecap5_dproc_pkg.h"
 
 class TB_Ifm : public Testbench<Vtb_ifm> {
 public:
@@ -53,7 +53,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   tb->tick();
   // check the boot address
   tb->check("tb_ifm_no_stall_01",
-      core->tb_ifm->wb_adr_o == Vifm_ecap5_dproc_pkg::boot_address,
+      core->tb_ifm->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address,
       "Failed to initialize pc after reset");
 
   // check the memory read request
@@ -86,7 +86,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
 
   // check the incremented address
   tb->check("tb_ifm_no_stall_06",
-    core->tb_ifm->wb_adr_o == (Vifm_ecap5_dproc_pkg::boot_address + 4),
+    core->tb_ifm->wb_adr_o == (Vtb_ifm_ecap5_dproc_pkg::boot_address + 4),
     "Failed to increment pc");
   
   // check the memory read request
