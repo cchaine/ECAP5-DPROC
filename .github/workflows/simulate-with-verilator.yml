@@ -9,7 +9,6 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  ACTIONS_STEP_DEBUG: true
 
 jobs:
   build:
@@ -22,5 +21,5 @@ jobs:
       run: cmake -B ${{github.workspace}}/build
 
     - name: Build
-      run: make
+      run: make -C ${{github.workspace}}/build
 
