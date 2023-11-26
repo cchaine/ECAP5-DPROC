@@ -11,7 +11,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  build:
+  simulate:
     runs-on: self-hosted
 
     steps:
@@ -23,3 +23,11 @@ jobs:
     - name: Build
       run: make -C ${{github.workspace}}/build
 
+    - name: Generate report
+      run: make -C ${{github.workspace}}/build report
+
+    - name: Upload test report
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report
+        path: ${{github.workspace}}/build/report.html
