@@ -20,9 +20,24 @@
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required(VERSION 3.12)
+include(FetchContent)
 
 project(ECAP5_DPROC VERSION 1.0)
 
+# Find packages
 find_package(verilator HINTS $ENV{VERILATOR_ROOT})
 
+# Download external dependencies
+FetchContent_Declare(ECAP5_TREQ
+  GIT_REPOSITORY https://github.com/cchaine/ECAP5-TREQ  
+  GIT_TAG origin/main
+)
+FetchContent_MakeAvailable(ECAP5_TREQ)
+
 add_subdirectory(tests)
+
+# Define commands for using ECAP5-TREQ
+add_custom_command(
+  OUTPUT report.html
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py gen_report -s ${CMAKE_SOURCE_DIR}/docs/arch/content -m ${CMAKE_SOURCE_DIR}/traceability/matrix.csv -d . -o report.html)
+add_custom_target(report DEPENDS report.html)
