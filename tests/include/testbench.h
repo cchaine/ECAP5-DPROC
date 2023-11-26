@@ -23,6 +23,9 @@
 #ifndef TESTBENCH_H
 #define TESTBENCH_H
 
+// This macro is used to allow easier parsing of all the checks
+#define CHECK(TB, COND, MSG) tb->check(TB, COND, MSG)
+
 template<class Module> class Testbench {
 public:
   unsigned long tickcount;
