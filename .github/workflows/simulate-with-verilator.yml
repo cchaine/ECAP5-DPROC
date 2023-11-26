@@ -24,10 +24,10 @@ jobs:
       run: make -C ${{github.workspace}}/build tests
 
     - name: Generate report
-      run: make -C ${{github.workspace}}/build report
+      run: make -C ${{github.workspace}}/build test_report
 
     - name: Upload test report
       uses: actions/upload-artifact@v3
       with:
         name: test-report
-        path: ${{github.workspace}}/build/report.html
+        path: ${{github.workspace}}/build/test-report.html
