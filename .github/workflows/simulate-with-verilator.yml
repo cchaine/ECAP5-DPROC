@@ -31,3 +31,6 @@ jobs:
       with:
         name: test-report
         path: ${{github.workspace}}/build/test-report.html
+
+    - name: Write summary
+      run: cat ${{github.workspace}}/build/test-report.md >> $GITHUB_STEP_SUMMARY
