@@ -52,12 +52,12 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->output_ready_i = 1;
   tb->tick();
   // check the boot address
-  tb->check("tb_ifm_no_stall_01",
+  CHECK("tb_ifm_no_stall_01",
       core->tb_ifm->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address,
       "Failed to initialize pc after reset");
 
   // check the memory read request
-  tb->check("tb_ifm_no_stall_02",
+  CHECK("tb_ifm_no_stall_02",
     (core->tb_ifm->wb_stb_o == 1) && (core->tb_ifm->wb_cyc_o == 1),
     "Failed to perform the memory request");
 
@@ -68,29 +68,29 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done and the value is outputed
-  tb->check("tb_ifm_no_stall_03",
+  CHECK("tb_ifm_no_stall_03",
     (core->tb_ifm->wb_stb_o == 0) && (core->tb_ifm->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  tb->check("tb_ifm_no_stall_04",
+  CHECK("tb_ifm_no_stall_04",
     core->output_valid_o == 1,
     "Failed to output the instruction");
   
   // check the stage output instruction
-  tb->check("tb_ifm_no_stall_05",
+  CHECK("tb_ifm_no_stall_05",
     core->instr_o == data,
     "Wrong outputed instruction");
 
   tb->tick();
 
   // check the incremented address
-  tb->check("tb_ifm_no_stall_06",
+  CHECK("tb_ifm_no_stall_06",
     core->tb_ifm->wb_adr_o == (Vtb_ifm_ecap5_dproc_pkg::boot_address + 4),
     "Failed to increment pc");
   
   // check the memory read request
-  tb->check("tb_ifm_no_stall_07",
+  CHECK("tb_ifm_no_stall_07",
     (core->tb_ifm->wb_stb_o == 1) && (core->tb_ifm->wb_cyc_o == 1),
     "Failed to perform the subsequent memory request");
 }
@@ -125,6 +125,7 @@ int main(int argc, char ** argv, char ** env) {
 
   TB_Ifm * tb = new TB_Ifm;
   tb->open_trace("waves/ifm.vcd");
+  tb->open_testdata("testdata/ifm.csv");
 
   /************************************************************/
   

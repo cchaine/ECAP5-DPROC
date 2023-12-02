@@ -192,6 +192,7 @@ int main(int argc, char ** argv, char ** env) {
 
   TB_Regm * tb = new TB_Regm;
   tb->open_trace("waves/regm.vcd");
+  tb->open_testdata("testdata/regm.csv");
 
   /************************************************************/
 
