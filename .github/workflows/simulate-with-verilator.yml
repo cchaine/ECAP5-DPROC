@@ -24,7 +24,8 @@ jobs:
       run: ninja -C ${{github.workspace}}/build build
 
     - name: Simulate
-      run: ninja -C ${{github.workspace}}/build -k tests
+      # Enable -k option to simulate every module even if one fails
+      run: ninja -C ${{github.workspace}}/build -k 0 tests
       continue-on-error: true
 
     - name: Generate reports
