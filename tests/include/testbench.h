@@ -91,7 +91,11 @@ public:
   void check(const char * testbench, bool condition, const char * msg) {
     if(this->testdata_path != NULL) {
       FILE * f = fopen(this->testdata_path, "a");
-      fprintf(f, "%s;%d;%s\n", testbench, !condition, msg);
+      if(condition) {
+        fprintf(f, "%s;%d\n", testbench, true);
+      } else {
+        fprintf(f, "%s;%d;%s\n", testbench, false, msg);
+      }
       fclose(f);
     } else {
       printf("[%s]: ", testbench);
