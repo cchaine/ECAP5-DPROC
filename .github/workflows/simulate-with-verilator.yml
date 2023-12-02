@@ -24,7 +24,7 @@ jobs:
       run: make -C ${{github.workspace}}/build build
 
     - name: Simulate
-      run: make -C ${{github.workspace}}/build tests
+      run: make -C ${{github.workspace}}/build -k tests
 
     - name: Generate reports
       if: (steps.simulate.outcome == 'failure') || (steps.simulate.output == 'success')
