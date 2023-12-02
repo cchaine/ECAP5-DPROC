@@ -30,7 +30,7 @@ jobs:
       run: >-
         ninja -C ${{github.workspace}}/build -k 0 tests &&
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
-        grep -qe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*
+        (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
     - name: Generate reports
       run: ninja -C ${{github.workspace}}/build md_report
