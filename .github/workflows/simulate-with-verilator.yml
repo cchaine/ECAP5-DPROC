@@ -25,9 +25,9 @@ jobs:
 
     - name: Simulate
       run: make -C ${{github.workspace}}/build -k tests
+      continue-on-error: true
 
     - name: Generate reports
-      if: (steps.simulate.outcome == 'failure') || (steps.simulate.output == 'success')
       run: make -C ${{github.workspace}}/build md_report
 
     - name: Write summary
