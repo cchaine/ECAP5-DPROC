@@ -20,14 +20,20 @@ jobs:
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build
 
-    - name: Build
-      run: make -C ${{github.workspace}}/build
+    - name: Simulate
+      run: make -C ${{github.workspace}}/build tests
 
-    - name: Generate report
-      run: make -C ${{github.workspace}}/build report
+    - name: Generate html report
+      run: make -C ${{github.workspace}}/build html_report
 
     - name: Upload test report
       uses: actions/upload-artifact@v3
       with:
         name: test-report
-        path: ${{github.workspace}}/build/report.html
+        path: ${{github.workspace}}/build/test-report.html
+
+    - name: Generate markdown report
+      run: make -C ${{github.workspace}}/build md_report
+
+    - name: Write summary
+      run: cat ${{github.workspace}}/build/test-report.md >> $GITHUB_STEP_SUMMARY

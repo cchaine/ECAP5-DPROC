@@ -26,7 +26,9 @@ set(LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
 
 set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh)
 
-function(add_testbench module)
+set(TEST_TARGETS)
+
+macro(add_testbench module)
   set(TARGET tb_${module})
   cmake_parse_arguments(TESTBENCH ""
                                   ""
@@ -45,18 +47,24 @@ function(add_testbench module)
             ${TESTBENCH_LIBS}
     INCLUDE_DIRS ${SRC_DIR}
     TRACE)
-  # Create the check_${module} command to run the test
+
+  set(TEST_TARGET simulate_${module})
+  # Create the ${TEST_TARGET} command to run the test
   get_target_property(BINARY_DIR "${TARGET}" BINARY_DIR)
-  add_custom_target(check_${module}
+  add_custom_target(${TEST_TARGET}
     COMMAND ${TARGET}
     DEPENDS ${TARGET}
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
-endfunction()
+  # Add the ${TEST_TARGET} target to the test targets
+  list(APPEND TEST_TARGETS ${TEST_TARGET})
+endmacro()
 
 add_testbench(regm)
 add_testbench(ifm LIBS wishbone_slave)
 
+add_custom_target(tests)
+add_dependencies(tests ${TEST_TARGETS})
+
 # Create folders for the waves and testdata
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/waves)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testdata)
-

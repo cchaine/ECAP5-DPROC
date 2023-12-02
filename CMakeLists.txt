@@ -38,6 +38,14 @@ add_subdirectory(tests)
 
 # Define commands for using ECAP5-TREQ
 add_custom_command(
-  OUTPUT report.html
-  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py gen_report -s ${CMAKE_SOURCE_DIR}/docs/arch/content -m ${CMAKE_SOURCE_DIR}/traceability/matrix.csv -d . -o report.html)
-add_custom_target(report DEPENDS report.html)
+  OUTPUT test-report.html
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json -f html gen_test_report -o ${CMAKE_BINARY_DIR}/test-report.html)
+add_custom_target(html_report DEPENDS test-report.html)
+add_custom_command(
+  OUTPUT test-report.md
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json -f markdown gen_test_report -o ${CMAKE_BINARY_DIR}/test-report.md)
+add_custom_target(md_report DEPENDS test-report.md)
+
+
