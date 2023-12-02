@@ -125,6 +125,7 @@ int main(int argc, char ** argv, char ** env) {
 
   TB_Ifm * tb = new TB_Ifm;
   tb->open_trace("waves/ifm.vcd");
+  tb->open_testdata("testdata/ifm.csv");
 
   /************************************************************/
   
