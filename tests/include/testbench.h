@@ -103,8 +103,11 @@ public:
         printf("OK\n");
       } else {
         printf("%s\n", msg);
-        this->success = false;
       }
+    }
+
+    if(!condition) {
+        this->success = false;
     }
   }
 };

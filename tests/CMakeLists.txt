@@ -31,6 +31,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testdata)
 
 set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh)
 
+set(TEST_BINARIES)
 set(TEST_TARGETS)
 set(TEST_OUTPUTS)
 
@@ -65,12 +66,15 @@ macro(add_testbench module)
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
   add_custom_target(${TEST_TARGET} DEPENDS ${TEST_OUTPUT})
   # Add the ${TEST_TARGET} target to the test targets
+  list(APPEND TEST_BINARIES ${TARGET})
   list(APPEND TEST_TARGETS ${TEST_TARGET})
   list(APPEND TEST_OUTPUTS ${TEST_OUTPUT})
 endmacro()
 
 add_testbench(regm)
 add_testbench(ifm LIBS wishbone_slave)
+
+add_custom_target(build DEPENDS ${TEST_BINARIES})
 
 add_custom_target(tests DEPENDS ${TEST_TARGETS})
 
