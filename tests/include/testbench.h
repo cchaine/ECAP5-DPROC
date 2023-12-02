@@ -83,7 +83,15 @@ public:
     if(condition) {
       printf("OK\n");
     } else {
-      printf("%s\n", msg);
+      printf("[%s]: ", testbench);
+      if(condition) {
+        printf("OK\n");
+      } else {
+        printf("%s\n", msg);
+      }
+    }
+
+    if(!condition) {
       this->success = false;
     }
   }
