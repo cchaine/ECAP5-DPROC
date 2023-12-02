@@ -38,4 +38,5 @@ jobs:
       run: ninja -C ${{github.workspace}}/build md_report
 
     - name: Write summary
+      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-report.md >> $GITHUB_STEP_SUMMARY
