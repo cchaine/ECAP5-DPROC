@@ -24,6 +24,7 @@ jobs:
       run: ninja -C ${{github.workspace}}/build build
 
     - name: Simulate
+      id: simulate
       # Enable -k option to simulate every module even if one fails
       # Checks if there is any testdata
       # Check if there is any fail in that testdata
