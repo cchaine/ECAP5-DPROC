@@ -27,7 +27,7 @@ jobs:
       run: make -C ${{github.workspace}}/build tests
 
     - name: Generate reports
-      if: always()
+      if: (steps.simulate.outcome == 'failure') || (steps.simulate.output == 'success')
       run: make -C ${{github.workspace}}/build md_report
 
     - name: Write summary
