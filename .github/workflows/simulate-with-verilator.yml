@@ -25,11 +25,11 @@ jobs:
 
     - name: Simulate
       # Enable -k option to simulate every module even if one fails
+      # Checks if there is any testdata
+      # Check if there is any fail in that testdata
       run: >-
         ninja -C ${{github.workspace}}/build -k 0 tests &&
-        # Checks if there is any testdata
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
-        # Check if there is any fail in that testdata
         grep -qe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*
 
     - name: Generate reports
