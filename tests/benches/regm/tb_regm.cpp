@@ -210,16 +210,13 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
-  int return_code;
   printf("[REGM]: ");
   if(tb->success) {
     printf("Done\n");
-    return_code = EXIT_SUCCESS;
   } else {
     printf("Failed\n");
-    return_code = EXIT_FAILURE;
   }
 
   delete tb;
-  exit(return_code);
+  exit(EXIT_SUCCESS);
 }
