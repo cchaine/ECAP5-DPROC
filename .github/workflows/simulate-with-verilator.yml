@@ -31,7 +31,6 @@ jobs:
         ninja -C ${{github.workspace}}/build -k 0 tests &&
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
-      continue-on-error: true
 
     - name: Generate reports
       if: ${{ (steps.simulate.outcome == "success") || (steps.simulate.outcome == "failure") }}
