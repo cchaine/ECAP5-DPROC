@@ -55,3 +55,8 @@ endfunction()
 
 add_testbench(regm)
 add_testbench(ifm LIBS wishbone_slave)
+
+# Create folders for the waves and testdata
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/waves)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testdata)
+

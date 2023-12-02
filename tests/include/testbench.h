@@ -32,11 +32,13 @@ public:
   Module * core;
   VerilatedVcdC * trace;
   bool success;
+  const char * testdata_path;
 
   Testbench() {
     this->tickcount = 0;
     this->core = new Module;
     this->success = true;
+    this->testdata_path = NULL;
   }
 
   ~Testbench() {
@@ -78,13 +80,27 @@ public:
     }
   }
 
+  void open_testdata(const char * path) {
+    this->testdata_path = path;
+    // open the file to clear the content
+    FILE * f = fopen(this->testdata_path, "w");
+    assert(f);
+    fclose(f);
+  }
+
   void check(const char * testbench, bool condition, const char * msg) {
-    printf("[%s]: ", testbench);
-    if(condition) {
-      printf("OK\n");
+    if(this->testdata_path != NULL) {
+      FILE * f = fopen(this->testdata_path, "a");
+      fprintf(f, "%s;%d;%s\n", testbench, condition, msg);
+      fclose(f);
     } else {
-      printf("%s\n", msg);
-      this->success = false;
+      printf("[%s]: ", testbench);
+      if(condition) {
+        printf("OK\n");
+      } else {
+        printf("%s\n", msg);
+        this->success = false;
+      }
     }
   }
 };
