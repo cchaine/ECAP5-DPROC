@@ -34,7 +34,7 @@ jobs:
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
     - name: Generate reports
-      if: ${{ steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure' }}
+      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: ninja -C ${{github.workspace}}/build md_report
 
     - name: Write summary
