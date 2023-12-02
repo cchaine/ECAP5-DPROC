@@ -24,6 +24,7 @@ jobs:
       run: make -C ${{github.workspace}}/build tests
 
     - name: Generate reports
+      if: always()
       run: make -C ${{github.workspace}}/build reports
 
     - name: Upload test report
