@@ -100,7 +100,6 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 }
 
 void tb_ifm_memory_wait_state(TB_Ifm * tb) {
-  ze
   tb->reset();
 }
 
