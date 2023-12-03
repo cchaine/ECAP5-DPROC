@@ -80,16 +80,8 @@ add_custom_target(tests DEPENDS ${TEST_TARGETS})
 
 # Define commands for using ECAP5-TREQ
 add_custom_command(
-  OUTPUT test-report.html
+  OUTPUT test-summary.md
   DEPENDS ${TEST_OUTPUTS}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json -f html gen_test_report -o ${CMAKE_BINARY_DIR}/test-report.html)
-add_custom_target(html_report DEPENDS test-report.html)
-add_custom_command(
-  OUTPUT test-report.md
-  DEPENDS ${TEST_OUTPUTS}
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json -f markdown gen_test_report -o ${CMAKE_BINARY_DIR}/test-report.md)
-add_custom_target(md_report DEPENDS test-report.md)
-
-add_custom_target(reports DEPENDS html_report md_report)
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_test_summary -o ${CMAKE_BINARY_DIR}/test-summary.md)
+add_custom_target(test_summary DEPENDS test-summary.md)

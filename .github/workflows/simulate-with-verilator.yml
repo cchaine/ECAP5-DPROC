@@ -33,10 +33,10 @@ jobs:
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
-    - name: Generate reports
+    - name: Generate report
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
-      run: ninja -C ${{github.workspace}}/build html_report
+      run: ninja -C ${{github.workspace}}/build test_summary
 
     - name: Write summary
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
-      run: cat ${{github.workspace}}/build/test-report.html >> $GITHUB_STEP_SUMMARY
+      run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
