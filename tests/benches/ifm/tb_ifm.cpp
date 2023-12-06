@@ -123,9 +123,12 @@ int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
 
+  bool verbose = parse_verbose(argc, argv);
+
   TB_Ifm * tb = new TB_Ifm;
   tb->open_trace("waves/ifm.vcd");
   tb->open_testdata("testdata/ifm.csv");
+  tb->set_debug_log(verbose);
 
   /************************************************************/
   
