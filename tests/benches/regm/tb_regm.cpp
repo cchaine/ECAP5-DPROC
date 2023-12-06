@@ -190,9 +190,13 @@ int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
 
-  TB_Regm * tb = new TB_Regm;
+  // Check arguments
+  bool verbose = parse_verbose(argc, argv);
+
+  TB_Regm * tb = new TB_Regm();
   tb->open_trace("waves/regm.vcd");
   tb->open_testdata("testdata/regm.csv");
+  tb->set_debug_log(verbose);
 
   /************************************************************/
 
