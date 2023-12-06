@@ -33,12 +33,14 @@ public:
   VerilatedVcdC * trace;
   bool success;
   const char * testdata_path;
+  bool debug_log;
 
   Testbench() {
     this->tickcount = 0;
     this->core = new Module;
     this->success = true;
     this->testdata_path = NULL;
+    this->debug_log = false;
   }
 
   ~Testbench() {
@@ -55,6 +57,10 @@ public:
       this->core->trace(this->trace, 99);
       this->trace->open(path);
     }
+  }
+
+  void set_debug_log(bool debug_log) {
+    this->debug_log = debug_log;
   }
 
   void tick() {
@@ -97,7 +103,8 @@ public:
         fprintf(f, "%s;%d;%s\n", testbench, false, msg);
       }
       fclose(f);
-    } else {
+    }
+    if(this->debug_log) {
       printf("[%s]: ", testbench);
       if(condition) {
         printf("OK\n");
@@ -111,5 +118,9 @@ public:
     }
   }
 };
+
+bool parse_verbose(int argc, char ** argv) {
+  return (argc == 2) && (strncmp(argv[1], "-v", 2) == 0);
+}
 
 #endif

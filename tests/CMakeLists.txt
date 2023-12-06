@@ -59,8 +59,11 @@ macro(add_testbench module)
   set(TEST_OUTPUT ${TESTDATA_DIR}/${module}.csv)
   # Create the ${TEST_TARGET} command to run the test
   get_target_property(BINARY_DIR "${TARGET}" BINARY_DIR)
+  if(${DEBUGLOG})
+    set(RUN_TARGET_ARGUMENT "-v")  
+  endif()
   add_custom_command(
-    COMMAND ${TARGET}
+    COMMAND ${TARGET} ${RUN_TARGET_ARGUMENT}
     OUTPUT ${TEST_OUTPUT}
     DEPENDS ${TARGET}
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
