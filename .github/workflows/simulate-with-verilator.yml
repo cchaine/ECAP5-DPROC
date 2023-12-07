@@ -40,3 +40,27 @@ jobs:
     - name: Write summary
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Retreive badge status
+      if: always()
+      run: >-
+           echo "TEST_STATUS=\$ECAP5_TREQ_TEST_STATUS" >> $GITHUB_ENV &&
+           if [[ -z $ECAP5_TREQ_TEST_STATUS ]]; then
+             echo "TEST_IS_FAILED=1" >> $GITHUB_ENV;
+           else
+             echo "TEST_IS_FAILED=0" >> $GITHUB_ENV;
+           fi 
+
+    - name: Create test status badge
+      if: always()
+      uses: schneegans/dynamic-badges-action@v1.7.0
+      with:
+        auth: ${{ secrets.GIST_SECRET }}
+        gistID: 32195ea7fa70c0218ef3f9952504c59e
+        filename: test-badge.json
+        label: Test status
+        message: ${{ env.TEST_STATUS }}%
+        valColorRange: ${{ env.TEST_STATUS }}
+        maxColorRange: 100
+        minColorRange: 0
+        isError: ${{ env.TEST_IS_FAILED }}
