@@ -46,7 +46,7 @@ jobs:
       run: >-
            echo "TEST_RESULT=\"`cat ${{github.workspace}}/build/test-result.log`\"" >> $GITHUB_ENV &&
            echo "TEST_STATUS=${{ env.TEST_STATUS }}%" >> $GITHUB_ENV &&
-           if [[ -z "${{TEST_RESULT}}" ]]; then
+           if [[ -z "${{env.TEST_RESULT}}" ]]; then
              echo "TEST_IS_FAILED=true" >> $GITHUB_ENV;
              echo "TEST_STATUS=Failed" >> $GITHUB_ENV;
              echo "BADGE_COLOR=0" >> $GITHUB_ENV;
