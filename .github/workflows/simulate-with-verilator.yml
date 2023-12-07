@@ -41,29 +41,11 @@ jobs:
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
 
-    - name: Retreive badge status
-      if: always()
-      run: >-
-           echo "TEST_RESULT=\"`cat ${{github.workspace}}/build/test-result.log`\"" >> $GITHUB_ENV &&
-           echo "TEST_STATUS=${{ env.TEST_STATUS }}%" >> $GITHUB_ENV &&
-           if [[ -z "${{env.TEST_RESULT}}" ]]; then
-             echo "TEST_IS_FAILED=true" >> $GITHUB_ENV;
-             echo "TEST_STATUS=Failed" >> $GITHUB_ENV;
-             echo "BADGE_COLOR=0" >> $GITHUB_ENV;
-           else
-             echo "TEST_IS_FAILED=false" >> $GITHUB_ENV;
-             echo "BADGE_COLOR=100" >> $GITHUB_ENV;
-           fi 
-
     - name: Create test status badge
       if: always()
-      uses: schneegans/dynamic-badges-action@v1.6.0
+      uses: exuanbo/actions-deploy-gist@v1
       with:
-        auth: ${{ secrets.GIST_SECRET }}
-        gistID: 32195ea7fa70c0218ef3f9952504c59e
-        filename: test-badge.json
-        label: Test status
-        message: ${{ env.TEST_STATUS }}
-        valColorRange: ${{ env.TEST_RESULT }}
-        maxColorRange: ${{ env.BADGE_COLOR }}
-        minColorRange: 0
+        token: ${{ secrets.GIST_SECRET }}
+        gist_id: 32195ea7fa70c0218ef3f9952504c59e
+        file_path: ${{github.workspace}}/build/test-report-badge.json
+        file_type: text 
