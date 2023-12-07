@@ -46,9 +46,9 @@ jobs:
       run: >-
            echo "TEST_STATUS=\$ECAP5_TREQ_TEST_STATUS" >> $GITHUB_ENV &&
            if [[ -z $ECAP5_TREQ_TEST_STATUS ]]; then
-             echo "TEST_IS_FAILED=1" >> $GITHUB_ENV;
+             echo "TEST_IS_FAILED=true" >> $GITHUB_ENV;
            else
-             echo "TEST_IS_FAILED=0" >> $GITHUB_ENV;
+             echo "TEST_IS_FAILED=false" >> $GITHUB_ENV;
            fi 
 
     - name: Create test status badge
