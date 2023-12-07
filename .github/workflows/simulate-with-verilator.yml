@@ -44,7 +44,7 @@ jobs:
     - name: Retreive badge status
       if: always()
       run: >-
-           echo "TEST_RESULT=$ECAP5_TREQ_TEST_STATUS" >> $GITHUB_ENV &&
+           echo "TEST_RESULT=\"`cat ${{github.workspace}}/build/test-result.log`\"" >> $GITHUB_ENV &&
            echo "TEST_STATUS=${{ env.TEST_STATUS }}" >> $GITHUB_ENV &&
            if [[ -z "$ECAP5_TREQ_TEST_STATUS" ]]; then
              echo "TEST_IS_FAILED=true" >> $GITHUB_ENV;
@@ -61,7 +61,7 @@ jobs:
         gistID: 32195ea7fa70c0218ef3f9952504c59e
         filename: test-badge.json
         label: Test status
-        message: ${{ env.TEST_STATUS }}%
+        message: ${{ env.TEST_STATUS }}
         valColorRange: ${{ env.TEST_RESULT }}
         maxColorRange: 100
         minColorRange: 0
