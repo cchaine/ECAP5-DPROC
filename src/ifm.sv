@@ -41,7 +41,7 @@ module ifm
   output  logic        output_valid_o,
   output  logic[31:0]  instr_o
 );
-import ecap5_dproc_pkg::*; 
+import ecap5_dprfoc_pkg::*; 
 
 enum logic [1:0] {
   INIT,     // 0
