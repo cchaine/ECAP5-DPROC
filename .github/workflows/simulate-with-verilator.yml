@@ -46,7 +46,7 @@ jobs:
       run: >-
         if [ ! -f "build/test-report-badge.json" ]; then
           mkdir -p build &&
-          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"Red\"}" > build/test-report-badge.json;
+          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-report-badge.json;
         fi
 
     - name: Create test status badge
