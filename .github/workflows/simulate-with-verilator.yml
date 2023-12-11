@@ -47,5 +47,5 @@ jobs:
       with:
         token: ${{ secrets.GIST_SECRET }}
         gist_id: 32195ea7fa70c0218ef3f9952504c59e
-        file_path: ${{github.workspace}}/build/test-report-badge.json
+        file_path: build/test-report-badge.json
         file_type: text 
