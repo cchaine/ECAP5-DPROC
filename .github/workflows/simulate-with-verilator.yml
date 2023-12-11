@@ -41,6 +41,14 @@ jobs:
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
 
+    - name: Generate failing badge
+      if: always()
+      run: >-
+        if [ ! -f "build/test-report-badge.json" ]; then
+          mkdir -p build &&
+          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"Red\"}" > build/test-report-badge.json;
+        fi
+
     - name: Create test status badge
       if: always()
       uses: exuanbo/actions-deploy-gist@v1
