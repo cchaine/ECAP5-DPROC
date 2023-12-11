@@ -20,7 +20,7 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module exm import ecap5_dproc_pkg::*;
+module exm import ecap5_dprooc_pkg::*;
 (
   input   logic        clk_i,
   // Input logic
