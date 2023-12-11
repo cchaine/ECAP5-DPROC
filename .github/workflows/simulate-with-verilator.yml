@@ -40,3 +40,20 @@ jobs:
     - name: Write summary
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Create test badge
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      run: >-
+        if [ ! -f "build/test-report-badge.json" ]; then
+          mkdir -p build &&
+          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-report-badge.json;
+        fi
+
+    - name: Upload test status badge
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.GIST_SECRET }}
+        gist_id: 32195ea7fa70c0218ef3f9952504c59e
+        file_path: build/test-report-badge.json
+        file_type: text 
