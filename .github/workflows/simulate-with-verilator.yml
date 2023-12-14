@@ -64,11 +64,9 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
     - name: Generate report
-      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: ninja -C ${{github.workspace}}/build test_summary
 
     - name: Write summary
-      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
 
     - name: Create test badge
