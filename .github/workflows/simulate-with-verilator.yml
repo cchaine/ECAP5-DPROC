@@ -34,14 +34,14 @@ jobs:
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
     - name: Cache simulation results
+      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       uses: actions/cache/save@v3
       env:
         cache-name: simulation-results
         cache-folder-path: ${{github.workspace}}/build/tests/testdata
       with:
         paths: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles(env.cache-folder-path) }}
-        restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
   report:
     runs-on: self-hosted
@@ -60,7 +60,7 @@ jobs:
         cache-folder-path: ${{github.workspace}}/build/tests/testdata
       with:
         paths: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-build-${{ env.cache-name }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
     - name: Generate report
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
