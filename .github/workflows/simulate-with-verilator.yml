@@ -40,12 +40,13 @@ jobs:
         cache-name: simulation-results
         cache-folder-path: ${{github.workspace}}/build/tests/testdata
       with:
-        paths: ${{ env.cache-folder-path }}
+        path: ${{ env.cache-folder-path }}
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
   report:
     runs-on: self-hosted
     needs: simulate
+    if: always()
 
     steps:
     - uses: actions/checkout@v3
@@ -59,7 +60,7 @@ jobs:
         cache-name: simulation-results
         cache-folder-path: ${{github.workspace}}/build/tests/testdata
       with:
-        paths: ${{ env.cache-folder-path }}
+        path: ${{ env.cache-folder-path }}
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
     - name: Generate report
