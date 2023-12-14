@@ -40,11 +40,12 @@ jobs:
         cache-folder-path: ${{github.workspace}}/build/tests/testdata
       with:
         paths: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles(${{ env.cache-folder-path }}) }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles(env.cache-folder-path) }}
         restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
 
   report:
     runs-on: self-hosted
+    needs: simulate
 
     steps:
     - uses: actions/checkout@v3
