@@ -33,6 +33,34 @@ jobs:
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
+    - name: Cache simulation results
+      uses: actions/cache/save@v3
+      env:
+        cache-name: simulation-results
+        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+      with:
+        paths: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles(${{ env.cache-folder-path }}) }}
+        restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}
+
+  report:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -GNinja
+
+    - name: Import simulation results
+      uses: actions/cache/restore@v3
+      env:
+        cache-name: simulation-results
+        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+      with:
+        paths: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}
+
     - name: Generate report
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: ninja -C ${{github.workspace}}/build test_summary
