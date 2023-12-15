@@ -33,12 +33,40 @@ jobs:
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
-    - name: Generate report
+    - name: Cache simulation results
       if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
+      uses: actions/cache/save@v3
+      env:
+        cache-name: simulation-results
+        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
+
+  report:
+    runs-on: self-hosted
+    needs: simulate
+    if: always()
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -GNinja
+
+    - name: Import simulation results
+      uses: actions/cache/restore@v3
+      env:
+        cache-name: simulation-results
+        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
+
+    - name: Generate report
       run: ninja -C ${{github.workspace}}/build test_summary
 
     - name: Write summary
-      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
       run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
 
     - name: Create test badge
