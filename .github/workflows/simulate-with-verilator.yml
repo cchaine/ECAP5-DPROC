@@ -70,9 +70,11 @@ jobs:
       run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
 
     - name: Generate badges
-      if: ${{ && github.ref == 'refs/heads/main' }}
+      run: ninja -C ${{github.workspace}}/build badges;
+
+    - name: Check generated badges
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
       run: >-
-        ninja -C ${{github.workspace}}/build badges;
         if [ ! -f "build/test-result-badge.json" ]; then
           mkdir -p build &&
           echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-result-badge.json;
