@@ -64,24 +64,25 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
 
     - name: Generate report
-      run: ninja -C ${{github.workspace}}/build test_summary
+      run: ninja -C ${{github.workspace}}/build report
 
     - name: Write summary
-      run: cat ${{github.workspace}}/build/test-summary.md >> $GITHUB_STEP_SUMMARY
+      run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
 
-    - name: Create test badge
-      if: ${{ always() && github.ref == 'refs/heads/main' }}
+    - name: Generate badges
+      if: ${{ && github.ref == 'refs/heads/main' }}
       run: >-
-        if [ ! -f "build/test-report-badge.json" ]; then
+        ninja -C ${{github.workspace}}/build badges;
+        if [ ! -f "build/test-result-badge.json" ]; then
           mkdir -p build &&
-          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-report-badge.json;
+          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-result-badge.json;
         fi
 
-    - name: Upload test status badge
+    - name: Upload test result badge
       if: ${{ always() && github.ref == 'refs/heads/main' }}
       uses: exuanbo/actions-deploy-gist@v1
       with:
         token: ${{ secrets.GIST_SECRET }}
         gist_id: 32195ea7fa70c0218ef3f9952504c59e
-        file_path: build/test-report-badge.json
+        file_path: build/test-result-badge.json
         file_type: text 

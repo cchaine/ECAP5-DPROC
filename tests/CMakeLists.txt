@@ -83,8 +83,14 @@ add_custom_target(tests DEPENDS ${TEST_TARGETS})
 
 # Define commands for using ECAP5-TREQ
 add_custom_command(
-  OUTPUT test-summary.md
+  OUTPUT report.md
   DEPENDS ${TEST_OUTPUTS}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_test_summary -o ${CMAKE_BINARY_DIR}/test-summary.md)
-add_custom_target(test_summary DEPENDS test-summary.md)
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_report -o ${CMAKE_BINARY_DIR}/report.md)
+add_custom_target(report DEPENDS report.md)
+add_custom_command(
+  OUTPUT test-result-badge.json
+  DEPENDS ${TEST_OUTPUTS}
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_test_result_badge -o ${CMAKE_BINARY_DIR}/test-result-badge.json)
+add_custom_target(badges DEPENDS test-result-badge.json)
