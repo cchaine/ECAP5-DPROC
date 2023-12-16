@@ -33,12 +33,12 @@ jobs:
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -vqe "[^;]*;0;" ${{github.workspace}}/build/tests/testdata/*)
 
-    - name: Cache simulation results
-      if: ${{ always() && (steps.simulate.outcome == 'success' || steps.simulate.outcome == 'failure') }}
+    - name: Cache build directory
+      if: always()
       uses: actions/cache/save@v3
       env:
-        cache-name: simulation-results
-        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+        cache-name: build-directory
+        cache-folder-path: ${{github.workspace}}/build
       with:
         path: ${{ env.cache-folder-path }}
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
@@ -51,14 +51,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -GNinja
-
-    - name: Import simulation results
+    - name: Import build directory
       uses: actions/cache/restore@v3
       env:
-        cache-name: simulation-results
-        cache-folder-path: ${{github.workspace}}/build/tests/testdata
+        cache-name: build-directory
+        cache-folder-path: ${{github.workspace}}/build
       with:
         path: ${{ env.cache-folder-path }}
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
@@ -70,6 +67,7 @@ jobs:
       run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
 
     - name: Generate badges
+      if: ${{ github.ref == 'refs/heads/main' }}
       run: ninja -C ${{github.workspace}}/build badges;
 
     - name: Check generated badges
