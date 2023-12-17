@@ -41,7 +41,7 @@ jobs:
         cache-folder-path: ${{github.workspace}}/build
       with:
         path: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_attempt }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
   report:
     runs-on: self-hosted
@@ -58,7 +58,7 @@ jobs:
         cache-folder-path: ${{github.workspace}}/build
       with:
         path: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_attempt }}
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     - name: Generate report
       run: ninja -C ${{github.workspace}}/build report
