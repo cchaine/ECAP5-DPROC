@@ -5,12 +5,12 @@ no_stall_04
 no_stall_05
 no_stall_06
 no_stall_07
-read_port_a
-read_port_b
+read_port_a;D_REGM_READ_PORT_01
+read_port_b;D_REGM_READ_PORT_02
 write_x0
 write
 parallel_read_01
 parallel_read_02
 read_before_write_01
 read_before_write_02
-__UNTRACEABLE__
+__UNTRACEABLE__;U_MEMORY_INTERFACE_03
