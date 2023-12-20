@@ -66,6 +66,9 @@ jobs:
     - name: Write summary
       run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
 
+    - name: Check for report errors
+      run: (! grep -qe "\[\!CAUTION\]" ${{github.workspace}}/build/report.md)
+
     - name: Generate badges
       if: ${{ github.ref == 'refs/heads/main' }}
       run: ninja -C ${{github.workspace}}/build badges;
