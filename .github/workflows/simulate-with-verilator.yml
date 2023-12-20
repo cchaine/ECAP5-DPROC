@@ -89,3 +89,12 @@ jobs:
         gist_id: 32195ea7fa70c0218ef3f9952504c59e
         file_path: build/test-result-badge.json
         file_type: text 
+
+    - name: Upload traceability result badge
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      uses: exuanbo/actions-deploy-gist@v1
+      with:
+        token: ${{ secrets.GIST_SECRET }}
+        gist_id: 32195ea7fa70c0218ef3f9952504c59e
+        file_path: build/traceability-result-badge.json
+        file_type: text 

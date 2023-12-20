@@ -93,7 +93,12 @@ add_custom_command(
   DEPENDS ${TEST_OUTPUTS}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_test_result_badge -o ${CMAKE_BINARY_DIR}/test-result-badge.json)
-add_custom_target(badges DEPENDS test-result-badge.json)
+add_custom_command(
+  OUTPUT traceability-result-badge.json
+  DEPENDS ${TEST_OUTPUTS}
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  COMMAND python3 ${ecap5_treq_SOURCE_DIR}/src/ecap5_treq/main.py -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_traceability_result_badge -o ${CMAKE_BINARY_DIR}/traceability-result-badge.json)
+add_custom_target(badges DEPENDS test-result-badge.json traceability-result-badge.json)
 
 add_custom_command(
   OUTPUT traceability-matrix.csv
