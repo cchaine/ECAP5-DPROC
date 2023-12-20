@@ -38,9 +38,9 @@
 }
 
 \req{I\_IRQ\_01}{
-  ECAP5-DPROC shall jump to a software-configurable address when input IRQ is asserted.
+  ECAP5-DPROC shall interrupt its execution flow when input IRQ is asserted.
 }[
-  derivedfrom={U\_HARDWARE\_INTERRUPT\_01, U\_HARDWARE\_INTERRUPT\_02}
+  derivedfrom=U\_HARDWARE\_INTERRUPT\_01
 ]
 
 \req{I\_DIRQ\_01}{
