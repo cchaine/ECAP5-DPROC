@@ -30,7 +30,7 @@ find_package(verilator HINTS $ENV{VERILATOR_ROOT})
 # Download external dependencies
 FetchContent_Declare(ECAP5_TREQ
   GIT_REPOSITORY https://github.com/cchaine/ECAP5-TREQ  
-  GIT_TAG origin/main
+  GIT_TAG tags/v1.0.0
 )
 FetchContent_MakeAvailable(ECAP5_TREQ)
 
