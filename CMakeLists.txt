@@ -24,15 +24,21 @@ include(FetchContent)
 
 project(ECAP5_DPROC VERSION 1.0)
 
+# Create python virtual env
+set(VENV_DIR ${CMAKE_BINARY_DIR}/venv)
+if(NOT EXISTS "${VENV_DIR}")
+  find_package(Python3 COMPONENTS Interpreter)
+  execute_process(COMMAND "${Python3_EXECUTABLE}" -m venv ${VENV_DIR})
+  set(Python3_FIND_VIRTUALENV ONLY)
+  unset(Python3_EXECUTABLE)
+endif()
+set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
+find_package(Python3 COMPONENTS Interpreter Development)
+
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
+
 # Find packages
 find_package(verilator HINTS $ENV{VERILATOR_ROOT})
-
-# Download external dependencies
-FetchContent_Declare(ECAP5_TREQ
-  GIT_REPOSITORY https://github.com/cchaine/ECAP5-TREQ  
-  GIT_TAG origin/main
-)
-FetchContent_MakeAvailable(ECAP5_TREQ)
 
 add_subdirectory(tests)
 
