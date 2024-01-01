@@ -40,5 +40,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
 # Find packages
 find_package(verilator HINTS $ENV{VERILATOR_ROOT})
 
+add_subdirectory(docs/src)
 add_subdirectory(tests)
 
