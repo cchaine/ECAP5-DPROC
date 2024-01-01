@@ -4,9 +4,9 @@ FetchContent_Declare(ECAP5_TREQ
   GIT_TAG tags/v1.0.0
 )
 FetchContent_MakeAvailable(ECAP5_TREQ)
-if(NOT FOUND ${ecap5_treq_EXECUTABLE})
+if(NOT DEFINED ecap5_treq_EXECUTABLE)
   execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${ecap5_treq_SOURCE_DIR})
-  set(ecap5_treq_EXECUTABLE ${VENV_DIR}/bin/ecap5-treq)
+  set(ecap5_treq_EXECUTABLE ${VENV_DIR}/bin/ecap5-treq CACHE STRING "path to the ecap5-treq executable")
 endif()
 
 # Define commands for using ECAP5-TREQ

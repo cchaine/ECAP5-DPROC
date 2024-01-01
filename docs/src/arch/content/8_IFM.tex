@@ -143,7 +143,7 @@ The table \ref{tab:ifm-upstream-requirements} outlines the upstream requirements
 ]
 
 \req{D\_IFM\_WISHBONE\_CYCLES\_01}{
-  The memory interface shall implement the single read cycle as described in figure \ref{fig:wishbone-single-read-cycle}.
+  The memory interface shall implement the single read cycle as described in figure \ref{fig:ifm-wishbone-single-read-cycle}.
 }[
 ]
 
@@ -151,12 +151,12 @@ The table \ref{tab:ifm-upstream-requirements} outlines the upstream requirements
 
 \begin{figure}[h!]
     \centering
-    \input{arch/figures/wishbone-single-read-cycle}
+    \input{arch/figures/ifm-wishbone-single-read-cycle}
     \caption{Timing diagram of the single read cycle of the wishbone memory interface}
-    \label{fig:wishbone-single-read-cycle}
+    \label{fig:ifm-wishbone-single-read-cycle}
 \end{figure}
 
-\input{arch/tables/wishbone-single-read-cycle}
+\input{arch/tables/ifm-wishbone-single-read-cycle}
 
 \req{D\_IFM\_WISHBONE\_TIMING\_01}{
   The clock input \texttt{clk\_i} shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of \texttt{clk\_i}. All input signals of the memory interface shall be stable before the rising edge of \texttt{clk\_i}.
