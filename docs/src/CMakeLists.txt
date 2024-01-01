@@ -10,18 +10,20 @@ macro(add_document dir)
   set(MAIN_TEX "${WORKINGDIR}/${dir}/${MAIN_TEX_FILENAME}.tex")
   file(GLOB_RECURSE ALL_TEX "*.tex")
 
-  # First pass only run once.
   set(PREBUILD_OUTPUTS ${LATEX_OUTPUT_PATH}/${MAIN_TEX_FILENAME}.aux
                        ${LATEX_OUTPUT_PATH}/${MAIN_TEX_FILENAME}.out
                        ${LATEX_OUTPUT_PATH}/${MAIN_TEX_FILENAME}.toc)
+  # First and second pass
   add_custom_command(
     OUTPUT ${PREBUILD_OUTPUTS}
+    COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} -draftmode -interaction=nonstopmode ${MAIN_TEX}
+    # The command is run twice to fix references
     COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} -draftmode -interaction=nonstopmode ${MAIN_TEX}
     COMMENT "Starting Prebuild"
     WORKING_DIRECTORY ${WORKINGDIR}
     DEPENDS ${ALL_TEX})
   add_custom_target(docs-${dir}-prebuild DEPENDS ${PREBUILD_OUTPUTS})
-  # Second pass - generate the final pdf
+  # Final pass - generate the final pdf
   add_custom_command(
     OUTPUT ${LATEX_OUTPUT_PATH}/${MAIN_TEX_FILENAME}.pdf
     COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} ${MAIN_TEX}

@@ -24,7 +24,7 @@ jobs:
       run: make -C ${{github.workspace}}/build docs
 
     - name: Check generated documentation
-      run: (! grep "LaTeX Warning" ${{github.workspace}}/build/docs/**/*.log)
+      run: (! grep -H "LaTeX Warning" ${{github.workspace}}/build/docs/**/*.log)
 
   simulate:
     runs-on: self-hosted
