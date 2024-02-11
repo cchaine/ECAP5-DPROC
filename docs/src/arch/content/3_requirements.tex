@@ -2,13 +2,6 @@
 
   \subsection{External Interface Requirements}
 
-    \begin{figure}[h!]
-        \centering
-        \input{arch/figures/external-interface.tex}
-        \caption{Schematic view of the external interface of ECAP5-DPROC}
-        \label{fig:externalinterface}
-      \end{figure}
-
     \begin{table}[H]
         \centering
         \input{arch/tables/control-interface.tex}
@@ -16,36 +9,27 @@
         \label{tab:control-interface}
       \end{table}
 
-    \begin{table}[H]
-        \centering
-        \input{arch/tables/memory-interface.tex}
-        \caption{ECAP5-DPROC memory interface signals}
-        \label{tab:memory-interface}
-      \end{table}
-
     \req{I\_CLK\_01}{
-        All inputs and outputs of ECAP5-DPROC shall belong to CLK's clock domain.
+        All inputs and outputs of ECAP5-DPROC shall belong to clk\_i's clock domain.
       }
 
     \req{I\_RESET\_01}{
-        The RST\_N signal shall hold ECAP5-DPROC in a reset state while asserted.
+        The rst\_i signal shall hold ECAP5-DPROC in a reset state while asserted.
       }[
         derivedfrom=U\_RESET\_01
       ]
 
-    \req{I\_RESET\_02}{
-        RST\_N polarity shall be active low.
-      }
-
     \req{I\_IRQ\_01}{
-        ECAP5-DPROC shall interrupt its execution flow when input IRQ is asserted.
+        ECAP5-DPROC shall interrupt its execution flow when input irq\_i is asserted.
       }[
         derivedfrom=U\_HARDWARE\_INTERRUPT\_01
       ]
 
-    \req{I\_DIRQ\_01}{
+    \req{I\_DRQ\_01}{
         TBC
       }
+
+    \input{arch/tables/memory-interface.tex}
 
     \req{I\_MEMORY\_INTERFACE\_01}{
         Signals from table \ref{tab:memory-interface} shall be compliant with the Wishbone specification.
@@ -962,27 +946,28 @@
             derivedfrom=U\_MEMORY\_INTERFACE\_02
           ]
 
-        \req{F\_WISHBONE\_ACK\_01}{
-            The memory interface shall operate normally when \texttt{ack\_i} is held in the asserted state.
+        \req{F\_WISHBONE\_HANDSHAKE\_01}{
+            The memory interface shall accept wb\_ack\_i signals at any time after a transaction is initiated.
           }[
             derivedfrom=U\_MEMORY\_INTERFACE\_02
           ]
 
-        \req{F\_WISHBONE\_STB\_01}{
-            The following signals shall be valid when \texttt{stb\_o} is asserted : \texttt{adr\_o}, \texttt{dat\_o}, \texttt{sel\_o} and \texttt{we\_o}.
+        \req{F\_WISHBONE\_HANDSHAKE\_02}{
+            The memory interface must qualify the following signals with wb\_stb\_o : wb\_adr\_o, wb\_dat\_o, wb\_sel\_o and wb\_we\_o.
           }[
             derivedfrom=U\_MEMORY\_INTERFACE\_02
           ]
 
-        \req{F\_WISHBONE\_CYCLES\_01}{
-            The memory interface shall implement the single read cycle as described in figure \ref{fig:wishbone-single-read-cycle}.
+        \req{F\_WISHBONE\_STALL\_01}{
+            While initiating a request, the memory interface shall hold the state of its outputs until wb\_stall\_i is deasserted.
           }[
-            derivedfrom=U\_MEMORY\_INTERFACE\_02
+            derivedfrom=U\_MEMORY\_INTERFACE\_02,
+            rationale=wb\_stall\_i is asserted to indicate that the request queue is temporary fulle and the request shall be resent.
           ]
 
         \vspace{0.5em}
 
-        \begin{figure}[h!]
+        \begin{figure}[H]
             \centering
             \input{arch/figures/wishbone-single-read-cycle}
             \caption{Timing diagram of the single read cycle of the wishbone memory interface}
@@ -991,15 +976,21 @@
 
         \input{arch/tables/wishbone-single-read-cycle}
 
-        \req{F\_WISHBONE\_CYCLES\_02}{
-            The memory interface shall implement the single write cycle as described in figure \ref{fig:wishbone-single-write-cycle}.
+        \req{F\_WISHBONE\_READ\_CYCLE\_01}{
+            A read transaction shall be started by asserting both wb\_cyc\_o and wb\_stb\_i, and deasserting wb\_we\_o.
+          }[
+            derivedfrom=U\_MEMORY\_INTERFACE\_02
+          ]
+
+        \req{F\_WISHBONE\_READ\_CYCLE\_02}{
+            The memory interface shall conform to the READ cycle detailed in figure \ref{fig:wishbone-single-read-cycle}.
           }[
             derivedfrom=U\_MEMORY\_INTERFACE\_02
           ]
 
         \vspace{0.5em}
 
-        \begin{figure}[h!]
+        \begin{figure}[H]
             \centering
             \input{arch/figures/wishbone-single-write-cycle}
             \caption{Timing diagram of the single write cycle of the wishbone memory interface}
@@ -1008,12 +999,28 @@
 
         \input{arch/tables/wishbone-single-write-cycle}
 
+        \req{F\_WISHBONE\_WRITE\_CYCLE\_01}{
+            A write transaction shall be started by asserting wb\_cyc\_o , wb\_stb\_i and wb\_we\_o.
+          }[
+            derivedfrom=U\_MEMORY\_INTERFACE\_02
+          ]
+
+        \req{F\_WISHBONE\_WRITE\_CYCLE\_02}{
+            The memory interface shall conform to the WRITE cycle detailed in figure \ref{fig:wishbone-single-write-cycle}.
+          }[
+            derivedfrom=U\_MEMORY\_INTERFACE\_02
+          ]
+
         \req{F\_WISHBONE\_TIMING\_01}{
             The clock input \texttt{clk\_i} shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of \texttt{clk\_i}. All input signals of the memory interface shall be stable before the rising edge of \texttt{clk\_i}.
           }[
             derivedfrom=U\_MEMORY\_INTERFACE\_02,
             rationale={As long as the memory interface is designed within the clock domain of \texttt{clk\_i}, the requirement will be satisfied by using the place and route tool.}
           ]
+
+        \begin{content}
+            BLOCK cycles are not supported in revision 1.0.0.
+          \end{content}
 
       \paragraph{Caches}
 
