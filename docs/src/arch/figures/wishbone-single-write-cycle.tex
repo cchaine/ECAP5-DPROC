@@ -10,12 +10,12 @@
     timing/e/background/.style={fill=gray!20},
 ]
 clk\_i & H 3{C C} L \\
-adr\_o & 2U 4D{VALID} 2U \\
+adr\_o & 2U 2D{VALID} 4U \\
 dat\_i & 8U \\
-dat\_o & 2U 4D{VALID} 2U \\
-we\_o & 2L 4H 2L \\
-sel\_o & 2U 4D{VALID} 2U \\
-stb\_o & 2L 4H 2L \\
+dat\_o & 2U 2D{VALID} 4U \\
+we\_o & 2L 2H 4L \\
+sel\_o & 2U 2D{VALID} 4U \\
+stb\_o & 2L 2H 4L \\
 ack\_i & 4L 2H 2L \\
 cyc\_o & 2L 4H 2L \\
 \extracode
