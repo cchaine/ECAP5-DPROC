@@ -1,0 +1,32 @@
+% Event environment
+\newlength{\eventtablelength}
+\setlength{\eventtablelength}{0.9\textwidth}
+\newcommand{\eventcolor}{cyan!40!gray}
+
+\newcommandx{\event}[2]{
+    \begingroup
+    \eventlabel{#1}
+    \begin{center}
+    {
+        \footnotesize
+        \begin{tabularx}{\eventtablelength}{|p{2.5cm}|X|}
+          \hline
+          \cellcolor{\eventcolor!30}\textbf{Event ID} & #1\\
+          \hline
+          \cellcolor{\eventcolor!15}\textbf{Description} & \cellcolor{\eventcolor!5}#2 \\
+          \hline
+        \end{tabularx}
+    }
+    \end{center}
+    \endgroup
+}
+
+\newcommandx{\eventlabel}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \label{event:\temp}
+}
+
+\newcommandx{\eventref}[1]{
+    \protect \StrSubstitute{#1}{\_}{-}[\temp]
+    \hyperref[event:\temp]{#1}
+}
