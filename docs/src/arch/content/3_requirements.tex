@@ -4,7 +4,7 @@
 
     \begin{table}[H]
         \centering
-        \input{arch/tables/control-interface.tex}
+        \input{arch/tables/3_control-interface.tex}
         \caption{ECAP5-DPROC control signals}
         \label{tab:control-interface}
       \end{table}
@@ -29,7 +29,7 @@
         TBC
       }
 
-    \input{arch/tables/memory-interface.tex}
+    \input{arch/tables/3_memory-interface.tex}
 
     \req{I\_MEMORY\_INTERFACE\_01}{
         Signals from table \ref{tab:memory-interface} shall be compliant with the Wishbone specification.
@@ -71,7 +71,7 @@
 
       \begin{figure}[h!]
           \centering
-          \input{arch/figures/instruction-encoding}
+          \input{arch/figures/3_instruction-encoding}
           \caption{Instruction encodings of the RV32I instruction set}
           \label{fig:instructionencoding}
         \end{figure}
@@ -173,7 +173,7 @@
 
       \begin{table}[H]
           \centering
-          \input{arch/tables/opcode-map.tex}
+          \input{arch/tables/3_opcode-map.tex}
           \caption{Opcode values for the RV32I instruction set.}
           \label{tab:opcodemap}
         \end{table}
@@ -969,12 +969,12 @@
 
         \begin{figure}[H]
             \centering
-            \input{arch/figures/wishbone-single-read-cycle}
+            \input{arch/figures/3_wishbone-single-read-cycle}
             \caption{Timing diagram of the single read cycle of the wishbone memory interface}
             \label{fig:wishbone-single-read-cycle}
           \end{figure}
 
-        \input{arch/tables/wishbone-single-read-cycle}
+        \input{arch/tables/3_wishbone-single-read-cycle}
 
         \req{F\_WISHBONE\_READ\_CYCLE\_01}{
             A read transaction shall be started by asserting both \texttt{wb\_cyc\_o} and \texttt{wb\_stb\_i}, and deasserting \texttt{wb\_we\_o}.
@@ -992,12 +992,12 @@
 
         \begin{figure}[H]
             \centering
-            \input{arch/figures/wishbone-single-write-cycle}
+            \input{arch/figures/3_wishbone-single-write-cycle}
             \caption{Timing diagram of the single write cycle of the wishbone memory interface}
             \label{fig:wishbone-single-write-cycle}
           \end{figure}
 
-        \input{arch/tables/wishbone-single-write-cycle}
+        \input{arch/tables/3_wishbone-single-write-cycle}
 
         \req{F\_WISHBONE\_WRITE\_CYCLE\_01}{
             A write transaction shall be started by asserting \texttt{wb\_cyc\_o}, \texttt{wb\_stb\_i} and \texttt{wb\_we\_o}.

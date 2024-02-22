@@ -1,19 +1,12 @@
 \section{External Memory Module}
 
-  \begin{figure}[h!]
-      \centering
-      \input{arch/figures/emm-arch.tex}
-      \caption{Schematic view of the External Memory Module}
-      \label{fig:emm}
-    \end{figure}
-
   \subsection{Interface}
 
     \begin{content}
         The external memory module implements the memory arbiter necessary to have process the two wishbone slave memory requests through a unique external memory interface. The signals are described in table \ref{tab:emm-interface}. 
       \end{content}
 
-    \input{arch/tables/emm-interface}
+    \input{arch/tables/7_emm-interface}
 
   \subsection{Specification}
 
@@ -21,7 +14,7 @@
 
       Table \ref{tab:emm-upstream-requirements} outlines the upstream requirements applicable to the External Memory Module.
 
-      \input{arch/tables/emm-upstream-requirements}
+      \input{arch/tables/7_emm-upstream-requirements}
 
     \subsubsection{Functional requirements}
 
