@@ -16,7 +16,7 @@ macro(add_document dir)
   # First and second pass
   add_custom_command(
     OUTPUT ${PREBUILD_OUTPUTS}
-    COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} -draftmode -interaction=nonstopmode ${MAIN_TEX}
+    COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} -draftmode ${MAIN_TEX}
     # The command is run twice to fix references
     COMMAND ${PDFLATEX_COMPILER} -output-directory ${LATEX_OUTPUT_PATH} -draftmode -interaction=nonstopmode ${MAIN_TEX}
     COMMENT "Starting Prebuild"
