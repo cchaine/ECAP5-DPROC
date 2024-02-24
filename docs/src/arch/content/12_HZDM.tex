@@ -1,19 +1,12 @@
 \section{Harzard Module}
 
-  \begin{figure}[h!]
-      \centering
-      \input{arch/figures/hzdm-arch.tex}
-      \caption{Schematic view of the Hazard Module}
-      \label{fig:hzdm}
-    \end{figure}
-
   \subsection{Interface}
 
     \begin{content}
         The hazard module implements TBC. The signals are described in table \ref{tab:hzdm-interface}. 
       \end{content}
 
-    \input{arch/tables/hzdm-interface}
+    \input{arch/tables/12_hzdm-interface}
 
   \subsection{Specification}
 
@@ -21,7 +14,7 @@
 
       The table \ref{tab:hzdm-upstream-requirements} outlines the upstream requirements applicable to the Hazard Module.
 
-      \input{arch/tables/hzdm-upstream-requirements}
+      \input{arch/tables/12_hzdm-upstream-requirements}
 
     \subsubsection{Functional requirements}
 
@@ -35,7 +28,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/hzdm-behavior-data-hazard.tex}
+          \input{arch/figures/12_hzdm-behavior-data-hazard.tex}
           \caption{Timing diagram of the data-hazard behavior of the hazard module}
           \label{fig:hzdm-behavior-data-hazard}
         \end{figure}
@@ -48,7 +41,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/hzdm-behavior-control-hazard.tex}
+          \input{arch/figures/12_hzdm-behavior-control-hazard.tex}
           \caption{Timing diagram of the control hazard behavior of the hazard module}
           \label{fig:hzdm-behavior-control-hazard}
         \end{figure}

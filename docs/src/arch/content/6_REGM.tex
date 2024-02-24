@@ -1,19 +1,12 @@
 \section{Register Module}
 
-  \begin{figure}[h!]
-      \centering
-      \input{arch/figures/regm-arch.tex}
-      \caption{Schematic view of the Register Module}
-      \label{fig:regm}
-  \end{figure}
-
   \subsection{Interface}
 
     \begin{content}
         The register module implements the 32 internal registers of ECAP5-DPROC. It has two reading port and one writing port. The signals are described in table \ref{tab:regm-interface}. 
       \end{content}
 
-    \input{arch/tables/regm-interface}
+    \input{arch/tables/6_regm-interface}
 
   \subsection{Specification}
 
@@ -21,7 +14,7 @@
 
       The table \ref{tab:regm-upstream-requirements} outlines the upstream requirements applicable to the Register Module.
 
-      \input{arch/tables/regm-upstream-requirements}
+      \input{arch/tables/6_regm-upstream-requirements}
 
     \subsubsection{Functional requirements}
 
@@ -71,7 +64,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/regm-behavior-read.tex}
+          \input{arch/figures/6_regm-behavior-read.tex}
           \caption{Timing diagram of the read behavior of the register module}
           \label{fig:regm-behavior-read}
         \end{figure}
@@ -84,7 +77,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/regm-behavior-write.tex}
+          \input{arch/figures/6_regm-behavior-write.tex}
           \caption{Timing diagram of the write behavior of the register module}
           \label{fig:regm-behavior-write}
         \end{figure}
@@ -99,7 +92,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/regm-behavior-read-before-write.tex}
+          \input{arch/figures/6_regm-behavior-read-before-write.tex}
           \caption{Timing diagram of the read-before-write behavior of the register module}
           \label{fig:regm-behavior-read-before-write}
         \end{figure}
