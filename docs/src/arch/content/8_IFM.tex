@@ -28,11 +28,16 @@
 
       \req{D\_IFM\_PC\_INCREMENT\_01}{
           The value of the \texttt{pc} register shall be incremented by 4 on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} where asserted.
-        }
+        }[
+          derivedfrom=F\_REGISTERS\_03,
+          rationale=Instructions are stored consecutively and aligned on a four-byte boundary.
+        ]
 
       \req{D\_IFM\_PC\_INCREMENT\_02}{
           The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted.
-        }
+        }[
+          derivedfrom={F\_JAL\_02, F\_JALR\_02, F\_BEQ\_02, F\_BNE\_02, F\_BLT\_02, F\_BGE\_02, F\_BLTU\_02, F\_BGEU\_02}
+        ]
 
       \req{D\_IFM\_PC\_LOAD\_01}{
           The value of the \texttt{pc} register shall be loaded with \texttt{IRQ\_HANDLER\_ADDR} on the rising edge of \texttt{clk\_i} when \texttt{irq\_i} is asserted.
@@ -50,7 +55,9 @@
 
       \req{D\_IFM\_RESET\_01}{
           The value of the \texttt{pc} register shall be loaded with \texttt{BOOT\_ADDR} on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
-        }
+        }[
+          derivedfrom=F\_REGISTERS\_RESET\_01
+        ]
 
       \req{D\_IFM\_RESET\_02}{
           The \texttt{output\_valid\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
