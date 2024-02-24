@@ -6,10 +6,15 @@
 \define@key{req}{rationale}{\def\pb@rationale{#1}}
 \define@key{req}{derivedfrom}{\def\pb@derivedfrom{#1}}
 \setkeys{req}{rationale=, derivedfrom=}
+\newcounter{x}
+\newcounter{z}
 \newcommandx{\req}[3][3]{
     \begingroup
     \setkeys{req}{#3}
     \reqlabel{#1}
+    \if\pb@derivedfrom \else
+      \readlist*\derivedfromlist\pb@derivedfrom
+    \fi
     \begin{center}
     {
         \footnotesize
@@ -26,10 +31,18 @@
               \hline
       \fi
       \if\pb@derivedfrom \else
-          \cellcolor{\reqcolor!15}\textbf{Derived From} & \cellcolor{\reqcolor!5}\reqref{\pb@derivedfrom} \\
-          \hline
+          \setcounter{z}{\derivedfromlistlen}
+          \forloop{x}{1}{\value{x} < \numexpr\value{z}+1}{
+            \ifthenelse{\value{x}=1}{
+              \cellcolor{\reqcolor!15}\textbf{Derived From} &}{\cellcolor{\reqcolor!15}&} 
+            \cellcolor{\reqcolor!5}\reqref{\derivedfromlist[\value{x}]}
+            \ifthenelse{\value{x} < \numexpr\value{z}}{\\[-0.2pt]}{}
+          }
+          \\\hline
       \fi
         \end{tabularx}
+      \if\pb@derivedfrom \else
+      \fi
     }
     \end{center}
     \endgroup
