@@ -1,19 +1,12 @@
 \section{Execute Module}
 
-  \begin{figure}[h!]
-      \centering
-      \input{arch/figures/exm-arch.tex}
-      \caption{Schematic view of the Execute Module}
-      \label{fig:exm}
-    \end{figure}
-
   \subsection{Interface}
 
     \begin{content}
         The execute module implements TBC. The signals are described in table \ref{tab:exm-interface}. 
       \end{content}
 
-    \input{arch/tables/exm-interface}
+    \input{arch/tables/10_exm-interface}
 
   \subsection{Specification}
 
@@ -21,7 +14,7 @@
 
       The table \ref{tab:exm-upstream-requirements} outlines the upstream requirements applicable to the Execute Module.
 
-      \input{arch/tables/exm-upstream-requirements}
+      \input{arch/tables/10_exm-upstream-requirements}
 
     \subsubsection{Functional requirements}
 
@@ -35,7 +28,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-lui.tex}
+          \input{arch/figures/10_exm-behavior-lui.tex}
           \caption{Timing diagram of the LUI behavior of the execute module}
           \label{fig:exm-behavior-lui}
         \end{figure}
@@ -50,7 +43,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-auipc.tex}
+          \input{arch/figures/10_exm-behavior-auipc.tex}
           \caption{Timing diagram of the AUIPC behavior of the execute module}
           \label{fig:exm-behavior-auipc}
         \end{figure}
@@ -67,7 +60,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-jump-jal.tex}
+          \input{arch/figures/10_exm-behavior-jump-jal.tex}
           \caption{Timing diagram of the jump behavior of the execute module for the JAL instruction}
           \label{fig:exm-behavior-jump-jal}
         \end{figure}
@@ -82,7 +75,7 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-jump-jalr.tex}
+          \input{arch/figures/10_exm-behavior-jump-jalr.tex}
           \caption{Timing diagram of the jump behavior of the execute module for the JALR instruction}
           \label{fig:exm-behavior-jump-jalr}
         \end{figure}
@@ -97,12 +90,12 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-branch.tex}
+          \input{arch/figures/10_exm-behavior-branch.tex}
           \caption{Timing diagram of the branch behavior of the execute module}
           \label{fig:exm-behavior-branch}
         \end{figure}
 
-      \input{arch/tables/exm-behavior-branch}
+      \input{arch/tables/10_exm-behavior-branch}
 
     \subsubsection{Load behavior}
 
@@ -116,12 +109,12 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-load.tex}
+          \input{arch/figures/10_exm-behavior-load.tex}
           \caption{Timing diagram of the load behavior of the execute module}
           \label{fig:exm-behavior-load}
         \end{figure}
 
-      \input{arch/tables/exm-behavior-load}
+      \input{arch/tables/10_exm-behavior-load}
 
     \subsubsection{Store behavior}
 
@@ -133,12 +126,12 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-store.tex}
+          \input{arch/figures/10_exm-behavior-store.tex}
           \caption{Timing diagram of the store behavior of the execute module}
           \label{fig:exm-behavior-store}
         \end{figure}
 
-      \input{arch/tables/exm-behavior-store}
+      \input{arch/tables/10_exm-behavior-store}
 
     \subsubsection{Arithmetic and logic behavior}
 
@@ -152,12 +145,12 @@
 
       \begin{figure}[H]
           \centering
-          \input{arch/figures/exm-behavior-arithmetic-logic.tex}
+          \input{arch/figures/10_exm-behavior-arithmetic-logic.tex}
           \caption{Timing diagram of the arithmetic and logic behavior of the execute module}
           \label{fig:exm-behavior-arithmetic-logic}
         \end{figure}
 
-      \input{arch/tables/exm-behavior-arithmetic-logic}
+      \input{arch/tables/10_exm-behavior-arithmetic-logic}
 
     \subsubsection{Hazard behaviors}
 
