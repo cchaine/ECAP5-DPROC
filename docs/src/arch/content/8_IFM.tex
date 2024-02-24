@@ -31,15 +31,15 @@
         }
 
       \req{D\_IFM\_PC\_INCREMENT\_02}{
-          The value of the \texttt{pc} register shall be incremented by the value of the \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted.
+          The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted.
         }
 
       \req{D\_IFM\_PC\_LOAD\_01}{
-          The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} when \texttt{irq\_i} is asserted.
+          The value of the \texttt{pc} register shall be loaded with \texttt{IRQ\_HANDLER\_ADDR} on the rising edge of \texttt{clk\_i} when \texttt{irq\_i} is asserted.
         }
 
       \req{D\_IFM\_PC\_LOAD\_02}{
-          The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} when \texttt{drq\_i} is asserted.
+          The value of the \texttt{pc} register shall be loaded with \texttt{DRQ\_HANDLER\_ADDR} on the rising edge of \texttt{clk\_i} when \texttt{drq\_i} is asserted.
         }
 
       \req{D\_IFM\_PC\_REGISTER\_02}{
@@ -49,7 +49,7 @@
       \paragraph{Reset}
 
       \req{D\_IFM\_RESET\_01}{
-          The value of the \texttt{pc} register shall be loaded with TBC on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+          The value of the \texttt{pc} register shall be loaded with \texttt{BOOT\_ADDR} on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
         }
 
       \req{D\_IFM\_RESET\_02}{
@@ -153,24 +153,12 @@
           The memory interface shall conform to the READ cycle detailed in figure \ref{fig:wishbone-single-read-cycle}.
         }
 
+
       \vspace{0.5em}
 
-      \begin{figure}[H]
-          \centering
-          \input{arch/figures/3_wishbone-single-write-cycle}
-          \caption{Timing diagram of the single write cycle of the wishbone memory interface}
-          \label{fig:ifm-wishbone-single-write-cycle}
-        \end{figure}
-
-      \input{arch/tables/8_ifm-wishbone-single-write-cycle}
-
-      \req{D\_IFM\_WISHBONE\_WRITE\_CYCLE\_01}{
-          A write transaction shall be started by asserting \texttt{wb\_cyc\_o}, \texttt{wb\_stb\_i} and \texttt{wb\_we\_o}.
-        }
-
-      \req{D\_IFM\_WISHBONE\_WRITE\_CYCLE\_02}{
-          The memory interface shall conform to the WRITE cycle detailed in figure \ref{fig:wishbone-single-write-cycle}.
-        }
+      \begin{content}
+          The memory write cycles are not implemented in this module as it shall only read data from memory.
+        \end{content}
 
       \req{D\_IFM\_WISHBONE\_TIMING\_01}{
           The clock input \texttt{clk\_i} shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of \texttt{clk\_i}. All input signals of the memory interface shall be stable before the rising edge of \texttt{clk\_i}.
@@ -178,32 +166,32 @@
           rationale={As long as the memory interface is designed within the clock domain of \texttt{clk\_i}, the requirement will be satisfied by using the place and route tool.}
         ]
 
-        \begin{content}
-            BLOCK cycles are not supported in revision 1.0.0.
-          \end{content}
-
       \req{D\_IFM\_MEMORY\_FETCH\_01}{
           A 32-bit read cycle at the address represented by \texttt{pc} shall be initiated when \eventref{EV\_IFM\_FETCH\_REQUEST\_01} is triggered.
         }
 
+      \begin{content}
+          BLOCK cycles are not supported in revision 1.0.0.
+        \end{content}
+
       \paragraph{Output}
 
       \req{D\_IFM\_OUTPUT\_01}{
-          The signal \texttt{instr\_o} shall be set to the result of the memory request on the rising edge of \texttt{clk\_i} when the memory request is completed.
+          The signal \texttt{instr\_o} shall be set to the value represented by \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} when \texttt{wb\_ack\_i} is asserted.
         }
 
       \req{D\_IFM\_OUTPUT\_02}{
-          The signal \texttt{pc\_o} shall be set asynchronously to the value of the \texttt{pc} register.
+          The signal \texttt{pc\_o} shall be set to the value of the \texttt{pc} register.
         }
 
       \req{D\_IFM\_OUTPUT\_HANDSHAKE\_01}{
-          The signal \texttt{output\_valid\_o} shall be deasserted on the rising edge of \texttt{clk\_i} when the instruction fetch module performs an instruction fetch.
+          The signal \texttt{output\_valid\_o} shall be deasserted on the rising edge of \texttt{clk\_i} when \eventref{EV\_IFM\_FETCH\_REQUEST\_01} is triggered.
         }[
           rationale=Refer to section \ref{control-hazard}.
         ]
 
       \req{D\_IFM\_OUTPUT\_HANDSHAKE\_02}{
-          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when the instruction fetch is completed.
+          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{wb\_ack\_i} is asserted.
         }[
           rationale=Refer to section \ref{control-hazard}.
         ]
