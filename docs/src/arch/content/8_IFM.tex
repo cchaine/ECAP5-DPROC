@@ -70,12 +70,16 @@
         }
 
       \req{D\_IFM\_FETCH\_TRIGGER\_01}{
-        The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
-        }
+          The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
+        }[
+          derivedfrom=A\_INSTRUCTION\_FETCH\_01
+        ]
 
       \req{D\_IFM\_FETCH\_TRIGGER\_02}{
-        The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} are asserted.
-        }
+          The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} are asserted.
+        }[
+          derivedfrom=A\_INSTRUCTION\_FETCH\_01
+        ]
 
       \paragraph{Memory request}
 
