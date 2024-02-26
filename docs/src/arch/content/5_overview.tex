@@ -14,6 +14,7 @@
       \end{content}
 
   \subsection{Pipeline stages}
+  \label{sec:pipeline-stages}
 
     \begin{content}
         ECAP5-DPROC is built around a pipelined architecture with the following stages :
@@ -103,19 +104,56 @@
           Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as \textit{bubble drop}. It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
         \end{content}
 
-  \subsection{Functional partitioning}
+  \subsection{Architecture specification}
 
     \begin{content}
-        The design is split into the following functional modules :
-        \begin{itemize}
-            \item \textbf{External Memory Module} (EMM) is in charge of accessing memory and peripherals.
-            \item \textbf{Instruction Fetch Module} (IFM) is in charge of implementing the instruction fetch stage.
-            \item \textbf{Decode Module} (DECM) is in charge of implementing the decode stage.
-            \item \textbf{Register Module} (REGM) implements the internal registers.
-            \item \textbf{Execute Module} (EXM) is in charge of implementing the execute stage.
-            \item \textbf{Write-Back Module} (WBM) is in charge of implementing the write-back stage.
-            \item \textbf{Hazard Module} (HZDM) handles the detecting of data and control hazards as well as triggering associated pipeline stalls and bubble drops.
-          \end{itemize}
+        This sections describes requirements which are not derived from upstream requirements but instead are derived from the architectural choices made for ECAP5-DPROC.
       \end{content}
+
+    \subsubsection{Functional partitioning}
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_01}{
+          The External Memory Module (EMM) shall arbitrate memory requests from both the IFM and EXM. 
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_02}{
+          The Instruction Fetch Module (IFM) shall implement the instruction fetch stage of the pipeline.
+        }
+
+      \req{A\_INSTRUCTION\_FETCH\_01}{
+          The IFM shall fetch instructions continuously starting on the clock cycle after \texttt{rst\_i} is deasserted, providing them to the DECM one after the other.
+        }[
+          rationale={Pipeline stages are all run in parallel, refer to section \ref{sec:pipeline-stages}.}
+        ]
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_03}{
+          The Decode Module (DECM) shall implement the decode stage of the pipeline.
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_04}{
+          The Register Module (REGM) shall implement the internal general-purpose registers.
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_05}{
+          The Execute Module (EXM) shall implement the execute stage of the pipeline.
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_06}{
+          The Write-Back Module (WBM) shall implement the write-back stage of the pipeline.
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_07}{
+          The Hazard Module (HZDM) shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
+        }
+
+    \subsubsection{Module inter-connections}
+
+      \req{A\_MEMORY\_BUS\_01}{
+          The bus interface between the IFM and EMM shall be compliant with the pipelined wishbone B4 specification.
+        }
+
+      \req{A\_MEMORY\_BUS\_02}{
+          The bus interface between the EXM and EMM shall be compliant with the pipelined wishbone B4 specification.
+        }
 
 \newpage

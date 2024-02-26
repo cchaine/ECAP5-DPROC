@@ -26,8 +26,10 @@
       ]
 
     \req{I\_DRQ\_01}{
-        TBC
-      }
+        ECAP5-DPROC shall interrupt its execution flow when input \texttt{drq\_i} is asserted.
+      }[
+        derivedfrom=U\_DEBUG\_01
+      ]
 
     \input{arch/tables/3_memory-interface.tex}
 
@@ -42,6 +44,20 @@
       \end{content}
   
   \subsection{Functional Requirements}
+
+    \subsubsection{Reset and Interrupts}
+
+      \req{F\_IRQ\_HANDLER\_01}{
+          ECAP5-DPROC shall jump to a hardware-configurable address when \texttt{irq\_i} is asserted. 
+        }[
+          derivedfrom=U\_HARDWARE\_INTERRUPT\_02
+        ]
+
+      \req{F\_DRQ\_HANDLER\_01}{
+          ECAP5-DPROC shall jump to a hardware-configurable address when \texttt{drq\_i} is asserted. 
+        }[
+          derivedfrom=U\_DEBUG\_01
+        ]
 
     \subsubsection{Register file}
 
