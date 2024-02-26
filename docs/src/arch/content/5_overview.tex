@@ -120,6 +120,12 @@
           The Instruction Fetch Module (IFM) shall implement the instruction fetch stage of the pipeline.
         }
 
+      \req{A\_INSTRUCTION\_FETCH\_01}{
+          The IFM shall fetch instructions continuously starting on the clock cycle after \texttt{rst\_i} is deasserted, providing them to the DECM one after the other.
+        }[
+          rationale={Pipeline stages are all run in parallel, refer to section \ref{sec:pipeline-stages}.}
+        ]
+
       \req{A\_FUNCTIONAL\_PARTITIONING\_03}{
           The Decode Module (DECM) shall implement the decode stage of the pipeline.
         }
@@ -140,24 +146,14 @@
           The Hazard Module (HZDM) shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
         }
 
-    \subsubsection{Internal buses}
+    \subsubsection{Module inter-connections}
 
-      \req{A\_INTERNAL\_BUS\_01}{
+      \req{A\_MEMORY\_BUS\_01}{
           The bus interface between the IFM and EMM shall be compliant with the pipelined wishbone B4 specification.
         }
 
-      \req{A\_INTERNAL\_BUS\_02}{
+      \req{A\_MEMORY\_BUS\_02}{
           The bus interface between the EXM and EMM shall be compliant with the pipelined wishbone B4 specification.
         }
-
-    \subsubsection{Module-specific requirements}
-
-      \paragraph{IFM}
-
-      \req{A\_INSTRUCTION\_FETCH\_01}{
-          The IFM shall fetch instructions continuously starting on the clock cycle after \texttt{rst\_i} is deasserted, providing them to the DECM one after the other.
-        }[
-          rationale={Pipeline stages are all run in parallel, refer to section \ref{sec:pipeline-stages}.}
-        ]
 
 \newpage
