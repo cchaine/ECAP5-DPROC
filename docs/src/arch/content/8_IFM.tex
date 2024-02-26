@@ -41,11 +41,15 @@
 
       \req{D\_IFM\_PC\_LOAD\_01}{
           The value of the \texttt{pc} register shall be loaded with \texttt{IRQ\_HANDLER\_ADDR} on the rising edge of \texttt{clk\_i} when \texttt{irq\_i} is asserted.
-        }
+        }[
+          derivedfrom=F\_IRQ\_HANDLER\_01
+        ]
 
       \req{D\_IFM\_PC\_LOAD\_02}{
           The value of the \texttt{pc} register shall be loaded with \texttt{DRQ\_HANDLER\_ADDR} on the rising edge of \texttt{clk\_i} when \texttt{drq\_i} is asserted.
-        }
+        }[
+          derivedfrom=F\_DRQ\_HANDLER\_01
+        ]
 
       \req{D\_IFM\_PC\_REGISTER\_02}{
           Any changes to the \texttt{pc} register shall be performed before any memory requests.
@@ -70,26 +74,36 @@
         }
 
       \req{D\_IFM\_FETCH\_TRIGGER\_01}{
-        The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
-        }
+          The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
+        }[
+          derivedfrom=A\_INSTRUCTION\_FETCH\_01
+        ]
 
       \req{D\_IFM\_FETCH\_TRIGGER\_02}{
-        The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} are asserted.
-        }
+          The instruction fetch module shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} are asserted.
+        }[
+          derivedfrom=A\_INSTRUCTION\_FETCH\_01
+        ]
 
       \paragraph{Memory request}
 
       \req{D\_IFM\_REQUEST\_CANCEL\_01}{
           Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
-        }
+        }[
+          derivedfrom=I\_RESET\_01
+        ]
 
       \req{D\_IFM\_REQUEST\_CANCEL\_02}{
           Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}.
-        }
+        }[
+          derivedfrom=I\_IRQ\_01
+        ]
 
       \req{D\_IFM\_REQUEST\_CANCEL\_03}{
           Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}.
-        }
+        }[
+          derivedfrom=I\_DRQ\_01
+        ]
 
       \req{D\_IFM\_REQUEST\_CANCEL\_04}{
           Any pending memory requests shall be canceled on the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}.
