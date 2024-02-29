@@ -1,53 +1,88 @@
 [*]
-[*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
-[*] Tue Oct 17 06:30:56 2023
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Feb 29 09:58:33 2024
 [*]
-[dumpfile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/build/waves/ifm.vcd"
-[dumpfile_mtime] "Tue Oct 17 06:26:33 2023"
-[dumpfile_size] 7299
-[savefile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/config/ifm.gtkw"
-[timestart] 0
-[size] 1710 989
-[pos] -1 -1
-*-2.195040 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/ifm.vcd"
+[dumpfile_mtime] "Thu Feb 29 09:55:55 2024"
+[dumpfile_size] 3966
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/ifm.gtkw"
+[timestart] 8
+[size] 1288 849
+[pos] 1119 224
+*-5.371864 60 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
 [treeopen] TOP.
 [treeopen] TOP.tb_ifm.
-[sst_width] 193
-[signals_width] 159
+[sst_width] 253
+[signals_width] 152
 [sst_expanded] 1
-[sst_vpaned_height] 570
-@28
-TOP.tb_ifm.dut.clk_i
-TOP.tb_ifm.dut.rst_i
-@2028
-^1 /Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/filters/ifm_state_filter.gtkw
-TOP.tb_ifm.dut.state_q[1:0]
-@28
-TOP.tb_ifm.dut.drq_i
-TOP.tb_ifm.dut.irq_i
-TOP.tb_ifm.dut.branch_i
-@22
-TOP.tb_ifm.dut.pc_q[31:0]
+[sst_vpaned_height] 242
 @29
-[color] 1
-TOP.tb_ifm.stall_request_i
-@22
-[color] 7
-TOP.tb_ifm.dut.wb_adr_o[31:0]
+TOP.tb_ifm.clk_i
 @28
-[color] 7
-TOP.tb_ifm.dut.wb_stb_o
-[color] 7
-TOP.tb_ifm.dut.wb_ack_i
-[color] 7
-TOP.tb_ifm.dut.wb_cyc_o
-[color] 7
-TOP.tb_ifm.dut.wb_stall_i
+TOP.tb_ifm.rst_i
+TOP.tb_ifm.drq_i
+TOP.tb_ifm.irq_i
 @22
-[color] 7
-TOP.tb_ifm.dut.wb_dat_i[31:0]
-TOP.tb_ifm.dut.instr_o[31:0]
+TOP.tb_ifm.boffset_i[19:0]
 @28
-TOP.tb_ifm.dut.output_valid_o
+TOP.tb_ifm.branch_i
+@200
+-Memory
+@22
+[color] 2
+TOP.tb_ifm.wb_adr_o[31:0]
+[color] 2
+TOP.tb_ifm.wb_dat_i[31:0]
+@28
+[color] 2
+TOP.tb_ifm.wb_we_o
+@22
+[color] 2
+TOP.tb_ifm.wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_ifm.wb_stb_o
+[color] 2
+TOP.tb_ifm.wb_ack_i
+[color] 2
+TOP.tb_ifm.wb_cyc_o
+[color] 2
+TOP.tb_ifm.wb_stall_i
+@200
+-Output
+@28
+[color] 5
+TOP.tb_ifm.output_ready_i
+[color] 5
+TOP.tb_ifm.output_valid_o
+@22
+[color] 5
+TOP.tb_ifm.instr_o[31:0]
 [pattern_trace] 1
 [pattern_trace] 0
