@@ -155,21 +155,21 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   // check the memory read request
   CHECK("tb_ifm.stall_01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
-    "Failed to perform the memory read request : 1");
+    "Failed to perform the memory read request : 1st time");
 
   tb->tick();
 
   // check the memory read request
   CHECK("tb_ifm.stall_02",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
-    "Failed to perform hold the memory read request : 2");
+    "Failed to perform hold the memory read request : 2nd time");
 
   tb->tick();
 
   // check the memory read request
   CHECK("tb_ifm.stall_03",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
-    "Failed to perform hold the memory read request : 3");
+    "Failed to perform hold the memory read request : 3rd time");
 
   core->wb_stall_i = 0;
   tb->tick();
@@ -177,7 +177,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   // check the memory read request
   CHECK("tb_ifm.stall_04",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
-    "Failed to perform hold the memory read request : 4");
+    "Failed to perform hold the memory read request : final time");
 
   // send a response to the read request
   uint32_t data = rand();
@@ -205,7 +205,64 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 }
 
 void tb_ifm_memory_wait_state(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
   tb->reset();
+
+  // Leave the reset state
+  core->irq_i = 0;
+  core->drq_i = 0;
+  core->branch_i = 0;
+  core->output_ready_i = 1;
+  core->wb_stall_i = 0;
+  tb->tick();
+
+  // read request was sent
+  
+  // insert one wait cycle
+  tb->tick();
+
+  // check that the request is being processed
+  CHECK("tb_ifm.wait_state_01",
+      (core->wb_stb_o == 0),
+      "Failed to deassert stb after issuing the memory read request");
+  CHECK("tb_ifm.wait_state_02",
+      (core->wb_cyc_o == 1),
+      "Failed to maintain cyc for the entire duration of the read request");
+
+  // insert second wait cycle
+  tb->tick();
+
+  // check that the request is being processed
+  CHECK("tb_ifm.wait_state_03",
+      (core->wb_stb_o == 0),
+      "Failed to deassert stb after issuing the memory read request");
+  CHECK("tb_ifm.wait_state_04",
+      (core->wb_cyc_o == 1),
+      "Failed to maintain cyc for the entire duration of the read request");
+
+  // send a response to the read request
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  // check that the request is being processed
+  CHECK("tb_ifm.wait_state_05",
+      (core->wb_stb_o == 0),
+      "Failed to deassert stb after issuing the memory read request");
+  CHECK("tb_ifm.wait_state_06",
+      (core->wb_cyc_o == 1),
+      "Failed to maintain cyc for the entire duration of the read request");
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  tb->tick();
+
+  // check that the request is done and the value is outputed
+  CHECK("tb_ifm.wait_state_07",
+    (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+    "Failed to end the memory read request");
 }
 
 void tb_ifm_pipeline_stall(TB_Ifm * tb) {

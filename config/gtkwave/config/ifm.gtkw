@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Thu Feb 29 09:58:33 2024
+[*] Thu Feb 29 13:16:38 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/ifm.vcd"
-[dumpfile_mtime] "Thu Feb 29 09:55:55 2024"
-[dumpfile_size] 3966
+[dumpfile_mtime] "Thu Feb 29 13:12:00 2024"
+[dumpfile_size] 4953
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/ifm.gtkw"
 [timestart] 8
-[size] 1288 849
-[pos] 1119 224
-*-5.371864 60 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[size] 1712 599
+[pos] -408 100
+*-5.371864 190 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -41,10 +41,9 @@
 [sst_width] 253
 [signals_width] 152
 [sst_expanded] 1
-[sst_vpaned_height] 242
-@29
-TOP.tb_ifm.clk_i
+[sst_vpaned_height] 155
 @28
+TOP.tb_ifm.clk_i
 TOP.tb_ifm.rst_i
 TOP.tb_ifm.drq_i
 TOP.tb_ifm.irq_i
@@ -84,5 +83,7 @@ TOP.tb_ifm.output_valid_o
 @22
 [color] 5
 TOP.tb_ifm.instr_o[31:0]
+[color] 5
+TOP.tb_ifm.pc_o[31:0]
 [pattern_trace] 1
 [pattern_trace] 0
