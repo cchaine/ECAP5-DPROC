@@ -13,6 +13,13 @@ tb_ifm.no_stall_12;D_IFM_MEMORY_FETCH_01
 tb_ifm.no_stall_13;D_IFM_WISHBONE_RESET_02;D_IFM_WISHBONE_RESET_03
 tb_ifm.no_stall_14;D_IFM_OUTPUT_02
 tb_ifm.no_stall_15;D_IFM_OUTPUT_HANDSHAKE_01
+tb_ifm.stall_01;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_02;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_03;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_04;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_05;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_06;D_IFM_WISHBONE_STALL_01
+tb_ifm.stall_07;D_IFM_WISHBONE_STALL_01
 tb_regm.read_port_a
 tb_regm.read_port_b
 tb_regm.write_x0
