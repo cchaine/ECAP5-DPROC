@@ -110,11 +110,11 @@
       }
 
     \req{D\_IFM\_WISHBONE\_RESET\_01}{
-        The memory interface shall initialize itself at the rising edge of \texttt{wb\_clk\_i} following the assertion of \texttt{wb\_rst\_i}.
+        The memory interface shall initialize itself at the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
       }
 
     \req{D\_IFM\_WISHBONE\_RESET\_02}{
-        The memory interface shall stay in the initialization state until the rising edge of \texttt{wb\_clk\_i} following the deassertion of \texttt{wb\_rst\_i}.
+        The memory interface shall stay in the initialization state until the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
       }
 
     \req{D\_IFM\_WISHBONE\_RESET\_03}{
@@ -128,11 +128,11 @@
       ]
 
     \req{D\_IFM\_WISHBONE\_TRANSFER\_CYCLE\_02}{
-        Signal \texttt{wb\_cyc\_o} shall be asserted no later than the rising edge of \texttt{wb\_clk\_i} that qualifies the assertion of \texttt{wb\_stb\_o}.
+        Signal \texttt{wb\_cyc\_o} shall be asserted no later than the rising edge of \texttt{clk\_i} that qualifies the assertion of \texttt{wb\_stb\_o}.
       }
 
     \req{D\_IFM\_WISHBONE\_TRANSFER\_CYCLE\_03}{
-          Signal \texttt{wb\_cyc\_o} shall be deasserted no earlier than the rising edge of \texttt{wb\_clk\_i} that qualifies the deassertion of \texttt{wb\_stb\_o}.
+          Signal \texttt{wb\_cyc\_o} shall be deasserted no earlier than the rising edge of \texttt{clk\_i} that qualifies the deassertion of \texttt{wb\_stb\_o}.
       }
 
     \req{D\_IFM\_WISHBONE\_HANDSHAKE\_01}{
@@ -190,11 +190,11 @@
     \subsubsection{Output}
 
     \req{D\_IFM\_OUTPUT\_01}{
-        The signal \texttt{instr\_o} shall be set to the value represented by \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} when \texttt{wb\_ack\_i} is asserted.
+        The signal \texttt{instr\_o} shall be set to the value represented by \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i}
       }
 
     \req{D\_IFM\_OUTPUT\_02}{
-        The signal \texttt{pc\_o} shall be set to the value of the \texttt{pc} register.
+        The signal \texttt{pc\_o} shall be set to the value of the \texttt{pc} register on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i}
       }
 
     \req{D\_IFM\_OUTPUT\_HANDSHAKE\_01}{
@@ -204,7 +204,7 @@
       ]
 
     \req{D\_IFM\_OUTPUT\_HANDSHAKE\_02}{
-        The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{wb\_ack\_i} is asserted.
+        The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i}.
       }[
         rationale=Refer to section \ref{control-hazard}.
       ]
