@@ -75,7 +75,7 @@ macro(add_testbench module)
 endmacro()
 
 add_testbench(regm)
-add_testbench(ifm LIBS wishbone_slave)
+add_testbench(ifm)
 
 add_custom_target(build DEPENDS ${TEST_BINARIES})
 

@@ -27,19 +27,25 @@ module tb_ifm (
   input   logic        drq_i,
   input   logic        branch_i,
   input   logic[19:0]  boffset_i,
-  input   logic        output_ready_i,
-  output  logic        output_valid_o,
+  /* Memory */
+  output  logic[31:0]  wb_adr_o,
+  input   logic[31:0]  wb_dat_i, 
+  output  logic        wb_we_o,
+  output  logic[3:0]   wb_sel_o,
+  output  logic        wb_stb_o, 
+  input   logic        wb_ack_i, 
+  output  logic        wb_cyc_o, 
+  input   logic        wb_stall_i,
+  /* Output */
   output  logic[31:0]  instr_o,
-  input   logic        stall_request_i,
-  input   logic[31:0]  injected_data_i
+  output  logic[31:0]  pc_o,
+  input   logic        output_ready_i,
+  output  logic        output_valid_o
 );
 
-logic[31:0]  wb_adr_o   /* verilator public */ ; 
-logic[31:0]  wb_dat_i   /* verilator public */ ; 
-logic        wb_stb_o   /* verilator public */ ; 
-logic        wb_ack_i   /* verilator public */ ; 
-logic        wb_cyc_o   /* verilator public */ ; 
-logic        wb_stall_i /* verilator public */ ;
+assign wb_we_o = 1;
+assign wb_sel_o = '0;
+assign pc_o = 32'hFFFFFFFF;
 
 ifm dut (
   .clk_i           (clk_i),
@@ -59,16 +65,4 @@ ifm dut (
   .instr_o         (instr_o)
 );
 
-wishbone_slave mem (
-  .clk_i  (clk_i),
-  .wb_adr_i        ({2'b0, wb_adr_o[31:2]}),
-  .wb_dat_o        (wb_dat_i),
-  .wb_stb_i        (wb_stb_o),
-  .wb_ack_o        (wb_ack_i),
-  .wb_cyc_i        (wb_cyc_o),
-  .wb_stall_o      (wb_stall_i),
-  .stall_request_i (stall_request_i),
-  .injected_data_i (injected_data_i)
-);
-
-endmodule // top
+endmodule // tb_ifm
