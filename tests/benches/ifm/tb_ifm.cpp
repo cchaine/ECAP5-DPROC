@@ -29,7 +29,6 @@
 
 #include "Vtb_ifm.h"
 #include "testbench.h"
-#include "Vtb_ifm_tb_ifm.h"
 #include "Vtb_ifm_ecap5_dproc_pkg.h"
 
 class TB_Ifm : public Testbench<Vtb_ifm> {
