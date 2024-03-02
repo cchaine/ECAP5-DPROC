@@ -40,7 +40,7 @@ tb_ifm.pipeline_stall_10;D_IFM_OUTPUT_HANDSHAKE_03
 tb_ifm.pipeline_stall_11;D_IFM_OUTPUT_HANDSHAKE_04
 tb_ifm.pipeline_stall_12;D_IFM_FETCH_TRIGGER_02
 tb_ifm.pipeline_stall_13;D_IFM_OUTPUT_HANDSHAKE_01
-tb_ifm.pipeline_stall_14;D_IFM_PC_INCREMENT_01
+tb_ifm.pipeline_stall_14;D_IFM_PC_INCREMENT_01;D_IFM_PC_REGISTER_02
 tb_ifm.pipeline_stall_15;D_IFM_FETCH_TRIGGER_02
 tb_regm.read_port_a
 tb_regm.read_port_b
