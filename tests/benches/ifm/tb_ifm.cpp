@@ -80,7 +80,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   
   // check the size of the memory read request
   CHECK("tb_ifm.no_stall_04",
-    (core->wb_sel_o == 0x7),
+    (core->wb_sel_o == 0xF),
     "Failed to specify the size of the memory read request");
 
   // send a response to the read request
@@ -333,6 +333,8 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to detect a pipeline stall");
 
+  core->output_ready_i = 1;
+
   tb->tick();
 
   // check that the output is valid
@@ -352,8 +354,6 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   CHECK("tb_ifm.pipeline_stall_12",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to detect a pipeline stall");
-  
-  core->output_ready_i = 1;
 
   tb->tick();
 
