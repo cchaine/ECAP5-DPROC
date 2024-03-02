@@ -43,10 +43,6 @@ module tb_ifm (
   output  logic        output_valid_o
 );
 
-assign wb_we_o = 1;
-assign wb_sel_o = '0;
-assign pc_o = 32'hFFFFFFFF;
-
 ifm dut (
   .clk_i           (clk_i),
   .rst_i           (rst_i),
@@ -56,13 +52,16 @@ ifm dut (
   .boffset_i       (boffset_i),
   .wb_adr_o        (wb_adr_o),
   .wb_dat_i        (wb_dat_i),
+  .wb_we_o         (wb_we_o),
+  .wb_sel_o        (wb_sel_o),
   .wb_stb_o        (wb_stb_o),
   .wb_ack_i        (wb_ack_i),
   .wb_cyc_o        (wb_cyc_o),
   .wb_stall_i      (wb_stall_i),
   .output_ready_i  (output_ready_i),
   .output_valid_o  (output_valid_o),
-  .instr_o         (instr_o)
+  .instr_o         (instr_o),
+  .pc_o            (pc_o)
 );
 
 endmodule // tb_ifm
