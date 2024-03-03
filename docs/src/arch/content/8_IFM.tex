@@ -26,7 +26,7 @@
         ]
 
       \req{D\_IFM\_PC\_INCREMENT\_02}{
-        The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted. In the case where \eventref{EV\_IFM\_CANCEL\_REQUESTS\_01} has been triggered, after updating \texttt{pc}, the value of \texttt{branch\_i} shall not have any effect on \texttt{pc} until \eventref{EV\_IFM\_CANCEL\_REQUESTS\_02} is triggered.
+        The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted. \texttt{pc} shall not be updated on subsequent asserted \texttt{branch\_i} until the pending memory requests are terminated.
         }[
           derivedfrom={F\_JAL\_02, F\_JALR\_02, F\_BEQ\_02, F\_BNE\_02, F\_BLT\_02, F\_BGE\_02, F\_BLTU\_02, F\_BGEU\_02}
         ]
