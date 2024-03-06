@@ -10,25 +10,48 @@
 
   \subsection{Specification}
 
+    \subsubsection{State machine}
+
+    % Diagram with the stage states
+    % requirements on the stages
+
+    \begin{figure}[H]
+        \centering
+        \input{arch/figures/8_ifm-state-diagram}
+        \caption{State diagram of the instruction fetch module}
+        \label{fig:ifm-state-diagram}
+      \end{figure}
+
+    \req{D\_IFM\_STATE\_01}{
+        The IFM shall be in the \texttt{IDLE} (\texttt{0}) state while \texttt{rst\_i} is asserted or on a successfull output handshake.
+      }
+
+    \req{D\_IFM\_STATE\_03}{
+        The IFM shall be in the \texttt{REQUEST} (\texttt{1}) state when a memory request is successfully sent.
+      }
+
+    \req{D\_IFM\_STATE\_04}{
+        The IFM shall be in the \texttt{MEMORY\_WAIT} (\texttt{2}) state when a memory request has been sent but the response has not been received.
+      }
+
+    \req{D\_IFM\_STATE\_05}{
+        The IFM shall be in the \texttt{DONE} (\texttt{3}) state when a memory request response is successfully received.
+      }
+
+    \req{D\_IFM\_STATE\_06}{
+        The IFM shall be in the \texttt{MEMORY\_STALL} (\texttt{4}) state when a memory request is ready but the memory interface is stalled.
+      }
+
+    \req{D\_IFM\_STATE\_07}{
+        The IFM shall be in the \texttt{PIPELINE\_STALL} (\texttt{5}) state when a memory request output is ready but the pipeline is stalled.
+      }
+
     \subsubsection{PC register}
 
       \req{D\_IFM\_PC\_REGISTER\_01}{
           The instruction fetch module shall implement a \texttt{pc} register which shall store the address of the instruction to be fetched.
         }[
           derivedfrom=F\_REGISTERS\_03
-        ]
-
-      \req{D\_IFM\_PC\_INCREMENT\_01}{
-          The value of the \texttt{pc} register shall be incremented by 4 on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} where asserted.
-        }[
-          derivedfrom=F\_REGISTERS\_03,
-          rationale=Instructions are stored consecutively and aligned on a four-byte boundary.
-        ]
-
-      \req{D\_IFM\_PC\_INCREMENT\_02}{
-        The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted. \texttt{pc} shall not be updated on subsequent asserted \texttt{branch\_i} until the pending memory requests are terminated.
-        }[
-          derivedfrom={F\_JAL\_02, F\_JALR\_02, F\_BEQ\_02, F\_BNE\_02, F\_BLT\_02, F\_BGE\_02, F\_BLTU\_02, F\_BGEU\_02}
         ]
 
       \req{D\_IFM\_PC\_LOAD\_01}{
@@ -43,8 +66,25 @@
           derivedfrom=F\_DRQ\_HANDLER\_01
         ]
 
+      \req{D\_IFM\_PC\_LOAD\_03}{
+          The value of the \texttt{pc} register shall be incremented by 4 on the rising edge of \texttt{clk\_i} after both \texttt{output\_ready\_i} and \texttt{output\_valid\_o} where asserted.
+        }[
+          derivedfrom=F\_REGISTERS\_03,
+          rationale=Instructions are stored consecutively and aligned on a four-byte boundary.
+        ]
+
+      \req{D\_IFM\_PC\_LOAD\_04}{
+        The value of the \texttt{pc} register shall be incremented by the value of \texttt{boffset\_i} on the rising edge of \texttt{clk\_i} when \texttt{branch\_i} is asserted. \texttt{pc} shall not be updated on subsequent asserted \texttt{branch\_i} until the pending memory requests are terminated.
+        }[
+          derivedfrom={F\_JAL\_02, F\_JALR\_02, F\_BEQ\_02, F\_BNE\_02, F\_BLT\_02, F\_BGE\_02, F\_BLTU\_02, F\_BGEU\_02}
+        ]
+
       \req{D\_IFM\_PC\_REGISTER\_02}{
           Any changes to the \texttt{pc} register shall be performed before any memory requests.
+        }
+
+      \req{D\_IFM\_PC\_PRECEDENCE\_01}{
+          In the case where multiple load requirement can apply, the following precedence shall be applied, starting with the highest: \reqref{D\_IFM\_PC\_LOAD\_02}, \reqref{D\_IFM\_PC\_LOAD\_01}, \reqref{D\_IFM\_PC\_LOAD\_04} and \reqref{D\_IFM\_PC\_LOAD\_03}.
         }
 
     \subsubsection{Reset}
@@ -57,32 +97,6 @@
 
       \req{D\_IFM\_RESET\_02}{
           The \texttt{output\_valid\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
-        }
-
-    \subsubsection{Fetch cancellation}
-      
-      \event{EV\_IFM\_REQUEST\_CANCEL\_01}{
-          This event represents the cancellation of any pending memory requests
-        }
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_01}{
-          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered, the memory interface shall wait for the termination of any pending memory requests before performing new requests.
-        }
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_02}{
-          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
-        }[
-          derivedfrom=I\_DRQ\_01
-        ]
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_03}{
-          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
-        }[
-          derivedfrom=I\_IRQ\_01
-        ]
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_04}{
-          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
         }
 
     \subsubsection{Fetch triggering}
@@ -104,7 +118,49 @@
         ]
 
       \req{D\_IFM\_MEMORY\_FETCH\_01}{
-          A 32-bit read cycle at the address represented by \texttt{pc} shall be initiated when \eventref{EV\_IFM\_FETCH\_REQUEST\_01} is triggered and no request cancellation is in progress.
+          A 32-bit read cycle at the address represented by \texttt{pc} shall be initiated when \eventref{EV\_IFM\_FETCH\_REQUEST\_01} is triggered.
+        }
+
+    \subsubsection{Fetch cancellation}
+      
+      \event{EV\_IFM\_REQUEST\_CANCEL\_01}{
+          This event represents the cancellation of any pending memory requests
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_01}{
+          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{IDLE} state, the memory interface shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_02}{
+          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{REQUEST} state, the memory interface shall update the address of the current memory request.
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_03}{
+          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{MEMORY\_STALL} state, the memory interface shall update the address of the current memory request.
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_04}{
+        When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in either \texttt{MEMORY\_WAIT} or \texttt{DONE} state, the memory interface shall wait for the termination of the request, disable the output and trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_05}{
+        When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{PIPELINE\_STALL} state, the memory interface shall disable the output and trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
+        }
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_06}{
+          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
+        }[
+          derivedfrom=I\_DRQ\_01
+        ]
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_07}{
+          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
+        }[
+          derivedfrom=I\_IRQ\_01
+        ]
+
+      \req{D\_IFM\_REQUEST\_CANCEL\_08}{
+          On the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
         }
 
     \subsubsection{Wishbone interface}
