@@ -48,12 +48,12 @@ import ecap5_dproc_pkg::*;
 
 enum logic [2:0] {
   IDLE,          // 0
-  MEMORY_STALL,  // 1
-  REQUEST,       // 2
-  WAIT,          // 3
-  DONE,          // 4
+  REQUEST,       // 1
+  MEMORY_WAIT,   // 2
+  DONE,          // 3
+  MEMORY_STALL,  // 4
   PIPELINE_STALL // 5
-} state_d, state_q;
+} state_d, state_q /* verilator public */;
 
 logic[31:0] pc_d, pc_q, pc_qq;
 logic[31:0] instr_d, instr_q;
@@ -97,11 +97,11 @@ always_comb begin : wishbone_read
         state_d = DONE;
         instr_d = wb_dat_i;
       end else begin
-        state_d = WAIT;
+        state_d = MEMORY_WAIT;
       end
       wb_stb_d = 0;
     end
-    WAIT: begin
+    MEMORY_WAIT: begin
       if(wb_ack_i) begin
         state_d = DONE;
         instr_d = wb_dat_i;

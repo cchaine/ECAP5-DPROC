@@ -26,23 +26,23 @@
         The IFM shall be in the \texttt{IDLE} (\texttt{0}) state while \texttt{rst\_i} is asserted or on a successfull output handshake.
       }
 
-    \req{D\_IFM\_STATE\_03}{
+    \req{D\_IFM\_STATE\_02}{
         The IFM shall be in the \texttt{REQUEST} (\texttt{1}) state when a memory request is successfully sent.
       }
 
-    \req{D\_IFM\_STATE\_04}{
+    \req{D\_IFM\_STATE\_03}{
         The IFM shall be in the \texttt{MEMORY\_WAIT} (\texttt{2}) state when a memory request has been sent but the response has not been received.
       }
 
-    \req{D\_IFM\_STATE\_05}{
+    \req{D\_IFM\_STATE\_04}{
         The IFM shall be in the \texttt{DONE} (\texttt{3}) state when a memory request response is successfully received.
       }
 
-    \req{D\_IFM\_STATE\_06}{
+    \req{D\_IFM\_STATE\_05}{
         The IFM shall be in the \texttt{MEMORY\_STALL} (\texttt{4}) state when a memory request is ready but the memory interface is stalled.
       }
 
-    \req{D\_IFM\_STATE\_07}{
+    \req{D\_IFM\_STATE\_06}{
         The IFM shall be in the \texttt{PIPELINE\_STALL} (\texttt{5}) state when a memory request output is ready but the pipeline is stalled.
       }
 

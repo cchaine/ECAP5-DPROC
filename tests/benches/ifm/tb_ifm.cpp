@@ -30,6 +30,8 @@
 #include "Vtb_ifm.h"
 #include "testbench.h"
 #include "Vtb_ifm_ecap5_dproc_pkg.h"
+#include "Vtb_ifm_ifm.h"
+#include "Vtb_ifm_tb_ifm.h"
 
 class TB_Ifm : public Testbench<Vtb_ifm> {
 public:
@@ -54,6 +56,10 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to initialize the memory interface");
 
+  CHECK("tb_ifm.no_stall_16",
+      (core->tb_ifm->dut->state_q == 0),
+      "Failed to enter the IDLE state");
+
   // Leave the reset state
   core->irq_i = 0;
   core->drq_i = 0;
@@ -61,6 +67,10 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
   tb->tick();
+
+  CHECK("tb_ifm.no_stall_17",
+      (core->tb_ifm->dut->state_q == 1),
+      "Failed to enter the REQUEST state");
 
   // check that the output is properly invalidated
   CHECK("tb_ifm.no_stall_15",
@@ -88,6 +98,10 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
+  CHECK("tb_ifm.no_stall_18",
+      (core->tb_ifm->dut->state_q == 3),
+      "Failed to enter the DONE state");
+
   // check that the request is being processed
   CHECK("tb_ifm.no_stall_05",
       (core->wb_stb_o == 0),
@@ -100,6 +114,10 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->wb_ack_i = 0;
 
   tb->tick();
+
+  CHECK("tb_ifm.no_stall_19",
+      (core->tb_ifm->dut->state_q == 0),
+      "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
   CHECK("tb_ifm.no_stall_07",
@@ -121,6 +139,10 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
     "Wrong outputed pc");
 
   tb->tick();
+
+  CHECK("tb_ifm.no_stall_20",
+      (core->tb_ifm->dut->state_q == 1),
+      "Failed to enter the REQUEST state");
 
   // check that a successfull output handshake is properly detected
   CHECK("tb_ifm.no_stall_10",
@@ -151,12 +173,20 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   core->wb_stall_i = 1;
   tb->tick();
 
+  CHECK("tb_ifm.memory_stall_08",
+      (core->tb_ifm->dut->state_q == 4),
+      "Failed to enter the MEMORY_STALL state");
+
   // check the memory read request
   CHECK("tb_ifm.memory_stall_01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to perform the memory read request : 1st time");
 
   tb->tick();
+
+  CHECK("tb_ifm.memory_stall_09",
+      (core->tb_ifm->dut->state_q == 4),
+      "Failed to enter the MEMORY_STALL state");
 
   // check the memory read request
   CHECK("tb_ifm.memory_stall_02",
@@ -165,6 +195,10 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 
   tb->tick();
 
+  CHECK("tb_ifm.memory_stall_10",
+      (core->tb_ifm->dut->state_q == 4),
+      "Failed to enter the MEMORY_STALL state");
+
   // check the memory read request
   CHECK("tb_ifm.memory_stall_03",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
@@ -172,6 +206,10 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 
   core->wb_stall_i = 0;
   tb->tick();
+
+  CHECK("tb_ifm.memory_stall_11",
+      (core->tb_ifm->dut->state_q == 1),
+      "Failed to enter the REQUEST state");
 
   // check the memory read request
   CHECK("tb_ifm.memory_stall_04",
@@ -183,6 +221,10 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   core->wb_dat_i = data;
   core->wb_ack_i = 1;
   tb->tick();
+
+  CHECK("tb_ifm.memory_stall_12",
+      (core->tb_ifm->dut->state_q == 3),
+      "Failed to enter the DONE state");
 
   // check that the request is being processed
   CHECK("tb_ifm.memory_stall_05",
@@ -196,6 +238,10 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   core->wb_ack_i = 0;
 
   tb->tick();
+
+  CHECK("tb_ifm.memory_stall_13",
+      (core->tb_ifm->dut->state_q == 0),
+      "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
   CHECK("tb_ifm.memory_stall_07",
@@ -217,8 +263,16 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
   // read request is sent
   
+  CHECK("tb_ifm.memory_wait_state_08",
+      (core->tb_ifm->dut->state_q == 1),
+      "Failed to enter the REQUEST state");
+  
   // insert one wait cycle
   tb->tick();
+
+  CHECK("tb_ifm.memory_wait_state_09",
+      (core->tb_ifm->dut->state_q == 2),
+      "Failed to enter the MEMORY_WAIT state");
 
   // check that the request is being processed
   CHECK("tb_ifm.memory_wait_state_01",
@@ -230,6 +284,10 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
   // insert second wait cycle
   tb->tick();
+
+  CHECK("tb_ifm.memory_wait_state_10",
+      (core->tb_ifm->dut->state_q == 2),
+      "Failed to enter the MEMORY_WAIT state");
 
   // check that the request is being processed
   CHECK("tb_ifm.memory_wait_state_03",
@@ -245,6 +303,10 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
+  CHECK("tb_ifm.memory_wait_state_11",
+      (core->tb_ifm->dut->state_q == 3),
+      "Failed to enter the DONE state");
+
   // check that the request is being processed
   CHECK("tb_ifm.memory_wait_state_05",
       (core->wb_stb_o == 0),
@@ -257,6 +319,10 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
   core->wb_ack_i = 0;
 
   tb->tick();
+
+  CHECK("tb_ifm.memory_wait_state_12",
+      (core->tb_ifm->dut->state_q == 0),
+      "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
   CHECK("tb_ifm.memory_wait_state_07",
@@ -278,6 +344,10 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->tick();
 
   // read request is sent
+  
+  CHECK("tb_ifm.pipeline_stall_16",
+      (core->tb_ifm->dut->state_q == 1),
+      "Failed to enter the REQUEST state");
 
   // send a response to the read request
   uint32_t data = rand();
@@ -285,12 +355,20 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
+  CHECK("tb_ifm.pipeline_stall_17",
+      (core->tb_ifm->dut->state_q == 3),
+      "Failed to enter the DONE state");
+
   // the request is being processed
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
 
   tb->tick();
+
+  CHECK("tb_ifm.pipeline_stall_18",
+      (core->tb_ifm->dut->state_q == 5),
+      "Failed to enter the PIPELINE_STALL state");
 
   // the response has been received
 
@@ -314,6 +392,10 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
   tb->tick();
 
+  CHECK("tb_ifm.pipeline_stall_19",
+      (core->tb_ifm->dut->state_q == 5),
+      "Failed to enter the PIPELINE_STALL state");
+
   // check that the output is valid
   CHECK("tb_ifm.pipeline_stall_05",
     (core->output_valid_o == 1),
@@ -335,6 +417,10 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   core->output_ready_i = 1;
 
   tb->tick();
+
+  CHECK("tb_ifm.pipeline_stall_20",
+      (core->tb_ifm->dut->state_q == 0),
+      "Failed to enter the IDLE state");
 
   // check that the output is valid
   CHECK("tb_ifm.pipeline_stall_09",
