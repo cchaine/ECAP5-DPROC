@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sat Mar  2 10:58:47 2024
+[*] Mon Mar  4 21:19:07 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/ifm.vcd"
-[dumpfile_mtime] "Sat Mar  2 10:57:41 2024"
-[dumpfile_size] 8249
+[dumpfile_mtime] "Mon Mar  4 21:18:17 2024"
+[dumpfile_size] 30164
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/ifm.gtkw"
 [timestart] 8
-[size] 1488 762
-[pos] -1 2
-*-7.371864 565 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[size] 2496 743
+[pos] -1 -1
+*-8.371864 2305 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -39,18 +39,18 @@
 [treeopen] TOP.
 [treeopen] TOP.tb_ifm.
 [sst_width] 253
-[signals_width] 171
+[signals_width] 190
 [sst_expanded] 1
-[sst_vpaned_height] 207
+[sst_vpaned_height] 270
 @28
 TOP.tb_ifm.clk_i
 TOP.tb_ifm.rst_i
 TOP.tb_ifm.drq_i
 TOP.tb_ifm.irq_i
+@29
+TOP.tb_ifm.branch_i
 @22
 TOP.tb_ifm.boffset_i[19:0]
-@28
-TOP.tb_ifm.branch_i
 @200
 -Memory
 @2028
@@ -77,7 +77,6 @@ TOP.tb_ifm.wb_ack_i
 TOP.tb_ifm.wb_cyc_o
 [color] 2
 TOP.tb_ifm.wb_stall_i
-TOP.tb_ifm.dut.output_valid_q
 @200
 -Output
 @28
