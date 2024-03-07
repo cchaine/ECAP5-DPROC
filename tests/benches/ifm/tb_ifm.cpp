@@ -1383,6 +1383,157 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
       "Failed to fetch the interruption instruction");
 }
 
+/*============================================*/
+/*                 Precedence                 */
+/*============================================*/
+
+void tb_ifm_precedence_debug(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
+  tb->reset();
+
+  // Leave the reset state
+  core->drq_i = 1;
+  core->irq_i = 1;
+  core->branch_i = 1;
+  core->output_ready_i = 1;
+  core->wb_stall_i = 0;
+
+  tb->tick();
+
+  // request sent
+
+  // send a response to the read request
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  core->drq_i = 1;
+  core->irq_i = 1;
+  core->branch_i = 1;
+  core->boffset_i = rand() % 0x7FFFFFFF;
+  tb->tick();
+  core->branch_i = 0;
+  core->irq_i = 0;
+  core->drq_i = 0;
+  
+  tb->tick();
+
+  CHECK("tb_ifm.precedence_debug_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to update pc with the right precedence");
+}
+
+void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
+  tb->reset();
+
+  // Leave the reset state
+  core->drq_i = 0;
+  core->irq_i = 1;
+  core->branch_i = 1;
+  core->output_ready_i = 1;
+  core->wb_stall_i = 0;
+
+  tb->tick();
+
+  // request sent
+
+  // send a response to the read request
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  core->irq_i = 1;
+  core->branch_i = 1;
+  core->boffset_i = rand() % 0x7FFFFFFF;
+  tb->tick();
+  core->branch_i = 0;
+  core->irq_i = 0;
+  
+  tb->tick();
+
+  CHECK("tb_ifm.precedence_interrupt_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
+      "Failed to update pc with the right precedence");
+}
+
+void tb_ifm_precedence_branch(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
+  tb->reset();
+
+  // Leave the reset state
+  core->drq_i = 0;
+  core->irq_i = 0;
+  core->branch_i = 0;
+  core->output_ready_i = 1;
+  core->wb_stall_i = 0;
+
+  tb->tick();
+
+  // request sent
+
+  // send a response to the read request
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  core->branch_i = 1;
+  core->boffset_i = rand() % 0x7FFFFFFF;
+  tb->tick();
+  core->branch_i = 0;
+  
+  tb->tick();
+
+  CHECK("tb_ifm.precedence_branch_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
+      "Failed to update pc with the right precedence");
+}
+
+void tb_ifm_precedence_increment(TB_Ifm * tb) {
+  Vtb_ifm * core = tb->core;
+  tb->reset();
+
+  // Leave the reset state
+  core->drq_i = 0;
+  core->irq_i = 0;
+  core->branch_i = 0;
+  core->output_ready_i = 1;
+  core->wb_stall_i = 0;
+
+  tb->tick();
+
+  // request sent
+
+  // send a response to the read request
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  tb->tick();
+  
+  tb->tick();
+
+  CHECK("tb_ifm.precedence_increment_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + 4),
+      "Failed to update pc with the right precedence");
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -1427,6 +1578,11 @@ int main(int argc, char ** argv, char ** env) {
   tb_ifm_branch_on_output_handshake(tb);
   tb_ifm_branch_during_pipeline_stall(tb);
   tb_ifm_branch_back_to_back(tb);
+
+  tb_ifm_precedence_debug(tb);
+  tb_ifm_precedence_interrupt(tb);
+  tb_ifm_precedence_branch(tb);
+  tb_ifm_precedence_increment(tb);
 
   /************************************************************/
 
