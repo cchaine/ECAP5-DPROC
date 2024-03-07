@@ -55,36 +55,35 @@ enum logic [2:0] {
   PIPELINE_STALL // 5
 } state_d, state_q /* verilator public */;
 
-logic[31:0] pc_d, pc_q, pc_qq;
-logic[31:0] instr_d, instr_q;
-logic[31:0] wb_adr_d, wb_adr_q;
-logic wb_stb_d, wb_stb_q;
-logic wb_cyc_d, wb_cyc_q;
-logic rst_q, rst_qq;
-logic output_valid_d, output_valid_q;
+logic[31:0]  pc_d,            pc_q,            pc_qq;
+logic[31:0]  instr_d,         instr_q;         
+logic[31:0]  wb_adr_d,        wb_adr_q;        
+logic        wb_stb_d,        wb_stb_q;        
+logic        wb_cyc_d,        wb_cyc_q;        
+logic        rst_q,           rst_qq;          
+logic        output_valid_d,  output_valid_q;  
+logic        fetch_request;                    
+logic        pending_jump_d,  pending_jump_q;  
 
-always_comb begin : wishbone_read
+/*
+ * A memory fetch is triggered in either of the following cases
+ *   - After a falling edge of rst
+ *   - After a successfull output handshake
+ *   - After a jump was requested
+ */
+assign fetch_request = (rst_qq && !rst_i) || (output_valid_q && output_ready_i) || (pending_jump_q);
+
+always_comb begin : state_machine
   state_d = state_q;
-
-  wb_adr_d = wb_adr_q;
-  wb_stb_d = wb_stb_q;
-  wb_cyc_d = wb_cyc_q;
-
-  output_valid_d = output_valid_q;
-  instr_d = instr_q;
 
   case(state_q)
     IDLE: begin
-      if((rst_qq && !rst_i) || (output_valid_q && output_ready_i)) begin
+      if(fetch_request) begin
         if(wb_stall_i) begin
           state_d = MEMORY_STALL;
         end else begin
           state_d = REQUEST;
         end
-        wb_adr_d = pc_q;
-        wb_stb_d = 1;
-        wb_cyc_d = 1;
-        output_valid_d = 0;
       end
     end
     MEMORY_STALL: begin
@@ -95,21 +94,16 @@ always_comb begin : wishbone_read
     REQUEST: begin
       if(wb_ack_i) begin
         state_d = DONE;
-        instr_d = wb_dat_i;
       end else begin
         state_d = MEMORY_WAIT;
       end
-      wb_stb_d = 0;
     end
     MEMORY_WAIT: begin
       if(wb_ack_i) begin
         state_d = DONE;
-        instr_d = wb_dat_i;
       end
     end
     DONE: begin
-      wb_cyc_d = 0;
-      output_valid_d = 1;
       if(output_ready_i) begin
         state_d = IDLE;
       end else begin
@@ -117,7 +111,7 @@ always_comb begin : wishbone_read
       end
     end
     PIPELINE_STALL: begin
-      if(output_ready_i) begin
+      if(output_ready_i || pending_jump_q) begin
         state_d = IDLE; 
       end
     end
@@ -126,28 +120,108 @@ always_comb begin : wishbone_read
   endcase
 end
 
+always_comb begin : wishbone_read
+  wb_adr_d = wb_adr_q;
+  wb_stb_d = wb_stb_q;
+  wb_cyc_d = wb_cyc_q;
+
+  case(state_q)
+    IDLE: begin
+      if(fetch_request) begin
+        wb_adr_d = pc_q;
+        wb_stb_d = 1;
+        wb_cyc_d = 1;
+      end
+    end
+    MEMORY_STALL: begin
+    end
+    REQUEST: begin
+      wb_stb_d = 0;
+    end
+    MEMORY_WAIT: begin
+    end
+    DONE: begin
+      wb_cyc_d = 0;
+    end
+    PIPELINE_STALL: begin
+    end
+    default: begin
+    end
+  endcase
+end
+assign  wb_adr_o  =  wb_adr_q;
+assign  wb_we_o   =  0;
+assign  wb_sel_o  =  4'hF;
+assign  wb_stb_o  =  wb_stb_q;
+assign  wb_cyc_o  =  wb_cyc_q;
+
+always_comb begin : output_management
+  pending_jump_d = pending_jump_q;
+
+  output_valid_d = output_valid_q;
+  instr_d = instr_q;
+
+  case(state_q)
+    IDLE: begin
+      if(fetch_request) begin
+        output_valid_d = 0;
+        pending_jump_d = 0;
+      end
+    end
+    MEMORY_STALL: begin
+    end
+    REQUEST: begin
+      if(wb_ack_i) begin
+        instr_d = wb_dat_i;
+      end
+    end
+    MEMORY_WAIT: begin
+      if(wb_ack_i) begin
+        instr_d = wb_dat_i;
+      end
+    end
+    DONE: begin
+      if(pending_jump_q) begin
+        output_valid_d = 0;
+      end else begin
+        output_valid_d = 1;
+      end
+    end
+    PIPELINE_STALL: begin
+      if(pending_jump_q) begin
+        output_valid_d = 0;
+      end
+    end
+    default: begin
+    end
+  endcase
+end
+assign  output_valid_o  =  output_valid_q;
+assign  instr_o         =  instr_q;
+assign  pc_o            =  pc_qq;
+
 /*
  * The next value of PC comes from (in order of precedence):
- *  0. Default increment
- *  1. Control flow change request (branch)
- *  2. External interrupt
- *  3. Debug
+ *  0. Debug
+ *  1. External interrupt
+ *  2. Control flow change request (branch)
+ *  3. Default increment
  */
 always_comb begin : pc_update
   pc_d = pc_q;
-  // 0. Default increment
+  // 3. Default increment
   if (output_valid_d && output_ready_i) begin
     pc_d = pc_q + 4;
   end
-  // 1. Control flow change request
-  if (branch_i) begin
+  // 2. Control flow change request
+  if (branch_i && !pending_jump_q) begin
     pc_d = pc_q + {12'h0, boffset_i[19:0]};
   end
-  // 2. External interrupt
+  // 1. External interrupt
   if (irq_i) begin
     pc_d = ecap5_dproc_pkg::interrupt_address[31:0];
   end
-  // 3. Debug
+  // 0. Debug
   if (drq_i) begin
     pc_d = ecap5_dproc_pkg::debug_address[31:0];
   end
@@ -162,6 +236,7 @@ always_ff @(posedge clk_i) begin
     output_valid_q  <=  0;
     instr_q         <=  0;
     pc_q            <=  ecap5_dproc_pkg::boot_address[31:0];
+    pending_jump_q <=  0;
   end else begin
     state_q         <=  state_d;
     wb_adr_q        <=  wb_adr_d;
@@ -170,6 +245,12 @@ always_ff @(posedge clk_i) begin
     output_valid_q  <=  output_valid_d;
     instr_q         <=  instr_d;
     pc_q            <=  pc_d;
+
+    if(drq_i || irq_i || branch_i) begin
+      pending_jump_q <=  1;
+    end else begin
+      pending_jump_q <=  pending_jump_d;
+    end
   end
   // Store a delayed rst to detect a falling edge for instruction fetch trigger
   rst_q   <=  rst_i;
@@ -177,15 +258,5 @@ always_ff @(posedge clk_i) begin
   // store a delayed pc used to output the address of the current instruction
   pc_qq   <=  pc_q;
 end
-
-assign pc_o = pc_qq;
-assign instr_o = instr_q;
-assign output_valid_o = output_valid_q;
-
-assign wb_adr_o = wb_adr_q;
-assign wb_we_o = 0;
-assign wb_sel_o = 4'hF;
-assign wb_stb_o = wb_stb_q;
-assign wb_cyc_o = wb_cyc_q;
 
 endmodule // ifm

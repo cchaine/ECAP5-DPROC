@@ -12,39 +12,36 @@
 
     \subsubsection{State machine}
 
-    % Diagram with the stage states
-    % requirements on the stages
+      \begin{figure}[H]
+          \centering
+          \input{arch/figures/8_ifm-state-diagram}
+          \caption{State diagram of the instruction fetch module}
+          \label{fig:ifm-state-diagram}
+        \end{figure}
 
-    \begin{figure}[H]
-        \centering
-        \input{arch/figures/8_ifm-state-diagram}
-        \caption{State diagram of the instruction fetch module}
-        \label{fig:ifm-state-diagram}
-      \end{figure}
+      \req{D\_IFM\_STATE\_01}{
+          The IFM shall be in the \texttt{IDLE} (\texttt{0}) state while \texttt{rst\_i} is asserted or on a successfull output handshake.
+        }
 
-    \req{D\_IFM\_STATE\_01}{
-        The IFM shall be in the \texttt{IDLE} (\texttt{0}) state while \texttt{rst\_i} is asserted or on a successfull output handshake.
-      }
+      \req{D\_IFM\_STATE\_02}{
+          The IFM shall be in the \texttt{REQUEST} (\texttt{1}) state when a memory request is successfully sent.
+        }
 
-    \req{D\_IFM\_STATE\_02}{
-        The IFM shall be in the \texttt{REQUEST} (\texttt{1}) state when a memory request is successfully sent.
-      }
+      \req{D\_IFM\_STATE\_03}{
+          The IFM shall be in the \texttt{MEMORY\_WAIT} (\texttt{2}) state when a memory request has been sent but the response has not been received.
+        }
 
-    \req{D\_IFM\_STATE\_03}{
-        The IFM shall be in the \texttt{MEMORY\_WAIT} (\texttt{2}) state when a memory request has been sent but the response has not been received.
-      }
+      \req{D\_IFM\_STATE\_04}{
+          The IFM shall be in the \texttt{DONE} (\texttt{3}) state when a memory request response is successfully received.
+        }
 
-    \req{D\_IFM\_STATE\_04}{
-        The IFM shall be in the \texttt{DONE} (\texttt{3}) state when a memory request response is successfully received.
-      }
+      \req{D\_IFM\_STATE\_05}{
+          The IFM shall be in the \texttt{MEMORY\_STALL} (\texttt{4}) state when a memory request is ready but the memory interface is stalled.
+        }
 
-    \req{D\_IFM\_STATE\_05}{
-        The IFM shall be in the \texttt{MEMORY\_STALL} (\texttt{4}) state when a memory request is ready but the memory interface is stalled.
-      }
-
-    \req{D\_IFM\_STATE\_06}{
-        The IFM shall be in the \texttt{PIPELINE\_STALL} (\texttt{5}) state when a memory request output is ready but the pipeline is stalled.
-      }
+      \req{D\_IFM\_STATE\_06}{
+          The IFM shall be in the \texttt{PIPELINE\_STALL} (\texttt{5}) state when a memory request output is ready but the pipeline is stalled.
+        }
 
     \subsubsection{PC register}
 
@@ -128,38 +125,30 @@
         }
 
       \req{D\_IFM\_REQUEST\_CANCEL\_01}{
-          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{IDLE} state, the memory interface shall trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
+          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered, the memory interface shall wait for the termination of the any pending memory request and disable the module outputs.
         }
 
+      \begin{content}
+        In the case where \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered on the rising edge of \texttt{clk\_i} with a successfull output handshake, the instruction is still outputed. This might cause a problem which will be handled in HZDM. TBC
+      \end{content}
+
       \req{D\_IFM\_REQUEST\_CANCEL\_02}{
-          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{REQUEST} state, the memory interface shall update the address of the current memory request.
+        After \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} has been triggered, \eventref{EV\_IFM\_FETCH\_REQUEST\_01} shall be triggered once all pending memory requests are terminated.
         }
 
       \req{D\_IFM\_REQUEST\_CANCEL\_03}{
-          When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{MEMORY\_STALL} state, the memory interface shall update the address of the current memory request.
-        }
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_04}{
-        When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in either \texttt{MEMORY\_WAIT} or \texttt{DONE} state, the memory interface shall wait for the termination of the request, disable the output and trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
-        }
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_05}{
-        When \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} is triggered while in the \texttt{PIPELINE\_STALL} state, the memory interface shall disable the output and trigger \eventref{EV\_IFM\_FETCH\_REQUEST\_01} on the next rising edge of \texttt{clk\_i}.
-        }
-
-      \req{D\_IFM\_REQUEST\_CANCEL\_06}{
           On the rising edge of \texttt{clk\_i} following the assertion of \texttt{drq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
         }[
           derivedfrom=I\_DRQ\_01
         ]
 
-      \req{D\_IFM\_REQUEST\_CANCEL\_07}{
+      \req{D\_IFM\_REQUEST\_CANCEL\_04}{
           On the rising edge of \texttt{clk\_i} following the assertion of \texttt{irq\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
         }[
           derivedfrom=I\_IRQ\_01
         ]
 
-      \req{D\_IFM\_REQUEST\_CANCEL\_08}{
+      \req{D\_IFM\_REQUEST\_CANCEL\_05}{
           On the rising edge of \texttt{clk\_i} following the assertion of \texttt{branch\_i}, \eventref{EV\_IFM\_REQUEST\_CANCEL\_01} shall be triggered.
         }
 

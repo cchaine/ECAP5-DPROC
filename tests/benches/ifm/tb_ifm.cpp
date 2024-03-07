@@ -462,7 +462,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 /*                   Debug                    */
 /*============================================*/
 
-void tb_ifm_debug_after_reset(TB_Ifm * tb) {
+void tb_ifm_debug_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
 
@@ -478,9 +478,30 @@ void tb_ifm_debug_after_reset(TB_Ifm * tb) {
   core->drq_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.debug_after_reset_01",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+  CHECK("tb_ifm.debug_during_request_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+  
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  tb->tick();
+  
+  // check the stage output
+  CHECK("tb_ifm.debug_during_request_02",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+  
+  tb->tick();
+
+  CHECK("tb_ifm.debug_during_request_03",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_during_ack(TB_Ifm * tb) {
@@ -532,8 +553,8 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   tb->tick();
 
   CHECK("tb_ifm.debug_during_ack_05",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_during_wait(TB_Ifm * tb) {
@@ -587,39 +608,62 @@ void tb_ifm_debug_during_wait(TB_Ifm * tb) {
   tb->tick();
 
   CHECK("tb_ifm.debug_during_wait_03",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
-
+  
   // Leave the reset state
   core->irq_i = 0;
   core->drq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 1;
-
+  
   tb->tick();
-
+  
   // request ready
-
+  
   tb->tick();
-
+  
   core->drq_i = 1;
   tb->tick();
   core->drq_i = 0;
-
+  tb->tick();
+  core->wb_stall_i = 0;
+  tb->tick();
+  
   CHECK("tb_ifm.debug_during_memory_stall_01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
-
-  // check the memory read request is updated
+  
   CHECK("tb_ifm.debug_during_memory_stall_02",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to update the memory read request address");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+  
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+  
+  tb->tick();
+  
+  // check the stage output
+  CHECK("tb_ifm.debug_during_memory_stall_03",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+  
+  tb->tick();
+  
+  CHECK("tb_ifm.debug_during_memory_stall_04",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
@@ -657,14 +701,14 @@ void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
 
   // check the stage output
   CHECK("tb_ifm.debug_on_output_handshake_02",
-    (core->output_valid_o == 0),
-    "Failed to cancel output");
+    (core->output_valid_o == 1),
+    "Failed to output the pre-jump instruction");
   
   tb->tick();
 
   CHECK("tb_ifm.debug_on_output_handshake_03",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
@@ -698,17 +742,18 @@ void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
   core->drq_i = 1;
   tb->tick();
   core->drq_i = 0;
+  tb->tick();
 
   // check the stage output
   CHECK("tb_ifm.debug_during_pipeline_stall_01",
     (core->output_valid_o == 0),
     "Failed to cancel output");
-  
-  tb->tick();
 
+  tb->tick();
+  
   CHECK("tb_ifm.debug_during_pipeline_stall_02",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
@@ -761,15 +806,15 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   tb->tick();
 
   CHECK("tb_ifm.debug_back_to_back_05",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
+      "Failed to fetch the debug instruction");
 }
 
 /*============================================*/
 /*                 Interrupt                  */
 /*============================================*/
 
-void tb_ifm_interrupt_after_reset(TB_Ifm * tb) {
+void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
 
@@ -785,9 +830,30 @@ void tb_ifm_interrupt_after_reset(TB_Ifm * tb) {
   core->irq_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.interrupt_after_reset_01",
+  CHECK("tb_ifm.interrupt_during_request_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  tb->tick();
+
+  // check the stage output
+  CHECK("tb_ifm.interrupt_during_request_02",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+
+  tb->tick();
+
+  CHECK("tb_ifm.interrupt_during_request_03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to fetch the interruption instruction");
+      "Failed to fetch the interrupt instruction");
 }
 
 void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
@@ -901,32 +967,55 @@ void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
 void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
-
+  
   // Leave the reset state
   core->irq_i = 0;
   core->drq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 1;
-
+  
   tb->tick();
-
+  
   // request ready
-
+  
   tb->tick();
-
+  
   core->irq_i = 1;
   tb->tick();
   core->irq_i = 0;
-
+  tb->tick();
+  core->wb_stall_i = 0;
+  tb->tick();
+  
   CHECK("tb_ifm.interrupt_during_memory_stall_01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
-
-  // check the memory read request is updated
+  
   CHECK("tb_ifm.interrupt_during_memory_stall_02",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+  
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+  
+  tb->tick();
+  
+  // check the stage output
+  CHECK("tb_ifm.interrupt_during_memory_stall_03",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+  
+  tb->tick();
+  
+  CHECK("tb_ifm.interrupt_during_memory_stall_04",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
-      "Failed to update the memory read request address");
+      "Failed to fetch the interrupt instruction");
 }
 
 void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
@@ -964,8 +1053,8 @@ void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
 
   // check the stage output
   CHECK("tb_ifm.interrupt_on_output_handshake_02",
-    (core->output_valid_o == 0),
-    "Failed to cancel output");
+    (core->output_valid_o == 1),
+    "Failed to output the pre-jump instruction");
   
   tb->tick();
 
@@ -1003,6 +1092,7 @@ void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
   core->irq_i = 1;
   tb->tick();
   core->irq_i = 0;
+  tb->tick();
 
   // check the stage output
   CHECK("tb_ifm.interrupt_during_pipeline_stall_01",
@@ -1074,7 +1164,7 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
 /*                   Branch                   */
 /*============================================*/
 
-void tb_ifm_branch_after_reset(TB_Ifm * tb) {
+void tb_ifm_branch_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
 
@@ -1091,9 +1181,30 @@ void tb_ifm_branch_after_reset(TB_Ifm * tb) {
   core->branch_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.branch_after_reset_01",
+  CHECK("tb_ifm.branch_during_request_01",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  tb->tick();
+
+  // check the stage output
+  CHECK("tb_ifm.branch_during_request_02",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+
+  tb->tick();
+
+  CHECK("tb_ifm.branch_during_request_03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
-      "Failed to fetch the interruption instruction");
+      "Failed to fetch the branch instruction");
 }
 
 void tb_ifm_branch_during_ack(TB_Ifm * tb) {
@@ -1209,33 +1320,56 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
 void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
-
+  
   // Leave the reset state
   core->irq_i = 0;
   core->drq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 1;
-
+  
   tb->tick();
-
+  
   // request ready
-
+  
   tb->tick();
-
+  
   core->branch_i = 1;
   core->boffset_i = rand() % 0x7FFFFFFF;
   tb->tick();
   core->branch_i = 0;
-
-  // check the memory read request is updated
+  tb->tick();
+  core->wb_stall_i = 0;
+  tb->tick();
+  
   CHECK("tb_ifm.branch_during_memory_stall_01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
-
+  
   CHECK("tb_ifm.branch_during_memory_stall_02",
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
+      "Failed to fetch the pre-jump instruction");
+  
+  uint32_t data = rand();
+  core->wb_dat_i = data;
+  core->wb_ack_i = 1;
+  tb->tick();
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+  
+  tb->tick();
+  
+  // check the stage output
+  CHECK("tb_ifm.branch_during_memory_stall_03",
+    (core->output_valid_o == 0),
+    "Failed to cancel output");
+  
+  tb->tick();
+  
+  CHECK("tb_ifm.branch_during_memory_stall_04",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
-      "Failed to update the memory read request address");
+      "Failed to fetch the branch instruction");
 }
 
 void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
@@ -1274,8 +1408,8 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
 
   // check the stage output
   CHECK("tb_ifm.branch_on_output_handshake_02",
-    (core->output_valid_o == 0),
-    "Failed to cancel output");
+    (core->output_valid_o == 1),
+    "Failed to output the pre-jump instruction");
   
   tb->tick();
 
@@ -1314,6 +1448,7 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   core->boffset_i = rand() % 0x7FFFFFFF;
   tb->tick();
   core->branch_i = 0;
+  tb->tick();
 
   // check the stage output
   CHECK("tb_ifm.branch_during_pipeline_stall_01",
@@ -1347,7 +1482,8 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   core->wb_dat_i = data;
   core->wb_ack_i = 1;
   core->branch_i = 1;
-  core->boffset_i = rand() % 0x7FFFFFFF;
+  uint32_t first_offset = rand() % 0x7FFFFFFF;
+  core->boffset_i = first_offset;
   tb->tick();
   core->branch_i = 1;
   core->boffset_i = rand() % 0x7FFFFFFF;
@@ -1379,8 +1515,8 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   tb->tick();
 
   CHECK("tb_ifm.branch_back_to_back_05",
-      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
-      "Failed to fetch the interruption instruction");
+      (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + first_offset),
+      "Failed to fetch the branch instruction");
 }
 
 /*============================================*/
@@ -1392,9 +1528,9 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
   tb->reset();
 
   // Leave the reset state
-  core->drq_i = 1;
-  core->irq_i = 1;
-  core->branch_i = 1;
+  core->drq_i = 0;
+  core->irq_i = 0;
+  core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
 
@@ -1433,8 +1569,8 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
 
   // Leave the reset state
   core->drq_i = 0;
-  core->irq_i = 1;
-  core->branch_i = 1;
+  core->irq_i = 0;
+  core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
 
@@ -1555,7 +1691,7 @@ int main(int argc, char ** argv, char ** env) {
 
   tb_ifm_pipeline_stall(tb);
 
-  tb_ifm_debug_after_reset(tb);
+  tb_ifm_debug_during_request(tb);
   tb_ifm_debug_during_ack(tb);
   tb_ifm_debug_during_wait(tb);
   tb_ifm_debug_during_memory_stall(tb);
@@ -1563,7 +1699,7 @@ int main(int argc, char ** argv, char ** env) {
   tb_ifm_debug_during_pipeline_stall(tb);
   tb_ifm_debug_back_to_back(tb);
 
-  tb_ifm_interrupt_after_reset(tb);
+  tb_ifm_interrupt_during_request(tb);
   tb_ifm_interrupt_during_ack(tb);
   tb_ifm_interrupt_during_wait(tb);
   tb_ifm_interrupt_during_memory_stall(tb);
@@ -1571,7 +1707,7 @@ int main(int argc, char ** argv, char ** env) {
   tb_ifm_interrupt_during_pipeline_stall(tb);
   tb_ifm_interrupt_back_to_back(tb);
 
-  tb_ifm_branch_after_reset(tb);
+  tb_ifm_branch_during_request(tb);
   tb_ifm_branch_during_ack(tb);
   tb_ifm_branch_during_wait(tb);
   tb_ifm_branch_during_memory_stall(tb);
