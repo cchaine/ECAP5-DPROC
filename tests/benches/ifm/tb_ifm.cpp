@@ -48,15 +48,15 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
   tb->reset();
 
-  CHECK("tb_ifm.no_stall_01",
+  CHECK("tb_ifm.no_stall.01",
       (core->output_valid_o == 0),
       "Failed to reset the module");
 
-  CHECK("tb_ifm.no_stall_13",
+  CHECK("tb_ifm.no_stall.13",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to initialize the memory interface");
 
-  CHECK("tb_ifm.no_stall_16",
+  CHECK("tb_ifm.no_stall.16",
       (core->tb_ifm->dut->state_q == 0),
       "Failed to enter the IDLE state");
 
@@ -68,27 +68,27 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->wb_stall_i = 0;
   tb->tick();
 
-  CHECK("tb_ifm.no_stall_17",
+  CHECK("tb_ifm.no_stall.17",
       (core->tb_ifm->dut->state_q == 1),
       "Failed to enter the REQUEST state");
 
   // check that the output is properly invalidated
-  CHECK("tb_ifm.no_stall_15",
+  CHECK("tb_ifm.no_stall.15",
       (core->output_valid_o == 0),
       "Failed to properly unvalidate the output on a memory read request");
 
   // check the boot address
-  CHECK("tb_ifm.no_stall_02",
+  CHECK("tb_ifm.no_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to initialize pc after reset");
 
   // check the memory read request
-  CHECK("tb_ifm.no_stall_03",
+  CHECK("tb_ifm.no_stall.03",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0),
     "Failed to perform the memory read request");
   
   // check the size of the memory read request
-  CHECK("tb_ifm.no_stall_04",
+  CHECK("tb_ifm.no_stall.04",
     (core->wb_sel_o == 0xF),
     "Failed to specify the size of the memory read request");
 
@@ -98,15 +98,15 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
-  CHECK("tb_ifm.no_stall_18",
+  CHECK("tb_ifm.no_stall.18",
       (core->tb_ifm->dut->state_q == 3),
       "Failed to enter the DONE state");
 
   // check that the request is being processed
-  CHECK("tb_ifm.no_stall_05",
+  CHECK("tb_ifm.no_stall.05",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.no_stall_06",
+  CHECK("tb_ifm.no_stall.06",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -115,47 +115,47 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
 
   tb->tick();
 
-  CHECK("tb_ifm.no_stall_19",
+  CHECK("tb_ifm.no_stall.19",
       (core->tb_ifm->dut->state_q == 0),
       "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
-  CHECK("tb_ifm.no_stall_07",
+  CHECK("tb_ifm.no_stall.07",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.no_stall_08",
+  CHECK("tb_ifm.no_stall.08",
     (core->output_valid_o == 1),
     "Failed to output the instruction");
   
   // check the stage output instruction
-  CHECK("tb_ifm.no_stall_09",
+  CHECK("tb_ifm.no_stall.09",
     (core->instr_o == data),
     "Wrong outputed instruction");
   // check the stage output pc
-  CHECK("tb_ifm.no_stall_14",
+  CHECK("tb_ifm.no_stall.14",
     (core->pc_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Wrong outputed pc");
 
   tb->tick();
 
-  CHECK("tb_ifm.no_stall_20",
+  CHECK("tb_ifm.no_stall.20",
       (core->tb_ifm->dut->state_q == 1),
       "Failed to enter the REQUEST state");
 
   // check that a successfull output handshake is properly detected
-  CHECK("tb_ifm.no_stall_10",
+  CHECK("tb_ifm.no_stall.10",
       (core->output_valid_o == 0),
       "Failed to invalidate the output after a successfull handshake");
 
   // check the incremented address
-  CHECK("tb_ifm.no_stall_11",
+  CHECK("tb_ifm.no_stall.11",
     (core->wb_adr_o == (Vtb_ifm_ecap5_dproc_pkg::boot_address + 4)),
     "Failed to increment pc");
   
   // check the memory read request
-  CHECK("tb_ifm.no_stall_12",
+  CHECK("tb_ifm.no_stall.12",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0),
     "Failed to perform the subsequent memory request");
 }
@@ -173,46 +173,46 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   core->wb_stall_i = 1;
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_08",
+  CHECK("tb_ifm.memory_stall.08",
       (core->tb_ifm->dut->state_q == 4),
       "Failed to enter the MEMORY_STALL state");
 
   // check the memory read request
-  CHECK("tb_ifm.memory_stall_01",
+  CHECK("tb_ifm.memory_stall.01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to perform the memory read request : 1st time");
 
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_09",
+  CHECK("tb_ifm.memory_stall.09",
       (core->tb_ifm->dut->state_q == 4),
       "Failed to enter the MEMORY_STALL state");
 
   // check the memory read request
-  CHECK("tb_ifm.memory_stall_02",
+  CHECK("tb_ifm.memory_stall.02",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to perform hold the memory read request : 2nd time");
 
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_10",
+  CHECK("tb_ifm.memory_stall.10",
       (core->tb_ifm->dut->state_q == 4),
       "Failed to enter the MEMORY_STALL state");
 
   // check the memory read request
-  CHECK("tb_ifm.memory_stall_03",
+  CHECK("tb_ifm.memory_stall.03",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to perform hold the memory read request : 3rd time");
 
   core->wb_stall_i = 0;
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_11",
+  CHECK("tb_ifm.memory_stall.11",
       (core->tb_ifm->dut->state_q == 1),
       "Failed to enter the REQUEST state");
 
   // check the memory read request
-  CHECK("tb_ifm.memory_stall_04",
+  CHECK("tb_ifm.memory_stall.04",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0) && (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to perform hold the memory read request : final time");
 
@@ -222,15 +222,15 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_12",
+  CHECK("tb_ifm.memory_stall.12",
       (core->tb_ifm->dut->state_q == 3),
       "Failed to enter the DONE state");
 
   // check that the request is being processed
-  CHECK("tb_ifm.memory_stall_05",
+  CHECK("tb_ifm.memory_stall.05",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.memory_stall_06",
+  CHECK("tb_ifm.memory_stall.06",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -239,12 +239,12 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 
   tb->tick();
 
-  CHECK("tb_ifm.memory_stall_13",
+  CHECK("tb_ifm.memory_stall.13",
       (core->tb_ifm->dut->state_q == 0),
       "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
-  CHECK("tb_ifm.memory_stall_07",
+  CHECK("tb_ifm.memory_stall.07",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 }
@@ -263,37 +263,37 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
   // read request is sent
   
-  CHECK("tb_ifm.memory_wait_state_08",
+  CHECK("tb_ifm.memory_wait_state.08",
       (core->tb_ifm->dut->state_q == 1),
       "Failed to enter the REQUEST state");
   
   // insert one wait cycle
   tb->tick();
 
-  CHECK("tb_ifm.memory_wait_state_09",
+  CHECK("tb_ifm.memory_wait_state.09",
       (core->tb_ifm->dut->state_q == 2),
       "Failed to enter the MEMORY_WAIT state");
 
   // check that the request is being processed
-  CHECK("tb_ifm.memory_wait_state_01",
+  CHECK("tb_ifm.memory_wait_state.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.memory_wait_state_02",
+  CHECK("tb_ifm.memory_wait_state.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
   // insert second wait cycle
   tb->tick();
 
-  CHECK("tb_ifm.memory_wait_state_10",
+  CHECK("tb_ifm.memory_wait_state.10",
       (core->tb_ifm->dut->state_q == 2),
       "Failed to enter the MEMORY_WAIT state");
 
   // check that the request is being processed
-  CHECK("tb_ifm.memory_wait_state_03",
+  CHECK("tb_ifm.memory_wait_state.03",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.memory_wait_state_04",
+  CHECK("tb_ifm.memory_wait_state.04",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -303,15 +303,15 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
-  CHECK("tb_ifm.memory_wait_state_11",
+  CHECK("tb_ifm.memory_wait_state.11",
       (core->tb_ifm->dut->state_q == 3),
       "Failed to enter the DONE state");
 
   // check that the request is being processed
-  CHECK("tb_ifm.memory_wait_state_05",
+  CHECK("tb_ifm.memory_wait_state.05",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.memory_wait_state_06",
+  CHECK("tb_ifm.memory_wait_state.06",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -320,12 +320,12 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
   tb->tick();
 
-  CHECK("tb_ifm.memory_wait_state_12",
+  CHECK("tb_ifm.memory_wait_state.12",
       (core->tb_ifm->dut->state_q == 0),
       "Failed to enter the IDLE state");
 
   // check that the request is done and the value is outputed
-  CHECK("tb_ifm.memory_wait_state_07",
+  CHECK("tb_ifm.memory_wait_state.07",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 }
@@ -345,7 +345,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
   // read request is sent
   
-  CHECK("tb_ifm.pipeline_stall_16",
+  CHECK("tb_ifm.pipeline_stall.16",
       (core->tb_ifm->dut->state_q == 1),
       "Failed to enter the REQUEST state");
 
@@ -355,7 +355,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
-  CHECK("tb_ifm.pipeline_stall_17",
+  CHECK("tb_ifm.pipeline_stall.17",
       (core->tb_ifm->dut->state_q == 3),
       "Failed to enter the DONE state");
 
@@ -366,51 +366,51 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
   tb->tick();
 
-  CHECK("tb_ifm.pipeline_stall_18",
+  CHECK("tb_ifm.pipeline_stall.18",
       (core->tb_ifm->dut->state_q == 5),
       "Failed to enter the PIPELINE_STALL state");
 
   // the response has been received
 
   // check that the output is valid
-  CHECK("tb_ifm.pipeline_stall_01",
+  CHECK("tb_ifm.pipeline_stall.01",
     (core->output_valid_o == 1),
     "Failed to validate the output");
 
-  CHECK("tb_ifm.pipeline_stall_02",
+  CHECK("tb_ifm.pipeline_stall.02",
     (core->instr_o == data),
     "Failed to output the instruction");
 
-  CHECK("tb_ifm.pipeline_stall_03",
+  CHECK("tb_ifm.pipeline_stall.03",
     (core->pc_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to output pc");
 
   // check that no memory request is performed in the meantime
-  CHECK("tb_ifm.pipeline_stall_04",
+  CHECK("tb_ifm.pipeline_stall.04",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to detect a pipeline stall");
 
   tb->tick();
 
-  CHECK("tb_ifm.pipeline_stall_19",
+  CHECK("tb_ifm.pipeline_stall.19",
       (core->tb_ifm->dut->state_q == 5),
       "Failed to enter the PIPELINE_STALL state");
 
   // check that the output is valid
-  CHECK("tb_ifm.pipeline_stall_05",
+  CHECK("tb_ifm.pipeline_stall.05",
     (core->output_valid_o == 1),
     "Failed to validate the output");
 
-  CHECK("tb_ifm.pipeline_stall_06",
+  CHECK("tb_ifm.pipeline_stall.06",
     (core->instr_o == data),
     "Failed to output the instruction");
 
-  CHECK("tb_ifm.pipeline_stall_07",
+  CHECK("tb_ifm.pipeline_stall.07",
     (core->pc_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to output pc");
 
   // check that no memory request is performed in the meantime
-  CHECK("tb_ifm.pipeline_stall_08",
+  CHECK("tb_ifm.pipeline_stall.08",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to detect a pipeline stall");
 
@@ -418,42 +418,42 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
   tb->tick();
 
-  CHECK("tb_ifm.pipeline_stall_20",
+  CHECK("tb_ifm.pipeline_stall.20",
       (core->tb_ifm->dut->state_q == 0),
       "Failed to enter the IDLE state");
 
   // check that the output is valid
-  CHECK("tb_ifm.pipeline_stall_09",
+  CHECK("tb_ifm.pipeline_stall.09",
     (core->output_valid_o == 1),
     "Failed to validate the output");
 
-  CHECK("tb_ifm.pipeline_stall_10",
+  CHECK("tb_ifm.pipeline_stall.10",
     (core->instr_o == data),
     "Failed to output the instruction");
 
-  CHECK("tb_ifm.pipeline_stall_11",
+  CHECK("tb_ifm.pipeline_stall.11",
     (core->pc_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
     "Failed to output pc");
 
   // check that no memory request is performed in the meantime
-  CHECK("tb_ifm.pipeline_stall_12",
+  CHECK("tb_ifm.pipeline_stall.12",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to detect a pipeline stall");
 
   tb->tick();
 
   // check that a successfull output handshake is properly detected
-  CHECK("tb_ifm.pipeline_stall_13",
+  CHECK("tb_ifm.pipeline_stall.13",
       (core->output_valid_o == 0),
       "Failed to invalidate the output after a successfull handshake");
 
   // check the incremented address
-  CHECK("tb_ifm.pipeline_stall_14",
+  CHECK("tb_ifm.pipeline_stall.14",
     (core->wb_adr_o == (Vtb_ifm_ecap5_dproc_pkg::boot_address + 4)),
     "Failed to increment pc");
   
   // check the memory read request
-  CHECK("tb_ifm.pipeline_stall_15",
+  CHECK("tb_ifm.pipeline_stall.15",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1) && (core->wb_we_o == 0),
     "Failed to perform the subsequent memory request");
 }
@@ -478,7 +478,7 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
   core->drq_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.debug_during_request_01",
+  CHECK("tb_ifm.debug_during_request.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
   
@@ -493,13 +493,13 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
   tb->tick();
   
   // check the stage output
-  CHECK("tb_ifm.debug_during_request_02",
+  CHECK("tb_ifm.debug_during_request.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.debug_during_request_03",
+  CHECK("tb_ifm.debug_during_request.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -528,10 +528,10 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   core->drq_i = 0;
 
   // check that the request is being processed
-  CHECK("tb_ifm.debug_during_ack_01",
+  CHECK("tb_ifm.debug_during_ack.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.debug_during_ack_02",
+  CHECK("tb_ifm.debug_during_ack.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -541,18 +541,18 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.debug_during_ack_03",
+  CHECK("tb_ifm.debug_during_ack.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.debug_during_ack_04",
+  CHECK("tb_ifm.debug_during_ack.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.debug_during_ack_05",
+  CHECK("tb_ifm.debug_during_ack.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -596,18 +596,18 @@ void tb_ifm_debug_during_wait(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.debug_during_wait_01",
+  CHECK("tb_ifm.debug_during_wait.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.debug_during_wait_02",
+  CHECK("tb_ifm.debug_during_wait.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.debug_during_wait_03",
+  CHECK("tb_ifm.debug_during_wait.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -636,11 +636,11 @@ void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   core->wb_stall_i = 0;
   tb->tick();
   
-  CHECK("tb_ifm.debug_during_memory_stall_01",
+  CHECK("tb_ifm.debug_during_memory_stall.01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
   
-  CHECK("tb_ifm.debug_during_memory_stall_02",
+  CHECK("tb_ifm.debug_during_memory_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
   
@@ -655,13 +655,13 @@ void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   tb->tick();
   
   // check the stage output
-  CHECK("tb_ifm.debug_during_memory_stall_03",
+  CHECK("tb_ifm.debug_during_memory_stall.03",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
   
-  CHECK("tb_ifm.debug_during_memory_stall_04",
+  CHECK("tb_ifm.debug_during_memory_stall.04",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -695,18 +695,18 @@ void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
   core->drq_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.debug_on_output_handshake_01",
+  CHECK("tb_ifm.debug_on_output_handshake.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.debug_on_output_handshake_02",
+  CHECK("tb_ifm.debug_on_output_handshake.02",
     (core->output_valid_o == 1),
     "Failed to output the pre-jump instruction");
   
   tb->tick();
 
-  CHECK("tb_ifm.debug_on_output_handshake_03",
+  CHECK("tb_ifm.debug_on_output_handshake.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -745,13 +745,13 @@ void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
   tb->tick();
 
   // check the stage output
-  CHECK("tb_ifm.debug_during_pipeline_stall_01",
+  CHECK("tb_ifm.debug_during_pipeline_stall.01",
     (core->output_valid_o == 0),
     "Failed to cancel output");
 
   tb->tick();
   
-  CHECK("tb_ifm.debug_during_pipeline_stall_02",
+  CHECK("tb_ifm.debug_during_pipeline_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -780,10 +780,10 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   core->drq_i = 1;
 
   // check that the request is being processed
-  CHECK("tb_ifm.debug_back_to_back_01",
+  CHECK("tb_ifm.debug_back_to_back.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.debug_back_to_back_02",
+  CHECK("tb_ifm.debug_back_to_back.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -794,18 +794,18 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   core->drq_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.debug_back_to_back_03",
+  CHECK("tb_ifm.debug_back_to_back.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.debug_back_to_back_04",
+  CHECK("tb_ifm.debug_back_to_back.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.debug_back_to_back_05",
+  CHECK("tb_ifm.debug_back_to_back.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to fetch the debug instruction");
 }
@@ -830,7 +830,7 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   core->irq_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.interrupt_during_request_01",
+  CHECK("tb_ifm.interrupt_during_request.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
 
@@ -845,13 +845,13 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   tb->tick();
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_during_request_02",
+  CHECK("tb_ifm.interrupt_during_request.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
 
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_during_request_03",
+  CHECK("tb_ifm.interrupt_during_request.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interrupt instruction");
 }
@@ -880,10 +880,10 @@ void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
   core->irq_i = 0;
 
   // check that the request is being processed
-  CHECK("tb_ifm.interrupt_during_ack_01",
+  CHECK("tb_ifm.interrupt_during_ack.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.interrupt_during_ack_02",
+  CHECK("tb_ifm.interrupt_during_ack.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -893,18 +893,18 @@ void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.interrupt_during_ack_03",
+  CHECK("tb_ifm.interrupt_during_ack.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_during_ack_04",
+  CHECK("tb_ifm.interrupt_during_ack.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_during_ack_05",
+  CHECK("tb_ifm.interrupt_during_ack.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interruption instruction");
 }
@@ -948,18 +948,18 @@ void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.interrupt_during_wait_01",
+  CHECK("tb_ifm.interrupt_during_wait.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_during_wait_02",
+  CHECK("tb_ifm.interrupt_during_wait.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_during_wait_03",
+  CHECK("tb_ifm.interrupt_during_wait.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interruption instruction");
 }
@@ -988,11 +988,11 @@ void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   core->wb_stall_i = 0;
   tb->tick();
   
-  CHECK("tb_ifm.interrupt_during_memory_stall_01",
+  CHECK("tb_ifm.interrupt_during_memory_stall.01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
   
-  CHECK("tb_ifm.interrupt_during_memory_stall_02",
+  CHECK("tb_ifm.interrupt_during_memory_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
   
@@ -1007,13 +1007,13 @@ void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   tb->tick();
   
   // check the stage output
-  CHECK("tb_ifm.interrupt_during_memory_stall_03",
+  CHECK("tb_ifm.interrupt_during_memory_stall.03",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
   
-  CHECK("tb_ifm.interrupt_during_memory_stall_04",
+  CHECK("tb_ifm.interrupt_during_memory_stall.04",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interrupt instruction");
 }
@@ -1047,18 +1047,18 @@ void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
   core->irq_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.interrupt_on_output_handshake_01",
+  CHECK("tb_ifm.interrupt_on_output_handshake.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_on_output_handshake_02",
+  CHECK("tb_ifm.interrupt_on_output_handshake.02",
     (core->output_valid_o == 1),
     "Failed to output the pre-jump instruction");
   
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_on_output_handshake_03",
+  CHECK("tb_ifm.interrupt_on_output_handshake.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interruption instruction");
 }
@@ -1095,13 +1095,13 @@ void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
   tb->tick();
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_during_pipeline_stall_01",
+  CHECK("tb_ifm.interrupt_during_pipeline_stall.01",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_during_pipeline_stall_02",
+  CHECK("tb_ifm.interrupt_during_pipeline_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interruption instruction");
 }
@@ -1130,10 +1130,10 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
   core->irq_i = 1;
 
   // check that the request is being processed
-  CHECK("tb_ifm.interrupt_back_to_back_01",
+  CHECK("tb_ifm.interrupt_back_to_back.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.interrupt_back_to_back_02",
+  CHECK("tb_ifm.interrupt_back_to_back.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -1144,18 +1144,18 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
   core->irq_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.interrupt_back_to_back_03",
+  CHECK("tb_ifm.interrupt_back_to_back.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.interrupt_back_to_back_04",
+  CHECK("tb_ifm.interrupt_back_to_back.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.interrupt_back_to_back_05",
+  CHECK("tb_ifm.interrupt_back_to_back.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to fetch the interruption instruction");
 }
@@ -1181,7 +1181,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   core->branch_i = 0;
 
   // check the boot address
-  CHECK("tb_ifm.branch_during_request_01",
+  CHECK("tb_ifm.branch_during_request.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
 
@@ -1196,13 +1196,13 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   tb->tick();
 
   // check the stage output
-  CHECK("tb_ifm.branch_during_request_02",
+  CHECK("tb_ifm.branch_during_request.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
 
   tb->tick();
 
-  CHECK("tb_ifm.branch_during_request_03",
+  CHECK("tb_ifm.branch_during_request.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the branch instruction");
 }
@@ -1232,10 +1232,10 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   core->branch_i = 0;
 
   // check that the request is being processed
-  CHECK("tb_ifm.branch_during_ack_01",
+  CHECK("tb_ifm.branch_during_ack.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.branch_during_ack_02",
+  CHECK("tb_ifm.branch_during_ack.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -1245,18 +1245,18 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.branch_during_ack_03",
+  CHECK("tb_ifm.branch_during_ack.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.branch_during_ack_04",
+  CHECK("tb_ifm.branch_during_ack.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.branch_during_ack_05",
+  CHECK("tb_ifm.branch_during_ack.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the interruption instruction");
 }
@@ -1301,18 +1301,18 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   tb->tick();
 
   // check that the request is done
-  CHECK("tb_ifm.branch_during_wait_01",
+  CHECK("tb_ifm.branch_during_wait.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.branch_during_wait_02",
+  CHECK("tb_ifm.branch_during_wait.02",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.branch_during_wait_03",
+  CHECK("tb_ifm.branch_during_wait.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the interruption instruction");
 }
@@ -1342,11 +1342,11 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   core->wb_stall_i = 0;
   tb->tick();
   
-  CHECK("tb_ifm.branch_during_memory_stall_01",
+  CHECK("tb_ifm.branch_during_memory_stall.01",
     (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
     "Failed to perform hold the memory read request");
   
-  CHECK("tb_ifm.branch_during_memory_stall_02",
+  CHECK("tb_ifm.branch_during_memory_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address),
       "Failed to fetch the pre-jump instruction");
   
@@ -1361,13 +1361,13 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   tb->tick();
   
   // check the stage output
-  CHECK("tb_ifm.branch_during_memory_stall_03",
+  CHECK("tb_ifm.branch_during_memory_stall.03",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
   
-  CHECK("tb_ifm.branch_during_memory_stall_04",
+  CHECK("tb_ifm.branch_during_memory_stall.04",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the branch instruction");
 }
@@ -1402,18 +1402,18 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   core->branch_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.branch_on_output_handshake_01",
+  CHECK("tb_ifm.branch_on_output_handshake.01",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.branch_on_output_handshake_02",
+  CHECK("tb_ifm.branch_on_output_handshake.02",
     (core->output_valid_o == 1),
     "Failed to output the pre-jump instruction");
   
   tb->tick();
 
-  CHECK("tb_ifm.branch_on_output_handshake_03",
+  CHECK("tb_ifm.branch_on_output_handshake.03",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the interruption instruction");
 }
@@ -1451,13 +1451,13 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   tb->tick();
 
   // check the stage output
-  CHECK("tb_ifm.branch_during_pipeline_stall_01",
+  CHECK("tb_ifm.branch_during_pipeline_stall.01",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.branch_during_pipeline_stall_02",
+  CHECK("tb_ifm.branch_during_pipeline_stall.02",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to fetch the interruption instruction");
 }
@@ -1489,10 +1489,10 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   core->boffset_i = rand() % 0x7FFFFFFF;
 
   // check that the request is being processed
-  CHECK("tb_ifm.branch_back_to_back_01",
+  CHECK("tb_ifm.branch_back_to_back.01",
       (core->wb_stb_o == 0),
       "Failed to deassert stb after issuing the memory read request");
-  CHECK("tb_ifm.branch_back_to_back_02",
+  CHECK("tb_ifm.branch_back_to_back.02",
       (core->wb_cyc_o == 1),
       "Failed to maintain cyc for the entire duration of the read request");
 
@@ -1503,18 +1503,18 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   core->branch_i = 0;
 
   // check that the request is done
-  CHECK("tb_ifm.branch_back_to_back_03",
+  CHECK("tb_ifm.branch_back_to_back.03",
     (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
     "Failed to end the memory read request");
 
   // check the stage output
-  CHECK("tb_ifm.branch_back_to_back_04",
+  CHECK("tb_ifm.branch_back_to_back.04",
     (core->output_valid_o == 0),
     "Failed to cancel output");
   
   tb->tick();
 
-  CHECK("tb_ifm.branch_back_to_back_05",
+  CHECK("tb_ifm.branch_back_to_back.05",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + first_offset),
       "Failed to fetch the branch instruction");
 }
@@ -1558,7 +1558,7 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
   
   tb->tick();
 
-  CHECK("tb_ifm.precedence_debug_01",
+  CHECK("tb_ifm.precedence_debug.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address),
       "Failed to update pc with the right precedence");
 }
@@ -1596,7 +1596,7 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
   
   tb->tick();
 
-  CHECK("tb_ifm.precedence_interrupt_01",
+  CHECK("tb_ifm.precedence_interrupt.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address),
       "Failed to update pc with the right precedence");
 }
@@ -1632,7 +1632,7 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
   
   tb->tick();
 
-  CHECK("tb_ifm.precedence_branch_01",
+  CHECK("tb_ifm.precedence_branch.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + core->boffset_i),
       "Failed to update pc with the right precedence");
 }
@@ -1665,7 +1665,7 @@ void tb_ifm_precedence_increment(TB_Ifm * tb) {
   
   tb->tick();
 
-  CHECK("tb_ifm.precedence_increment_01",
+  CHECK("tb_ifm.precedence_increment.01",
       (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + 4),
       "Failed to update pc with the right precedence");
 }
