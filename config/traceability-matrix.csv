@@ -150,4 +150,7 @@ tb_regm.parallel_read.01
 tb_regm.parallel_read.02
 tb_regm.read_before_write.01;D_REGM_WRITE_PORT_02
 tb_regm.read_before_write.02;D_REGM_WRITE_PORT_02
-__UNTRACEABLE__;D_IFM_PC_REGISTER_01;D_IFM_WISHBONE_DATASHEET_01;D_IFM_WISHBONE_HANDSHAKE_02;D_IFM_WISHBONE_TIMING_01;D_REGM_REGISTERS_01
+__UNTRACEABLE__;D_REGM_REGISTERS_01;This requirement is covered by the hdl code.
+__UNTRACEABLE__;D_IFM_WISHBONE_DATASHEET_01;This requirement is covered by the hdl code.
+__UNTRACEABLE__;D_IFM_WISHBONE_HANDSHAKE_02;This requirement is covered by the hdl code.
+__UNTRACEABLE__;D_IFM_WISHBONE_TIMING_01; This requirement requirement is covered by the hdl code.
