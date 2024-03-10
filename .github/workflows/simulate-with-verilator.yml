@@ -9,6 +9,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  REPORT_ARTIFACT_NAME: ecap5-dproc-report-${{github.run_number}}-${{github.run_attempt}}
 
 jobs:
   documentation:
@@ -76,10 +77,18 @@ jobs:
         key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     - name: Generate report
-      run: make -C ${{github.workspace}}/build report
+      run: >-
+        make -C ${{github.workspace}}/build report_markdown &&
+        make -C ${{github.workspace}}/build report
 
     - name: Write summary
       run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.REPORT_ARTIFACT_NAME}}
+        path: ${{github.workspace}}/build/report.html
 
     - name: Check for report errors
       run: (! grep -qe "\[\!CAUTION\]" ${{github.workspace}}/build/report.md)
