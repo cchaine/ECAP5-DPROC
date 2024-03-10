@@ -10,6 +10,68 @@
 
   \subsection{Specification}
 
+    \subsubsection{Input registering}
+
+      \event{EV\_EXM\_INPUT\_REGISTER\_01}{
+          This event represents a successfull input handshake.
+        }
+
+      \req{D\_EXM\_INPUT\_REGISTER\_01}{
+          On the rising edge of \texttt{clk\_i} when both \texttt{input\_valid\_i} and \texttt{input\_ready\_o} are asserted, \eventref{EV\_EXM\_INPUT\_REGISTER\_01} shall be triggered.
+        }
+
+    \subsubsection{Load/Store}
+
+    \subsubsection{Wishbone interface}
+
+    \subsubsection{Output}
+
+      \req{D\_EXM\_OUTPUT\_ADDR\_01}{
+          The value of \texttt{result\_addr\_o} shall be set the to the value of \texttt{result\_addr\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_01}{
+          The \texttt{result\_write\_o} output shall be asserted on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is one of the following : \texttt{LUI}, \texttt{AUIPC}, \texttt{JAL}, \texttt{JALR}, \texttt{OP} and \texttt{OP-IMM}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_02}{
+          The value of \texttt{result\_write\_o} shall be deasserted on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{BRANCH}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_03}{
+          The value of \texttt{result\_write\_o} shall be asserted on the rising edge of \texttt{clk\_i} following the completion of the memory request when \texttt{opcode\_i} is one of the following: \texttt{LOAD} and \texttt{STORE}.
+        }
+
+      \req{D\_EXM\_DATA\_OUTPUT\_01}{
+          The value of the \texttt{result\_data\_o} shall be set to the value specified in table \ref{tab:exm-alu-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
+        }
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-alu-output.tex}
+          \caption{}
+          \label{tab:exm-alu-output}
+        \end{table}
+
+      \req{D\_EXM\_BRANCH\_OUTPUT\_01}{
+        The value of \texttt{branch\_o} shall be set to the value specified in table \ref{tab:exm-branch-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}. 
+        }
+
+      \req{D\_EXM\_BRANCH\_OUTPUT\_02}{
+          The \texttt{branch\_o} output shall be deasserted for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which do not belong to table \ref{tab:exm-branch-output}.
+        }
+
+      \begin{content}
+          The value of \texttt{result\_data\_o} is unspecified for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which are not present in \ref{tab:exm-alu-output}.
+        \end{content}
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-branch-output.tex}
+          \caption{}
+          \label{tab:exm-branch-output}
+        \end{table}
+
   \subsection{Behavior}
 
     \subsubsection{LUI behavior}
