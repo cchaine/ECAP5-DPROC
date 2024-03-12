@@ -50,17 +50,17 @@
         }
 
       \req{D\_EXM\_INPUT\_BUBBLE\_01}{
-          The registered input values shall be overwritten with the values provided in table \ref{tab:exm-bubble-input} when \eventref{EV\_EXM\_INPUT\_REGISTER\_01} is triggered and \texttt{input\_valid\_o} is deasserted.
+          The registered input values shall be overriden with the values provided in table \ref{tab:exm-bubble-input} when \eventref{EV\_EXM\_INPUT\_REGISTER\_01} is triggered and \texttt{input\_valid\_o} is deasserted.
         }
 
       \req{D\_EXM\_INPUT\_BUBBLE\_02}{
-          The registered input values shall be overwritten with the values provided in table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
+          The registered input values shall be overriden with the values provided in table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
         }
 
       \begin{table}[H]
           \centering
           \input{arch/tables/10_exm-bubble-input.tex}
-          \caption{}
+          \caption{Input signal override values for implementing a pipeline bubble}
           \label{tab:exm-bubble-input}
         \end{table}
   
@@ -207,18 +207,18 @@
         }
 
       \req{D\_EXM\_OUTPUT\_DATA\_01}{
-          The value of the \texttt{result\_data\_o} shall be set to the value specified in table \ref{tab:exm-alu-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
+          The value of the \texttt{result\_o} shall be set to the value specified in table \ref{tab:exm-result-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
         }
 
       \begin{table}[H]
           \centering
-          \input{arch/tables/10_exm-alu-output.tex}
-          \caption{}
-          \label{tab:exm-alu-output}
+          \input{arch/tables/10_exm-result-output.tex}
+          \caption{Table of values for the \texttt{result\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
+          \label{tab:exm-result-output}
         \end{table}
 
       \begin{content}
-          The value of \texttt{result\_data\_o} is unspecified for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which are not present in \ref{tab:exm-alu-output}.
+          The value of \texttt{result\_o} is unspecified for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which are not present in \ref{tab:exm-result-output}.
         \end{content}
 
       \req{D\_EXM\_OUTPUT\_BRANCH\_01}{
@@ -232,7 +232,7 @@
       \begin{table}[H]
           \centering
           \input{arch/tables/10_exm-branch-output.tex}
-          \caption{}
+          \caption{Table of values for the \texttt{branch\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
           \label{tab:exm-branch-output}
         \end{table}
 
@@ -243,7 +243,7 @@
       \begin{table}[H]
           \centering
           \input{arch/tables/10_exm-boffset-output.tex}
-          \caption{}
+          \caption{Table of values for the \texttt{boffset\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
           \label{tab:exm-boffset-output}
         \end{table}
 
