@@ -10,6 +10,265 @@
 
   \subsection{Specification}
 
+    \subsubsection{State machine}
+
+      \begin{figure}[H]
+          \centering
+          \input{arch/figures/10_exm-state-diagram}
+          \caption{State diagram of the execute module}
+          \label{fig:exm-state-diagram}
+        \end{figure}
+
+        \req{D\_EXM\_STATE\_01}{
+            The execute module shall be in the \texttt{NORMAL (0)} state when \texttt{opcode\_i} is not \texttt{LOAD} or \texttt{STORE}.
+          }
+
+        \req{D\_EXM\_STATE\_02}{
+            The execute module shall be in the \texttt{REQUEST (1)} state when \texttt{opcode\_i} is either \texttt{LOAD} or \texttt{STORE} and the memory request is successfully sent.
+          }
+
+        \req{D\_EXM\_STATE\_03}{
+            The execute module shall be in the \texttt{MEMORY\_WAIT (2)} state when \texttt{opcode\_i} is either \texttt{LOAD} or \texttt{STORE} and the memory request has been sent but the response has not been received.
+          }
+
+        \req{D\_EXM\_STATE\_04}{
+            The execute module shall be in the \texttt{DONE (3)} state when \texttt{opcode\_i} is either \texttt{LOAD} or \texttt{STORE} and the memory request response is successfully received.
+          }
+
+        \req{D\_EXM\_STATE\_05}{
+            The execute module shall be in the \texttt{MEMORY\_STALL (4)} state when \texttt{opcode\_i} is either \texttt{LOAD} or \texttt{STORE} and the memory request is ready while the memory interface is stalled.
+          }
+
+    \subsubsection{Input registering}
+
+      \event{EV\_EXM\_INPUT\_REGISTER\_01}{
+          This event represents a successfull input handshake.
+        }
+
+      \req{D\_EXM\_INPUT\_REGISTER\_01}{
+          On the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \eventref{EV\_EXM\_INPUT\_REGISTER\_01} shall be triggered.
+        }
+
+      \req{D\_EXM\_INPUT\_BUBBLE\_01}{
+          The registered input values shall be overriden with the values provided in table \ref{tab:exm-bubble-input} when \eventref{EV\_EXM\_INPUT\_REGISTER\_01} is triggered and \texttt{input\_valid\_o} is deasserted.
+        }
+
+      \req{D\_EXM\_INPUT\_BUBBLE\_02}{
+          The registered input values shall be overriden with the values provided in table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
+        }
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-bubble-input.tex}
+          \caption{Input signal override values for implementing a pipeline bubble}
+          \label{tab:exm-bubble-input}
+        \end{table}
+  
+      \req{D\_EXM\_INPUT\_READY\_01}{
+          The \texttt{input\_ready\_o} signal shall be asserted on the rising edge of \texttt{clk\_i} when in the \texttt{NORMAL} state. It shall be deasserted otherwise.
+        }
+
+    \subsubsection{Load triggering}
+      
+      \req{D\_EXM\_LOAD\_TRIGGER\_01}{
+          A one byte wishbone read cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{LOAD} and \texttt{func3\_i} is either \texttt{LB-FUNC3} or \texttt{LBU-FUNC3}.
+        }
+
+      \req{D\_EXM\_LOAD\_TRIGGER\_02}{
+          A two byte wishbone read cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{LOAD} and \texttt{func3\_i} is either \texttt{LH-FUNC3} or \texttt{LHU-FUNC3}.
+        }
+
+      \req{D\_EXM\_LOAD\_TRIGGER\_03}{
+          A four byte wishbone read cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{LOAD} and \texttt{func3\_i} is \texttt{LW-FUNC3}.
+        }
+
+    \subsubsection{Store triggering}
+
+      \req{D\_EXM\_STORE\_TRIGGER\_01}{
+          A one byte wishbone write cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{STORE} and \texttt{func3\_i} is \texttt{SB-FUNC3}.
+        }
+
+      \req{D\_EXM\_STORE\_TRIGGER\_02}{
+          A two byte wishbone write cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{STORE} and \texttt{func3\_i} is \texttt{SH-FUNC3}.
+        }
+
+      \req{D\_EXM\_STORE\_TRIGGER\_03}{
+          A four byte wishbone write cycle shall be triggered on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{STORE} and \texttt{func3\_i} is \texttt{SW-FUNC3}.
+        }
+
+    \subsubsection{Wishbone interface}
+
+      \begin{content}
+          The following requirements are extracted from the Wishbone specification for implementing the memory interface of the execute module.
+        \end{content}
+
+      \req{D\_EXM\_WISHBONE\_DATASHEET\_01}{
+          The memory interface shall comply with the Wishbone Datasheet provided in section \ref{user-needs}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_RESET\_01}{
+          The memory interface shall initialize itself at the rising edge of \texttt{clk\_i} following the assertion of \texttt{rst\_i}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_RESET\_02}{
+          The memory interface shall stay in the initialization state until the rising edge of \texttt{clk\_i} following the deassertion of \texttt{rst\_i}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_RESET\_03}{
+          Signals \texttt{wb\_stb\_o} and \texttt{wb\_cyc\_o} shall be deasserted while the memory interface is in the initialization state. The state of all other memory interface signals are undefined in response to a reset cycle.
+        }
+
+      \req{D\_EXM\_WISHBONE\_TRANSFER\_CYCLE\_01}{
+          The memory interface shall assert \texttt{wb\_cyc\_o} for the entire duration of the memory access.
+        }[
+          rationale=TBC what wb\_cyc\_o does.
+        ]
+
+      \req{D\_EXM\_WISHBONE\_TRANSFER\_CYCLE\_02}{
+          Signal \texttt{wb\_cyc\_o} shall be asserted no later than the rising edge of \texttt{clk\_i} that qualifies the assertion of \texttt{wb\_stb\_o}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_TRANSFER\_CYCLE\_03}{
+            Signal \texttt{wb\_cyc\_o} shall be deasserted no earlier than the rising edge of \texttt{clk\_i} that qualifies the deassertion of \texttt{wb\_stb\_o}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_HANDSHAKE\_01}{
+          The memory interface shall accept \texttt{wb\_ack\_i} signals at any time after a transaction is initiated.
+        }
+
+      \req{D\_EXM\_WISHBONE\_HANDSHAKE\_02}{
+          The memory interface must qualify the following signals with \texttt{wb\_stb\_o} : \texttt{wb\_adr\_o}, \texttt{wb\_dat\_o}, \texttt{wb\_sel\_o} and \texttt{wb\_we\_o}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_STALL\_01}{
+          While initiating a request, the memory interface shall hold the state of its outputs until \texttt{wb\_stall\_i} is deasserted.
+        }
+
+      \vspace{0.5em}
+
+      \begin{figure}[H]
+          \centering
+          \input{arch/figures/3_wishbone-single-read-cycle}
+          \caption{Timing diagram of the single read cycle of the wishbone memory interface}
+          \label{fig:exm-wishbone-single-read-cycle}
+        \end{figure}
+
+      \input{arch/tables/10_exm-wishbone-single-read-cycle}
+
+      \req{D\_EXM\_WISHBONE\_READ\_CYCLE\_01}{
+          A read transaction shall be started by asserting both \texttt{wb\_cyc\_o} and \texttt{wb\_stb\_o}, and deasserting \texttt{wb\_we\_o}.
+        }
+
+      \req{D\_EXM\_WISHBONE\_READ\_CYCLE\_02}{
+          The memory interface shall conform to the READ cycle detailed in figure \ref{fig:exm-wishbone-single-read-cycle}.
+        }
+
+      \vspace{0.5em}
+
+        \begin{figure}[H]
+            \centering
+            \input{arch/figures/3_wishbone-single-write-cycle}
+            \caption{Timing diagram of the single write cycle of the wishbone memory interface}
+            \label{fig:exm-wishbone-single-write-cycle}
+          \end{figure}
+
+        \input{arch/tables/10_exm-wishbone-single-write-cycle}
+
+        \req{D\_EXM\_WISHBONE\_WRITE\_CYCLE\_01}{
+            A write transaction shall be started by asserting \texttt{wb\_cyc\_o}, \texttt{wb\_stb\_i} and \texttt{wb\_we\_o}.
+          }
+
+        \req{D\_EXM\_WISHBONE\_WRITE\_CYCLE\_02}{
+            The memory interface shall conform to the WRITE cycle detailed in figure \ref{fig:exm-wishbone-single-write-cycle}.
+          }
+
+      \req{D\_EXM\_WISHBONE\_TIMING\_01}{
+          The clock input \texttt{clk\_i} shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of \texttt{clk\_i}. All input signals of the memory interface shall be stable before the rising edge of \texttt{clk\_i}.
+        }[
+          rationale={As long as the memory interface is designed within the clock domain of \texttt{clk\_i}, the requirement will be satisfied by using the place and route tool.}
+        ]
+
+    \subsubsection{Output}
+
+      \req{D\_EXM\_OUTPUT\_ADDR\_01}{
+          The value of \texttt{result\_addr\_o} shall be set the to the value of \texttt{result\_addr\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_01}{
+          The \texttt{result\_write\_o} output shall be asserted on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is one of the following : \texttt{LUI}, \texttt{AUIPC}, \texttt{JAL}, \texttt{JALR}, \texttt{OP} and \texttt{OP-IMM}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_02}{
+          The value of \texttt{result\_write\_o} shall be deasserted on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01} when \texttt{opcode\_i} is \texttt{BRANCH}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_WRITE\_03}{
+          The value of \texttt{result\_write\_o} shall be asserted on the rising edge of \texttt{clk\_i} following the completion of the memory request when \texttt{opcode\_i} is one of the following: \texttt{LOAD} and \texttt{STORE}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_DATA\_01}{
+          The value of the \texttt{result\_o} shall be set to the value specified in table \ref{tab:exm-result-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}.
+        }
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-result-output.tex}
+          \caption{Table of values for the \texttt{result\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
+          \label{tab:exm-result-output}
+        \end{table}
+
+      \begin{content}
+          The value of \texttt{result\_o} is unspecified for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which are not present in \ref{tab:exm-result-output}.
+        \end{content}
+
+      \req{D\_EXM\_OUTPUT\_BRANCH\_01}{
+        The value of \texttt{branch\_o} shall be set to the value specified in table \ref{tab:exm-branch-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}. 
+        }
+
+      \req{D\_EXM\_OUTPUT\_BRANCH\_02}{
+          The \texttt{branch\_o} output shall be deasserted for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which do not belong to table \ref{tab:exm-branch-output}.
+        }
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-branch-output.tex}
+          \caption{Table of values for the \texttt{branch\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
+          \label{tab:exm-branch-output}
+        \end{table}
+
+      \req{D\_EXM\_OUTPUT\_BOFFSET\_01}{
+          The value of \texttt{boffset\_o} shall be set to the value specified in table \ref{tab:exm-boffset-output} considering the values of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} on the rising edge of \texttt{clk\_i} following the triggering of \eventref{EV\_EXM\_INPUT\_REGISTER\_01}. 
+        }
+
+      \begin{table}[H]
+          \centering
+          \input{arch/tables/10_exm-boffset-output.tex}
+          \caption{Table of values for the \texttt{boffset\_o} output considering \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i}}
+          \label{tab:exm-boffset-output}
+        \end{table}
+
+      \begin{content}
+          The value of \texttt{boffset\_o} is unspecified for any combinaison of \texttt{opcode\_i}, \texttt{func3\_i} and \texttt{func7\_i} which are not present in \ref{tab:exm-boffset-output}.
+        \end{content}
+
+    \subsubsection{Output handshake}
+
+      \req{D\_EXM\_OUTPUT\_HANDSHAKE\_01}{
+          The \texttt{output\_valid\_o} output shall be asserted on the rising edge of \texttt{clk\_i} following \eventref{EV\_EXM\_INPUT\_REGISTER\_01} being triggered when \texttt{opcode\_i} is one of the following : \texttt{LUI}, \texttt{AUIPC}, \texttt{JAL}, \texttt{JALR}, \texttt{OP}, \texttt{OP-IMM} and \texttt{BRANCH}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_HANDSHAKE\_02}{
+          The signal \texttt{output\_valid\_o} shall be deasserted on the rising edge of \texttt{clk\_i} following \eventref{EV\_EXM\_INPUT\_REGISTER\_01} being triggered when \texttt{opcode\_i} is either \texttt{LOAD} or \texttt{STORE}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_HANDSHAKE\_03}{
+          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i} after \eventref{EV\_EXM\_INPUT\_REGISTER\_01} was triggered and \texttt{opcode\_i} is \texttt{LOAD} or \texttt{STORE}.
+        }
+
+      \req{D\_EXM\_OUTPUT\_HANDSHAKE\_04}{
+          When \texttt{output\_valid\_o} is asserted, the execute module shall hold the value of the following signals until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i} : \texttt{result\_write\_o}, \texttt{result\_addr\_o}, \texttt{result\_o}, \texttt{branch\_o} and \texttt{boffset\_o}.
+        }
+
   \subsection{Behavior}
 
     \subsubsection{LUI behavior}

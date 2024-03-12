@@ -1,0 +1,56 @@
+{
+\footnotesize
+\begin{tabularx}{0.9\textwidth}{|l|l|l|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{\texttt{opcode\_i}} & \cellcolor{gray!20}\textbf{\texttt{func3\_i}} & \cellcolor{gray!20}\textbf{\texttt{func7\_i}} & \cellcolor{gray!20}\textbf{Value} \\
+  \hline
+  \texttt{LUI} & N/A & N/A & \texttt{param1\_i} \\
+  \hline
+  \texttt{AUIPC} & N/A & N/A & The sum of \texttt{pc\_i} and \texttt{param1\_i} \\
+  \hline
+  \texttt{JAL} & N/A & N/A & \multirow{2}{*}{The value of \texttt{pc\_i} incremented by four.} \\
+  \cline{1-3}
+  \texttt{JALR} & N/A & N/A & \\
+  \hline
+  \texttt{LOAD} & N/A & N/A & The result of the read memory request. \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{ADD-FUNC3}} & \texttt{ADD-FUNC7} & \multirow{2}{*}{The signed sum of \texttt{param1\_i} and \texttt{param2\_i}} \\
+  \cline{1-1}\cline{3-3}
+  \texttt{OP-IMM} &  & N/A & \\
+  \hline
+  \texttt{OP} & \texttt{SUB-FUNC3} & \texttt{SUB-FUNC7} & The signed difference of \texttt{param1\_i} minus \texttt{param2\_i} \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{XOR-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{*}{The bitwise exclusive-or of \texttt{param1\_i} and \texttt{param2\_i}} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{OR-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{*}{The bitwise or of \texttt{param1\_i} and \texttt{param2\_i}} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{AND-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{*}{The bitwise and of \texttt{param1\_i} and \texttt{param2\_i}} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{SLT-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{0.46\textwidth}{1 when \texttt{param1\_i} is lower than \texttt{param2\_i} using a signed comparison. 0 otherwise.} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{SLTU-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{0.46\textwidth}{1 when \texttt{param1\_i} is lower than \texttt{param2\_i} using an unsigned comparison. 0 otherwise.} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{SLL-FUNC3}} & \multirow{2}{*}{N/A} & \multirow{2}{0.46\textwidth}{\texttt{param1\_i} shifted left by the amount specified by the first 5 bits of \texttt{param2\_i}. The right bits are filled with zeros.} \\
+  \cline{1-1}
+  \texttt{OP-IMM} & &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{SRL-FUNC3}} & \multirow{2}{*}{\texttt{SRL-FUNC7}} & \multirow{2}{0.46\textwidth}{\texttt{param1\_i} shifted right by the amount specified by the first 5 bits of \texttt{param2\_i}. The left bits are filled with zeros.} \\
+  \cline{1-1}
+  \texttt{OP-IMM} & &  & \\
+  \hline
+  \texttt{OP} & \multirow{2}{*}{\texttt{SRA-FUNC3}} & \multirow{2}{*}{\texttt{SRA-FUNC7}} & \multirow{2}{0.46\textwidth}{\texttt{param1\_i} shifted right by the amount specified by the first 5 bits of \texttt{param2\_i}. The left bits are filled with the most significant bit of \texttt{param2\_i}.} \\
+  \cline{1-1}
+  \texttt{OP-IMM} &  &  & \\
+  \hline
+\end{tabularx}
+}

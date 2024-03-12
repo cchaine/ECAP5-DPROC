@@ -1,0 +1,28 @@
+{
+  \vspace{0.5em}
+  \begin{center}
+    \refstepcounter{table}
+    Table \thetable: Description of the single read cycle of the wishbone memory interface defined in figure \ref{fig:exm-wishbone-single-read-cycle}.\label{tab:exm-wishbone-single-read-cycle}
+  \end{center}
+
+\footnotesize
+\begin{xltabular}{0.9\textwidth}{|l|X|}
+  \hline
+  \cellcolor{gray!20}\textbf{CLOCK EDGE} & \cellcolor{gray!20}\textbf{DESCRIPTION} \\
+  \hline
+  \multirow{5}{*}{0} & The memory interface presents a valid address on \texttt{adr\_o} \\
+  & The memory interface deasserts \texttt{we\_o} to indicate a READ cycle \\
+  & The memory interface presents a bank select \texttt{sel\_o} to indicate where it expects data. \\
+  & The memory interface asserts \texttt{cyc\_o} to indicate the start of the cycle. \\
+  & The memory interface asserts stb\_o to indicate the start of the phase. \\
+  \hline
+  \multirow{3}{*}{1} & Valid data is provided on \texttt{dat\_i}. \\
+  & \texttt{ack\_i} is asserted to indicate valid data. \\
+  & The memory interface deasserts \texttt{stb\_o} to indicate end of data phase. \\
+  \hline
+  \multirow{3}{*}{2} & The memory interface latches data on \texttt{dat\_i}. \\
+  & The memory interface deasserts \texttt{cyc\_o} to indicate the end of the cycle. \\
+  & \texttt{ack\_i} is deasserted. \\
+  \hline
+\end{xltabular}
+}

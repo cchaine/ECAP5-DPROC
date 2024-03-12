@@ -6,10 +6,91 @@
   \end{center}
 
 \footnotesize
-\begin{xltabular}{0.9\textwidth}{|l|c|c|X|r|}
+\begin{xltabular}{0.9\textwidth}{|l|c|c|r|}
   \hline
-  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{DESCRIPTION} & \cellcolor{gray!20}\textbf{VALUE} \\
+  \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{VALUE} \\
   \hline
+  \multicolumn{4}{|l|}{\textbf{Instruction opcode field}} \\
+  \hline
+  \texttt{LUI} & logic & 7 & 0x37 \\
+  \hline
+  \texttt{AUIPC} & logic & 7 & 0x7 \\
+  \hline
+  \texttt{JAL} & logic & 7 & 0x6F \\
+  \hline
+  \texttt{JALR} & logic & 7 & 0x67 \\
+  \hline
+  \texttt{OP} & logic & 7 & 0x33 \\
+  \hline
+  \texttt{OP-IMM} & logic & 7 & 0x13 \\
+  \hline
+  \texttt{BRANCH} & logic & 7 & 0x63 \\
+  \hline
+  \texttt{LOAD} & logic & 7 & 0x3 \\
+  \hline
+  \texttt{STORE} & logic & 7 & 0x23 \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{Instruction func3 field}} \\
+  \hline
+  \texttt{JALR-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{BEQ-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{BNE-FUNC3} & logic & 3 & 0x1 \\
+  \hline
+  \texttt{BLT-FUNC3} & logic & 3 & 0x4 \\
+  \hline
+  \texttt{BGE-FUNC3} & logic & 3 & 0x5 \\
+  \hline
+  \texttt{BLTU-FUNC3} & logic & 3 & 0x6 \\
+  \hline
+  \texttt{BGEU-FUNC3} & logic & 3 & 0x7 \\
+  \hline
+  \texttt{LB-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{LH-FUNC3} & logic & 3 & 0x1 \\
+  \hline
+  \texttt{LW-FUNC3} & logic & 3 & 0x2 \\
+  \hline
+  \texttt{LBU-FUNC3} & logic & 3 & 0x4 \\
+  \hline
+  \texttt{LHU-FUNC3} & logic & 3 & 0x5 \\
+  \hline
+  \texttt{SB-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{SH-FUNC3} & logic & 3 & 0x1 \\
+  \hline
+  \texttt{SW-FUNC3} & logic & 3 & 0x2 \\
+  \hline
+  \texttt{ADD-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{SUB-FUNC3} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{SLL-FUNC3} & logic & 3 & 0x1 \\
+  \hline
+  \texttt{SLT-FUNC3} & logic & 3 & 0x2 \\
+  \hline
+  \texttt{SLTU-FUNC3} & logic & 3 & 0x3 \\
+  \hline
+  \texttt{XOR-FUNC3} & logic & 3 & 0x4 \\
+  \hline
+  \texttt{SRL-FUNC3} & logic & 3 & 0x5 \\
+  \hline
+  \texttt{SRA-FUNC3} & logic & 3 & 0x5 \\
+  \hline
+  \texttt{OR-FUNC3} & logic & 3 & 0x6 \\
+  \hline
+  \texttt{AND-FUNC3} & logic & 3 & 0x7 \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{Instruction func7 field}} \\
+  \hline
+  \texttt{ADD-FUNC7} & logic & 7 & 0x0 \\
+  \hline
+  \texttt{SUB-FUNC7} & logic & 7 & 0x20 \\
+  \hline
+  \texttt{SRL-FUNC7} & logic & 3 & 0x0 \\
+  \hline
+  \texttt{SRA-FUNC7} & logic & 3 & 0x20 \\
   \hline
 \end{xltabular}
 }

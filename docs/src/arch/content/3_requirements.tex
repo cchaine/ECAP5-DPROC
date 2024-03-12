@@ -186,6 +186,13 @@
           derivedfrom=U\_INSTRUCTION\_SET\_01
         ]
 
+      \req{F\_INSTR\_VARIANT\_03}{
+          Instructions encoded using the \texttt{OP-IMM} opcode and either \texttt{SRLI-FUNC3} or \texttt{SRAI-FUNC3} shall use the 7 MSBs of their second parameter as a secondary behavior variant selector.
+        }[
+          derivedfrom=U\_INSTRUCTION\_SET\_01,
+          rationale={The SRLI and SRAI instructions use the I-type encoding but only the 5 LSBs of the immediate parameter are used for the behavior. The other 7 MSBs are assimilated to the \texttt{func7} field of the R-type encoding.}
+        ]
+
       \paragraph{Opcodes}
 
       \vspace{1em}
