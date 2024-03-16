@@ -657,13 +657,13 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BEQ_01",
+  CHECK("tb_exm.branch.BEQ_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BEQ_02",
+  CHECK("tb_exm.branch.BEQ_02",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BEQ_03",
+  CHECK("tb_exm.branch.BEQ_03",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -675,16 +675,16 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BEQ_04",
+  CHECK("tb_exm.branch.BEQ_04",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BEQ_05",
+  CHECK("tb_exm.branch.BEQ_05",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BEQ_06",
+  CHECK("tb_exm.branch.BEQ_06",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BEQ_07",
+  CHECK("tb_exm.branch.BEQ_07",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -708,13 +708,13 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BNE_01",
+  CHECK("tb_exm.branch.BNE_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BNE_02",
+  CHECK("tb_exm.branch.BNE_02",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BNE_03",
+  CHECK("tb_exm.branch.BNE_03",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -726,16 +726,16 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BNE_04",
+  CHECK("tb_exm.branch.BNE_04",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BNE_05",
+  CHECK("tb_exm.branch.BNE_05",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BNE_06",
+  CHECK("tb_exm.branch.BNE_06",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BNE_07",
+  CHECK("tb_exm.branch.BNE_07",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -758,13 +758,13 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLT_01",
+  CHECK("tb_exm.branch.BLT_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLT_02",
+  CHECK("tb_exm.branch.BLT_02",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLT_03",
+  CHECK("tb_exm.branch.BLT_03",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -776,13 +776,13 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLT_04",
+  CHECK("tb_exm.branch.BLT_04",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLT_05",
+  CHECK("tb_exm.branch.BLT_05",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLT_06",
+  CHECK("tb_exm.branch.BLT_06",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -794,16 +794,16 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLT_07",
+  CHECK("tb_exm.branch.BLT_07",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLT_08",
+  CHECK("tb_exm.branch.BLT_08",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLT_09",
+  CHECK("tb_exm.branch.BLT_09",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BLT_10",
+  CHECK("tb_exm.branch.BLT_10",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -826,13 +826,13 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLTU_01",
+  CHECK("tb_exm.branch.BLTU_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLTU_02",
+  CHECK("tb_exm.branch.BLTU_02",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLTU_03",
+  CHECK("tb_exm.branch.BLTU_03",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -844,13 +844,13 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLTU_04",
+  CHECK("tb_exm.branch.BLTU_04",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLTU_05",
+  CHECK("tb_exm.branch.BLTU_05",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLTU_06",
+  CHECK("tb_exm.branch.BLTU_06",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -862,13 +862,13 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLTU_07",
+  CHECK("tb_exm.branch.BLTU_07",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLTU_08",
+  CHECK("tb_exm.branch.BLTU_08",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLTU_09",
+  CHECK("tb_exm.branch.BLTU_09",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -880,16 +880,16 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BLTU_10",
+  CHECK("tb_exm.branch.BLTU_10",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BLTU_11",
+  CHECK("tb_exm.branch.BLTU_11",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BLTU_12",
+  CHECK("tb_exm.branch.BLTU_12",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BLTU_13",
+  CHECK("tb_exm.branch.BLTU_13",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -912,13 +912,13 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGE_01",
+  CHECK("tb_exm.branch.BGE_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGE_02",
+  CHECK("tb_exm.branch.BGE_02",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGE_03",
+  CHECK("tb_exm.branch.BGE_03",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -930,16 +930,16 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGE_04",
+  CHECK("tb_exm.branch.BGE_04",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGE_05",
+  CHECK("tb_exm.branch.BGE_05",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGE_06",
+  CHECK("tb_exm.branch.BGE_06",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BGE_07",
+  CHECK("tb_exm.branch.BGE_07",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -951,16 +951,16 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGE_08",
+  CHECK("tb_exm.branch.BGE_08",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGE_09",
+  CHECK("tb_exm.branch.BGE_09",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGE_10",
+  CHECK("tb_exm.branch.BGE_10",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BGE_11",
+  CHECK("tb_exm.branch.BGE_11",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -983,16 +983,16 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGEU_01",
+  CHECK("tb_exm.branch.BGEU_01",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGEU_02",
+  CHECK("tb_exm.branch.BGEU_02",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGEU_03",
+  CHECK("tb_exm.branch.BGEU_03",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BGEU_04",
+  CHECK("tb_exm.branch.BGEU_04",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -1004,16 +1004,16 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGEU_05",
+  CHECK("tb_exm.branch.BGEU_05",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGEU_06",
+  CHECK("tb_exm.branch.BGEU_06",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGEU_07",
+  CHECK("tb_exm.branch.BGEU_07",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BGEU_08",
+  CHECK("tb_exm.branch.BGEU_08",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -1025,16 +1025,16 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGEU_09",
+  CHECK("tb_exm.branch.BGEU_09",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGEU_10",
+  CHECK("tb_exm.branch.BGEU_10",
       (core->branch_o == 1),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGEU_11",
+  CHECK("tb_exm.branch.BGEU_11",
       (core->branch_offset_o == branch_offset),
       "Failed to output branch offset");
-  CHECK("tb_exm.alu.BGEU_12",
+  CHECK("tb_exm.branch.BGEU_12",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -1046,13 +1046,13 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   tb->_nop();
   tb->tick();
 
-  CHECK("tb_exm.alu.BGEU_13",
+  CHECK("tb_exm.branch.BGEU_13",
       (core->result_write_o == 0),
       "Failed to output the result write");
-  CHECK("tb_exm.alu.BGEU_14",
+  CHECK("tb_exm.branch.BGEU_14",
       (core->branch_o == 0),
       "Failed to output branch");
-  CHECK("tb_exm.alu.BGEU_15",
+  CHECK("tb_exm.branch.BGEU_15",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 }
@@ -1060,6 +1060,82 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
 void tb_exm_back_to_back(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  uint32_t operand1 = rand();
+  uint32_t operand2 = rand();
+  uint8_t result_addr1 = rand() % 32;
+  tb->_add(operand1, operand2, result_addr1);
+
+  tb->tick();
+
+  uint32_t operand3 = rand();
+  uint32_t operand4 = rand();
+  uint8_t result_addr2 = rand() % 32;
+  tb->_sub(operand3, operand4, result_addr2);
+
+  tb->tick();
+
+  CHECK("tb_exm.back_to_back.01",
+      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)),
+      "Failed to execute operation back to back");
+  CHECK("tb_exm.back_to_back.02",
+      (core->result_write_o == 1),
+      "Failed to output the result write");
+  CHECK("tb_exm.back_to_back.03",
+      (core->result_addr_o == result_addr1),
+      "Failed to output the result address");
+  CHECK("tb_exm.back_to_back.04",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.back_to_back.05",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  operand1 = rand();
+  operand2 = rand();
+  result_addr1 = rand() % 32;
+  tb->_add(operand1, operand2, result_addr1);
+
+  tb->tick();
+
+  CHECK("tb_exm.back_to_back.06",
+      (core->result_o == ((int32_t)operand3 - (int32_t)operand4)),
+      "Failed to execute operation back to back");
+  CHECK("tb_exm.back_to_back.07",
+      (core->result_write_o == 1),
+      "Failed to output the result write");
+  CHECK("tb_exm.back_to_back.08",
+      (core->result_addr_o == result_addr2),
+      "Failed to output the result address");
+  CHECK("tb_exm.back_to_back.09",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.back_to_back.10",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.back_to_back.11",
+      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)),
+      "Failed to execute operation back to back");
+  CHECK("tb_exm.back_to_back.12",
+      (core->result_write_o == 1),
+      "Failed to output the result write");
+  CHECK("tb_exm.back_to_back.13",
+      (core->result_addr_o == result_addr1),
+      "Failed to output the result address");
+  CHECK("tb_exm.back_to_back.14",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.back_to_back.15",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_bubble(TB_Exm * tb) {
