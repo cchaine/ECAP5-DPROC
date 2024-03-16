@@ -76,20 +76,20 @@
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_08}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted left by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the right bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT} and \texttt{alu\_shift\_right\_i} is deasserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted left by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the right bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT} and \texttt{alu\_shift\_left\_i} is asserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_09}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_right\_i} is asserted and \texttt{alu\_signed\_shift\_i} is deasserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is deasserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_10}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with the most significant bit of \texttt{alu\_operand1\_i}, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_right\_i} is asserted and \texttt{alu\_signed\_shift\_i} is asserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with the most significant bit of \texttt{alu\_operand1\_i}, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is asserted.
           }
 
       \paragraph{Branch}
 
-        \req{D\_EXM\_OUTPUT\_BRANCH\_07}{
+        \req{D\_EXM\_OUTPUT\_BRANCH\_01}{
             The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{branch\_cond\_i} is \texttt{NO\_BRANCH}.
           }
 

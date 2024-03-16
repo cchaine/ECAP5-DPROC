@@ -31,7 +31,7 @@ module tb_exm import ecap5_dproc_pkg::*; (
   input   logic[31:0]  alu_operand2_i, 
   input   logic[2:0]   alu_op_i,
   input   logic        alu_sub_i,
-  input   logic        alu_shift_right_i,
+  input   logic        alu_shift_left_i,
   input   logic        alu_signed_shift_i,
   // Branch logic
   input   logic[2:0]   branch_cond_i,
@@ -58,7 +58,7 @@ exm dut (
  .alu_operand2_i      (alu_operand2_i), 
  .alu_op_i            (alu_op_i),
  .alu_sub_i           (alu_sub_i),
- .alu_shift_right_i   (alu_shift_right_i),
+ .alu_shift_left_i    (alu_shift_left_i),
  .alu_signed_shift_i  (alu_signed_shift_i),
  .branch_cond_i       (branch_cond_i),
  .branch_offset_i     (branch_offset_i),
