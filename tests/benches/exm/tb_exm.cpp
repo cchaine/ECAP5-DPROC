@@ -161,6 +161,54 @@ public:
     this->core->result_write_i = 1;
     this->core->result_addr_i = result_addr;
   }
+
+  void _beq(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BEQ;
+    this->core->branch_offset_i = branch_offset;
+  }
+
+  void _bne(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BNE;
+    this->core->branch_offset_i = branch_offset;
+  }
+
+  void _blt(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BLT;
+    this->core->branch_offset_i = branch_offset;
+  }
+
+  void _bltu(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BLTU;
+    this->core->branch_offset_i = branch_offset;
+  }
+
+  void _bge(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BGE;
+    this->core->branch_offset_i = branch_offset;
+  }
+
+  void _bgeu(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+    this->_nop();
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BGEU;
+    this->core->branch_offset_i = branch_offset;
+  }
 };
 
 void tb_exm_alu_add(TB_Exm * tb) {
@@ -341,6 +389,7 @@ void tb_exm_alu_slt(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
   
+  // Test values from operand2 - 8 to operand2 + 2
   uint8_t result_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
   bool SLT_01_cond = 1;
@@ -386,6 +435,7 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
   
+  // Test values from operand2 - 8 to operand2 + 2 with operand2 - 8 being greater when unsigned
   uint8_t result_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
   bool SLTU_01_cond = 1;
@@ -464,6 +514,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
+
+  // Test with a negative number
   
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
@@ -489,6 +541,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   CHECK("tb_exm.alu.SRL_05",
       (core->output_valid_o == 1),
       "Failed to validate the output");
+
+  // Test with a positive number
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
@@ -523,6 +577,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
+
+  // Test with a negative number
   
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
@@ -551,6 +607,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   CHECK("tb_exm.alu.SRA_05",
       (core->output_valid_o == 1),
       "Failed to validate the output");
+
+  // Test with a positive number
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
@@ -583,31 +641,420 @@ void tb_exm_alu_sra(TB_Exm * tb) {
 void tb_exm_branch_beq(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with different values
+  
+  uint32_t operand1 = rand();
+  uint32_t operand2 = rand();
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_beq(operand1, operand2, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BEQ_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BEQ_02",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BEQ_03",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with equal values
+  
+  tb->_beq(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BEQ_04",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BEQ_05",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BEQ_06",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BEQ_07",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_branch_bne(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with equal values
+  
+  uint32_t operand1 = rand();
+  uint32_t operand2 = rand();
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_bne(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BNE_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BNE_02",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BNE_03",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with different values
+
+  tb->_bne(operand1, operand2, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BNE_04",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BNE_05",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BNE_06",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BNE_07",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_branch_blt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with a lower value
+  
+  uint32_t operand1 = 2 + rand() % 6;
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_blt((int32_t)operand1 + 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLT_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLT_02",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLT_03",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a value equal
+
+  tb->_blt(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLT_04",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLT_05",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLT_06",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a greater value 
+
+  tb->_blt((int32_t)operand1 - 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLT_07",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLT_08",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLT_09",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BLT_10",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_branch_bltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with a greater value
+  
+  uint32_t operand1 = 2 % rand() % 6;
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_bltu((int32_t)operand1 + 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLTU_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLTU_02",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLTU_03",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with an equal value
+
+  tb->_bltu(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLTU_04",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLTU_05",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLTU_06",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a lower negative value (greater when unsigned)
+
+  tb->_bltu((int32_t)operand1 - 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLTU_07",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLTU_08",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLTU_09",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a lower positive value
+
+  tb->_bltu((int32_t)operand1 - 2, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BLTU_10",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BLTU_11",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BLTU_12",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BLTU_13",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_branch_bge(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with a lower value
+  
+  uint32_t operand1 = 2 + rand() % 6;
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_bge((int32_t)operand1 - 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGE_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGE_02",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGE_03",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with an equal value
+
+  tb->_bge(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGE_04",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGE_05",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGE_06",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BGE_07",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a positive value
+
+  tb->_bge((int32_t)operand1 + 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGE_08",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGE_09",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGE_10",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BGE_11",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_branch_bgeu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   tb->reset();
+  tb->_nop();
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  // Test with a lower negative value (greater when unsigned)
+  
+  uint32_t operand1 = 2 + rand() % 6;
+  uint32_t branch_offset = rand() % 0xFFFFF;
+  tb->_bgeu((int32_t)operand1 - 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGEU_01",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGEU_02",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGEU_03",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BGEU_04",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with an equal value
+
+  tb->_bgeu(operand1, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGEU_05",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGEU_06",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGEU_07",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BGEU_08",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a greater positive value
+
+  tb->_bgeu((int32_t)operand1 + 10, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGEU_09",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGEU_10",
+      (core->branch_o == 1),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGEU_11",
+      (core->branch_offset_o == branch_offset),
+      "Failed to output branch offset");
+  CHECK("tb_exm.alu.BGEU_12",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Test with a lower positive value
+  
+  tb->_bgeu((int32_t)operand1 - 2, operand1, branch_offset);
+
+  tb->tick();
+  tb->_nop();
+  tb->tick();
+
+  CHECK("tb_exm.alu.BGEU_13",
+      (core->result_write_o == 0),
+      "Failed to output the result write");
+  CHECK("tb_exm.alu.BGEU_14",
+      (core->branch_o == 0),
+      "Failed to output branch");
+  CHECK("tb_exm.alu.BGEU_15",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_exm_back_to_back(TB_Exm * tb) {

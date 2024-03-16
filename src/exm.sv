@@ -96,7 +96,7 @@ always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_q);
   alu_signed_operand2 = $signed(alu_operand2_q);
 
-  alu_sum_operand2 = alu_sub_q
+  alu_sum_operand2 = alu_sub_q || (branch_cond_q == BRANCH_BEQ || branch_cond_q == BRANCH_BNE)
                           ? (-alu_signed_operand2)
                           :   alu_signed_operand2;
   alu_sum_output   =  alu_signed_operand1 + alu_sum_operand2;
@@ -156,7 +156,7 @@ always_ff @(posedge clk_i) begin
     alu_operand2_q      <=  '0;
     alu_op_q            <=   ALU_ADD;
     alu_sub_q           <=   0;
-    alu_shift_left_q   <=   0;
+    alu_shift_left_q   <=    0;
     alu_signed_shift_q  <=   0;
     result_write_q      <=   0;
     result_addr_q       <=  '0;
@@ -173,7 +173,7 @@ always_ff @(posedge clk_i) begin
     alu_operand2_q      <=  alu_operand2_i;
     alu_op_q            <=  alu_op_i;
     alu_sub_q           <=  alu_sub_i;
-    alu_shift_left_q   <=  alu_shift_left_i;
+    alu_shift_left_q    <=  alu_shift_left_i;
     alu_signed_shift_q  <=  alu_signed_shift_i;
     result_write_q      <=  result_write_i;
     result_addr_q       <=  result_addr_i;
