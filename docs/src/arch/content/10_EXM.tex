@@ -13,11 +13,15 @@
     \subsubsection{Input handshake}
 
       \req{D\_EXM\_INPUT\_REGISTER\_01}{
-          All inputs shall be registered on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted. Input registers shall be loaded with values from table \ref{tab:exm-bubble-input} otherwise.
+          All inputs shall be registered on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
         }
 
       \req{D\_EXM\_INPUT\_REGISTER\_02}{
-          Iput registers shall be loaded with values from table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
+          Input registers shall be loaded with values from table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
+        }
+
+      \req{D\_EXM\_INPUT\_REGISTER\_03}{
+          Input registers shall be loaded with values from table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} is deasserted.
         }
 
       \begin{table}[H]
