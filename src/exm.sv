@@ -23,26 +23,24 @@
 module exm import ecap5_dproc_pkg::*;
 (
   input   logic        clk_i,
-  // Input logic
+  input   logic        rst_i,
+  // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
+  // ALU logic
   input   logic[31:0]  alu_operand1_i,
   input   logic[31:0]  alu_operand2_i, 
   input   logic[2:0]   alu_op_i,
   input   logic        alu_sub_i,
   input   logic        alu_shift_right_i,
-  input   logic        alu_result_write_i,
+  input   logic        alu_signed_shift_i,
+  // Branch logic
+  input   logic        branch_i,
   input   logic[2:0]   branch_cond_i,
   input   logic[19:0]  branch_offset_i,
-  // Wishbone master
-  output  logic[31:0]  wb_adr_o,
-  input   logic[31:0]  wb_dat_i,
-  output  logic[31:0]  wb_dat_o,
-  output  logic        wb_we_o,
-  output  logic[3:0]   wb_sel_o,
-  output  logic        wb_stb_o,
-  input   logic        wb_ack_i,
-  output  logic        wb_cyc_o,
+  // WBM inputs
+  input   logic        result_write_i,
+  input   logic[4:0]   result_addr_i,
   // Output logic
   input   logic        output_ready_i,
   output  logic        output_valid_o,
@@ -54,11 +52,14 @@ module exm import ecap5_dproc_pkg::*;
 );
 
 // Registered inputs
-logic[31:0] alu_operand1_q,
-            alu_operand2_q;
-logic[2:0]  alu_op_q;
-logic       alu_sub_q;
-logic[19:0] branch_offset_q;
+logic[31:0]  alu_operand1_q,
+             alu_operand2_q;  
+logic[2:0]   alu_op_q;
+logic        alu_sub_q;
+logic        alu_shift_right_q;
+logic        result_write_q;
+logic        alu_result_addr_q;
+logic[19:0]  branch_offset_q;
 
 // ALU internal signals
 logic signed[31:0] alu_signed_operand1,
@@ -81,8 +82,11 @@ logic[31:0] alu_sum_output,
 logic alu_sum_z;
 
 // Stage outputs
+logic result_write_qq;
+logic alu_result_addr_qq;
 logic[31:0] result_d, result_q;
 logic branch_d, branch_q;
+logic result_write_qq;
 logic[19:0] branch_offset_qq;
 
 always_comb begin : alu
@@ -146,7 +150,7 @@ always_ff @(posedge clk_i) begin
     alu_op_q            <=   ALU_ADD;
     alu_sub_q           <=   0;
     alu_shift_right_i   <=   0;
-    alu_result_write_i  <=   0;
+    result_write_i  <=   0;
     branch_cond_i       <=   0;
     branch_offset_q     <=  '0;
 
@@ -159,14 +163,19 @@ always_ff @(posedge clk_i) begin
     alu_op_q            <=  alu_op_i;
     alu_sub_q           <=  alu_sub_i;
     alu_shift_right_q   <=  alu_shift_right_i;
-    alu_result_write_q  <=  alu_result_write_i;
+    result_write_q  <=  result_write_i;
     branch_cond_q       <=  branch_cond_i;
     branch_offset_q     <=  alu_branch_offset_i;
 
+    result_write_qq <=  result_write_q;
     result_q            <=  result_d;
     branch_q            <=  branch_d;
     branch_offset_qq    <=  alu_branch_offset_q;
   end
 end
+assign result_write_o = result_write_qq;
+assign result_addr_o = alu_result_addr_qq;
+
+assign input_ready_o = output_valid_i;
 
 endmodule // exm
