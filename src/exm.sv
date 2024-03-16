@@ -35,7 +35,6 @@ module exm import ecap5_dproc_pkg::*;
   input   logic        alu_shift_right_i,
   input   logic        alu_signed_shift_i,
   // Branch logic
-  input   logic        branch_i,
   input   logic[2:0]   branch_cond_i,
   input   logic[19:0]  branch_offset_i,
   // WBM inputs
@@ -57,18 +56,22 @@ logic[31:0]  alu_operand1_q,
 logic[2:0]   alu_op_q;
 logic        alu_sub_q;
 logic        alu_shift_right_q;
+logic        alu_signed_shift_q;
 logic        result_write_q;
-logic        alu_result_addr_q;
+logic[4:0]   result_addr_q;
+logic[2:0]   branch_cond_q;
 logic[19:0]  branch_offset_q;
 
 // ALU internal signals
 logic signed[31:0] alu_signed_operand1,
                    alu_signed_operand2;
 
+logic[31:0] alu_sum_operand2;
+
 logic[31:0] alu_shift0,
             alu_shift1,
             alu_shift2,
-            alu_shift3
+            alu_shift3,
             alu_shift4;
 logic[31:0] alu_shift_operand1;
 
@@ -82,18 +85,17 @@ logic[31:0] alu_sum_output,
 logic alu_sum_z;
 
 // Stage outputs
-logic result_write_qq;
-logic alu_result_addr_qq;
-logic[31:0] result_d, result_q;
-logic branch_d, branch_q;
-logic result_write_qq;
-logic[19:0] branch_offset_qq;
+logic        result_write_qq;     
+logic[4:0]   result_addr_qq;  
+logic[31:0]  result_d, result_q;
+logic        branch_d, branch_q;
+logic[19:0]  branch_offset_qq;    
 
 always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_q);
   alu_signed_operand2 = $signed(alu_operand2_q);
 
-  alu_sum_operand2 = alu_sub_i 
+  alu_sum_operand2 = alu_sub_q
                           ? (-alu_signed_operand2)
                           :   alu_signed_operand2;
   alu_sum_output   =  alu_signed_operand1 + alu_sum_operand2;
@@ -106,15 +108,15 @@ always_comb begin : alu
   alu_sltu_output  =  {31'h0,      alu_operand1_q <      alu_operand2_q};
 
   alu_shift_operand1 = alu_shift_right_q
-                            ? (<<{alu_operand1_q})
+                            ? {<<{alu_operand1_q}}
                             :     alu_operand1_q;
   alu_shift0  =  alu_operand2_q[0]  ?  {alu_shift_operand1[0],     alu_shift_operand1[31:1]}   :  alu_shift_operand1;
   alu_shift1  =  alu_operand2_q[1]  ?  {alu_shift_operand1[1:0],   alu_shift_operand1[31:2]}   :  alu_shift0;
   alu_shift2  =  alu_operand2_q[2]  ?  {alu_shift_operand1[3:0],   alu_shift_operand1[31:4]}   :  alu_shift1;
   alu_shift3  =  alu_operand2_q[3]  ?  {alu_shift_operand1[7:0],   alu_shift_operand1[31:8]}   :  alu_shift2;
   alu_shift4  =  alu_operand2_q[4]  ?  {alu_shift_operand1[15:0],  alu_shift_operand1[31:16]}  :  alu_shift3;
-  alu_shift_result = alu_shift_right_q
-                          ? (<<{alu_shift4})
+  alu_shift_output = alu_shift_right_q
+                          ? {<<{alu_shift4}}
                           :     alu_shift4;
 end
 
@@ -133,12 +135,13 @@ end
 
 always_comb begin : branch
   case(branch_cond_q)
+    NO_BRANCH:    branch_d  =   '0;
     BRANCH_BEQ:   branch_d  =   alu_sum_z;
     BRANCH_BNE:   branch_d  =  ~alu_sum_z;
-    BRANCH_BLT:   branch_d  =   alu_slt_output;
-    BRANCH_BLTU:  branch_d  =   alu_sltu_output;
-    BRANCH_BGE:   branch_d  =  ~alu_slt_output;
-    BRANCH_BGEU:  branch_d  =  ~alu_sltu_output;
+    BRANCH_BLT:   branch_d  =   alu_slt_output[0];
+    BRANCH_BLTU:  branch_d  =   alu_sltu_output[0];
+    BRANCH_BGE:   branch_d  =  ~alu_slt_output[0];
+    BRANCH_BGEU:  branch_d  =  ~alu_sltu_output[0];
     default:      branch_d  =   '0;
   endcase
 end
@@ -149,33 +152,44 @@ always_ff @(posedge clk_i) begin
     alu_operand2_q      <=  '0;
     alu_op_q            <=   ALU_ADD;
     alu_sub_q           <=   0;
-    alu_shift_right_i   <=   0;
-    result_write_i  <=   0;
-    branch_cond_i       <=   0;
+    alu_shift_right_q   <=   0;
+    alu_signed_shift_q  <=   0;
+    result_write_q      <=   0;
+    result_addr_q       <=  '0;
+    branch_cond_q       <=   NO_BRANCH;
     branch_offset_q     <=  '0;
 
-    result_q              <=  '0;
-    branch_q              <=   0;
-    alu_branch_offset_qq  <=  '0;
+    result_write_qq     <=   0;
+    result_addr_qq      <=  '0;
+    result_q            <=  '0;
+    branch_q            <=   0;
+    branch_offset_qq    <=  '0;
   end else begin
     alu_operand1_q      <=  alu_operand1_i;
     alu_operand2_q      <=  alu_operand2_i;
     alu_op_q            <=  alu_op_i;
     alu_sub_q           <=  alu_sub_i;
     alu_shift_right_q   <=  alu_shift_right_i;
-    result_write_q  <=  result_write_i;
+    alu_signed_shift_q  <=  alu_signed_shift_i;
+    result_write_q      <=  result_write_i;
+    result_addr_q       <=  result_addr_i;
     branch_cond_q       <=  branch_cond_i;
-    branch_offset_q     <=  alu_branch_offset_i;
+    branch_offset_q     <=  branch_offset_i;
 
-    result_write_qq <=  result_write_q;
-    result_q            <=  result_d;
-    branch_q            <=  branch_d;
-    branch_offset_qq    <=  alu_branch_offset_q;
+    result_addr_qq    <=  result_addr_q;
+    result_write_qq   <=  result_write_q;
+    result_q          <=  result_d;
+    branch_q          <=  branch_d;
+    branch_offset_qq  <=  branch_offset_q;
   end
 end
-assign result_write_o = result_write_qq;
-assign result_addr_o = alu_result_addr_qq;
+assign input_ready_o = output_ready_i;
 
-assign input_ready_o = output_valid_i;
+assign result_write_o = result_write_qq;
+assign result_addr_o = result_addr_qq;
+assign result_o = result_q;
+assign branch_o = branch_q;
+assign branch_offset_o = branch_offset_qq;
+assign output_valid_o = 1;
 
 endmodule // exm

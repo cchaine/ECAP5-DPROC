@@ -1,33 +1,103 @@
 [*]
-[*] GTKWave Analyzer v3.3.107 (w)1999-2020 BSI
-[*] Wed Oct 18 09:07:39 2023
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sat Mar 16 11:11:21 2024
 [*]
-[dumpfile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/build/waves/exm.vcd"
-[dumpfile_mtime] "Wed Oct 18 09:06:06 2023"
-[dumpfile_size] 9845
-[savefile] "/Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/config/exm.gtkw"
-[timestart] 0
-[size] 1800 995
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/exm.vcd"
+[dumpfile_mtime] "Sat Mar 16 11:10:35 2024"
+[dumpfile_size] 10175
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/exm.gtkw"
+[timestart] 8
+[size] 1616 864
 [pos] -1 -1
-*-1.795433 2 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-4.838040 44 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
 [treeopen] TOP.
 [treeopen] TOP.tb_exm.
-[sst_width] 193
-[signals_width] 159
+[sst_width] 253
+[signals_width] 249
 [sst_expanded] 1
-[sst_vpaned_height] 306
+[sst_vpaned_height] 263
 @28
-TOP.tb_exm.dut.clk_i
+TOP.tb_exm.clk_i
+TOP.tb_exm.rst_i
+@200
+-Input
+@28
+TOP.tb_exm.input_ready_o
+TOP.tb_exm.input_valid_i
 @2028
 [color] 2
-^1 /Users/cchaine/Desktop/Documents/projects/ecap5/design/proc/tests/gtkwave/filters/instr_t_filter.gtkw
-TOP.tb_exm.dut.instr_i[5:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/exm_alu_op_filter.gtkw
+TOP.tb_exm.alu_op_i[2:0]
 @22
-TOP.tb_exm.dut.param1_i[31:0]
-TOP.tb_exm.dut.param2_i[31:0]
-TOP.tb_exm.dut.param3_i[31:0]
-TOP.tb_exm.dut.pc_i[31:0]
-@23
-TOP.tb_exm.dut.result_d[31:0]
+[color] 2
+TOP.tb_exm.alu_operand1_i[31:0]
+[color] 2
+TOP.tb_exm.alu_operand2_i[31:0]
+@28
+[color] 2
+TOP.tb_exm.alu_sub_i
+[color] 2
+TOP.tb_exm.alu_shift_right_i
+[color] 2
+TOP.tb_exm.alu_signed_shift_i
+@2028
+[color] 7
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/exm_branch_cond_filter.gtkw
+TOP.tb_exm.branch_cond_i[2:0]
+@22
+[color] 7
+TOP.tb_exm.branch_offset_i[19:0]
+@28
+[color] 7
+TOP.tb_exm.result_write_i
+@22
+[color] 7
+TOP.tb_exm.result_addr_i[4:0]
+@200
+-Output
+@28
+[color] 5
+TOP.tb_exm.output_ready_i
+[color] 5
+TOP.tb_exm.output_valid_o
+[color] 5
+TOP.tb_exm.result_write_o
+@22
+[color] 5
+TOP.tb_exm.result_addr_o[4:0]
+[color] 5
+TOP.tb_exm.result_o[31:0]
+@28
+[color] 5
+TOP.tb_exm.branch_o
+@22
+[color] 5
+TOP.tb_exm.branch_offset_o[19:0]
 [pattern_trace] 1
 [pattern_trace] 0

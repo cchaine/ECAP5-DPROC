@@ -26,4 +26,20 @@ localparam  logic[31:0]  boot_address       /* verilator public */ =  32'h000000
 localparam  logic[31:0]  interrupt_address  /* verilator public */ =  32'hFF00000A;
 localparam  logic[31:0]  debug_address      /* verilator public */ =  32'hFF00000B;
 
+localparam  logic[2:0]  ALU_ADD    /* verilator public */ = 3'h0;
+localparam  logic[2:0]  ALU_XOR    /* verilator public */ = 3'h1;
+localparam  logic[2:0]  ALU_OR     /* verilator public */ = 3'h2;
+localparam  logic[2:0]  ALU_AND    /* verilator public */ = 3'h3;
+localparam  logic[2:0]  ALU_SLT    /* verilator public */ = 3'h4;
+localparam  logic[2:0]  ALU_SLTU   /* verilator public */ = 3'h5;
+localparam  logic[2:0]  ALU_SHIFT  /* verilator public */ = 3'h6;
+
+localparam  logic[2:0]  NO_BRANCH    /* verilator public */ = 3'h0;
+localparam  logic[2:0]  BRANCH_BEQ   /* verilator public */ = 3'h1;
+localparam  logic[2:0]  BRANCH_BNE   /* verilator public */ = 3'h2;
+localparam  logic[2:0]  BRANCH_BLT   /* verilator public */ = 3'h3;
+localparam  logic[2:0]  BRANCH_BLTU  /* verilator public */ = 3'h4;
+localparam  logic[2:0]  BRANCH_BGE   /* verilator public */ = 3'h5;
+localparam  logic[2:0]  BRANCH_BGEU  /* verilator public */ = 3'h6;
+
 endpackage

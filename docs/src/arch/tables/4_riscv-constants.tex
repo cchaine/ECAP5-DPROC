@@ -10,87 +10,37 @@
   \hline
   \cellcolor{gray!20}\textbf{NAME} & \cellcolor{gray!20}\textbf{TYPE} & \cellcolor{gray!20}\textbf{WIDTH} & \cellcolor{gray!20}\textbf{VALUE} \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{Instruction opcode field}} \\
+  \multicolumn{4}{|l|}{\textbf{ALU operation}} \\
   \hline
-  \texttt{LUI} & logic & 7 & 0x37 \\
+  \texttt{ALU\_ADD} & logic & 3 & 0x0 \\
   \hline
-  \texttt{AUIPC} & logic & 7 & 0x7 \\
+  \texttt{ALU\_XOR} & logic & 3 & 0x1 \\
   \hline
-  \texttt{JAL} & logic & 7 & 0x6F \\
+  \texttt{ALU\_OR} & logic & 3 & 0x2 \\
   \hline
-  \texttt{JALR} & logic & 7 & 0x67 \\
+  \texttt{ALU\_AND} & logic & 3 & 0x3 \\
   \hline
-  \texttt{OP} & logic & 7 & 0x33 \\
+  \texttt{ALU\_SLT} & logic & 3 & 0x4 \\
   \hline
-  \texttt{OP-IMM} & logic & 7 & 0x13 \\
+  \texttt{ALU\_SLTU} & logic & 3 & 0x5 \\
   \hline
-  \texttt{BRANCH} & logic & 7 & 0x63 \\
+  \texttt{ALU\_SHIFT} & logic & 3 & 0x6 \\
   \hline
-  \texttt{LOAD} & logic & 7 & 0x3 \\
+  \multicolumn{4}{|l|}{\textbf{BRANCH condition}} \\
   \hline
-  \texttt{STORE} & logic & 7 & 0x23 \\
+  \texttt{NO\_BRANCH} & logic & 3 & 0x0 \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{Instruction func3 field}} \\
+  \texttt{BRANCH\_BEQ} & logic & 3 & 0x1 \\
   \hline
-  \texttt{JALR-FUNC3} & logic & 3 & 0x0 \\
+  \texttt{BRANCH\_BNE} & logic & 3 & 0x2 \\
   \hline
-  \texttt{BEQ-FUNC3} & logic & 3 & 0x0 \\
+  \texttt{BRANCH\_BLT} & logic & 3 & 0x3 \\
   \hline
-  \texttt{BNE-FUNC3} & logic & 3 & 0x1 \\
+  \texttt{BRANCH\_BLTU} & logic & 3 & 0x4 \\
   \hline
-  \texttt{BLT-FUNC3} & logic & 3 & 0x4 \\
+  \texttt{BRANCH\_BGE} & logic & 3 & 0x5 \\
   \hline
-  \texttt{BGE-FUNC3} & logic & 3 & 0x5 \\
-  \hline
-  \texttt{BLTU-FUNC3} & logic & 3 & 0x6 \\
-  \hline
-  \texttt{BGEU-FUNC3} & logic & 3 & 0x7 \\
-  \hline
-  \texttt{LB-FUNC3} & logic & 3 & 0x0 \\
-  \hline
-  \texttt{LH-FUNC3} & logic & 3 & 0x1 \\
-  \hline
-  \texttt{LW-FUNC3} & logic & 3 & 0x2 \\
-  \hline
-  \texttt{LBU-FUNC3} & logic & 3 & 0x4 \\
-  \hline
-  \texttt{LHU-FUNC3} & logic & 3 & 0x5 \\
-  \hline
-  \texttt{SB-FUNC3} & logic & 3 & 0x0 \\
-  \hline
-  \texttt{SH-FUNC3} & logic & 3 & 0x1 \\
-  \hline
-  \texttt{SW-FUNC3} & logic & 3 & 0x2 \\
-  \hline
-  \texttt{ADD-FUNC3} & logic & 3 & 0x0 \\
-  \hline
-  \texttt{SUB-FUNC3} & logic & 3 & 0x0 \\
-  \hline
-  \texttt{SLL-FUNC3} & logic & 3 & 0x1 \\
-  \hline
-  \texttt{SLT-FUNC3} & logic & 3 & 0x2 \\
-  \hline
-  \texttt{SLTU-FUNC3} & logic & 3 & 0x3 \\
-  \hline
-  \texttt{XOR-FUNC3} & logic & 3 & 0x4 \\
-  \hline
-  \texttt{SRL-FUNC3} & logic & 3 & 0x5 \\
-  \hline
-  \texttt{SRA-FUNC3} & logic & 3 & 0x5 \\
-  \hline
-  \texttt{OR-FUNC3} & logic & 3 & 0x6 \\
-  \hline
-  \texttt{AND-FUNC3} & logic & 3 & 0x7 \\
-  \hline
-  \multicolumn{4}{|l|}{\textbf{Instruction func7 field}} \\
-  \hline
-  \texttt{ADD-FUNC7} & logic & 7 & 0x0 \\
-  \hline
-  \texttt{SUB-FUNC7} & logic & 7 & 0x20 \\
-  \hline
-  \texttt{SRL-FUNC7} & logic & 3 & 0x0 \\
-  \hline
-  \texttt{SRA-FUNC7} & logic & 3 & 0x20 \\
+  \texttt{BRANCH\_BGEU} & logic & 3 & 0x6 \\
   \hline
 \end{xltabular}
 }
