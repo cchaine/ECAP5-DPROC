@@ -61,6 +61,7 @@ logic        result_write_q;
 logic[4:0]   result_addr_q;
 logic[2:0]   branch_cond_q;
 logic[19:0]  branch_offset_q;
+logic        input_ready_q;
 
 // ALU internal signals
 logic signed[31:0] alu_signed_operand1,
@@ -91,6 +92,7 @@ logic[4:0]   result_addr_qq;
 logic[31:0]  result_d, result_q;
 logic        branch_d, branch_q;
 logic[19:0]  branch_offset_qq;    
+logic        output_valid_d, output_valid_q;
 
 always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_q);
@@ -150,6 +152,13 @@ always_comb begin : branch
   endcase
 end
 
+always_comb begin : output_handshake
+  output_valid_d = output_valid_q;
+  if(input_ready_q) begin
+    output_valid_d = 1;
+  end
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i || ~input_valid_i) begin
     alu_operand1_q      <=  '0;
@@ -163,37 +172,47 @@ always_ff @(posedge clk_i) begin
     branch_cond_q       <=   NO_BRANCH;
     branch_offset_q     <=  '0;
 
+    input_ready_q       <=   0;
+
     result_write_qq     <=   0;
     result_addr_qq      <=  '0;
     result_q            <=  '0;
     branch_q            <=   0;
     branch_offset_qq    <=  '0;
+
+    output_valid_q      <=   0;
   end else begin
-    alu_operand1_q      <=  alu_operand1_i;
-    alu_operand2_q      <=  alu_operand2_i;
-    alu_op_q            <=  alu_op_i;
-    alu_sub_q           <=  alu_sub_i;
-    alu_shift_left_q    <=  alu_shift_left_i;
-    alu_signed_shift_q  <=  alu_signed_shift_i;
-    result_write_q      <=  result_write_i;
-    result_addr_q       <=  result_addr_i;
-    branch_cond_q       <=  branch_cond_i;
-    branch_offset_q     <=  branch_offset_i;
+    // Input registering
+    if(output_ready_i) begin
+      alu_operand1_q      <=  alu_operand1_i;
+      alu_operand2_q      <=  alu_operand2_i;
+      alu_op_q            <=  alu_op_i;
+      alu_sub_q           <=  alu_sub_i;
+      alu_shift_left_q    <=  alu_shift_left_i;
+      alu_signed_shift_q  <=  alu_signed_shift_i;
+      result_write_q      <=  result_write_i;
+      result_addr_q       <=  result_addr_i;
+      branch_cond_q       <=  branch_cond_i;
+      branch_offset_q     <=  branch_offset_i;
+    end
+
+    input_ready_q       <= output_ready_i;
 
     result_addr_qq    <=  result_addr_q;
     result_write_qq   <=  result_write_q;
     result_q          <=  result_d;
     branch_q          <=  branch_d;
     branch_offset_qq  <=  branch_offset_q;
+
+    output_valid_q    <= output_valid_d;
   end
 end
-assign input_ready_o = output_ready_i;
-
+assign input_ready_o = input_ready_q;
 assign result_write_o = result_write_qq;
 assign result_addr_o = result_addr_qq;
 assign result_o = result_q;
 assign branch_o = branch_q;
 assign branch_offset_o = branch_offset_qq;
-assign output_valid_o = 1;
+assign output_valid_o = output_valid_q;
 
 endmodule // exm
