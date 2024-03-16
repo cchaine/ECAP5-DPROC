@@ -26,8 +26,4 @@ localparam  logic[31:0]  boot_address       /* verilator public */ =  32'h000000
 localparam  logic[31:0]  interrupt_address  /* verilator public */ =  32'hFF00000A;
 localparam  logic[31:0]  debug_address      /* verilator public */ =  32'hFF00000B;
 
-typedef enum logic[5:0] {
-  LUI, AUIPC, JAL, JALR, BEQ, BNE, BLT, BLTU, BGE, BGEU, LB, LH, LW, LBU, LHU, SB, SH, SW, ADD, ADDI, SUB, XOR, XORI, OR, ORI, AND, ANDI, SLT, SLTI, SLTU, SLTIU, SLL, SLLI, SRL, SRLI, SRA, SRAI
-} instr_t;
-
 endpackage
