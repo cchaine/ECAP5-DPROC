@@ -23,132 +23,232 @@
 module exm import ecap5_dproc_pkg::*;
 (
   input   logic        clk_i,
-  // Input logic
+  input   logic        rst_i,
+  // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  input   logic[31:0]  pc_i,
-  input   instr_t      instr_i,
-  input   logic[31:0]  param1_i,
-  input   logic[31:0]  param2_i,
-  input   logic[31:0]  param3_i,
-  input   logic        has_memory_read_i,
-  input   logic        has_memory_write_i,
-  input   logic        has_result_i,
-  // Wishbone master
-  output  logic[31:0]  wb_adr_o,
-  input   logic[31:0]  wb_dat_i,
-  output  logic[31:0]  wb_dat_o,
-  output  logic        wb_we_o,
-  output  logic[3:0]   wb_sel_o,
-  output  logic        wb_stb_o,
-  input   logic        wb_ack_i,
-  output  logic        wb_cyc_o,
-  // Output logic
+  // ALU inputs 
+  input   logic[31:0]  alu_operand1_i,
+  input   logic[31:0]  alu_operand2_i, 
+  input   logic[2:0]   alu_op_i,
+  input   logic        alu_sub_i,
+  input   logic        alu_shift_left_i,
+  input   logic        alu_signed_shift_i,
+  // Branch inputs 
+  input   logic[2:0]   branch_cond_i,
+  input   logic[19:0]  branch_offset_i,
+  // Output write inputs
+  input   logic        result_write_i,
+  input   logic[4:0]   result_addr_i,
+  // Output handshake
   input   logic        output_ready_i,
   output  logic        output_valid_o,
+  // Output write outputs
   output  logic        result_write_o,
   output  logic[4:0]   result_addr_o,
+  // ALU output
   output  logic[31:0]  result_o,
+  // Branch outputs
   output  logic        branch_o,
-  output  logic[19:0]  boffset_o
+  output  logic[19:0]  branch_offset_o
 );
 
-logic[31:0] result_d, result_q;
-logic[31:0] load_result = 32'hCAFE0000;
-enum {
- INIT, REQUEST_WRITE, REQUEST_READ, RESPONSE
-} state_d, state_q;
-logic[31:0] shifted_result;
+/*****************************************/
+/*           Registered inputs           */
+/*****************************************/
 
-always_comb begin : wishbone_master
-  state_d = state_q;
-  case(state_q) 
-    INIT: begin
+logic[31:0]  alu_operand1_q,
+             alu_operand2_q;  
+logic[2:0]   alu_op_q;
+logic        alu_sub_q;
+logic        alu_shift_left_q;
+logic        alu_signed_shift_q;
 
-    end
-    REQUEST_READ: begin
-      state_d = RESPONSE; 
-    end
-    RESPONSE: begin
-      state_d = INIT;
-    end
-    REQUEST_WRITE: begin
-      state_d = INIT;
-    end
+logic        result_write_q;
+logic[4:0]   result_addr_q;
+logic[2:0]   branch_cond_q;
+logic[19:0]  branch_offset_q;
+logic        input_ready_q;
+
+/*****************************************/
+/*         ALU internal signals          */
+/*****************************************/
+
+logic signed[31:0] alu_signed_operand1,
+                   alu_signed_operand2;
+
+logic[31:0] alu_sum_operand2;
+
+logic[31:0] alu_shift0,
+            alu_shift1,
+            alu_shift2,
+            alu_shift3,
+            alu_shift4;
+logic[31:0] alu_shift_operand1;
+logic[31:0] alu_shift_fill;
+
+logic[31:0] alu_sum_output, 
+            alu_xor_output,
+            alu_or_output,
+            alu_and_output,
+            alu_slt_output,
+            alu_sltu_output,
+            alu_shift_output;
+logic alu_sum_z;
+
+/*****************************************/
+/*             Stage outputs             */
+/*****************************************/
+
+logic        result_write_qq;     
+logic[4:0]   result_addr_qq;  
+logic[31:0]  result_d, result_q;
+logic        branch_d, branch_q;
+logic[19:0]  branch_offset_qq;    
+logic        output_valid_d, output_valid_q;
+
+always_comb begin : alu
+  alu_signed_operand1 = $signed(alu_operand1_q);
+  alu_signed_operand2 = $signed(alu_operand2_q);
+
+  // The second alu operand is inverted in the following cases :
+  //   . The requested alu operation is a substraction (alu_sub_q)
+  //   . The requested branch operation is BEQ as the substraction is used to determine the equality
+  //   . The requested branch operation is BNE as the substraction is used to determine the non-equality
+  alu_sum_operand2 = alu_sub_q || (branch_cond_q == BRANCH_BEQ || branch_cond_q == BRANCH_BNE)
+                          ? (-alu_signed_operand2)
+                          :   alu_signed_operand2;
+  alu_sum_output   =  alu_signed_operand1 + alu_sum_operand2;
+  // A flag indicating if the output of the sum is zero is computed to be used with branch operations
+  alu_sum_z = (alu_sum_output == 32'h0);
+
+  alu_xor_output   =  alu_operand1_q  ^  alu_operand2_q;
+  alu_or_output    =  alu_operand1_q  |  alu_operand2_q;
+  alu_and_output   =  alu_operand1_q  &  alu_operand2_q;
+  alu_slt_output   =  {31'h0, alu_signed_operand1 < alu_signed_operand2};
+  alu_sltu_output  =  {31'h0,      alu_operand1_q <      alu_operand2_q};
+
+  // The bitorder of the first shift operand is inverted in case of a left shift
+  alu_shift_operand1 = alu_shift_left_q
+                            ? {<<{alu_operand1_q}}
+                            :     alu_operand1_q;
+  // The bits are filled with ones instead of zero when the requested shift is a right signed shift (SRA) with
+  // a negative operand.
+  alu_shift_fill = (~alu_shift_left_q && alu_signed_shift_q && alu_operand1_q[31])
+                        ? 32'hFFFFFFFF
+                        : 32'h00000000;
+  // Barrel shifter implementation
+  alu_shift0  =  alu_operand2_q[0]  ?  {    alu_shift_fill[0],  alu_shift_operand1[31:1]}  :  alu_shift_operand1;
+  alu_shift1  =  alu_operand2_q[1]  ?  {  alu_shift_fill[1:0],          alu_shift0[31:2]}  :          alu_shift0;
+  alu_shift2  =  alu_operand2_q[2]  ?  {  alu_shift_fill[3:0],          alu_shift1[31:4]}  :          alu_shift1;
+  alu_shift3  =  alu_operand2_q[3]  ?  {  alu_shift_fill[7:0],          alu_shift2[31:8]}  :          alu_shift2;
+  alu_shift4  =  alu_operand2_q[4]  ?  { alu_shift_fill[15:0],         alu_shift3[31:16]}  :          alu_shift3;
+  // The bitorder of the shift output is re-inverted in case of a left shift
+  alu_shift_output = alu_shift_left_q
+                          ? {<<{alu_shift4}}
+                          :     alu_shift4;
+end
+
+always_comb begin : result_mux
+  case(alu_op_q)
+    ALU_ADD:    result_d  =  alu_sum_output;
+    ALU_XOR:    result_d  =  alu_xor_output;
+    ALU_OR:     result_d  =  alu_or_output;
+    ALU_AND:    result_d  =  alu_and_output;
+    ALU_SLT:    result_d  =  alu_slt_output;
+    ALU_SLTU:   result_d  =  alu_sltu_output;
+    ALU_SHIFT:  result_d  =  alu_shift_output;
+    default:    result_d  =  '0;
   endcase
 end
 
-always_comb begin : result_computation
-  result_d = 0;
-  case(instr_i) 
-    LUI:                  result_d = param1_i;
-    AUIPC:                result_d = pc_i + param1_i;
-    JAL, JALR:            result_d = pc_i + 4;
-    LB, LH, LW, LBU, LHU: result_d = load_result;
-    ADD, ADDI:            result_d = param1_i + param2_i;
-    SUB:                  result_d = param1_i - param2_i;
-    XOR, XORI:            result_d = param1_i ^ param2_i;
-    OR, ORI:              result_d = param1_i | param2_i;
-    AND, ANDI:            result_d = param1_i & param2_i;
-    SLT, SLTI:            result_d = (signed'(param1_i) < signed'(param2_i)) ? 1 : 0;
-    SLTU, SLTIU:          result_d = (param1_i < param2_i) ? 1 : 0;
-    SLL, SLLI:            result_d = shifted_result;
-    SRL, SRLI:            result_d = shifted_result;
-//    SRA, SRAI:            result_d = {param2_i[4:0]{param1_i[31]}, param1_i[31 : param2_i[4:0]]};
+always_comb begin : branch_mux
+  case(branch_cond_q)
+    NO_BRANCH:    branch_d  =   '0;
+    BRANCH_BEQ:   branch_d  =   alu_sum_z;
+    BRANCH_BNE:   branch_d  =  ~alu_sum_z;
+    BRANCH_BLT:   branch_d  =   alu_slt_output[0];
+    BRANCH_BLTU:  branch_d  =   alu_sltu_output[0];
+    BRANCH_BGE:   branch_d  =  ~alu_slt_output[0];
+    BRANCH_BGEU:  branch_d  =  ~alu_sltu_output[0];
+    default:      branch_d  =   '0;
   endcase
 end
 
-always_comb begin : barrel_shifter
-  logic[31:0] shift0, shift1, shift2, shift3, shift4;
-  logic[31:0] data;
-
-  if((instr_i == SLL) || (instr_i == SLLI)) begin
-    data = {<<{param1_i}};
-  end else begin
-    data = param1_i;
-  end
-
-  shift0       =  param2_i[0]  ?  {data[0],   data[31:1]}  :  data;
-  shift1       =  param2_i[1]  ?  {shift0[1:0],   shift0[31:2]}    :  shift0;
-  shift2       =  param2_i[2]  ?  {shift1[3:0],   shift1[31:4]}    :  shift1;
-  shift3       =  param2_i[3]  ?  {shift2[7:0],   shift2[31:8]}    :  shift2;
-  shift4       =  param2_i[4]  ?  {shift3[15:0],  shift3[31:16]}   :  shift3;
-
-  if(param2_i > 5'b11111) begin
-    shift4 = 0;
-  end
-  
-  if((instr_i == SLL) || (instr_i == SLLI)) begin
-    shifted_result = {<<{shift4}};
-  end else begin
-    shifted_result = shift4;
+always_comb begin : output_handshake
+  output_valid_d = output_valid_q;
+  if(input_ready_q) begin
+    output_valid_d = 1;
   end
 end
 
 always_ff @(posedge clk_i) begin
-  if(has_memory_read_i) begin
-    state_q <= REQUEST_READ;
-    input_ready_o <= 0;
-  end else if(has_memory_write_i) begin
-    state_q <= REQUEST_WRITE;
-    input_ready_o <= 0;
+  if(rst_i) begin
+    alu_operand1_q      <=  '0;
+    alu_operand2_q      <=  '0;
+    alu_op_q            <=   ALU_ADD;
+    alu_sub_q           <=   0;
+    alu_shift_left_q   <=    0;
+    alu_signed_shift_q  <=   0;
+    result_write_q      <=   0;
+    result_addr_q       <=  '0;
+    branch_cond_q       <=   NO_BRANCH;
+    branch_offset_q     <=  '0;
+
+    input_ready_q       <=   0;
+
+    result_write_qq     <=   0;
+    result_addr_qq      <=  '0;
+    result_q            <=  '0;
+    branch_q            <=   0;
+    branch_offset_qq    <=  '0;
+
+    output_valid_q      <=   0;
   end else begin
-    result_q <= result_d;
-    input_ready_o <= 1;
-  end 
+    // Input registering
+    if(output_ready_i) begin
+      alu_operand1_q      <=  alu_operand1_i;
+      alu_operand2_q      <=  alu_operand2_i;
+      alu_op_q            <=  alu_op_i;
+      alu_sub_q           <=  alu_sub_i;
+      alu_shift_left_q    <=  alu_shift_left_i;
+      alu_signed_shift_q  <=  alu_signed_shift_i;
+      // The result_write_q is overriden when the input is invalid
+      result_write_q      <=  input_valid_i
+                                      ? result_write_i
+                                      : 0;
+      result_addr_q       <=  result_addr_i;
+      // The branch_cond_q is overriden when the input is invalid
+      branch_cond_q       <=  input_valid_i
+                                      ? branch_cond_i
+                                      : NO_BRANCH;
+      branch_offset_q     <=  branch_offset_i;
+    end
+    input_ready_q       <= output_ready_i;
+
+    result_addr_qq    <=  result_addr_q;
+    result_write_qq   <=  result_write_q;
+    result_q          <=  result_d;
+    branch_q          <=  branch_d;
+    branch_offset_qq  <=  branch_offset_q;
+
+    output_valid_q    <= output_valid_d;
+  end
 end
 
-  assign wb_adr_o = 0;
-  assign wb_dat_o = 0;
-  assign wb_we_o = 0;
-  assign wb_sel_o = 0;
-  assign wb_stb_o = 0;
-  assign wb_cyc_o = 0;
-  assign output_valid_o = 0;
-  assign result_write_o = 0;
-  assign result_addr_o = 0;
-  assign result_o = result_q;
-  assign branch_o = 0;
-  assign boffset_o = 0;
+/*****************************************/
+/*         Assign output signals         */
+/*****************************************/
+
+assign input_ready_o = input_ready_q;
+
+assign result_write_o = result_write_qq;
+assign result_addr_o = result_addr_qq;
+assign result_o = result_q;
+
+assign branch_o = branch_q;
+assign branch_offset_o = branch_offset_qq;
+
+assign output_valid_o = output_valid_q;
 
 endmodule // exm

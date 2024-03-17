@@ -23,23 +23,22 @@
 module tb_exm import ecap5_dproc_pkg::*; (
   input   logic        clk_i,
   input   logic        rst_i,
-  // Input logic
+  // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  input   logic[31:0]  pc_i,
-  input   instr_t      instr_i,
-  input   logic[31:0]  param1_i,
-  input   logic[31:0]  param2_i,
-  input   logic[31:0]  param3_i,
-  // Wishbone master
-  output  logic[31:0]  wb_adr_o,
-  input   logic[31:0]  wb_dat_i,
-  output  logic[31:0]  wb_dat_o,
-  output  logic        wb_we_o,
-  output  logic[3:0]   wb_sel_o,
-  output  logic        wb_stb_o,
-  input   logic        wb_ack_i,
-  output  logic        wb_cyc_o,
+  // ALU logic
+  input   logic[31:0]  alu_operand1_i,
+  input   logic[31:0]  alu_operand2_i, 
+  input   logic[2:0]   alu_op_i,
+  input   logic        alu_sub_i,
+  input   logic        alu_shift_left_i,
+  input   logic        alu_signed_shift_i,
+  // Branch logic
+  input   logic[2:0]   branch_cond_i,
+  input   logic[19:0]  branch_offset_i,
+  // WBM inputs
+  input   logic        result_write_i,
+  input   logic[4:0]   result_addr_i,
   // Output logic
   input   logic        output_ready_i,
   output  logic        output_valid_o,
@@ -47,33 +46,31 @@ module tb_exm import ecap5_dproc_pkg::*; (
   output  logic[4:0]   result_addr_o,
   output  logic[31:0]  result_o,
   output  logic        branch_o,
-  output  logic[19:0]  boffset_o
+  output  logic[19:0]  branch_offset_o
 );
 
 exm dut (
-  .clk_i,
-  .input_ready_o,
-  .input_valid_i,
-  .pc_i,
-  .instr_i,
-  .param1_i,
-  .param2_i,
-  .param3_i,
-  .wb_adr_o,
-  .wb_dat_i,
-  .wb_dat_o,
-  .wb_we_o,
-  .wb_sel_o,
-  .wb_stb_o,
-  .wb_ack_i,
-  .wb_cyc_o,
-  .output_ready_i,
-  .output_valid_o,
-  .result_write_o,
-  .result_addr_o,
-  .result_o,
-  .branch_o,
-  .boffset_o
+ .clk_i               (clk_i),
+ .rst_i               (rst_i),
+ .input_ready_o       (input_ready_o),
+ .input_valid_i       (input_valid_i),
+ .alu_operand1_i      (alu_operand1_i),
+ .alu_operand2_i      (alu_operand2_i), 
+ .alu_op_i            (alu_op_i),
+ .alu_sub_i           (alu_sub_i),
+ .alu_shift_left_i    (alu_shift_left_i),
+ .alu_signed_shift_i  (alu_signed_shift_i),
+ .branch_cond_i       (branch_cond_i),
+ .branch_offset_i     (branch_offset_i),
+ .result_write_i      (result_write_i),
+ .result_addr_i       (result_addr_i),
+ .output_ready_i      (output_ready_i),
+ .output_valid_o      (output_valid_o),
+ .result_write_o      (result_write_o),
+ .result_addr_o       (result_addr_o),
+ .result_o            (result_o),
+ .branch_o            (branch_o),
+ .branch_offset_o     (branch_offset_o)
 );
 
 endmodule // top

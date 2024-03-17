@@ -21,10 +21,10 @@
         \begin{itemize}
             \item The instruction fetch stage loads the next instruction from memory.
             \item The decode stage handles the instruction decoding to provide the next stage with the different instruction input values including reading from internal registers.
-            \item The execute stage implements all arithmetic and logic operations. This includes load and store operations to the memory.
+            \item The execute stage implements all arithmetic and logic operations.
+            \item The load/store stage implements load/store operations.
             \item The write-back stage which handles storing instructions outputs to internal registers.
           \end{itemize}
-        Considering the load-store architecture of the RISC-V instruction set, the choice was made, for revision 1.0.0, to include the memory stage of the typical 5-stage pipeline within the execute stage. This will decrease the latency while keeping a similar throughput, as any memory access will inevitably produce a pipeline stall as of revision 1.0.0.
       \end{content}
 
     \subsubsection{Pipeline stall}
@@ -139,10 +139,14 @@
         }
 
       \req{A\_FUNCTIONAL\_PARTITIONING\_06}{
-          The Write-Back Module (WBM) shall implement the write-back stage of the pipeline.
+          The Load-Store Module (LSM) shall implement the load/store stage of the pipeline.
         }
 
       \req{A\_FUNCTIONAL\_PARTITIONING\_07}{
+          The Write-Back Module (WBM) shall implement the write-back stage of the pipeline.
+        }
+
+      \req{A\_FUNCTIONAL\_PARTITIONING\_08}{
           The Hazard Module (HZDM) shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
         }
 
@@ -153,7 +157,7 @@
         }
 
       \req{A\_MEMORY\_BUS\_02}{
-          The bus interface between the EXM and EMM shall be compliant with the pipelined wishbone B4 specification.
+          The bus interface between the LSM and EMM shall be compliant with the pipelined wishbone B4 specification.
         }
 
 \newpage

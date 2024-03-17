@@ -3,8 +3,8 @@
 \begin{tikzpicture}[scale=1.25, draw=gray, inner sep=0, outer sep=0]
   \node[rectangle, draw=black,
     minimum height = 1.25cm,
-    minimum width = 10cm,
-    fill = gray!20] (EMM) at (6, -2.5) {EMM};
+    minimum width = 13cm,
+    fill = gray!20] (EMM) at (7.5, -2.5) {EMM};
   \node[rectangle, draw=black,
     minimum height = 2cm,
     minimum width = 2cm,
@@ -15,8 +15,8 @@
     fill = blue!30!gray!20] (DECM) at (6, 0) {DECM};
   \node[rectangle, draw=black,
     minimum height = 1.25cm,
-    minimum width = 10cm,
-    fill = gray!20] (REGM) at (9, 2.5) {REGM};
+    minimum width = 13cm,
+    fill = gray!20] (REGM) at (10.5, 2.5) {REGM};
   \node[rectangle, draw=black,
     minimum height = 2cm,
     minimum width = 2cm,
@@ -24,37 +24,46 @@
   \node[rectangle, draw=black,
     minimum height = 2cm,
     minimum width = 2cm,
-    fill = blue!30!gray!20] (WBM) at (12, 0) {WBM};
+    fill = blue!30!gray!20] (LSM) at (12, 0) {LSM};
+  \node[rectangle, draw=black,
+    minimum height = 2cm,
+    minimum width = 2cm,
+    fill = blue!30!gray!20] (WBM) at (15, 0) {WBM};
   \node[rectangle, draw=red,
     anchor=north east,
-    minimum height = 1.5cm,
-    minimum width = 1.5cm,
+    minimum height = 1.25cm,
+    minimum width = 2cm,
     fill = red!20] (HZDM) at ([xshift=-1.25cm]REGM.north west) {HZDM};
 
-  \node (hzdm-port1) at ([xshift=-0.3cm]HZDM.south) {};
-  \node (hzdm-port2) at ([xshift=-0.1cm]HZDM.south) {};
-  \node (hzdm-port3) at ([xshift=0.1cm]HZDM.south) {};
-  \node (hzdm-port4) at ([xshift=0.3cm]HZDM.south) {};
+  \node (hzdm-port1) at ([xshift=-0.4cm]HZDM.south) {};
+  \node (hzdm-port2) at ([xshift=-0.2cm]HZDM.south) {};
+  \node (hzdm-port3) at ([xshift=0.0cm]HZDM.south) {};
+  \node (hzdm-port4) at ([xshift=0.2cm]HZDM.south) {};
+  \node (hzdm-port5) at ([xshift=0.4cm]HZDM.south) {};
   \node (ifm-hzd-port) at (IFM.north) {};
   \node (decm-hzd-port) at ([xshift=-0.4cm]DECM.north) {};
   \node (decm-hzd-port-mid) at ([yshift=0.3cm]decm-hzd-port.center) {};
   \node (exm-hzd-port) at ([xshift=-0.4cm]EXM.north) {};
   \node (exm-hzd-port-mid) at ([yshift=0.5cm]exm-hzd-port.center) {};
+  \node (lsm-hzd-port) at ([xshift=-0.4cm]LSM.north) {};
+  \node (lsm-hzd-port-mid) at ([yshift=0.7cm]lsm-hzd-port.center) {};
   \node (wbm-hzd-port) at ([xshift=-0.4cm]WBM.north) {};
-  \node (wbm-hzd-port-mid) at ([yshift=0.7cm]wbm-hzd-port.center) {};
+  \node (wbm-hzd-port-mid) at ([yshift=0.9cm]wbm-hzd-port.center) {};
   \draw[-, red] (hzdm-port1 |- ifm-hzd-port) -- (hzdm-port1);
   \draw[-, red] (decm-hzd-port) -- (decm-hzd-port-mid) -- (hzdm-port2 |- decm-hzd-port-mid) -- (hzdm-port2);
   \draw[-, red] (exm-hzd-port) -- (exm-hzd-port-mid) -- (hzdm-port3 |- exm-hzd-port-mid) -- (hzdm-port3);
-  \draw[-, red] (wbm-hzd-port) -- (wbm-hzd-port-mid) -- (hzdm-port4 |- wbm-hzd-port-mid) -- (hzdm-port4);
+  \draw[-, red] (lsm-hzd-port) -- (lsm-hzd-port-mid) -- (hzdm-port4 |- lsm-hzd-port-mid) -- (hzdm-port4);
+  \draw[-, red] (wbm-hzd-port) -- (wbm-hzd-port-mid) -- (hzdm-port5 |- wbm-hzd-port-mid) -- (hzdm-port5);
 
   \draw[->] (IFM.east) -- (DECM.west);
   \draw[->] (DECM.east) -- (EXM.west);
-  \draw[->] (EXM.east) -- (WBM.west);
+  \draw[->] (EXM.east) -- (LSM.west);
+  \draw[->] (LSM.east) -- (WBM.west);
 
   \draw[<-] (IFM.south) -- (IFM.south|- EMM.north);
 
-  \draw[->] ([xshift=-0.25cm]EXM.south) -- ([xshift=-0.25cm]EXM.south |- EMM.north);
-  \draw[<-] ([xshift=0.25cm]EXM.south) -- ([xshift=0.25cm]EXM.south |- EMM.north);
+  \draw[->] ([xshift=-0.25cm]LSM.south) -- ([xshift=-0.25cm]LSM.south |- EMM.north);
+  \draw[<-] ([xshift=0.25cm]LSM.south) -- ([xshift=0.25cm]LSM.south |- EMM.north);
 
   \draw[<-] (DECM.north) -- (DECM.north |- REGM.south);
   \draw[->] (WBM.north) -- (WBM.north |- REGM.south);

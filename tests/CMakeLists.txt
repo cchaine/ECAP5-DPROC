@@ -76,6 +76,7 @@ endmacro()
 
 add_testbench(regm)
 add_testbench(ifm)
+add_testbench(exm)
 
 add_custom_target(build DEPENDS ${TEST_BINARIES})
 

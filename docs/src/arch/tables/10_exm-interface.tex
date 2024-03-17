@@ -20,41 +20,31 @@
   \hline
   input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
   \hline
-  pc\_i & I & 32 & Program counter of the current instruction. \\
+  \multicolumn{4}{|l|}{\textbf{ALU LOGIC}} \\
   \hline
-  opcode\_i & I & TBD & TBC. \\
+  alu\_operand1\_i & I & 32 & First operand of the Arithmetic and Logic Unit. \\
   \hline
-  func3\_i & I & TBD & TBC. \\
+  alu\_operand2\_i & I & 32 & Second operand of the Arithmetic and Logic Unit. \\
   \hline
-  func7\_i & I & TBD & TBC. \\
+  alu\_op\_i & I & 3 & ALU output mux selector. \\
   \hline
-  param1\_i & I & 32 & First instruction parameter. \\
+  alu\_sub\_i & I & 1 & Inverts the second alu operand when asserted. \\
   \hline
-  param2\_i & I & 32 & Second instruction parameter. \\
+  alu\_shift\_left\_i & I & 1 & Shift direction selector. Left shift when asserted, right shift when deasserted. \\
   \hline
-  param3\_i & I & 32 & Third instruction parameter. \\
+  alu\_signed\_shift\_i & I & 1 & Shift result is signed extended when asserted, zero extended otherwise. \\
   \hline
-  result\_addr\_i & I & 5 & Address of the register where the result shall be stored. \\
+  \multicolumn{4}{|l|}{\textbf{BRANCH LOGIC}} \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{WISHBONE MASTER}} \\
+  branch\_cond\_i & I & 3 & Branch condition mux selector. \\
   \hline
-  wb\_adr\_o & O & 32 & The address output array is used to pass binary address. \\
+  branch\_offset\_i & I & 20 & Branch offset. \\
   \hline
-  wb\_dat\_i & I & 32 & The data input array is used to pass binary data. \\
+  \multicolumn{4}{|l|}{\textbf{WBM INPUTS}} \\
   \hline
-  wb\_dat\_o & I & 32 & The data output array is used to pass binary data. \\
+  result\_write\_i & I & 1 & Register write logic enable \\
   \hline
-  wb\_we\_o & O & 1 & The write enable output indicates whether the current local bus cycle is a READ or WRITE cycle. This signal is negated during READ cycles and is asserted during WRITE cycles. This signal is always low as this interface only supports READ cycles. \\
-  \hline
-  wb\_sel\_o & O & 4 & The select output array indicates where valid data is expected on the wb dat i signal array during READ cycles. Each individual select signal correlates to one of four active bytes on the 32-bit data port. \\
-  \hline
-  wb\_stb\_o & O & 1 & The strobe output indicates a valid data transfer cycle. It is used to qualify various other signals on the interface. \\
-  \hline
-  wb\_ack\_i & I & 1 & The acknowledge input, when asserted, indicates the nor- mal termination of a bus cycle. \\
-  \hline
-  wb\_cyc\_o & O & 1 & The cycle output, when asserted, indicates that a valid bus cycle is in progress. This signal is asserted for the duration of all bus cycles. \\
-  \hline
-  wb\_stall\_i & I & 1 & The pipeline stall input indicates that current slave is not able to accept the transfer in the transaction queue. \\
+  result\_addr\_i & I & 5 & Register write address. \\
   \hline
   \multicolumn{4}{|l|}{\textbf{OUTPUT LOGIC}} \\
   \hline
@@ -70,7 +60,7 @@
   \hline
   branch\_o & O & 1 & Branch request. \\
   \hline
-  boffset\_o & O & 20 & Branch offset from pc\_i \\
+  branch\_offset\_o & O & 20 & Branch offset from pc \\
   \hline
 \end{xltabular}
 }
