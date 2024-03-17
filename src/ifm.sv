@@ -24,7 +24,7 @@ module ifm
 (
   input   logic        clk_i,
   input   logic        rst_i,
-  // Jump logic
+  // Jump inputs
   input   logic        irq_i,
   input   logic        drq_i,
   input   logic        branch_i,
@@ -38,9 +38,10 @@ module ifm
   input   logic        wb_ack_i,
   output  logic        wb_cyc_o,
   input   logic        wb_stall_i,
-  // Output logic
+  // Output Handshake
   input   logic        output_ready_i,
   output  logic        output_valid_o,
+  // DECM outputs
   output  logic[31:0]  instr_o,
   output  logic[31:0]  pc_o
 );
@@ -55,22 +56,31 @@ enum logic [2:0] {
   PIPELINE_STALL // 5
 } state_d, state_q /* verilator public */;
 
-logic[31:0]  pc_d,            pc_q,            pc_qq;
-logic[31:0]  instr_d,         instr_q;         
+/*****************************************/
+/*            Internal signals           */
+/*****************************************/
+logic        rst_q,           rst_qq;          
+logic        pending_jump_d,  pending_jump_q;  
+logic        fetch_request;                    
+
+/*****************************************/
+/*        Wishbone output signals        */
+/*****************************************/
 logic[31:0]  wb_adr_d,        wb_adr_q;        
 logic        wb_stb_d,        wb_stb_q;        
 logic        wb_cyc_d,        wb_cyc_q;        
-logic        rst_q,           rst_qq;          
-logic        output_valid_d,  output_valid_q;  
-logic        fetch_request;                    
-logic        pending_jump_d,  pending_jump_q;  
 
-/*
- * A memory fetch is triggered in either of the following cases
- *   - After a falling edge of rst
- *   - After a successfull output handshake
- *   - After a jump was requested
- */
+/*****************************************/
+/*             Stage outputs             */
+/*****************************************/
+logic[31:0]  pc_d,            pc_q,            pc_qq;
+logic[31:0]  instr_d,         instr_q;         
+logic        output_valid_d,  output_valid_q;  
+
+// A memory fetch is triggered in the following cases :
+//   . After a falling edge of rst
+//   . After a successfull output handshake
+//   . After a jump was requested
 assign fetch_request = (rst_qq && !rst_i) || (output_valid_q && output_ready_i) || (pending_jump_q);
 
 always_comb begin : state_machine
@@ -79,39 +89,50 @@ always_comb begin : state_machine
   case(state_q)
     IDLE: begin
       if(fetch_request) begin
+        // A memory request shall be triggered
         if(wb_stall_i) begin
+          // The memory is stalled
           state_d = MEMORY_STALL;
         end else begin
+          // The memory is ready
           state_d = REQUEST;
         end
       end
     end
     MEMORY_STALL: begin
       if(!wb_stall_i) begin
+        // The memory is unstalled
         state_d = REQUEST;
       end
     end
     REQUEST: begin
       if(wb_ack_i) begin
+        // The response has been received directly
         state_d = DONE;
       end else begin
+        // Wait for the response to be received
         state_d = MEMORY_WAIT;
       end
     end
     MEMORY_WAIT: begin
       if(wb_ack_i) begin
+        // The response has been received
         state_d = DONE;
       end
     end
     DONE: begin
       if(output_ready_i) begin
+        // Successfull output handshake
         state_d = IDLE;
       end else begin
+        // Wait for the output to be ready
         state_d = PIPELINE_STALL;
       end
     end
     PIPELINE_STALL: begin
       if(output_ready_i || pending_jump_q) begin
+        // Either the output is ready or a jump was requested which cancels
+        // the output
         state_d = IDLE; 
       end
     end
@@ -133,27 +154,16 @@ always_comb begin : wishbone_read
         wb_cyc_d = 1;
       end
     end
-    MEMORY_STALL: begin
-    end
     REQUEST: begin
       wb_stb_d = 0;
     end
-    MEMORY_WAIT: begin
-    end
     DONE: begin
       wb_cyc_d = 0;
-    end
-    PIPELINE_STALL: begin
     end
     default: begin
     end
   endcase
 end
-assign  wb_adr_o  =  wb_adr_q;
-assign  wb_we_o   =  0;
-assign  wb_sel_o  =  4'hF;
-assign  wb_stb_o  =  wb_stb_q;
-assign  wb_cyc_o  =  wb_cyc_q;
 
 always_comb begin : output_management
   pending_jump_d = pending_jump_q;
@@ -167,8 +177,6 @@ always_comb begin : output_management
         output_valid_d = 0;
         pending_jump_d = 0;
       end
-    end
-    MEMORY_STALL: begin
     end
     REQUEST: begin
       if(wb_ack_i) begin
@@ -196,9 +204,6 @@ always_comb begin : output_management
     end
   endcase
 end
-assign  output_valid_o  =  output_valid_q;
-assign  instr_o         =  instr_q;
-assign  pc_o            =  pc_qq;
 
 /*
  * The next value of PC comes from (in order of precedence):
@@ -236,7 +241,7 @@ always_ff @(posedge clk_i) begin
     output_valid_q  <=  0;
     instr_q         <=  0;
     pc_q            <=  ecap5_dproc_pkg::boot_address[31:0];
-    pending_jump_q <=  0;
+    pending_jump_q  <=  0;
   end else begin
     state_q         <=  state_d;
     wb_adr_q        <=  wb_adr_d;
@@ -246,6 +251,7 @@ always_ff @(posedge clk_i) begin
     instr_q         <=  instr_d;
     pc_q            <=  pc_d;
 
+    // Jump triggering
     if(drq_i || irq_i || branch_i) begin
       pending_jump_q <=  1;
     end else begin
@@ -258,5 +264,19 @@ always_ff @(posedge clk_i) begin
   // store a delayed pc used to output the address of the current instruction
   pc_qq   <=  pc_q;
 end
+
+/*****************************************/
+/*         Assign output signals         */
+/*****************************************/
+
+assign  wb_adr_o  =  wb_adr_q;
+assign  wb_we_o   =  0;
+assign  wb_sel_o  =  4'hF;
+assign  wb_stb_o  =  wb_stb_q;
+assign  wb_cyc_o  =  wb_cyc_q;
+
+assign  output_valid_o  =  output_valid_q;
+assign  instr_o         =  instr_q;
+assign  pc_o            =  pc_qq;
 
 endmodule // ifm

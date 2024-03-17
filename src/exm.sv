@@ -27,43 +27,53 @@ module exm import ecap5_dproc_pkg::*;
   // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  // ALU logic
+  // ALU inputs 
   input   logic[31:0]  alu_operand1_i,
   input   logic[31:0]  alu_operand2_i, 
   input   logic[2:0]   alu_op_i,
   input   logic        alu_sub_i,
   input   logic        alu_shift_left_i,
   input   logic        alu_signed_shift_i,
-  // Branch logic
+  // Branch inputs 
   input   logic[2:0]   branch_cond_i,
   input   logic[19:0]  branch_offset_i,
-  // WBM inputs
+  // Output write inputs
   input   logic        result_write_i,
   input   logic[4:0]   result_addr_i,
-  // Output logic
+  // Output handshake
   input   logic        output_ready_i,
   output  logic        output_valid_o,
+  // Output write outputs
   output  logic        result_write_o,
   output  logic[4:0]   result_addr_o,
+  // ALU output
   output  logic[31:0]  result_o,
+  // Branch outputs
   output  logic        branch_o,
   output  logic[19:0]  branch_offset_o
 );
 
-// Registered inputs
+/*****************************************/
+/*           Registered inputs           */
+/*****************************************/
+
 logic[31:0]  alu_operand1_q,
              alu_operand2_q;  
 logic[2:0]   alu_op_q;
 logic        alu_sub_q;
 logic        alu_shift_left_q;
 logic        alu_signed_shift_q;
+
 logic        result_write_q;
 logic[4:0]   result_addr_q;
 logic[2:0]   branch_cond_q;
 logic[19:0]  branch_offset_q;
 logic        input_ready_q;
 
-// ALU internal signals
+/*****************************************/
+/*         ALU internal signals          */
+/*****************************************/
+
 logic signed[31:0] alu_signed_operand1,
                    alu_signed_operand2;
 
@@ -86,7 +96,10 @@ logic[31:0] alu_sum_output,
             alu_shift_output;
 logic alu_sum_z;
 
-// Stage outputs
+/*****************************************/
+/*             Stage outputs             */
+/*****************************************/
+
 logic        result_write_qq;     
 logic[4:0]   result_addr_qq;  
 logic[31:0]  result_d, result_q;
@@ -98,10 +111,15 @@ always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_q);
   alu_signed_operand2 = $signed(alu_operand2_q);
 
+  // The second alu operand is inverted in the following cases :
+  //   . The requested alu operation is a substraction (alu_sub_q)
+  //   . The requested branch operation is BEQ as the substraction is used to determine the equality
+  //   . The requested branch operation is BNE as the substraction is used to determine the non-equality
   alu_sum_operand2 = alu_sub_q || (branch_cond_q == BRANCH_BEQ || branch_cond_q == BRANCH_BNE)
                           ? (-alu_signed_operand2)
                           :   alu_signed_operand2;
   alu_sum_output   =  alu_signed_operand1 + alu_sum_operand2;
+  // A flag indicating if the output of the sum is zero is computed to be used with branch operations
   alu_sum_z = (alu_sum_output == 32'h0);
 
   alu_xor_output   =  alu_operand1_q  ^  alu_operand2_q;
@@ -110,23 +128,28 @@ always_comb begin : alu
   alu_slt_output   =  {31'h0, alu_signed_operand1 < alu_signed_operand2};
   alu_sltu_output  =  {31'h0,      alu_operand1_q <      alu_operand2_q};
 
+  // The bitorder of the first shift operand is inverted in case of a left shift
   alu_shift_operand1 = alu_shift_left_q
                             ? {<<{alu_operand1_q}}
                             :     alu_operand1_q;
-  alu_shift_fill = (alu_signed_shift_q && ~alu_shift_left_q && alu_operand1_q[31])
+  // The bits are filled with ones instead of zero when the requested shift is a right signed shift (SRA) with
+  // a negative operand.
+  alu_shift_fill = (~alu_shift_left_q && alu_signed_shift_q && alu_operand1_q[31])
                         ? 32'hFFFFFFFF
                         : 32'h00000000;
+  // Barrel shifter implementation
   alu_shift0  =  alu_operand2_q[0]  ?  {    alu_shift_fill[0],  alu_shift_operand1[31:1]}  :  alu_shift_operand1;
   alu_shift1  =  alu_operand2_q[1]  ?  {  alu_shift_fill[1:0],          alu_shift0[31:2]}  :          alu_shift0;
   alu_shift2  =  alu_operand2_q[2]  ?  {  alu_shift_fill[3:0],          alu_shift1[31:4]}  :          alu_shift1;
   alu_shift3  =  alu_operand2_q[3]  ?  {  alu_shift_fill[7:0],          alu_shift2[31:8]}  :          alu_shift2;
   alu_shift4  =  alu_operand2_q[4]  ?  { alu_shift_fill[15:0],         alu_shift3[31:16]}  :          alu_shift3;
+  // The bitorder of the shift output is re-inverted in case of a left shift
   alu_shift_output = alu_shift_left_q
                           ? {<<{alu_shift4}}
                           :     alu_shift4;
 end
 
-always_comb begin : result
+always_comb begin : result_mux
   case(alu_op_q)
     ALU_ADD:    result_d  =  alu_sum_output;
     ALU_XOR:    result_d  =  alu_xor_output;
@@ -139,7 +162,7 @@ always_comb begin : result
   endcase
 end
 
-always_comb begin : branch
+always_comb begin : branch_mux
   case(branch_cond_q)
     NO_BRANCH:    branch_d  =   '0;
     BRANCH_BEQ:   branch_d  =   alu_sum_z;
@@ -160,7 +183,7 @@ always_comb begin : output_handshake
 end
 
 always_ff @(posedge clk_i) begin
-  if(rst_i || ~input_valid_i) begin
+  if(rst_i) begin
     alu_operand1_q      <=  '0;
     alu_operand2_q      <=  '0;
     alu_op_q            <=   ALU_ADD;
@@ -190,12 +213,17 @@ always_ff @(posedge clk_i) begin
       alu_sub_q           <=  alu_sub_i;
       alu_shift_left_q    <=  alu_shift_left_i;
       alu_signed_shift_q  <=  alu_signed_shift_i;
-      result_write_q      <=  result_write_i;
+      // The result_write_q is overriden when the input is invalid
+      result_write_q      <=  input_valid_i
+                                      ? result_write_i
+                                      : 0;
       result_addr_q       <=  result_addr_i;
-      branch_cond_q       <=  branch_cond_i;
+      // The branch_cond_q is overriden when the input is invalid
+      branch_cond_q       <=  input_valid_i
+                                      ? branch_cond_i
+                                      : NO_BRANCH;
       branch_offset_q     <=  branch_offset_i;
     end
-
     input_ready_q       <= output_ready_i;
 
     result_addr_qq    <=  result_addr_q;
@@ -207,12 +235,20 @@ always_ff @(posedge clk_i) begin
     output_valid_q    <= output_valid_d;
   end
 end
+
+/*****************************************/
+/*         Assign output signals         */
+/*****************************************/
+
 assign input_ready_o = input_ready_q;
+
 assign result_write_o = result_write_qq;
 assign result_addr_o = result_addr_qq;
 assign result_o = result_q;
+
 assign branch_o = branch_q;
 assign branch_offset_o = branch_offset_qq;
+
 assign output_valid_o = output_valid_q;
 
 endmodule // exm
