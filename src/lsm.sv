@@ -28,10 +28,10 @@ module lsm import ecap5_dproc_pkg::*;
   output  logic        input_ready_o,
   input   logic        input_valid_i,
   // Load-Store inputs
-  input   logic[31:0]  addr_i,
+  input   logic[31:0]  alu_result_i,
   input   logic        enable_i,
   input   logic        write_i,
-  input   logic[31:0]  store_data_i,
+  input   logic[31:0]  write_data_i,
   input   logic[3:0]   sel_i,
   // Register write interface
   input   logic        reg_write_i,
@@ -133,8 +133,8 @@ always_comb begin : wishbone_read
   case(state_q)
     IDLE: begin
       if(enable_i) begin
-        wb_adr_d = addr_i;
-        wb_dat_d = store_data_i;
+        wb_adr_d = alu_result_i;
+        wb_dat_d = write_data_i;
         wb_we_d  = write_i;
         wb_sel_d = sel_i;
         wb_stb_d = 1;

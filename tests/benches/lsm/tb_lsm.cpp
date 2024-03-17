@@ -42,7 +42,7 @@ public:
   }
 
   void _nop() {
-    this->core->addr_i = 0;
+    this->core->alu_result_i = 0;
     this->core->enable_i = 0;
     this->core->write_i = 0;
     this->core->sel_i = 0x0;
@@ -51,81 +51,130 @@ public:
   }
 
   void _lb(uint32_t addr, uint8_t reg_addr) {
-    this->core->addr_i = addr;
+    this->_nop();
+    this->core->alu_result_i = addr;
     this->core->enable_i = 1;
     this->core->write_i = 0;
     this->core->sel_i = 0x1;
     this->core->reg_write_i = 1;
     this->core->reg_addr_i = reg_addr;
   }
+
+  void _lh(uint32_t addr, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 0;
+    this->core->sel_i = 0x3;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
+  }
+
+  void _lw(uint32_t addr, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 0;
+    this->core->sel_i = 0xF;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
+  }
+
+  void _sb(uint32_t addr, uint32_t data, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 1;
+    this->core->write_data_i = data;
+    this->core->sel_i = 0x1;
+    this->core->reg_write_i = 0;
+  }
+
+  void _sh(uint32_t addr, uint32_t data, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 1;
+    this->core->write_data_i = data;
+    this->core->sel_i = 0x3;
+    this->core->reg_write_i = 0;
+  }
+
+  void _sw(uint32_t addr, uint32_t data, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 1;
+    this->core->write_data_i = data;
+    this->core->sel_i = 0xF;
+    this->core->reg_write_i = 0;
+  }
 };
 
-void tb_lsm_no_stall_load(TB_Lsm * tb) {
+void tb_lsm_no_stall_lb(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 
   core->wb_stall_i = 0;
-
-  tb->tick();
-
-  uint32_t addr = rand();
-  uint8_t reg_addr = rand() % 32;
-  tb->_lb(addr, reg_addr);
-  tb->tick();
-  tb->_nop();
-
-  uint32_t data = rand();
-  core->wb_ack_i = 1;
-  core->wb_dat_i = data;
-  tb->tick();
-  core->wb_ack_i = 0;
-  core->wb_dat_i = 0;
-
-  tb->tick();
-  tb->tick();
 }
 
-void tb_lsm_no_stall_store(TB_Lsm * tb) {
+void tb_lsm_no_stall_lh(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
+
+  core->wb_stall_i = 0;
+}
+
+void tb_lsm_no_stall_lw(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  tb->reset();
+
+  core->wb_stall_i = 0;
+}
+
+void tb_lsm_no_stall_sb(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  tb->reset();
+}
+
+void tb_lsm_no_stall_sh(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  tb->reset();
+}
+
+void tb_lsm_no_stall_sw(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  tb->reset();
 }
 
 void tb_lsm_memory_stall_load(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 void tb_lsm_memory_stall_store(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 void tb_lsm_memory_wait_load(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 void tb_lsm_memory_wait_store(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 void tb_lsm_bypass(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 void tb_lsm_bubble(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   tb->reset();
-  tb->_nop();
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -141,8 +190,13 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
-  tb_lsm_no_stall_load(tb);
-  tb_lsm_no_stall_store(tb);
+  tb_lsm_no_stall_lb(tb);
+  tb_lsm_no_stall_lh(tb);
+  tb_lsm_no_stall_lw(tb);
+
+  tb_lsm_no_stall_sb(tb);
+  tb_lsm_no_stall_sh(tb);
+  tb_lsm_no_stall_sw(tb);
 
   tb_lsm_memory_stall_load(tb);
   tb_lsm_memory_stall_store(tb);

@@ -20,11 +20,19 @@
   \hline
   input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
   \hline
+  alu\_result\_i & I & 32 & ALU result \\
+  \hline
   enable\_i & I & 1 & Bypass enable signal. The load-store unit is bypassed when asserted. \\
   \hline
   write\_i & I & 1 & Write enable. The memory is written when asserted and read when deasserted. \\
   \hline
+  write\_data\_i & I & 32 & Data to be written in memory \\
+  \hline
   sel\_i & I & 4 & Byte selection enable \\
+  \hline
+  reg\_write\_i & I & 1 & Register write enable \\
+  \hline
+  reg\_addr\_i & I & 5 & Register write address \\
   \hline
   \multicolumn{4}{|l|}{\textbf{WISHBONE MASTER}} \\
   \hline

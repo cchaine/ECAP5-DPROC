@@ -20,7 +20,7 @@
         \end{figure}
 
       \req{D\_LSM\_STATE\_01}{
-          The LSM shall be in the \texttt{IDLE} (\texttt{0}) state while \texttt{rst\_i} is asserted or on a successfull output handshake.
+          The LSM shall be in the \texttt{IDLE} (\texttt{0}) state when there are no pending memory requests.
         }
 
       \req{D\_LSM\_STATE\_02}{
@@ -41,25 +41,6 @@
 
     \subsubsection{Input handshake}
 
-      \req{D\_LSM\_INPUT\_REGISTER\_01}{
-          All inputs shall be registered on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
-        }
-
-      \req{D\_LSM\_INPUT\_REGISTER\_02}{
-          Input registers shall be loaded with values from table \ref{tab:lsm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
-        }
-
-      \req{D\_LSM\_INPUT\_REGISTER\_03}{
-          Input registers shall be loaded with values from table \ref{tab:lsm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} is deasserted.
-        }
-
-      \begin{table}[H]
-        \centering
-        \input{arch/tables/11_lsm-bubble-input.tex}
-        \caption{Input signal override values for implementing a pipeline bubble}
-        \label{tab:lsm-bubble-input}
-      \end{table}
-
       \req{D\_LSM\_INPUT\_READY\_01}{
           The \texttt{input\_ready\_o} signal shall be asserted while in the \texttt{IDLE} state. It shall be deasserted otherwise.
         }
@@ -75,11 +56,11 @@
         }
 
       \req{D\_LSM\_READ\_REQUEST\_01}{
-          A memory read cycle at the address specified by \texttt{alu\_result\_i} shall be triggered when \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} is triggered and \texttt{write\_i} is deasserted.
+          A memory read cycle with address \texttt{alu\_result\_i} shall be triggered when \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} is triggered and \texttt{write\_i} is deasserted.
         }
 
       \req{D\_LSM\_WRITE\_REQUEST\_01}{
-          A memory write cycle at the address specified by \texttt{alu\_result\_i} with the value \texttt{store\_data\_i} shall be triggered when \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} is triggered and \texttt{write\_i} is asserted.
+        A memory write cycle with address \texttt{alu\_result\_i} and data \texttt{write\_data\_i} shall be triggered when \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} is triggered and \texttt{write\_i} is deasserted.
         }
 
       \req{D\_LSM\_REQUEST\_SIZE\_01}{
@@ -190,6 +171,10 @@
             The \texttt{reg\_write\_o} output shall be set to the registered value of \texttt{reg\_write\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
           }
 
+        \req{D\_LSM\_OUTPUT\_WRITE\_02}{
+            The \texttt{reg\_write\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is deasserted.
+          }
+
       \paragraph{Register addr}
 
         \req{D\_LSM\_OUTPUT\_ADDR\_01}{
@@ -199,25 +184,21 @@
       \paragraph{Register data}
 
         \req{D\_LSM\_OUTPUT\_DATA\_01}{
-          The \texttt{reg\_data\_o} shall be set to the value of \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i} when the registered \texttt{enable\_i} is asserted.
+            The \texttt{reg\_data\_o} shall be set to the value of \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} after being in the \texttt{DONE} state.
           }
 
         \req{D\_LSM\_OUTPUT\_DATA\_02}{
-          The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when the registered \texttt{enable\_i} is deasserted.
+            The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted.
           }
 
     \subsubsection{Output handshake}
 
       \req{D\_LSM\_OUTPUT\_HANDSHAKE\_01}{
-        The \texttt{output\_valid\_i} signal shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted. 
-      }
+          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} after being in the \texttt{DONE} state.
+        }
 
       \req{D\_LSM\_OUTPUT\_HANDSHAKE\_02}{
-        The \texttt{output\_valid\_i} signal shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted. 
-      }
-
-      \req{D\_LSM\_OUTPUT\_HANDSHAKE\_03}{
-        The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} following the assertion of \texttt{wb\_ack\_i} when the registered \texttt{enable\_i} is deasserted.
+          The \texttt{output\_valid\_i} signal shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted. 
         }
 
 \newpage
