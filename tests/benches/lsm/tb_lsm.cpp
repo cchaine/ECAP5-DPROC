@@ -48,7 +48,15 @@ public:
     this->core->sel_i = 0x0;
     this->core->reg_write_i = 0;
     this->core->reg_addr_i = 0;
-    this->core->wb_stall_i = 0;
+  }
+
+  void _lb(uint32_t addr, uint8_t reg_addr) {
+    this->core->addr_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 0;
+    this->core->sel_i = 0x1;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 };
 
@@ -57,10 +65,24 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   tb->reset();
   tb->_nop();
 
-  tb->tick();
+  core->wb_stall_i = 0;
 
   tb->tick();
 
+  uint32_t addr = rand();
+  uint8_t reg_addr = rand() % 32;
+  tb->_lb(addr, reg_addr);
+  tb->tick();
+  tb->_nop();
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data;
+  tb->tick();
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  tb->tick();
   tb->tick();
 }
 

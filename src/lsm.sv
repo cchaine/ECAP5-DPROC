@@ -54,6 +54,9 @@ module lsm import ecap5_dproc_pkg::*;
   output  logic[31:0]  reg_data_o
 );
 
+/*****************************************/
+/*           Internal signals            */
+/*****************************************/
 enum logic [2:0] {
   IDLE,          // 0
   REQUEST,       // 1
