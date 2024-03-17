@@ -44,13 +44,13 @@ public:
   void _nop() {
     this->core->alu_operand1_i = 0;
     this->core->alu_operand2_i = 0;
-    this->core->alu_op_i = 0;
+    this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
     this->core->alu_sub_i = 0;
     this->core->alu_shift_left_i = 0;
     this->core->alu_signed_shift_i = 0;
     this->core->result_write_i = 0;
     this->core->result_addr_i = 0;
-    this->core->branch_cond_i = 0;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::NO_BRANCH;
     this->core->branch_offset_i = 0;
   }
 
@@ -1258,8 +1258,11 @@ void tb_exm_wait(TB_Exm * tb) {
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  tb->_xor(operand1, operand2, result_addr);
   
+  tb->tick();
+
+  tb->_add(operand1, operand2, result_addr);
   tb->tick();
   
   tb->_sub(operand1, operand2, result_addr + 10);
@@ -1301,7 +1304,7 @@ void tb_exm_wait(TB_Exm * tb) {
   
   CHECK("tb_exm.wait.06",
       (core->result_o == ((int32_t)operand1 - (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr + 10) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
+      "Failed to output values");
   
   tb->tick();
 }
