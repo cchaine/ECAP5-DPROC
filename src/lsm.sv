@@ -83,7 +83,7 @@ logic input_ready_q;
 logic output_valid_q;
 logic reg_write_d, reg_write_q, reg_write_qq;
 logic[4:0] reg_addr_d, reg_addr_q, reg_addr_qq;
-logic[31:0] reg_data_d, reg_data_q;
+logic[31:0] reg_data_d, reg_data_q, reg_data_qq;
 
 assign input_ready_q = (state_q == IDLE);
 
@@ -170,6 +170,9 @@ always_comb begin : reg_output
       if(input_valid_i) begin
         reg_addr_d = reg_addr_i;
         reg_write_d = reg_write_i;
+        if(~enable_i) begin
+          reg_data_d = alu_result_i;
+        end
       end
     end
     REQUEST: begin
@@ -190,21 +193,26 @@ end
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <= IDLE;
+
     wb_adr_q        <= '0;
     wb_dat_q        <= '0;
     wb_we_q         <=  0;
     wb_sel_q        <= '0;
     wb_stb_q        <=  0;
     wb_cyc_q        <=  0;
+
     output_valid_q  <=  0;
 
     reg_write_q   <=  0;
-    reg_write_qq  <=  0;
     reg_addr_q    <=  '0;
-    reg_addr_qq   <=  '0;
     reg_data_q    <=  '0;
+
+    reg_write_qq  <=  0;
+    reg_addr_qq   <=  '0;
+    reg_data_qq   <=  '0;
   end else begin
     state_q         <=  state_d;
+
     wb_adr_q        <=  wb_adr_d;
     wb_dat_q        <=  wb_dat_d;
     wb_we_q         <=  wb_we_d;
@@ -220,6 +228,7 @@ always_ff @(posedge clk_i) begin
 
     reg_write_qq  <=  reg_write_q;
     reg_addr_qq   <=  reg_addr_q;
+    reg_data_qq   <=  reg_data_q;
   end
 end
 
@@ -237,7 +246,7 @@ assign wb_cyc_o = wb_cyc_q;
 
 assign reg_write_o = reg_write_qq;
 assign reg_addr_o = reg_addr_qq;
-assign reg_data_o = reg_data_q;
+assign reg_data_o = reg_data_qq;
 
 assign output_valid_o = output_valid_q;
 
