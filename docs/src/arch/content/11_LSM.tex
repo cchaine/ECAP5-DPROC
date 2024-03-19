@@ -52,7 +52,7 @@
         }
 
       \req{D\_LSM\_REQUEST\_TRIGGER\_01}{
-          The \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} event shall be triggered on the rising edge of \texttt{clk\_i} while in the \texttt{IDLE} state after \texttt{enable\_i} is asserted.
+          The \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} event shall be triggered on the rising edge of \texttt{clk\_i} while in the \texttt{IDLE} state after both \texttt{enable\_i} and \texttt{input\_valid\_i} are asserted.
         }
 
       \req{D\_LSM\_READ\_REQUEST\_01}{
@@ -168,17 +168,13 @@
       \paragraph{Register write}
 
         \req{D\_LSM\_OUTPUT\_WRITE\_01}{
-            The \texttt{reg\_write\_o} output shall be set to the registered value of \texttt{reg\_write\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
-          }
-
-        \req{D\_LSM\_OUTPUT\_WRITE\_02}{
-            The \texttt{reg\_write\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is deasserted.
+            The \texttt{reg\_write\_o} output shall be set to the value of \texttt{reg\_write\_i} on the rising edge of \texttt{clk\_i} following the assertion of both \texttt{input\_ready\_o} and \texttt{input\_valid\_i}.
           }
 
       \paragraph{Register addr}
 
         \req{D\_LSM\_OUTPUT\_ADDR\_01}{
-            The \texttt{reg\_addr\_o} output shall be set to the registered value of \texttt{reg\_addr\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
+            The \texttt{reg\_addr\_o} output shall be set to the value of \texttt{reg\_addr\_i} on the rising edge of \texttt{clk\_i} following the assertion of both \texttt{input\_ready\_o} and \texttt{input\_valid\_i}.
           }
 
       \paragraph{Register data}
@@ -188,7 +184,7 @@
           }
 
         \req{D\_LSM\_OUTPUT\_DATA\_02}{
-            The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted.
+            The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} when \texttt{enable\_i} is asserted and both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
           }
 
     \subsubsection{Output handshake}

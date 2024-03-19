@@ -58,12 +58,13 @@ module lsm import ecap5_dproc_pkg::*;
 /*           Internal signals            */
 /*****************************************/
 enum logic [2:0] {
-  IDLE,          // 0
-  REQUEST,       // 1
-  MEMORY_WAIT,   // 2
-  DONE,          // 3
-  MEMORY_STALL   // 4
+  IDLE,           // 0
+  REQUEST,        // 1
+  MEMORY_WAIT,    // 2
+  DONE,           // 3
+  MEMORY_STALL    // 4
 } state_d, state_q /* verilator public */;
+logic memory_request;
 
 /*****************************************/
 /*        Wishbone output signals        */
@@ -78,14 +79,22 @@ logic        wb_cyc_d,        wb_cyc_q;
 /*****************************************/
 /*             Output signals            */
 /*****************************************/
-logic output_valid_d, output_valid_q;
+logic input_ready_q;
+logic output_valid_q;
+logic reg_write_d, reg_write_q, reg_write_qq;
+logic[4:0] reg_addr_d, reg_addr_q, reg_addr_qq;
+logic[31:0] reg_data_d, reg_data_q;
+
+assign input_ready_q = (state_q == IDLE);
+
+assign memory_request = (enable_i && input_valid_i);
 
 always_comb begin : state_machine
   state_d = state_q;
 
   case(state_q)
     IDLE: begin
-      if(enable_i) begin
+      if(memory_request) begin
         // A memory request shall be triggered
         if(wb_stall_i) begin
           // The memory is stalled
@@ -132,7 +141,7 @@ always_comb begin : wishbone_read
 
   case(state_q)
     IDLE: begin
-      if(enable_i) begin
+      if(memory_request) begin
         wb_adr_d = alu_result_i;
         wb_dat_d = write_data_i;
         wb_we_d  = write_i;
@@ -152,6 +161,32 @@ always_comb begin : wishbone_read
   endcase
 end
 
+always_comb begin : reg_output
+  reg_addr_d = reg_addr_q;
+  reg_data_d = reg_data_q;
+
+  case(state_q)
+    IDLE: begin
+      if(input_valid_i) begin
+        reg_addr_d = reg_addr_i;
+        reg_write_d = reg_write_i;
+      end
+    end
+    REQUEST: begin
+      if(wb_ack_i) begin
+        reg_data_d = wb_dat_i;
+      end
+    end
+    DONE: begin
+      if(wb_ack_i) begin
+        reg_data_d = wb_dat_i;
+      end
+    end
+    default: begin
+    end
+  endcase
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <= IDLE;
@@ -162,6 +197,12 @@ always_ff @(posedge clk_i) begin
     wb_stb_q        <=  0;
     wb_cyc_q        <=  0;
     output_valid_q  <=  0;
+
+    reg_write_q   <=  0;
+    reg_write_qq  <=  0;
+    reg_addr_q    <=  '0;
+    reg_addr_qq   <=  '0;
+    reg_data_q    <=  '0;
   end else begin
     state_q         <=  state_d;
     wb_adr_q        <=  wb_adr_d;
@@ -170,13 +211,22 @@ always_ff @(posedge clk_i) begin
     wb_sel_q        <=  wb_sel_d;
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
-    output_valid_q  <= output_valid_d;
+
+    output_valid_q  <= (state_q == DONE);
+
+    reg_write_q   <=  reg_write_d;
+    reg_addr_q    <=  reg_addr_d;
+    reg_data_q    <=  reg_data_d;
+
+    reg_write_qq  <=  reg_write_q;
+    reg_addr_qq   <=  reg_addr_q;
   end
 end
 
 /*****************************************/
 /*         Assign output signals         */
 /*****************************************/
+assign input_ready_o = input_ready_q;
 
 assign wb_adr_o = wb_adr_q;
 assign wb_dat_o = wb_dat_q;
@@ -184,5 +234,11 @@ assign wb_we_o  = wb_we_q;
 assign wb_sel_o = wb_sel_q;
 assign wb_stb_o = wb_stb_q;
 assign wb_cyc_o = wb_cyc_q;
+
+assign reg_write_o = reg_write_qq;
+assign reg_addr_o = reg_addr_qq;
+assign reg_data_o = reg_data_q;
+
+assign output_valid_o = output_valid_q;
 
 endmodule // lsm
