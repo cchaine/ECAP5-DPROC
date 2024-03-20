@@ -80,13 +80,11 @@ logic        wb_cyc_d,        wb_cyc_q;
 /*****************************************/
 /*             Output signals            */
 /*****************************************/
-logic input_ready_d, input_ready_q;
+logic input_ready_q;
 logic output_valid_q;
 logic reg_write_d, reg_write_q;
 logic[4:0] reg_addr_d, reg_addr_q;
 logic[31:0] reg_data_d, reg_data_q;
-
-assign input_ready_d = (state_q == IDLE);
 
 assign memory_request = (enable_i && input_valid_i);
 
@@ -162,6 +160,20 @@ always_comb begin : wishbone_read
   endcase
 end
 
+always_comb begin : reg_output
+  reg_write_d = reg_write_q;
+  reg_addr_d = reg_addr_q;
+  reg_data_d = reg_data_q;
+
+  if(state_q == IDLE) begin
+    reg_addr_d = reg_addr_i;
+    reg_data_d = alu_result_i;
+    reg_write_d = input_valid_i ? reg_write_i : 0;
+  end else if(wb_ack_i) begin
+    reg_data_d = wb_dat_i;
+  end
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <= IDLE;
@@ -183,7 +195,7 @@ always_ff @(posedge clk_i) begin
   end else begin
     state_q         <=  state_d;
 
-    input_ready_q  <= input_ready_d;
+    input_ready_q  <= (state_q == IDLE);
 
     wb_adr_q        <=  wb_adr_d;
     wb_dat_q        <=  wb_dat_d;
@@ -192,20 +204,11 @@ always_ff @(posedge clk_i) begin
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
 
-    output_valid_q  <= (input_ready_d && ~enable_i) || (state_q == DONE);
+    output_valid_q  <= (state_q == IDLE && ~enable_i) || (state_q == DONE);
 
-    if(input_ready_d) begin
-      reg_addr_q    <=  reg_addr_i;
-    end
-
-    if(input_ready_d) begin
-      reg_data_q  <= alu_result_i;
-      reg_write_q <= input_valid_i
-                            ? reg_write_i
-                            : 0;
-    end else if(wb_ack_i) begin
-      reg_data_q  <=  wb_dat_i;
-    end
+    reg_write_q <= reg_write_d;
+    reg_addr_q <= reg_addr_d;
+    reg_data_q <= reg_data_d;
   end
 end
 
