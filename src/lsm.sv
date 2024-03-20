@@ -62,8 +62,9 @@ enum logic [2:0] {
   REQUEST,        // 1
   MEMORY_WAIT,    // 2
   DONE,           // 3
-  MEMORY_STALL    // 4
+  MEMORY_STALL   // 4
 } state_d, state_q /* verilator public */;
+
 logic memory_request;
 
 /*****************************************/
@@ -79,13 +80,13 @@ logic        wb_cyc_d,        wb_cyc_q;
 /*****************************************/
 /*             Output signals            */
 /*****************************************/
-logic input_ready_q;
+logic input_ready_d, input_ready_q;
 logic output_valid_q;
-logic reg_write_d, reg_write_q, reg_write_qq;
-logic[4:0] reg_addr_d, reg_addr_q, reg_addr_qq;
-logic[31:0] reg_data_d, reg_data_q, reg_data_qq;
+logic reg_write_d, reg_write_q;
+logic[4:0] reg_addr_d, reg_addr_q;
+logic[31:0] reg_data_d, reg_data_q;
 
-assign input_ready_q = (state_q == IDLE);
+assign input_ready_d = (state_q == IDLE);
 
 assign memory_request = (enable_i && input_valid_i);
 
@@ -161,38 +162,11 @@ always_comb begin : wishbone_read
   endcase
 end
 
-always_comb begin : reg_output
-  reg_addr_d = reg_addr_q;
-  reg_data_d = reg_data_q;
-
-  case(state_q)
-    IDLE: begin
-      if(input_valid_i) begin
-        reg_addr_d = reg_addr_i;
-        reg_write_d = reg_write_i;
-        if(~enable_i) begin
-          reg_data_d = alu_result_i;
-        end
-      end
-    end
-    REQUEST: begin
-      if(wb_ack_i) begin
-        reg_data_d = wb_dat_i;
-      end
-    end
-    DONE: begin
-      if(wb_ack_i) begin
-        reg_data_d = wb_dat_i;
-      end
-    end
-    default: begin
-    end
-  endcase
-end
-
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <= IDLE;
+
+    input_ready_q <= 0;
 
     wb_adr_q        <= '0;
     wb_dat_q        <= '0;
@@ -206,12 +180,10 @@ always_ff @(posedge clk_i) begin
     reg_write_q   <=  0;
     reg_addr_q    <=  '0;
     reg_data_q    <=  '0;
-
-    reg_write_qq  <=  0;
-    reg_addr_qq   <=  '0;
-    reg_data_qq   <=  '0;
   end else begin
     state_q         <=  state_d;
+
+    input_ready_q  <= input_ready_d;
 
     wb_adr_q        <=  wb_adr_d;
     wb_dat_q        <=  wb_dat_d;
@@ -220,15 +192,20 @@ always_ff @(posedge clk_i) begin
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
 
-    output_valid_q  <= (state_q == DONE);
+    output_valid_q  <= (input_ready_d && ~enable_i) || (state_q == DONE);
 
-    reg_write_q   <=  reg_write_d;
-    reg_addr_q    <=  reg_addr_d;
-    reg_data_q    <=  reg_data_d;
+    if(input_ready_d) begin
+      reg_addr_q    <=  reg_addr_i;
+    end
 
-    reg_write_qq  <=  reg_write_q;
-    reg_addr_qq   <=  reg_addr_q;
-    reg_data_qq   <=  reg_data_q;
+    if(input_ready_d) begin
+      reg_data_q  <= alu_result_i;
+      reg_write_q <= input_valid_i
+                            ? reg_write_i
+                            : 0;
+    end else if(wb_ack_i) begin
+      reg_data_q  <=  wb_dat_i;
+    end
   end
 end
 
@@ -244,9 +221,9 @@ assign wb_sel_o = wb_sel_q;
 assign wb_stb_o = wb_stb_q;
 assign wb_cyc_o = wb_cyc_q;
 
-assign reg_write_o = reg_write_qq;
-assign reg_addr_o = reg_addr_qq;
-assign reg_data_o = reg_data_qq;
+assign reg_write_o = reg_write_q;
+assign reg_addr_o = reg_addr_q;
+assign reg_data_o = reg_data_q;
 
 assign output_valid_o = output_valid_q;
 

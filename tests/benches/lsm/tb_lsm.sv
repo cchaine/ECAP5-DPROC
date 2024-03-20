@@ -21,6 +21,8 @@
  */
 
 module tb_lsm import ecap5_dproc_pkg::*; (
+  input   int          testcase,
+
   input   logic        clk_i,
   input   logic        rst_i,
   // Input handshake

@@ -37,6 +37,7 @@
 class TB_Lsm : public Testbench<Vtb_lsm> {
 public:
   void reset() {
+    this->_nop();
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
@@ -116,106 +117,90 @@ public:
 
 void tb_lsm_no_stall_load(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 1;
   tb->reset();
 
   core->wb_stall_i = 0;
-  core->input_valid_i = 0;
+  core->input_valid_i = 1;
+
+  // During reset
 
   CHECK("tb_lsm.no_stall.LOAD_01",
       (core->tb_lsm->dut->state_q == 0),
       "Failed to reset to the IDLE state");
 
   CHECK("tb_lsm.no_stall.LOAD_02",
-      (core->input_ready_o == 1),
-      "Failed to assert input_ready_o");
+      (core->input_ready_o == 0),
+      "Failed to deassert input_ready_o");
 
   CHECK("tb_lsm.no_stall.LOAD_03",
       (core->reg_addr_o == 0),
       "Failed to detect a failed input handshake");
 
+  // LH
+
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
   tb->_lh(addr, reg_addr);
   tb->tick();
-
-  CHECK("tb_lsm.no_stall.LOAD_04",
-      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
-      "Failed to detect a failed input handshake");
-
-  CHECK("tb_lsm.no_stall.LOAD_05",
-      (core->reg_addr_o == 0),
-      "Failed to detect a failed input handshake");
-
-  CHECK("tb_lsm.no_stall.LOAD_06",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
-
-  core->input_valid_i = 1;
-  tb->tick();
   tb->_nop();
 
-  CHECK("tb_lsm.no_stall.LOAD_07",
-      (core->reg_write_o == 0),
+  CHECK("tb_lsm.no_stall.LOAD_04",
+      (core->reg_write_o == 1),
       "Failed to set reg_write_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_08",
-      (core->reg_addr_o == 0),
+  CHECK("tb_lsm.no_stall.LOAD_05",
+      (core->reg_addr_o == reg_addr),
       "Failed to set reg_addr_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_09",
+  CHECK("tb_lsm.no_stall.LOAD_06",
       (core->tb_lsm->dut->state_q == 1),
       "Failed to switch to the REQUEST state");
 
-  CHECK("tb_lsm.no_stall.LOAD_10",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
+  CHECK("tb_lsm.no_stall.LOAD_07",
+      (core->input_ready_o == 1),
+      "Failed to keep input_ready_o asserted input_ready_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_11",
+  CHECK("tb_lsm.no_stall.LOAD_08",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to trigger the memory request");
 
-  CHECK("tb_lsm.no_stall.LOAD_12",
+  CHECK("tb_lsm.no_stall.LOAD_09",
       (core->wb_adr_o == addr) && (core->wb_we_o == 0),
       "Failed to trigger a memory read request");
 
-  CHECK("tb_lsm.no_stall.LOAD_13",
+  CHECK("tb_lsm.no_stall.LOAD_10",
       (core->wb_sel_o == 0x3),
       "Failed to set the wishbone sel signal");
 
-  CHECK("tb_lsm.no_stall.LOAD_14",
-      (core->reg_data_o == 0),
-      "Failed to set the register data output");
-
-  CHECK("tb_lsm.no_stall.LOAD_15",
+  CHECK("tb_lsm.no_stall.LOAD_11",
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
+
+  // Answer memory request
 
   uint32_t data = rand();
   core->wb_ack_i = 1;
   core->wb_dat_i = data;
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.LOAD_16",
+  CHECK("tb_lsm.no_stall.LOAD_12",
       (core->reg_write_o == 1),
       "Failed to set reg_write_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_17",
+  CHECK("tb_lsm.no_stall.LOAD_13",
       (core->reg_addr_o == reg_addr),
       "Failed to set reg_addr_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_18",
+  CHECK("tb_lsm.no_stall.LOAD_14",
       (core->tb_lsm->dut->state_q == 3),
       "Failed to switch to the DONE state");
 
-  CHECK("tb_lsm.no_stall.LOAD_19",
+  CHECK("tb_lsm.no_stall.LOAD_15",
       (core->input_ready_o == 0),
       "Failed to deassert input_ready_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_20",
-      (core->reg_data_o == 0),
-      "Failed to set the register data output");
-
-  CHECK("tb_lsm.no_stall.LOAD_21",
+  CHECK("tb_lsm.no_stall.LOAD_16",
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
 
@@ -223,44 +208,66 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   core->wb_dat_i = 0;
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.LOAD_22",
+  // Output the result
+
+  CHECK("tb_lsm.no_stall.LOAD_17",
       (core->reg_write_o == 1),
       "Failed to set reg_write_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_23",
+  CHECK("tb_lsm.no_stall.LOAD_18",
       (core->reg_addr_o == reg_addr),
       "Failed to set reg_addr_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_24",
+  CHECK("tb_lsm.no_stall.LOAD_19",
       (core->tb_lsm->dut->state_q == 0),
       "Failed to switch to the IDLE state");
 
-  CHECK("tb_lsm.no_stall.LOAD_25",
-      (core->input_ready_o == 1),
-      "Failed to assert input_ready_o");
+  CHECK("tb_lsm.no_stall.LOAD_20",
+      (core->input_ready_o == 0),
+      "Failed to deassert input_ready_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_26",
+  CHECK("tb_lsm.no_stall.LOAD_21",
       (core->reg_data_o == data),
-      "Failed to set the register data output");
+      "Failed to set reg_data_o");
 
-  CHECK("tb_lsm.no_stall.LOAD_27",
+  CHECK("tb_lsm.no_stall.LOAD_22",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
+  // Next instruction (nop)
+
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.LOAD_28",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
-}
+  CHECK("tb_lsm.no_stall.LOAD_23",
+      (core->input_ready_o == 1),
+      "Failed to assert input_ready_o");
 
+  CHECK("tb_lsm.no_stall.LOAD_24",
+      (core->output_valid_o == 1),
+      "Failed to invalidate the output");
+
+  CHECK("tb_lsm.no_stall.LOAD_25",
+      (core->reg_write_o == 0),
+      "Failed to deassert reg_write_o");
+  
+  CHECK("tb_lsm.no_stall.LOAD_26",
+      (core->reg_addr_o == 0),
+      "Failed to set reg_addr_o");
+
+  CHECK("tb_lsm.no_stall.LOAD_27",
+      (core->reg_data_o == 0),
+      "Failed to set reg_data_o");
+}
 
 void tb_lsm_no_stall_store(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 2;
   tb->reset();
 
   core->wb_stall_i = 0;
   core->input_valid_i = 1;
+
+  // SW
 
   uint32_t addr = rand();
   uint32_t data = rand();
@@ -278,8 +285,8 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
       "Failed to switch to the REQUEST state");
 
   CHECK("tb_lsm.no_stall.STORE_03",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
+      (core->input_ready_o == 1),
+      "Failed to keep asserted input_ready_o");
 
   CHECK("tb_lsm.no_stall.STORE_04",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
@@ -300,6 +307,8 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
   CHECK("tb_lsm.no_stall.STORE_08",
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
+
+  // Answer memory request
 
   core->wb_ack_i = 1;
   tb->tick();
@@ -324,6 +333,8 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
   core->wb_dat_i = 0;
   tb->tick();
 
+  // Output the result (none)
+
   CHECK("tb_lsm.no_stall.STORE_13",
       (core->reg_write_o == 0),
       "Failed to set reg_write_o");
@@ -333,8 +344,8 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
       "Failed to switch to the IDLE state");
 
   CHECK("tb_lsm.no_stall.STORE_15",
-      (core->input_ready_o == 1),
-      "Failed to assert input_ready_o");
+      (core->input_ready_o == 0),
+      "Failed to deassert input_ready_o");
 
   CHECK("tb_lsm.no_stall.STORE_16",
       (core->output_valid_o == 1),
@@ -342,17 +353,27 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
 
   tb->tick();
 
+  // Next instruction
+
   CHECK("tb_lsm.no_stall.STORE_17",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
+      (core->input_ready_o == 1),
+      "Failed to assert input_ready_o");
+
+  CHECK("tb_lsm.no_stall.STORE_18",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_lsm_memory_stall(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 3;
   tb->reset();
 
+  // Memory stall
   core->wb_stall_i = 1;
   core->input_valid_i = 1;
+
+  // LH
 
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
@@ -360,11 +381,15 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   tb->tick();
   tb->_nop();
 
+  // Hold the request
+
   CHECK("tb_lsm.memory_stall.LOAD_01",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
   tb->tick();
+
+  // Hold the request
 
   CHECK("tb_lsm.memory_stall.LOAD_02",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
@@ -377,6 +402,8 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   core->wb_stall_i = 0;
   tb->tick();
 
+  // Hold the request
+
   CHECK("tb_lsm.memory_stall.LOAD_04",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
@@ -384,6 +411,8 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   CHECK("tb_lsm.memory_stall.LOAD_05",
       (core->output_valid_o == 0),
       "Failed to validate the output");
+
+  // Answer to the request
 
   uint32_t data = rand();
   core->wb_ack_i = 1;
@@ -402,6 +431,8 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
 
   tb->tick();
 
+  // Output the result
+
   CHECK("tb_lsm.memory_stall.LOAD_08",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to hold the memory request");
@@ -411,13 +442,18 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
       "Failed to validate the output");
 
   tb->tick();
+
+  // Next instruction
 }
 
 void tb_lsm_memory_wait(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 4;
   tb->reset();
 
   core->input_valid_i = 1;
+
+  // LH
 
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
@@ -426,6 +462,8 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
   tb->_nop();
 
   tb->tick();
+  
+  // Wait before sending the response
 
   CHECK("tb_lsm.memory_wait.01",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
@@ -437,6 +475,8 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
 
   tb->tick();
 
+  // Wait before sending the response
+
   CHECK("tb_lsm.memory_wait.03",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to wait for the memory response");
@@ -447,6 +487,8 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
 
   tb->tick();
 
+  // Wait before sending the response
+
   CHECK("tb_lsm.memory_wait.05",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to wait for the memory response");
@@ -454,6 +496,8 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
   CHECK("tb_lsm.memory_wait.06",
       (core->output_valid_o == 0),
       "Failed to validate the output");
+
+  // Send the response
 
   uint32_t data = rand();
   core->wb_ack_i = 1;
@@ -472,6 +516,8 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
 
   tb->tick();
 
+  // Output the result
+
   CHECK("tb_lsm.memory_wait.09",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to hold the memory request");
@@ -481,15 +527,18 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
       "Failed to validate the output");
 
   tb->tick();
+  
+  // Next instruction
 }
 
 void tb_lsm_bypass(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 5;
   tb->reset();
-  tb->_nop();
 
   core->input_valid_i = 1;
 
+  // Bypass
   core->enable_i = 0;
   core->reg_write_i = 1;
   uint32_t data = rand();
@@ -499,11 +548,9 @@ void tb_lsm_bypass(TB_Lsm * tb) {
   tb->tick();
   tb->_nop();
 
-  tb->tick();
-
   CHECK("tb_lsm.bypass.01",
       (core->reg_write_o == 1),
-      "Failed to set reg_write_i");
+      "Failed to set reg_write_o");
 
   CHECK("tb_lsm.bypass.02",
       (core->reg_addr_o == reg_addr),
@@ -511,7 +558,7 @@ void tb_lsm_bypass(TB_Lsm * tb) {
 
   CHECK("tb_lsm.bypass.03",
       (core->reg_data_o == data),
-      "Failed to set reg_data_i");
+      "Failed to set reg_data_o");
 
   CHECK("tb_lsm.bypass.04",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
@@ -526,17 +573,301 @@ void tb_lsm_bypass(TB_Lsm * tb) {
 
 void tb_lsm_bubble(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 6;
   tb->reset();
+
+  core->input_valid_i = 1;
+
+  // Bypass
+
+  core->enable_i = 0;
+  core->reg_write_i = 1;
+  uint32_t data = rand();
+  core->alu_result_i = data;
+  uint32_t reg_addr = 1 + rand() % 31;
+  core->reg_addr_i = reg_addr;
+  tb->tick();
+
+  CHECK("tb_lsm.bubble.01",
+      (core->reg_write_o == 1),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.bubble.02",
+      (core->reg_addr_o == reg_addr),
+      "Failed to set reg_addr_i");
+
+  CHECK("tb_lsm.bubble.03",
+      (core->reg_data_o == data),
+      "Failed to set reg_data_o");
+
+  CHECK("tb_lsm.bubble.04",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.bubble.05",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  core->input_valid_i = 0;
+  tb->tick();
+
+  // Bubble
+
+  CHECK("tb_lsm.bubble.06",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.bubble.07",
+      (core->reg_write_o == 0),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.bubble.08",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Bubble
+
+  tb->tick();
+
+  CHECK("tb_lsm.bubble.09",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.bubble.10",
+      (core->reg_write_o == 0),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.bubble.11",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
 }
 
 void tb_lsm_back_to_back(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
+  core->testcase = 7;
   tb->reset();
-}
+  tb->_nop();
 
-void tb_lsm_back_to_back_bypass(TB_Lsm * tb) {
-  Vtb_lsm * core = tb->core;
-  tb->reset();
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  // LH
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lh(addr, reg_addr);
+  tb->tick();
+
+  CHECK("tb_lsm.back_to_back.01",
+      (core->output_valid_o == 0),
+      "Failed to invalidate the output");
+
+  CHECK("tb_lsm.back_to_back.02",
+      (core->reg_write_o == 1),
+      "Failed to assert reg_write_o");
+
+  // Bypass
+
+  core->enable_i = 0;
+  core->reg_write_i = 1;
+  uint32_t data = rand();
+  core->alu_result_i = data;
+  reg_addr = 1 + rand() % 31;
+  core->reg_addr_i = reg_addr;
+
+  // Send the response to LH
+
+  data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data;
+  tb->tick();
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  CHECK("tb_lsm.back_to_back.03",
+      (core->output_valid_o == 0),
+      "Failed to invalidate the output");
+
+  CHECK("tb_lsm.back_to_back.04",
+      (core->reg_write_o == 1),
+      "Failed to deassert reg_write_o");
+
+  tb->tick();
+
+  // Output the result of LH
+
+  CHECK("tb_lsm.back_to_back.05",
+      (core->output_valid_o == 1),
+      "Failed to invalidate the output");
+
+  CHECK("tb_lsm.back_to_back.06",
+      (core->reg_write_o == 1),
+      "Failed to deassert reg_write_o");
+
+  tb->tick();
+
+  // Output the result of the bypass
+
+  CHECK("tb_lsm.back_to_back.07",
+      (core->reg_write_o == 1),
+      "Failed to assert reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.08",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // SB
+
+  addr = rand();
+  data = rand();
+  reg_addr = 1 + rand() % 31;
+  tb->_sb(addr, data, reg_addr);
+  tb->tick();
+
+  // Bypass
+
+  core->enable_i = 0;
+  core->reg_write_i = 1;
+  data = rand();
+  core->alu_result_i = data;
+  reg_addr = 1 + rand() % 31;
+  core->reg_addr_i = reg_addr;
+
+  CHECK("tb_lsm.back_to_back.09",
+      (core->reg_write_o == 0),
+      "Failed to deassert reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.10",
+      (core->output_valid_o == 0),
+      "Failed to invalidate the output");
+
+  // Answer to SB
+
+  core->wb_ack_i = 1;
+  tb->tick();
+  core->wb_ack_i = 0;
+
+  CHECK("tb_lsm.back_to_back.11",
+      (core->reg_write_o == 0),
+      "Failed to deassert reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.12",
+      (core->output_valid_o == 0),
+      "Failed to invalidate the output");
+
+  tb->tick();
+
+  // Output the result of SB (none)
+  
+  CHECK("tb_lsm.back_to_back.13",
+      (core->reg_write_o == 0),
+      "Failed to deassert reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.14",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  tb->tick();
+  
+  // Output the result of bypass
+
+  CHECK("tb_lsm.back_to_back.15",
+      (core->reg_write_o == 1),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.16",
+      (core->reg_addr_o == reg_addr),
+      "Failed to set reg_addr_i");
+
+  CHECK("tb_lsm.back_to_back.17",
+      (core->reg_data_o == data),
+      "Failed to set reg_data_o");
+
+  CHECK("tb_lsm.back_to_back.18",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.back_to_back.19",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Bypass
+
+  core->enable_i = 0;
+  core->reg_write_i = 1;
+  data = rand();
+  core->alu_result_i = data;
+  reg_addr = 1 + rand() % 31;
+  core->reg_addr_i = reg_addr;
+  tb->tick();
+
+  // Output the result of bypass
+
+  CHECK("tb_lsm.back_to_back.20",
+      (core->reg_write_o == 1),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.21",
+      (core->reg_addr_o == reg_addr),
+      "Failed to set reg_addr_i");
+
+  CHECK("tb_lsm.back_to_back.22",
+      (core->reg_data_o == data),
+      "Failed to set reg_data_o");
+
+  CHECK("tb_lsm.back_to_back.23",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.back_to_back.24",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Bypass
+
+  core->enable_i = 0;
+  core->reg_write_i = 1;
+  data = rand();
+  core->alu_result_i = data;
+  reg_addr = 1 + rand() % 31;
+  core->reg_addr_i = reg_addr;
+  tb->tick();
+
+  // Output the result of bypass
+
+  CHECK("tb_lsm.back_to_back.25",
+      (core->reg_write_o == 1),
+      "Failed to set reg_write_o");
+
+  CHECK("tb_lsm.back_to_back.26",
+      (core->reg_addr_o == reg_addr),
+      "Failed to set reg_addr_i");
+
+  CHECK("tb_lsm.back_to_back.27",
+      (core->reg_data_o == data),
+      "Failed to set reg_data_o");
+
+  CHECK("tb_lsm.back_to_back.28",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to not trigger a memory request");
+
+  CHECK("tb_lsm.back_to_back.29",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  // Bypass without reg write
+  tb->_nop();
+  tb->tick();
+
+  // Output the result of the bypass (none)
+
+  CHECK("tb_lsm.back_to_back.30",
+      (core->output_valid_o == 1),
+      "Failed to validate the output");
+
+  CHECK("tb_lsm.back_to_back.31",
+      (core->reg_write_o == 0),
+      "Failed to deassert reg_write_o");
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -563,7 +894,6 @@ int main(int argc, char ** argv, char ** env) {
   tb_lsm_bubble(tb);
 
   tb_lsm_back_to_back(tb);
-  tb_lsm_back_to_back_bypass(tb);
 
   /************************************************************/
 

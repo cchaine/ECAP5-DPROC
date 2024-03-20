@@ -42,7 +42,11 @@
     \subsubsection{Input handshake}
 
       \req{D\_LSM\_INPUT\_READY\_01}{
-          The \texttt{input\_ready\_o} signal shall be asserted while in the \texttt{IDLE} state. It shall be deasserted otherwise.
+          The \texttt{input\_ready\_o} signal shall be asserted while in the \texttt{IDLE} state.
+        }
+
+      \req{D\_LSM\_INPUT\_READY\_02}{
+          The \texttt{input\_ready\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} after leaving the \texttt{IDLE} state.
         }
 
     \subsubsection{Request triggering}
@@ -52,7 +56,7 @@
         }
 
       \req{D\_LSM\_REQUEST\_TRIGGER\_01}{
-          The \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} event shall be triggered on the rising edge of \texttt{clk\_i} while in the \texttt{IDLE} state after both \texttt{enable\_i} and \texttt{input\_valid\_i} are asserted.
+          The \eventref{EV\_LSM\_REQUEST\_TRIGGER\_01} event shall be triggered on the rising edge of \texttt{clk\_i} while in the \texttt{IDLE} state when both \texttt{enable\_i} and \texttt{input\_valid\_i} are asserted.
         }
 
       \req{D\_LSM\_READ\_REQUEST\_01}{
@@ -168,33 +172,37 @@
       \paragraph{Register write}
 
         \req{D\_LSM\_OUTPUT\_WRITE\_01}{
-            The \texttt{reg\_write\_o} output shall be set to the value of \texttt{reg\_write\_i} on the rising edge of \texttt{clk\_i} following the assertion of both \texttt{input\_ready\_o} and \texttt{input\_valid\_i}.
+            The \texttt{reg\_write\_o} output shall be set to the value of \texttt{reg\_write\_i} on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
+          }
+
+        \req{D\_LSM\_OUTPUT\_WRITE\_02}{
+            The \texttt{reg\_write\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} is deasserted.
           }
 
       \paragraph{Register addr}
 
         \req{D\_LSM\_OUTPUT\_ADDR\_01}{
-            The \texttt{reg\_addr\_o} output shall be set to the value of \texttt{reg\_addr\_i} on the rising edge of \texttt{clk\_i} following the assertion of both \texttt{input\_ready\_o} and \texttt{input\_valid\_i}.
+            The \texttt{reg\_addr\_o} output shall be set to the value of \texttt{reg\_addr\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted.
           }
 
       \paragraph{Register data}
 
         \req{D\_LSM\_OUTPUT\_DATA\_01}{
-            The \texttt{reg\_data\_o} shall be set to the value of \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} after being in the \texttt{DONE} state.
+            The \texttt{reg\_data\_o} shall be set to the value of \texttt{wb\_dat\_i} on the rising edge of \texttt{clk\_i} when \texttt{wb\_ack\_i} is asserted.
           }
 
         \req{D\_LSM\_OUTPUT\_DATA\_02}{
-            The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} when \texttt{enable\_i} is asserted and both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
+            The \texttt{reg\_data\_o} shall be set to the value of \texttt{alu\_result\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted.
           }
 
     \subsubsection{Output handshake}
 
       \req{D\_LSM\_OUTPUT\_HANDSHAKE\_01}{
-          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} after being in the \texttt{DONE} state.
+          The signal \texttt{output\_valid\_o} shall be asserted on the rising edge of \texttt{clk\_i} when leaving the \texttt{DONE} state.
         }
 
       \req{D\_LSM\_OUTPUT\_HANDSHAKE\_02}{
-          The \texttt{output\_valid\_i} signal shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted when \texttt{enable\_i} is deasserted. 
+          The \texttt{output\_valid\_i} signal shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_i} is asserted and \texttt{enable\_i} is deasserted. 
         }
 
 \newpage

@@ -1,0 +1,7 @@
+1 no_stall_load
+2 no_stall_store
+3 memory_stall
+4 memory_wait
+5 bypass
+6 bubble
+7 back_to_back
