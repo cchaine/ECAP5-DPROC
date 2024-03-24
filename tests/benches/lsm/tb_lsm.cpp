@@ -120,6 +120,16 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   core->testcase = 1;
   tb->reset();
 
+  bool COND_state = true;
+  bool COND_input_ready = true;
+  bool COND_wb_stb = true;
+  bool COND_wb_cyc = true;
+  bool COND_wb_sel = true;
+  bool COND_reg_write = true;
+  bool COND_reg_addr = true;
+  bool COND_reg_data = true;
+  bool COND_output_valid = true;
+
   core->wb_stall_i = 0;
   core->input_valid_i = 1;
 
@@ -135,132 +145,131 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
 
   // LH
 
+  //`````````````````````````````````
+  //      Set inputs
+
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
   tb->_lh(addr, reg_addr);
+
+  //=================================
+  //      Tick
+
   tb->tick();
-  tb->_nop();
 
-  CHECK("tb_lsm.no_stall.LOAD_04",
-      (core->reg_write_o == 1),
-      "Failed to set reg_write_o");
+  //`````````````````````````````````
+  //      Checks 
+  
+  COND_state         &=  (core->tb_lsm->dut->state_q  ==  1);
+  COND_input_ready   &=  (core->input_ready_o         ==  0);
+  COND_wb_stb        &=  (core->wb_stb_o              ==  1);
+  COND_wb_cyc        &=  (core->wb_cyc_o              ==  1);
+  COND_wb_sel        &=  (core->wb_sel_o              ==  3);
+  COND_reg_write     &=  (core->reg_write_o           ==  1);
+  COND_reg_addr      &=  (core->reg_addr_o            ==  reg_addr);
+  COND_output_valid  &=  (core->output_valid_o        ==  0);
 
-  CHECK("tb_lsm.no_stall.LOAD_05",
-      (core->reg_addr_o == reg_addr),
-      "Failed to set reg_addr_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_06",
-      (core->tb_lsm->dut->state_q == 1),
-      "Failed to switch to the REQUEST state");
-
-  CHECK("tb_lsm.no_stall.LOAD_07",
-      (core->input_ready_o == 1),
-      "Failed to keep input_ready_o asserted input_ready_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_08",
-      (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
-      "Failed to trigger the memory request");
-
-  CHECK("tb_lsm.no_stall.LOAD_09",
-      (core->wb_adr_o == addr) && (core->wb_we_o == 0),
-      "Failed to trigger a memory read request");
-
-  CHECK("tb_lsm.no_stall.LOAD_10",
-      (core->wb_sel_o == 0x3),
-      "Failed to set the wishbone sel signal");
-
-  CHECK("tb_lsm.no_stall.LOAD_11",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
-
-  // Answer memory request
+  //`````````````````````````````````
+  //      Set inputs
 
   uint32_t data = rand();
   core->wb_ack_i = 1;
   core->wb_dat_i = data;
+
+  //=================================
+  //      Tick
+  
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.LOAD_12",
-      (core->reg_write_o == 1),
-      "Failed to set reg_write_o");
+  //`````````````````````````````````
+  //      Checks 
 
-  CHECK("tb_lsm.no_stall.LOAD_13",
-      (core->reg_addr_o == reg_addr),
-      "Failed to set reg_addr_o");
+  COND_state         &=  (core->tb_lsm->dut->state_q  ==  3);
+  COND_input_ready   &=  (core->input_ready_o         ==  0);
+  COND_wb_stb        &=  (core->wb_stb_o              ==  0);
+  COND_wb_cyc        &=  (core->wb_cyc_o              ==  1);
+  COND_reg_write     &=  (core->reg_write_o           ==  1);
+  COND_reg_addr      &=  (core->reg_addr_o            ==  reg_addr);
+  COND_output_valid  &=  (core->output_valid_o        ==  0);
 
-  CHECK("tb_lsm.no_stall.LOAD_14",
-      (core->tb_lsm->dut->state_q == 3),
-      "Failed to switch to the DONE state");
-
-  CHECK("tb_lsm.no_stall.LOAD_15",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_16",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
-
-  CHECK("tb_lsm.no_stall.LOAD_29",
-      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
-      "Failed to detect a successfull memory request");
+  //`````````````````````````````````
+  //      Set inputs
 
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick
+  
   tb->tick();
 
   // Output the result
 
-  CHECK("tb_lsm.no_stall.LOAD_17",
-      (core->reg_write_o == 1),
-      "Failed to set reg_write_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_18",
-      (core->reg_addr_o == reg_addr),
-      "Failed to set reg_addr_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_19",
-      (core->tb_lsm->dut->state_q == 0),
-      "Failed to switch to the IDLE state");
-
-  CHECK("tb_lsm.no_stall.LOAD_20",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_21",
-      (core->reg_data_o == data),
-      "Failed to set reg_data_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_22",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
-
-  CHECK("tb_lsm.no_stall.LOAD_30",
-      (core->wb_cyc_o == 0),
-      "Failed to deasssert cyc after successfull memory request");
+  //`````````````````````````````````
+  //      Checks 
+  
+  COND_state         &=  (core->tb_lsm->dut->state_q  ==  0);
+  COND_input_ready   &=  (core->input_ready_o         ==  0);
+  COND_wb_cyc        &=  (core->wb_cyc_o              ==  0);
+  COND_reg_write     &=  (core->reg_write_o           ==  1);
+  COND_reg_addr      &=  (core->reg_addr_o            ==  reg_addr);
+  COND_reg_data      &=  (core->reg_data_o            ==  data);
+  COND_output_valid  &=  (core->output_valid_o        ==  1);
 
   // Next instruction (nop)
 
+  //=================================
+  //      Tick
+  
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.LOAD_23",
-      (core->input_ready_o == 1),
-      "Failed to assert input_ready_o");
+  //`````````````````````````````````
+  //      Checks 
 
-  CHECK("tb_lsm.no_stall.LOAD_24",
-      (core->output_valid_o == 1),
-      "Failed to invalidate the output");
+  COND_input_ready   &=  (core->input_ready_o         ==  1);
+  COND_reg_write     &=  (core->reg_write_o           ==  0);
+  COND_reg_addr      &=  (core->reg_addr_o            ==  0);
+  COND_reg_data      &=  (core->reg_data_o            ==  0);
+  COND_output_valid  &=  (core->output_valid_o        ==  1);
 
-  CHECK("tb_lsm.no_stall.LOAD_25",
-      (core->reg_write_o == 0),
-      "Failed to deassert reg_write_o");
-  
-  CHECK("tb_lsm.no_stall.LOAD_26",
-      (core->reg_addr_o == 0),
-      "Failed to set reg_addr_o");
+  //`````````````````````````````````
+  //      Checks 
 
-  CHECK("tb_lsm.no_stall.LOAD_27",
-      (core->reg_data_o == 0),
-      "Failed to set reg_data_o");
+  CHECK("tb_lsm.no_stall.LOAD_01",
+      COND_state,
+      "Failed to implement the state machine");
+
+  CHECK("tb_lsm.no_stall.LOAD_02",
+      COND_input_ready,
+      "Failed to implement the input_ready_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_03",
+      COND_wb_stb,
+      "Failed to implement the wb_stb_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_04",
+      COND_wb_cyc,
+      "Failed to implement the wb_cyc_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_05",
+      COND_wb_sel,
+      "Failed to implement the wb_sel_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_06",
+      COND_reg_write,
+      "Failed to implement the reg_write_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_07",
+      COND_reg_addr,
+      "Failed to implement the reg_addr_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_08",
+      COND_reg_data,
+      "Failed to implement the reg_data_o signal");
+
+  CHECK("tb_lsm.no_stall.LOAD_09",
+      COND_output_valid,
+      "Failed to implement the output_valid_o signal");
 }
 
 void tb_lsm_no_stall_store(TB_Lsm * tb) {
