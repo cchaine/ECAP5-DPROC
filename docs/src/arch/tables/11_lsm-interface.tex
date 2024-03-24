@@ -20,6 +20,20 @@
   \hline
   input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
   \hline
+  alu\_result\_i & I & 32 & ALU result \\
+  \hline
+  enable\_i & I & 1 & Bypass enable signal. The load-store unit is bypassed when asserted. \\
+  \hline
+  write\_i & I & 1 & Write enable. The memory is written when asserted and read when deasserted. \\
+  \hline
+  write\_data\_i & I & 32 & Data to be written in memory \\
+  \hline
+  sel\_i & I & 4 & Byte selection enable \\
+  \hline
+  reg\_write\_i & I & 1 & Register write enable \\
+  \hline
+  reg\_addr\_i & I & 5 & Register write address \\
+  \hline
   \multicolumn{4}{|l|}{\textbf{WISHBONE MASTER}} \\
   \hline
   wb\_adr\_o & O & 32 & The address output array is used to pass binary address. \\
@@ -44,15 +58,11 @@
   \hline
   output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
   \hline
-  result\_write\_o & O & 1 & Asserted when the instruction shall store its result. \\
+  reg\_write\_o & O & 1 & Asserted when the instruction shall store its result. \\
   \hline
-  result\_addr\_o & O & 5 & Address of the register where the result shall be stored. \\
+  reg\_addr\_o & O & 5 & Address of the register where the result shall be stored. \\
   \hline
-  result\_o & O & 32 & Instruction result. \\
-  \hline
-  branch\_o & O & 1 & Branch request. \\
-  \hline
-  boffset\_o & O & 20 & Branch offset from pc\_i \\
+  reg\_data\_o & O & 32 & Instruction result. \\
   \hline
 \end{xltabular}
 }
