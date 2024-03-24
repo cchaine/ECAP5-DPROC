@@ -129,13 +129,9 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
       (core->tb_lsm->dut->state_q == 0),
       "Failed to reset to the IDLE state");
 
-  CHECK("tb_lsm.no_stall.LOAD_02",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
-
-  CHECK("tb_lsm.no_stall.LOAD_03",
-      (core->reg_addr_o == 0),
-      "Failed to detect a failed input handshake");
+  CHECK("tb_lsm.no_stall.LOAD_28",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
+      "Failed to initialize the memory interface");
 
   // LH
 
@@ -204,6 +200,10 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
 
+  CHECK("tb_lsm.no_stall.LOAD_29",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
+      "Failed to detect a successfull memory request");
+
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
   tb->tick();
@@ -233,6 +233,10 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   CHECK("tb_lsm.no_stall.LOAD_22",
       (core->output_valid_o == 1),
       "Failed to validate the output");
+
+  CHECK("tb_lsm.no_stall.LOAD_30",
+      (core->wb_cyc_o == 0),
+      "Failed to deasssert cyc after successfull memory request");
 
   // Next instruction (nop)
 
@@ -313,10 +317,6 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
   core->wb_ack_i = 1;
   tb->tick();
 
-  CHECK("tb_lsm.no_stall.STORE_09",
-      (core->reg_write_o == 0),
-      "Failed to set reg_write_o");
-
   CHECK("tb_lsm.no_stall.STORE_10",
       (core->tb_lsm->dut->state_q == 3),
       "Failed to switch to the DONE state");
@@ -329,15 +329,15 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
 
+  CHECK("tb_lsm.no_stall.STORE_19",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
+      "Failed to detect a successfull memory request");
+
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
   tb->tick();
 
   // Output the result (none)
-
-  CHECK("tb_lsm.no_stall.STORE_13",
-      (core->reg_write_o == 0),
-      "Failed to set reg_write_o");
 
   CHECK("tb_lsm.no_stall.STORE_14",
       (core->tb_lsm->dut->state_q == 0),
@@ -362,6 +362,10 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
   CHECK("tb_lsm.no_stall.STORE_18",
       (core->output_valid_o == 1),
       "Failed to validate the output");
+
+  CHECK("tb_lsm.no_stall.STORE_20",
+      (core->wb_cyc_o == 0),
+      "Failed to deasssert cyc after successfull memory request");
 }
 
 void tb_lsm_memory_stall(TB_Lsm * tb) {
@@ -382,20 +386,28 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   tb->_nop();
 
   // Hold the request
+  
+  CHECK("tb_lsm.memory_stall.01",
+      (core->tb_lsm->dut->state_q == 4),
+      "Failed to switch to the MEMORY_STALL state");
 
-  CHECK("tb_lsm.memory_stall.LOAD_01",
+  CHECK("tb_lsm.memory_stall.02",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
   tb->tick();
 
   // Hold the request
+  
+  CHECK("tb_lsm.memory_stall.03",
+      (core->tb_lsm->dut->state_q == 4),
+      "Failed to stay in the MEMORY_STALL state");
 
-  CHECK("tb_lsm.memory_stall.LOAD_02",
+  CHECK("tb_lsm.memory_stall.04",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_stall.LOAD_03",
+  CHECK("tb_lsm.memory_stall.05",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
@@ -404,11 +416,11 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
 
   // Hold the request
 
-  CHECK("tb_lsm.memory_stall.LOAD_04",
+  CHECK("tb_lsm.memory_stall.06",
       (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_stall.LOAD_05",
+  CHECK("tb_lsm.memory_stall.07",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
@@ -421,11 +433,11 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
 
-  CHECK("tb_lsm.memory_stall.LOAD_06",
+  CHECK("tb_lsm.memory_stall.08",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_stall.LOAD_07",
+  CHECK("tb_lsm.memory_stall.09",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
@@ -433,11 +445,11 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
 
   // Output the result
 
-  CHECK("tb_lsm.memory_stall.LOAD_08",
+  CHECK("tb_lsm.memory_stall.10",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_stall.LOAD_09",
+  CHECK("tb_lsm.memory_stall.11",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
@@ -464,36 +476,48 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
   tb->tick();
   
   // Wait before sending the response
-
+  
   CHECK("tb_lsm.memory_wait.01",
-      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
-      "Failed to wait for the memory response");
+      (core->tb_lsm->dut->state_q == 2),
+      "Failed to switch to the MEMORY_WAIT state");
 
   CHECK("tb_lsm.memory_wait.02",
-      (core->output_valid_o == 0),
-      "Failed to validate the output");
-
-  tb->tick();
-
-  // Wait before sending the response
-
-  CHECK("tb_lsm.memory_wait.03",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to wait for the memory response");
 
-  CHECK("tb_lsm.memory_wait.04",
+  CHECK("tb_lsm.memory_wait.03",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
   tb->tick();
 
   // Wait before sending the response
+  
+  CHECK("tb_lsm.memory_wait.04",
+      (core->tb_lsm->dut->state_q == 2),
+      "Failed to stay in the MEMORY_WAIT state");
 
   CHECK("tb_lsm.memory_wait.05",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to wait for the memory response");
 
   CHECK("tb_lsm.memory_wait.06",
+      (core->output_valid_o == 0),
+      "Failed to validate the output");
+
+  tb->tick();
+
+  // Wait before sending the response
+  
+  CHECK("tb_lsm.memory_wait.07",
+      (core->tb_lsm->dut->state_q == 2),
+      "Failed to stay in the MEMORY_WAIT state");
+
+  CHECK("tb_lsm.memory_wait.08",
+      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
+      "Failed to wait for the memory response");
+
+  CHECK("tb_lsm.memory_wait.09",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
@@ -506,11 +530,11 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
 
-  CHECK("tb_lsm.memory_wait.07",
+  CHECK("tb_lsm.memory_wait.10",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_wait.08",
+  CHECK("tb_lsm.memory_wait.11",
       (core->output_valid_o == 0),
       "Failed to validate the output");
 
@@ -518,11 +542,11 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
 
   // Output the result
 
-  CHECK("tb_lsm.memory_wait.09",
+  CHECK("tb_lsm.memory_wait.12",
       (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
       "Failed to hold the memory request");
 
-  CHECK("tb_lsm.memory_wait.10",
+  CHECK("tb_lsm.memory_wait.13",
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
