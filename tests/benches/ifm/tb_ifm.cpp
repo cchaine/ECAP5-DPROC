@@ -46,6 +46,7 @@ public:
 
 void tb_ifm_no_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 1;
   tb->reset();
 
   CHECK("tb_ifm.no_stall.01",
@@ -162,6 +163,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
 
 void tb_ifm_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 2;
   tb->reset();
 
   // Leave the reset state
@@ -251,6 +253,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_memory_wait_state(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 3;
   tb->reset();
 
   // Leave the reset state
@@ -332,6 +335,7 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
 void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 4;
   tb->reset();
 
   // Leave the reset state
@@ -464,6 +468,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 5;
   tb->reset();
 
   // Leave the reset state
@@ -506,6 +511,7 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 6;
   tb->reset();
 
   // Leave the reset state
@@ -559,6 +565,7 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 7;
   tb->reset();
 
   // Leave the reset state
@@ -614,6 +621,7 @@ void tb_ifm_debug_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 8;
   tb->reset();
   
   // Leave the reset state
@@ -668,6 +676,7 @@ void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 9;
   tb->reset();
 
   // Leave the reset state
@@ -713,6 +722,7 @@ void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 10;
   tb->reset();
 
   // Leave the reset state
@@ -758,6 +768,7 @@ void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 11;
   tb->reset();
 
   // Leave the reset state
@@ -816,6 +827,7 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 12;
   tb->reset();
 
   // Leave the reset state
@@ -858,6 +870,7 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 13;
   tb->reset();
 
   // Leave the reset state
@@ -911,6 +924,7 @@ void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 14;
   tb->reset();
 
   // Leave the reset state
@@ -966,6 +980,7 @@ void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 15;
   tb->reset();
   
   // Leave the reset state
@@ -1020,6 +1035,7 @@ void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 16;
   tb->reset();
 
   // Leave the reset state
@@ -1065,6 +1081,7 @@ void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 17;
   tb->reset();
 
   // Leave the reset state
@@ -1108,6 +1125,7 @@ void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 18;
   tb->reset();
 
   // Leave the reset state
@@ -1166,6 +1184,7 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 19;
   tb->reset();
 
   // Leave the reset state
@@ -1209,6 +1228,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 20;
   tb->reset();
 
   // Leave the reset state
@@ -1263,6 +1283,7 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 21;
   tb->reset();
 
   // Leave the reset state
@@ -1319,6 +1340,7 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 22;
   tb->reset();
   
   // Leave the reset state
@@ -1374,6 +1396,7 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 23;
   tb->reset();
 
   // Leave the reset state
@@ -1420,6 +1443,7 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 24;
   tb->reset();
 
   // Leave the reset state
@@ -1464,6 +1488,7 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 25;
   tb->reset();
 
   // Leave the reset state
@@ -1525,6 +1550,7 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_precedence_debug(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 26;
   tb->reset();
 
   // Leave the reset state
@@ -1565,6 +1591,7 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
 
 void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 27;
   tb->reset();
 
   // Leave the reset state
@@ -1603,6 +1630,7 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
 
 void tb_ifm_precedence_branch(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 28;
   tb->reset();
 
   // Leave the reset state
@@ -1639,6 +1667,7 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
 
 void tb_ifm_precedence_increment(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
+  core->testcase = 29;
   tb->reset();
 
   // Leave the reset state
