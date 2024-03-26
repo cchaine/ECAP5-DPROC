@@ -407,105 +407,158 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
 void tb_lsm_memory_stall(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   core->testcase = 3;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LH with a staled memory
+  //    tick 1. Nothing (core holds request)
+  //    tick 2. Nothing (core holds request)
+  //    tick 3. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 4. Nothing (core outputs result of LH)
+  //    tick 5. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
 
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   // Memory stall
   core->wb_stall_i = 1;
   core->input_valid_i = 1;
 
-  // LH
-
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
   tb->_lh(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
+  
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,        (core->tb_lsm->dut->state_q  ==  4));
+  tb->check(COND_wishbone,     (core->wb_stb_o              ==  1)    &&
+                               (core->wb_cyc_o              ==  1));  
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_nop();
 
-  // Hold the request
+  //=================================
+  //      Tick (2)
   
-  CHECK("tb_lsm.memory_stall.01",
-      (core->tb_lsm->dut->state_q == 4),
-      "Failed to switch to the MEMORY_STALL state");
-
-  CHECK("tb_lsm.memory_stall.02",
-      (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
-      "Failed to hold the memory request");
-
   tb->tick();
 
-  // Hold the request
+  //`````````````````````````````````
+  //      Checks 
   
-  CHECK("tb_lsm.memory_stall.03",
-      (core->tb_lsm->dut->state_q == 4),
-      "Failed to stay in the MEMORY_STALL state");
+  tb->check(COND_state,        (core->tb_lsm->dut->state_q  ==  4));
+  tb->check(COND_wishbone,     (core->wb_stb_o              ==  1)    &&
+                               (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid, (core->output_valid_o        ==  0));
 
-  CHECK("tb_lsm.memory_stall.04",
-      (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
-      "Failed to hold the memory request");
-
-  CHECK("tb_lsm.memory_stall.05",
-      (core->output_valid_o == 0),
-      "Failed to validate the output");
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->wb_stall_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  // Hold the request
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,        (core->tb_lsm->dut->state_q  ==  1));
+  tb->check(COND_wishbone,     (core->wb_stb_o              ==  1)    &&
+                               (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid, (core->output_valid_o        ==  0));
 
-  CHECK("tb_lsm.memory_stall.06",
-      (core->wb_stb_o == 1) && (core->wb_cyc_o == 1),
-      "Failed to hold the memory request");
-
-  CHECK("tb_lsm.memory_stall.07",
-      (core->output_valid_o == 0),
-      "Failed to validate the output");
-
-  // Answer to the request
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   uint32_t data = rand();
   core->wb_ack_i = 1;
   core->wb_dat_i = data;
+
+  //=================================
+  //      Tick (4)
+
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_wishbone,     (core->wb_stb_o              ==  0)    &&
+                               (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid, (core->output_valid_o        ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->wb_ack_i = 0;
   core->wb_dat_i = 0;
 
-  CHECK("tb_lsm.memory_stall.08",
-      (core->wb_stb_o == 0) && (core->wb_cyc_o == 1),
-      "Failed to hold the memory request");
-
-  CHECK("tb_lsm.memory_stall.09",
-      (core->output_valid_o == 0),
-      "Failed to validate the output");
+  //=================================
+  //      Tick (5)
 
   tb->tick();
 
-  // Output the result
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_wishbone,     (core->wb_stb_o              ==  0)    &&
+                               (core->wb_cyc_o              ==  0));  
+  tb->check(COND_output_valid, (core->output_valid_o        ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
 
-  CHECK("tb_lsm.memory_stall.10",
-      (core->wb_stb_o == 0) && (core->wb_cyc_o == 0),
-      "Failed to hold the memory request");
+  CHECK("tb_lsm.memory_stall.01",
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_lsm.memory_stall.11",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  CHECK("tb_lsm.memory_stall.02",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  tb->tick();
-
-  // Next instruction
+  CHECK("tb_lsm.memory_stall_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_lsm_memory_wait(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   core->testcase = 4;
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
 
-  core->input_valid_i = 1;
-
   // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
 
   uint32_t addr = rand();
   uint32_t reg_addr = 1 + rand() % 31;
   tb->_lh(addr, reg_addr);
+
+  //=================================
+  //      Tick (0)
+  
   tb->tick();
   tb->_nop();
 
@@ -947,7 +1000,7 @@ int main(int argc, char ** argv, char ** env) {
   tb_lsm_no_stall_load(tb);
   tb_lsm_no_stall_store(tb);
 
-  //tb_lsm_memory_stall(tb);
+  tb_lsm_memory_stall(tb);
 
   //tb_lsm_memory_wait(tb);
 
