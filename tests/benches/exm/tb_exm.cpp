@@ -224,9 +224,6 @@ void tb_exm_alu_add(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_add(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.ADD_01",
@@ -259,9 +256,6 @@ void tb_exm_alu_sub(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint32_t result_addr = rand() % 32;
   tb->_sub(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.SUB_01",
@@ -294,9 +288,6 @@ void tb_exm_alu_xor(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_xor(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.XOR_01",
@@ -329,9 +320,6 @@ void tb_exm_alu_or(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_or(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.OR_01",
@@ -364,9 +352,6 @@ void tb_exm_alu_and(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_and(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.AND_01",
@@ -405,8 +390,6 @@ void tb_exm_alu_slt(TB_Exm * tb) {
   bool SLT_05_cond = 1;
   for(int i = 0; i < 10; i++) {
     tb->_slt((int32_t)operand2 - 8 + i, operand2, result_addr);
-    tb->tick();
-    tb->_nop();
     tb->tick();
 
     SLT_01_cond &= (core->result_o == (((int32_t)operand2 - 8 + i) < (int32_t)operand2));
@@ -453,8 +436,6 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
   for(int i = 0; i < 10; i++) {
     tb->_sltu((int32_t)operand2 - 8 + i, operand2, result_addr);
     tb->tick();
-    tb->_nop();
-    tb->tick();
 
     SLTU_01_cond &= (core->result_o == ((uint32_t)((int32_t)operand2 - 8 + i) < (uint32_t)(int32_t)operand2));
     SLTU_02_cond &= (core->result_write_o == 1);
@@ -493,9 +474,6 @@ void tb_exm_alu_sll(TB_Exm * tb) {
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_sll(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.SLL_01",
@@ -530,9 +508,6 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_srl(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.SRL_01",
@@ -557,9 +532,6 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   operand2 = 3 + rand() % 29;
   result_addr = rand() % 32;
   tb->_srl(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.alu.SRL_06",
@@ -594,9 +566,6 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_sra(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   uint32_t expected  = (operand1 >> (operand2 & 0x1F));
@@ -624,9 +593,6 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   operand2 = 3 + rand() % 29;
   result_addr = rand() % 32;
   tb->_sra(operand1, operand2, result_addr);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   expected  = (operand1 >> (operand2 & 0x1F));
@@ -663,9 +629,6 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_beq(operand1, operand2, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BEQ_01",
@@ -681,9 +644,6 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   // Test with equal values
   
   tb->_beq(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BEQ_04",
@@ -715,9 +675,6 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bne(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BNE_01",
@@ -733,9 +690,6 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   // Test with different values
 
   tb->_bne(operand1, operand2, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BNE_04",
@@ -766,9 +720,6 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_blt((int32_t)operand1 + 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLT_01",
@@ -784,9 +735,6 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   // Test with a value equal
 
   tb->_blt(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLT_04",
@@ -802,9 +750,6 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   // Test with a greater value 
 
   tb->_blt((int32_t)operand1 - 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLT_07",
@@ -835,9 +780,6 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   uint32_t operand1 = 2 % rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bltu((int32_t)operand1 + 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLTU_01",
@@ -853,9 +795,6 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   // Test with an equal value
 
   tb->_bltu(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLTU_04",
@@ -871,9 +810,6 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   // Test with a lower negative value (greater when unsigned)
 
   tb->_bltu((int32_t)operand1 - 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLTU_07",
@@ -889,9 +825,6 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   // Test with a lower positive value
 
   tb->_bltu((int32_t)operand1 - 2, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BLTU_10",
@@ -922,9 +855,6 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bge((int32_t)operand1 - 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGE_01",
@@ -940,9 +870,6 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   // Test with an equal value
 
   tb->_bge(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGE_04",
@@ -961,9 +888,6 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   // Test with a positive value
 
   tb->_bge((int32_t)operand1 + 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGE_08",
@@ -994,9 +918,6 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bgeu((int32_t)operand1 - 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGEU_01",
@@ -1015,9 +936,6 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   // Test with an equal value
 
   tb->_bgeu(operand1, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGEU_05",
@@ -1036,9 +954,6 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   // Test with a greater positive value
 
   tb->_bgeu((int32_t)operand1 + 10, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGEU_09",
@@ -1057,9 +972,6 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   // Test with a lower positive value
   
   tb->_bgeu((int32_t)operand1 - 2, operand1, branch_offset);
-
-  tb->tick();
-  tb->_nop();
   tb->tick();
 
   CHECK("tb_exm.branch.BGEU_13",
@@ -1082,22 +994,14 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  uint32_t operand1 = rand();
-  uint32_t operand2 = rand();
-  uint8_t result_addr1 = rand() % 32;
-  tb->_add(operand1, operand2, result_addr1);
-
-  tb->tick();
-
   CHECK("tb_exm.back_to_back.01",
       (core->output_valid_o == 0),
       "Failed to invalidate the output");
 
-  uint32_t operand3 = rand();
-  uint32_t operand4 = rand();
-  uint8_t result_addr2 = rand() % 32;
-  tb->_sub(operand3, operand4, result_addr2);
-
+  uint32_t operand1 = rand();
+  uint32_t operand2 = rand();
+  uint8_t result_addr = rand() % 32;
+  tb->_add(operand1, operand2, result_addr);
   tb->tick();
 
   CHECK("tb_exm.back_to_back.02",
@@ -1107,7 +1011,7 @@ void tb_exm_back_to_back(TB_Exm * tb) {
       (core->result_write_o == 1),
       "Failed to output the result write");
   CHECK("tb_exm.back_to_back.04",
-      (core->result_addr_o == result_addr1),
+      (core->result_addr_o == result_addr),
       "Failed to output the result address");
   CHECK("tb_exm.back_to_back.05",
       (core->branch_o == 0),
@@ -1116,21 +1020,21 @@ void tb_exm_back_to_back(TB_Exm * tb) {
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
+
   operand1 = rand();
   operand2 = rand();
-  result_addr1 = rand() % 32;
-  tb->_add(operand1, operand2, result_addr1);
-
+  result_addr = rand() % 32;
+  tb->_sub(operand1, operand2, result_addr);
   tb->tick();
 
   CHECK("tb_exm.back_to_back.07",
-      (core->result_o == ((int32_t)operand3 - (int32_t)operand4)),
+      (core->result_o == ((int32_t)operand1 - (int32_t)operand2)),
       "Failed to execute operation back to back");
   CHECK("tb_exm.back_to_back.08",
       (core->result_write_o == 1),
       "Failed to output the result write");
   CHECK("tb_exm.back_to_back.09",
-      (core->result_addr_o == result_addr2),
+      (core->result_addr_o == result_addr),
       "Failed to output the result address");
   CHECK("tb_exm.back_to_back.10",
       (core->branch_o == 0),
@@ -1139,7 +1043,10 @@ void tb_exm_back_to_back(TB_Exm * tb) {
       (core->output_valid_o == 1),
       "Failed to validate the output");
 
-  tb->_nop();
+  operand1 = rand();
+  operand2 = rand();
+  result_addr = rand() % 32;
+  tb->_add(operand1, operand2, result_addr);
   tb->tick();
 
   CHECK("tb_exm.back_to_back.12",
@@ -1149,7 +1056,7 @@ void tb_exm_back_to_back(TB_Exm * tb) {
       (core->result_write_o == 1),
       "Failed to output the result write");
   CHECK("tb_exm.back_to_back.14",
-      (core->result_addr_o == result_addr1),
+      (core->result_addr_o == result_addr),
       "Failed to output the result address");
   CHECK("tb_exm.back_to_back.15",
       (core->branch_o == 0),
@@ -1181,8 +1088,6 @@ void tb_exm_bubble(TB_Exm * tb) {
 
   tb->tick();
 
-  tb->tick();
-
   CHECK("tb_exm.bubble.01",
       (core->result_write_o == 0),
       "Failed to deassert result_write_o when bubble");
@@ -1200,17 +1105,14 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 0;
 
-  uint32_t operand1 = rand();
-  uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
-
-  tb->tick();
-
   CHECK("tb_exm.wait_after_reset.01",
       (core->input_ready_o == 0),
       "Failed to deassert input_ready_o");
 
+  uint32_t operand1 = rand();
+  uint32_t operand2 = rand();
+  uint8_t result_addr = rand() % 32;
+  tb->_add(operand1, operand2, result_addr);
   tb->tick();
 
   CHECK("tb_exm.wait_after_reset.02",
@@ -1241,24 +1143,24 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
       (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
       "Failed to handle input handshake");
 
-  core->output_ready_i = 1;
   tb->tick();
 
   CHECK("tb_exm.wait_after_reset.08",
-      (core->input_ready_o == 1),
+      (core->input_ready_o == 0),
       "Failed to reassert input_ready_o");
 
   CHECK("tb_exm.wait_after_reset.09",
       (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
       "Failed to handle input handshake");
 
-  tb->_sub(operand1, operand2, result_addr);
+  core->output_ready_i = 1;
   tb->tick();
 
   CHECK("tb_exm.wait_after_reset.10",
       (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
       "Failed to handle input handshake");
 
+  tb->_sub(operand1, operand2, result_addr);
   tb->tick();
 
   CHECK("tb_exm.wait_after_reset.11",
@@ -1284,15 +1186,13 @@ void tb_exm_wait(TB_Exm * tb) {
 
   tb->_add(operand1, operand2, result_addr);
   tb->tick();
-  
-  tb->_sub(operand1, operand2, result_addr + 10);
-  core->output_ready_i = 0;
-  tb->tick();
 
   CHECK("tb_exm.wait.01",
       (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
       "Failed to hold the output values");
-
+  
+  tb->_sub(operand1, operand2, result_addr + 10);
+  core->output_ready_i = 0;
   tb->tick();
 
   CHECK("tb_exm.wait.02",
@@ -1311,21 +1211,21 @@ void tb_exm_wait(TB_Exm * tb) {
       (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
       "Failed to hold the output values");
 
-  core->output_ready_i = 1;
-  
   tb->tick();
 
   CHECK("tb_exm.wait.05",
       (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
       "Failed to hold the output values");
 
-  tb->_nop();
-  tb->tick();
+  core->output_ready_i = 1;
   
+  tb->tick();
+
   CHECK("tb_exm.wait.06",
       (core->result_o == ((int32_t)operand1 - (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr + 10) && (core->branch_o == 0) && (core->output_valid_o == 1),
       "Failed to output values");
-  
+
+  tb->_nop();
   tb->tick();
 }
 
@@ -1353,14 +1253,14 @@ void tb_exm_reset(TB_Exm * tb) {
   tb->tick();
   core->rst_i = 0;
 
-  tb->tick();
-
   CHECK("tb_exm.reset.01",
       (core->result_write_o == 0),
       "Failed to deassert result_write_o when reset");
   CHECK("tb_exm.reset.02",
       (core->branch_o == Vtb_exm_ecap5_dproc_pkg::NO_BRANCH),
       "Failed to set branch to NO_BRANCH when reset");
+
+  tb->tick();
 
   core->input_valid_i = 0;
   core->alu_operand1_i = rand();
