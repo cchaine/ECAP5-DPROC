@@ -10,12 +10,10 @@ if(NOT DEFINED ecap5_treq_EXECUTABLE)
 endif()
 
 # Define commands for using ECAP5-TREQ
-add_custom_command(
-  OUTPUT report.html
+add_custom_target(report
   DEPENDS ${TEST_OUTPUTS}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMAND ${ecap5_treq_EXECUTABLE} -c ${CMAKE_SOURCE_DIR}/config/treq.json gen_report -o ${CMAKE_BINARY_DIR}/report.html --html)
-add_custom_target(report DEPENDS report.html)
 add_custom_command(
   OUTPUT report.md
   DEPENDS ${TEST_OUTPUTS}

@@ -42,6 +42,8 @@ public:
 
 void tb_regm_read_port_a(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 1;
+
   bool success = true;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
@@ -68,6 +70,8 @@ void tb_regm_read_port_a(TB_Regm * tb) {
 
 void tb_regm_read_port_b(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 2;
+
   bool success = true;
   for(int i = 0; i < 32; i++) {
     // set a random value inside the register to be read
@@ -94,6 +98,8 @@ void tb_regm_read_port_b(TB_Regm * tb) {
 
 void tb_regm_write_x0(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 3;
+
   // write to x0
   core->waddr_i = 0;
   core->wdata_i = rand();
@@ -112,6 +118,8 @@ void tb_regm_write_x0(TB_Regm * tb) {
 
 void tb_regm_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 4;
+
   bool success = true;
   for(int i = 1; i < 32; i++) {
     // write a random value
@@ -138,6 +146,8 @@ void tb_regm_write(TB_Regm * tb) {
 
 void tb_regm_parallel_read(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 5;
+
   // set a random value before reading back
   uint32_t value = rand();
   tb->set_register(5, value);
@@ -159,6 +169,8 @@ void tb_regm_parallel_read(TB_Regm * tb) {
 
 void tb_regm_read_before_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
+  core->testcase = 6;
+
   // write a value in the register
   uint32_t previous_value = rand();
   tb->set_register(5, previous_value);

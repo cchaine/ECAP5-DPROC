@@ -21,6 +21,8 @@
  */
 
 module tb_ifm (
+  input   int          testcase,
+  
   input   logic        clk_i,
   input   logic        rst_i,
   input   logic        irq_i,

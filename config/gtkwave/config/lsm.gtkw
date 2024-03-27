@@ -1,0 +1,109 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Wed Mar 20 15:26:24 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/lsm.vcd"
+[dumpfile_mtime] "Wed Mar 20 15:26:07 2024"
+[dumpfile_size] 11983
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/lsm.gtkw"
+[timestart] 8
+[size] 2112 867
+[pos] -1 -1
+*-6.701643 188 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_lsm.
+[sst_width] 253
+[signals_width] 177
+[sst_expanded] 1
+[sst_vpaned_height] 449
+@2025
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/lsm_testcase_filter.gtkw
+TOP.testcase[31:0]
+@28
+TOP.tb_lsm.clk_i
+TOP.tb_lsm.rst_i
+@200
+-Input
+@28
+TOP.tb_lsm.input_ready_o
+TOP.tb_lsm.input_valid_i
+@22
+TOP.tb_lsm.alu_result_i[31:0]
+@28
+TOP.tb_lsm.enable_i
+TOP.tb_lsm.write_i
+@22
+TOP.tb_lsm.sel_i[3:0]
+@28
+TOP.tb_lsm.reg_write_i
+@22
+TOP.tb_lsm.reg_addr_i[4:0]
+@200
+-Wishbone
+@2028
+[color] 2
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/lsm_state_filter.gtkw
+TOP.tb_lsm.dut.state_q[2:0]
+@22
+[color] 2
+TOP.tb_lsm.wb_adr_o[31:0]
+[color] 2
+TOP.tb_lsm.wb_dat_i[31:0]
+[color] 2
+TOP.tb_lsm.wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_lsm.wb_we_o
+@22
+[color] 2
+TOP.tb_lsm.wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_lsm.wb_stb_o
+[color] 2
+TOP.tb_lsm.wb_ack_i
+[color] 2
+TOP.tb_lsm.wb_cyc_o
+[color] 2
+TOP.tb_lsm.wb_stall_i
+@200
+-Output
+@28
+[color] 5
+TOP.tb_lsm.output_valid_o
+[color] 5
+TOP.tb_lsm.reg_write_o
+@22
+[color] 5
+TOP.tb_lsm.reg_addr_o[4:0]
+[color] 5
+TOP.tb_lsm.reg_data_o[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

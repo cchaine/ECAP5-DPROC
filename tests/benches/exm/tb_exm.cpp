@@ -213,6 +213,7 @@ public:
 
 void tb_exm_alu_add(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 1;
   tb->reset();
   tb->_nop();
   
@@ -244,6 +245,7 @@ void tb_exm_alu_add(TB_Exm * tb) {
 
 void tb_exm_alu_sub(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 2;
   tb->reset();
   tb->_nop();
   
@@ -275,6 +277,7 @@ void tb_exm_alu_sub(TB_Exm * tb) {
 
 void tb_exm_alu_xor(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 3;
   tb->reset();
   tb->_nop();
   
@@ -306,6 +309,7 @@ void tb_exm_alu_xor(TB_Exm * tb) {
 
 void tb_exm_alu_or(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 4;
   tb->reset();
   tb->_nop();
   
@@ -337,6 +341,7 @@ void tb_exm_alu_or(TB_Exm * tb) {
 
 void tb_exm_alu_and(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 5;
   tb->reset();
   tb->_nop();
   
@@ -368,6 +373,7 @@ void tb_exm_alu_and(TB_Exm * tb) {
 
 void tb_exm_alu_slt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 6;
   tb->reset();
   tb->_nop();
   
@@ -412,6 +418,7 @@ void tb_exm_alu_slt(TB_Exm * tb) {
 
 void tb_exm_alu_sltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 7;
   tb->reset();
   tb->_nop();
   
@@ -456,6 +463,7 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
 
 void tb_exm_alu_sll(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 8;
   tb->reset();
   tb->_nop();
   
@@ -487,6 +495,7 @@ void tb_exm_alu_sll(TB_Exm * tb) {
 
 void tb_exm_alu_srl(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 9;
   tb->reset();
   tb->_nop();
   
@@ -544,6 +553,7 @@ void tb_exm_alu_srl(TB_Exm * tb) {
 
 void tb_exm_alu_sra(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 10;
   tb->reset();
   tb->_nop();
   
@@ -606,6 +616,7 @@ void tb_exm_alu_sra(TB_Exm * tb) {
 
 void tb_exm_branch_beq(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 11;
   tb->reset();
   tb->_nop();
   
@@ -651,6 +662,7 @@ void tb_exm_branch_beq(TB_Exm * tb) {
 
 void tb_exm_branch_bne(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 12;
   tb->reset();
   tb->_nop();
   
@@ -696,6 +708,7 @@ void tb_exm_branch_bne(TB_Exm * tb) {
 
 void tb_exm_branch_blt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 13;
   tb->reset();
   tb->_nop();
   
@@ -755,6 +768,7 @@ void tb_exm_branch_blt(TB_Exm * tb) {
 
 void tb_exm_branch_bltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 14;
   tb->reset();
   tb->_nop();
   
@@ -829,6 +843,7 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
 
 void tb_exm_branch_bge(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 15;
   tb->reset();
   tb->_nop();
   
@@ -891,6 +906,7 @@ void tb_exm_branch_bge(TB_Exm * tb) {
 
 void tb_exm_branch_bgeu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 16;
   tb->reset();
   tb->_nop();
   
@@ -971,6 +987,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
 
 void tb_exm_back_to_back(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 17;
   tb->reset();
   tb->_nop();
   
@@ -1051,6 +1068,7 @@ void tb_exm_back_to_back(TB_Exm * tb) {
 
 void tb_exm_bubble(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 18;
   tb->reset();
   tb->_nop();
 
@@ -1080,6 +1098,7 @@ void tb_exm_bubble(TB_Exm * tb) {
 
 void tb_exm_wait_after_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 19;
   tb->reset();
   tb->_nop();
   
@@ -1151,6 +1170,7 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
 
 void tb_exm_wait(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 20;
   tb->reset();
   tb->_nop();
   
@@ -1211,6 +1231,7 @@ void tb_exm_wait(TB_Exm * tb) {
 
 void tb_exm_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
+  core->testcase = 21;
   tb->reset();
   tb->_nop();
 

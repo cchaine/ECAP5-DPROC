@@ -21,6 +21,8 @@
  */
 
 module tb_regm (
+  input   int          testcase,
+
   input   logic        clk_i,     
   input   logic[4:0]   raddr1_i,  
   output  logic[31:0]  rdata1_o,  
