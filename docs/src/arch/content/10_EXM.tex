@@ -12,25 +12,6 @@
 
     \subsubsection{Input handshake}
 
-      \req{D\_EXM\_INPUT\_REGISTER\_01}{
-          All inputs shall be registered on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
-        }
-
-      \req{D\_EXM\_INPUT\_REGISTER\_02}{
-          Input registers shall be loaded with values from table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
-        }
-
-      \req{D\_EXM\_INPUT\_REGISTER\_03}{
-          Input registers shall be loaded with values from table \ref{tab:exm-bubble-input} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} is deasserted.
-        }
-
-      \begin{table}[H]
-        \centering
-        \input{arch/tables/10_exm-bubble-input.tex}
-        \caption{Input signal override values for implementing a pipeline bubble}
-        \label{tab:exm-bubble-input}
-      \end{table}
-
       \req{D\_EXM\_INPUT\_READY\_01}{
           The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{output\_ready\_o} is deasserted.
         }
@@ -40,95 +21,95 @@
       \paragraph{Result address}
 
         \req{D\_EXM\_OUTPUT\_ADDR\_01}{
-            The value of \texttt{result\_addr\_o} shall be set to the registered value of \texttt{result\_addr\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
+            The value of \texttt{result\_addr\_o} shall be set to the value of \texttt{result\_addr\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_i} is asserted.
           }
 
       \paragraph{Result write}
 
         \req{D\_EXM\_OUTPUT\_WRITE\_01}{
-          The \texttt{result\_write\_o} output shall be set to the registered value of \texttt{result\_write\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
+            The \texttt{result\_write\_o} output shall be set to the value of \texttt{result\_write\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_i} is asserted.
           }
 
       \paragraph{Result}
 
         \req{D\_EXM\_OUTPUT\_RESULT\_01}{
-            The value of \texttt{result\_o} shall be set to the signed sum of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{alu\_op\_i} is \texttt{ALU\_ADD} and \texttt{alu\_sub\_i} is deasserted.
+            The value of \texttt{result\_o} shall be set to the signed sum of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{alu\_op\_i} is \texttt{ALU\_ADD} and \texttt{alu\_sub\_i} is deasserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_02}{
-            The value of \texttt{result\_o} shall be set to the signed difference of \texttt{alu\_operand1\_i} minus \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{alu\_op\_i} is \texttt{ALU\_ADD} and \texttt{alu\_sub\_i} is asserted.
+            The value of \texttt{result\_o} shall be set to the signed difference of \texttt{alu\_operand1\_i} minus \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{alu\_op\_i} is \texttt{ALU\_ADD} and \texttt{alu\_sub\_i} is asserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_03}{
-            The value of \texttt{result\_o} shall be set to the bitwise xor of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_XOR}.
+            The value of \texttt{result\_o} shall be set to the bitwise xor of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_XOR}.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_04}{
-            The value of \texttt{result\_o} shall be set to the bitwise or of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_OR}.
+            The value of \texttt{result\_o} shall be set to the bitwise or of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_OR}.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_05}{
-            The value of \texttt{result\_o} shall be set to the bitwise and of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_AND}.
+            The value of \texttt{result\_o} shall be set to the bitwise and of \texttt{alu\_operand1\_i} and \texttt{alu\_operand2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_AND}.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_06}{
-            The value of \texttt{result\_o} shall be set to 1 when \texttt{alu\_operand1\_i} is lower than \texttt{alu\_operand2\_i} using a signed comparison, 0 otherwise, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_SLT}.
+            The value of \texttt{result\_o} shall be set to 1 when \texttt{alu\_operand1\_i} is lower than \texttt{alu\_operand2\_i} using a signed comparison, 0 otherwise, on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_SLT}.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_07}{
-            The value of \texttt{result\_o} shall be set to 1 when \texttt{alu\_operand1\_i} is lower than \texttt{alu\_operand2\_i} using an unsigned comparison, 0 otherwise, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_SLTU}.
+            The value of \texttt{result\_o} shall be set to 1 when \texttt{alu\_operand1\_i} is lower than \texttt{alu\_operand2\_i} using an unsigned comparison, 0 otherwise, on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{alu\_op\_i} is \texttt{ALU\_SLTU}.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_08}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted left by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the right bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT} and \texttt{alu\_shift\_left\_i} is asserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted left by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the right bits are filled with zeros, on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT} and \texttt{alu\_shift\_left\_i} is asserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_09}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with zeros, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is deasserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with zeros, on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is deasserted.
           }
 
         \req{D\_EXM\_OUTPUT\_RESULT\_10}{
-            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with the most significant bit of \texttt{alu\_operand1\_i}, on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is asserted.
+            The value of \texttt{result\_o} shall be \texttt{alu\_operand1\_i} shifted right by the amount specified by the first 5 bits of \texttt{alu\_operand2\_i}, the left bits are filled with the most significant bit of \texttt{alu\_operand1\_i}, on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted,  \texttt{alu\_op\_i} is \texttt{ALU\_SHIFT}, \texttt{alu\_shift\_left\_i} is deasserted and \texttt{alu\_signed\_shift\_i} is asserted.
           }
 
       \paragraph{Branch}
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_01}{
-            The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted and \texttt{branch\_cond\_i} is \texttt{NO\_BRANCH}.
+            The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{branch\_cond\_i} is \texttt{NO\_BRANCH}.
           }
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_02}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BEQ} and the result of the ALU's sum is zero.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BEQ} and the result of the ALU's sum is zero.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's sum is the difference of both ALU operands.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_03}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BNE} and the result of the ALU's sum is not zero.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BNE} and the result of the ALU's sum is not zero.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's sum is the difference of both ALU operands.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_04}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLT} and the result of the ALU's slt.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLT} and the result of the ALU's slt.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using a signed comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_05}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLTU} and the result of the ALU's sltu.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLTU} and the result of the ALU's sltu.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using an unsigned comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_06}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGE} and the inverse of result of the ALU's slt.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGE} and the inverse of result of the ALU's slt.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using a signed comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_07}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGEU} and the inverse of result of the ALU's sltu.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGEU} and the inverse of result of the ALU's sltu.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using an unsigned comparison. 0 otherwise.
           ]
@@ -136,13 +117,13 @@
       \paragraph{Branch offset}
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_OFFSET\_01}{
-            The value of \texttt{branch\_offset\_o} shall be set to the registered value of \texttt{branch\_offset\_i} on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_i} is asserted.
+            The value of \texttt{branch\_offset\_o} shall be set to the registered value of \texttt{branch\_offset\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_i} is asserted.
           }
 
     \subsubsection{Output handshake}
 
       \req{D\_EXM\_OUTPUT\_HANDSHAKE\_01}{
-          The \texttt{output\_valid\_o} output shall be asserted on the rising edge of \texttt{clk\_i} after \texttt{input\_ready\_o} is asserted.
+          The \texttt{output\_valid\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted.
         }
 
       \req{D\_EXM\_OUTPUT\_HANDSHAKE\_02}{
