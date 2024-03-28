@@ -37,15 +37,14 @@
 class TB_Lsm : public Testbench<Vtb_lsm> {
 public:
   void reset() {
-    Testbench<Vtb_lsm>::reset();
-
     this->_nop();
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
     }
     this->core->rst_i = 0;
-    this->cycle = 0;
+
+    Testbench<Vtb_lsm>::reset();
   }
 
   void _nop() {
@@ -538,7 +537,7 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_lsm.memory_stall_03",
+  CHECK("tb_lsm.memory_stall.03",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }

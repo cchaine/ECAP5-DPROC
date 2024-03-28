@@ -34,14 +34,14 @@
 class TB_Exm : public Testbench<Vtb_exm> {
 public:
   void reset() {
-    Testbench<Vtb_exm>::reset();
-
     this->_nop();
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
     }
     this->core->rst_i = 0;
+
+    Testbench<Vtb_exm>::reset();
   }
   
   void _nop() {
@@ -215,6 +215,7 @@ public:
 };
 
 enum CondId {
+  COND_input_ready,
   COND_result,
   COND_branch,
   COND_output_valid,
@@ -227,7 +228,7 @@ void tb_exm_alu_add(TB_Exm * tb) {
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
-  //    tick 1. Set inputs for nop (core outputs result of ADD)
+  //    tick 1. Nothing (core outputs result of ADD)
 
   //=================================
   //      Tick (0)
@@ -249,11 +250,6 @@ void tb_exm_alu_add(TB_Exm * tb) {
   //      Tick (1)
   
   tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  tb->_nop();
 
   //`````````````````````````````````
   //      Checks 
@@ -284,9 +280,19 @@ void tb_exm_alu_add(TB_Exm * tb) {
 void tb_exm_alu_sub(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 2;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for SUB
+  //    tick 1. Nothing (core outputs result of SUB)
+
+  //=================================
+  //      Tick (0)
+
   tb->reset();
-  tb->_nop();
-  
+
+  //`````````````````````````````````
+  //      Set inputs
+
   core->input_valid_i = 1;
   core->output_ready_i = 1;
   
@@ -294,30 +300,53 @@ void tb_exm_alu_sub(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint32_t result_addr = rand() % 32;
   tb->_sub(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+
+  uint32_t result = ((int32_t)operand1 - (int32_t)operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
   CHECK("tb_exm.alu.SUB_01",
-      (core->result_o == ((int32_t)operand1 - (int32_t)operand2)),
-      "Failed to execute ALU_ADD operation with sub");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.SUB_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.SUB_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SUB_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SUB_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_xor(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 3;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for XOR
+  //    tick 1. Nothing (core outputs result of XOR)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -326,30 +355,53 @@ void tb_exm_alu_xor(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_xor(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = (operand1 ^ operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_exm.alu.XOR_01",
-      (core->result_o == (operand1 ^ operand2)),
-      "Failed to execute ALU_XOR operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.XOR_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.XOR_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.XOR_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.XOR_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_or(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 4;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for OR
+  //    tick 1. Nothing (core outputs result of OR)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -358,30 +410,53 @@ void tb_exm_alu_or(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_or(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = (operand1 | operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_exm.alu.OR_01",
-      (core->result_o == (operand1 | operand2)),
-      "Failed to execute ALU_OR operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.OR_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.OR_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.OR_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.OR_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_and(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 5;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for AND
+  //    tick 1. Nothing (core outputs result of AND)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -390,30 +465,53 @@ void tb_exm_alu_and(TB_Exm * tb) {
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_and(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = (operand1 & operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_exm.alu.AND_01",
-      (core->result_o == (operand1 & operand2)),
-      "Failed to execute ALU_OR operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.AND_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.AND_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.AND_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.AND_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_slt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 6;
+
+  // The following actions are performed in this test :
+  //    tick 0.    Set inputs for SLT starting with false
+  //    tick 1-10. Set inputs for SLT crossing the false-true output
+
+  //=================================
+  //      Tick (0)
+
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -421,89 +519,115 @@ void tb_exm_alu_slt(TB_Exm * tb) {
   // Test values from operand2 - 8 to operand2 + 2
   uint8_t result_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
-  bool SLT_01_cond = 1;
-  bool SLT_02_cond = 1;
-  bool SLT_03_cond = 1;
-  bool SLT_04_cond = 1;
-  bool SLT_05_cond = 1;
+  uint32_t result;
   for(int i = 0; i < 10; i++) {
     tb->_slt((int32_t)operand2 - 8 + i, operand2, result_addr);
+
+    //=================================
+    //      Tick (1 to 10)
+    
     tb->tick();
 
-    SLT_01_cond &= (core->result_o == (((int32_t)operand2 - 8 + i) < (int32_t)operand2));
-    SLT_02_cond &= (core->result_write_o == 1);
-    SLT_03_cond &= (core->result_addr_o == result_addr);
-    SLT_04_cond &= (core->branch_o == 0);
-    SLT_05_cond &= (core->output_valid_o == 1);
+    //`````````````````````````````````
+    //      Checks 
+    
+    result = (((int32_t)operand2 - 8 + i) < (int32_t)operand2);
+    tb->check(COND_result,       (core->result_o        ==  result) && 
+                                 (core->result_write_o  ==  1)      &&
+                                 (core->result_addr_o   ==  result_addr));
+    tb->check(COND_branch,       (core->branch_o        ==  0));
+    tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   }
 
+  //`````````````````````````````````
+  //      Formal Checks 
+    
   CHECK("tb_exm.alu.SLT_01",
-      SLT_01_cond,
-      "Failed to execute ALU_SLT operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.SLT_02",
-      SLT_02_cond,
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.SLT_03",
-      SLT_03_cond,
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SLT_04",
-      SLT_04_cond,
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SLT_05",
-      SLT_05_cond,
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_sltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 7;
+
+  // The following actions are performed in this test :
+  //    tick 0.    Set inputs for SLTU starting with false
+  //    tick 1-10. Set inputs for SLTU crossing the false-true output
+
+  //=================================
+  //      Tick (0)
+
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
   
-  // Test values from operand2 - 8 to operand2 + 2 with operand2 - 8 being greater when unsigned
+  // Test values from operand2 - 8 to operand2 + 2
   uint8_t result_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
-  bool SLTU_01_cond = 1;
-  bool SLTU_02_cond = 1;
-  bool SLTU_03_cond = 1;
-  bool SLTU_04_cond = 1;
-  bool SLTU_05_cond = 1;
+  uint32_t result;
   for(int i = 0; i < 10; i++) {
     tb->_sltu((int32_t)operand2 - 8 + i, operand2, result_addr);
+
+    //=================================
+    //      Tick (1 to 10)
+    
     tb->tick();
 
-    SLTU_01_cond &= (core->result_o == ((uint32_t)((int32_t)operand2 - 8 + i) < (uint32_t)(int32_t)operand2));
-    SLTU_02_cond &= (core->result_write_o == 1);
-    SLTU_03_cond &= (core->result_addr_o == result_addr);
-    SLTU_04_cond &= (core->branch_o == 0);
-    SLTU_05_cond &= (core->output_valid_o == 1);
+    //`````````````````````````````````
+    //      Checks 
+    
+    result = ((uint32_t)((int32_t)operand2 - 8 + i) < (uint32_t)((int32_t)operand2));
+    tb->check(COND_result,       (core->result_o        ==  result) && 
+                                 (core->result_write_o  ==  1)      &&
+                                 (core->result_addr_o   ==  result_addr));
+    tb->check(COND_branch,       (core->branch_o        ==  0));
+    tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   }
 
+  //`````````````````````````````````
+  //      Formal Checks 
+    
   CHECK("tb_exm.alu.SLTU_01",
-      SLTU_01_cond,
-      "Failed to execute ALU_SLTU operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.SLTU_02",
-      SLTU_02_cond,
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.SLTU_03",
-      SLTU_03_cond,
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SLTU_04",
-      SLTU_04_cond,
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SLTU_05",
-      SLTU_05_cond,
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_sll(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 8;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for SLL
+  //    tick 1. Nothing (core outputs result of SLL)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -512,607 +636,857 @@ void tb_exm_alu_sll(TB_Exm * tb) {
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_sll(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = (operand1 << (operand2 & 0x1F));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_exm.alu.SLL_01",
-      (core->result_o == (operand1 << (operand2 & 0x1F))),
-      "Failed to execute ALU_SLL operation");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.alu.SLL_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
   CHECK("tb_exm.alu.SLL_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SLL_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SLL_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_srl(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 9;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for SRL with negative number
+  //    tick 1. Set inputs for SRL with positive number (core outputs result of SRL)
+  //    tick 2. Nothing (core outputs result of SRL)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a negative number
-  
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_srl(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.alu.SRL_01",
-      (core->result_o == (operand1 >> (operand2 & 0x1F))),
-      "Failed to execute ALU_SRL operation");
-  CHECK("tb_exm.alu.SRL_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.alu.SRL_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SRL_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SRL_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = (operand1 >> (operand2 & 0x1F));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with a positive number
+  //`````````````````````````````````
+  //      Set inputs
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
   result_addr = rand() % 32;
   tb->_srl(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.alu.SRL_06",
-      (core->result_o == (operand1 >> (operand2 & 0x1F))),
-      "Failed to execute ALU_SRL operation");
-  CHECK("tb_exm.alu.SRL_07",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.alu.SRL_08",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SRL_09",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SRL_10",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = (operand1 >> (operand2 & 0x1F));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.alu.SRL_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.alu.SRL_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.alu.SRL_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_alu_sra(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 10;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for SRA with negative number
+  //    tick 1. Set inputs for SRA with positive number (core outputs result of SRA)
+  //    tick 2. Nothing (core outputs result of SRA)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a negative number
-  
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
   uint32_t result_addr = rand() % 32;
   tb->_sra(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  uint32_t expected  = (operand1 >> (operand2 & 0x1F));
-           expected |= ((1 << (operand2 & 0x1F)) - 1) << (32 - (operand2 & 0x1F));
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result  = (operand1 >> (operand2 & 0x1F));
+           result |= ((1 << (operand2 & 0x1F)) - 1) << (32 - (operand2 & 0x1F));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  CHECK("tb_exm.alu.SRA_01",
-      (core->result_o == expected),
-      "Failed to execute ALU_SRA operation");
-  CHECK("tb_exm.alu.SRA_02",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.alu.SRA_03",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SRA_04",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SRA_05",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
-
-  // Test with a positive number
+  //`````````````````````````````````
+  //      Set inputs
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
   result_addr = rand() % 32;
   tb->_sra(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  expected  = (operand1 >> (operand2 & 0x1F));
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = (operand1 >> (operand2 & 0x1F));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  CHECK("tb_exm.alu.SRA_06",
-      (core->result_o == (operand1 >> (operand2 & 0x1F))),
-      "Failed to execute ALU_SRA operation");
-  CHECK("tb_exm.alu.SRA_07",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.alu.SRA_08",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.alu.SRA_09",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.alu.SRA_10",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.alu.SRA_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.alu.SRA_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.alu.SRA_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_beq(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 11;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BEQ with different values
+  //    tick 1. Set inputs for BEQ with equal values (core outputs result of BEQ)
+  //    tick 2. Nothing (core outputs result of BEQ)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with different values
-  
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_beq(operand1, operand2, branch_offset);
-  tb->tick();
 
-  CHECK("tb_exm.branch.BEQ_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BEQ_02",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BEQ_03",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
-
-  // Test with equal values
+  //=================================
+  //      Tick (1)
   
-  tb->_beq(operand1, operand1, branch_offset);
   tb->tick();
 
-  CHECK("tb_exm.branch.BEQ_04",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BEQ_05",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BEQ_06",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BEQ_07",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  tb->_beq(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.branch.BEQ_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BEQ_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BEQ_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_bne(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 12;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BNE with equal values
+  //    tick 1. Set inputs for BNE with different values (core outputs result of BNE)
+  //    tick 2. Nothing (core outputs result of BNE)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with equal values
-  
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bne(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BNE_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BNE_02",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BNE_03",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with different values
+  //`````````````````````````````````
+  //      Set inputs
 
   tb->_bne(operand1, operand2, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BNE_04",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BNE_05",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BNE_06",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BNE_07",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.branch.BNE_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BNE_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BNE_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_blt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 13;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BLT with greater value
+  //    tick 1. Set inputs for BLT with equal value (core outputs result of BLT)
+  //    tick 2. Set inputs for BLT with lower value (core outputs result of BLT)
+  //    tick 3. Nothing (core outputs result of BLT)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a lower value
-  
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_blt((int32_t)operand1 + 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLT_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLT_02",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLT_03",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with a value equal
+  //`````````````````````````````````
+  //      Set inputs
 
   tb->_blt(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLT_04",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLT_05",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLT_06",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with a greater value 
+  //`````````````````````````````````
+  //      Set inputs
 
   tb->_blt((int32_t)operand1 - 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLT_07",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLT_08",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLT_09",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BLT_10",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.branch.BLT_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BLT_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BLT_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_bltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 14;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BLTU with greater value
+  //    tick 1. Set inputs for BLTU with equal values (core outputs result of BLTU)
+  //    tick 2. Set inputs for BLTU with lower negative value (core outputs result of BLTU)
+  //    tick 3. Set inputs for BLTU with lower postive value (core outputs result of BLTU)
+  //    tick 4. Nothing (core outputs result of BLTU)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a greater value
-  
   uint32_t operand1 = 2 % rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bltu((int32_t)operand1 + 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLTU_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLTU_02",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLTU_03",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with an equal value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bltu(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLTU_04",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLTU_05",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLTU_06",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with a lower negative value (greater when unsigned)
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bltu((int32_t)operand1 - 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLTU_07",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLTU_08",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLTU_09",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with a lower positive value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bltu((int32_t)operand1 - 2, operand1, branch_offset);
+
+  //=================================
+  //      Tick (4)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BLTU_10",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BLTU_11",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BLTU_12",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BLTU_13",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_exm.branch.BLTU_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BLTU_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BLTU_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_bge(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 15;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BGE with lower value
+  //    tick 1. Set inputs for BGE with equal value (core outputs result of BGE)
+  //    tick 2. Set inputs for BGE with greater value (core outputs result of BGE)
+  //    tick 3. Nothing (core outputs result of BGE)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a lower value
-  
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bge((int32_t)operand1 - 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGE_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGE_02",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGE_03",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  // Test with an equal value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bge(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGE_04",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGE_05",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGE_06",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BGE_07",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
-  // Test with a positive value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bge((int32_t)operand1 + 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGE_08",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGE_09",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGE_10",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BGE_11",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_exm.branch.BGE_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BGE_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BGE_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_branch_bgeu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 16;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for BLT with lower negative value
+  //    tick 1. Set inputs for BLT with equal value (core outputs result of BLT)
+  //    tick 2. Set inputs for BLT with greater positive value (core outputs result of BLT)
+  //    tick 3. Set inputs for BLT with lower positive value (core outputs result of BLT)
+  //    tick 4. Nothing (core outputs result of BLT)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
-  // Test with a lower negative value (greater when unsigned)
-  
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
   tb->_bgeu((int32_t)operand1 - 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (0)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGEU_01",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGEU_02",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGEU_03",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BGEU_04",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
-  // Test with an equal value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bgeu(operand1, operand1, branch_offset);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGEU_05",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGEU_06",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGEU_07",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BGEU_08",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
-  // Test with a greater positive value
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   tb->_bgeu((int32_t)operand1 + 10, operand1, branch_offset);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGEU_09",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGEU_10",
-      (core->branch_o == 1),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGEU_11",
-      (core->branch_offset_o == branch_offset),
-      "Failed to output branch offset");
-  CHECK("tb_exm.branch.BGEU_12",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_offset_o  ==  branch_offset));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
-  // Test with a lower positive value
+  //`````````````````````````````````
+  //      Set inputs
   
   tb->_bgeu((int32_t)operand1 - 2, operand1, branch_offset);
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.branch.BGEU_13",
-      (core->result_write_o == 0),
-      "Failed to output the result write");
-  CHECK("tb_exm.branch.BGEU_14",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.branch.BGEU_15",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_exm.branch.BGEU_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.BGEU_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.BGEU_03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_back_to_back(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 17;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for ADD
+  //    tick 1. Set inputs for SUB (core outputs result of ADD)
+  //    tick 2. Set inputs for ADD (core outputs result of SUB)
+  //    tick 3. Nothing (core outputs result of ADD)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
-
-  CHECK("tb_exm.back_to_back.01",
-      (core->output_valid_o == 0),
-      "Failed to invalidate the output");
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_add(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  CHECK("tb_exm.back_to_back.02",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)),
-      "Failed to execute operation back to back");
-  CHECK("tb_exm.back_to_back.03",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.back_to_back.04",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.back_to_back.05",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.back_to_back.06",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   operand1 = rand();
   operand2 = rand();
   result_addr = rand() % 32;
   tb->_sub(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.back_to_back.07",
-      (core->result_o == ((int32_t)operand1 - (int32_t)operand2)),
-      "Failed to execute operation back to back");
-  CHECK("tb_exm.back_to_back.08",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.back_to_back.09",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.back_to_back.10",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.back_to_back.11",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 - (int32_t)operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
+  //`````````````````````````````````
+  //      Set inputs
+  
   operand1 = rand();
   operand2 = rand();
   result_addr = rand() % 32;
   tb->_add(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.back_to_back.12",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)),
-      "Failed to execute operation back to back");
-  CHECK("tb_exm.back_to_back.13",
-      (core->result_write_o == 1),
-      "Failed to output the result write");
-  CHECK("tb_exm.back_to_back.14",
-      (core->result_addr_o == result_addr),
-      "Failed to output the result address");
-  CHECK("tb_exm.back_to_back.15",
-      (core->branch_o == 0),
-      "Failed to output branch");
-  CHECK("tb_exm.back_to_back.16",
-      (core->output_valid_o == 1),
-      "Failed to validate the output");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_exm.back_to_back.01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.back_to_back.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.back_to_back.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_bubble(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 18;
-  tb->reset();
-  tb->_nop();
 
-  core->output_ready_i = 1;
+  // The following actions are performed in this test :
+  //    tick 0. Set random invalidated inputs
+  //    tick 1. Nothing (core outputs bubble)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 0;
+  core->output_ready_i = 1;
+  
   core->alu_operand1_i = rand();
   core->alu_operand2_i = rand();
   core->alu_op_i = rand() % 7;
@@ -1124,93 +1498,172 @@ void tb_exm_bubble(TB_Exm * tb) {
   core->branch_cond_i = 1 + rand() % 6;
   core->branch_offset_i = rand() % 0xFFFFF;
 
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
   CHECK("tb_exm.bubble.01",
-      (core->result_write_o == 0),
-      "Failed to deassert result_write_o when bubble");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
   CHECK("tb_exm.bubble.02",
-      (core->branch_o == Vtb_exm_ecap5_dproc_pkg::NO_BRANCH),
-      "Failed to set branch to NO_BRANCH when bubble");
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.bubble.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_wait_after_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 19;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for ADD with unready output
+  //    tick 1. Nothing (core waits)
+  //    tick 2. Ready output (core waits)
+  //    tick 3. Set inputs for SUB (core outputs result of ADD)
+  //    tick 4. Nothing (core outputs result of SUB)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_input_ready, (core->input_ready_o == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 0;
-
-  CHECK("tb_exm.wait_after_reset.01",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
   tb->_add(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->output_ready_i = 1;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_sub(operand1, operand2, result_addr);
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 - (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.wait_after_reset.01",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o", tb->err_cycles[COND_input_ready]);
+    
   CHECK("tb_exm.wait_after_reset.02",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
 
   CHECK("tb_exm.wait_after_reset.03",
-      (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
-      "Failed to handle input handshake");
-
-  tb->tick();
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
   CHECK("tb_exm.wait_after_reset.04",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
-
-  CHECK("tb_exm.wait_after_reset.05",
-      (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
-      "Failed to handle input handshake");
-
-  tb->tick();
-
-  CHECK("tb_exm.wait_after_reset.06",
-      (core->input_ready_o == 0),
-      "Failed to deassert input_ready_o");
-
-  CHECK("tb_exm.wait_after_reset.07",
-      (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
-      "Failed to handle input handshake");
-
-  tb->tick();
-
-  CHECK("tb_exm.wait_after_reset.08",
-      (core->input_ready_o == 0),
-      "Failed to reassert input_ready_o");
-
-  CHECK("tb_exm.wait_after_reset.09",
-      (core->result_o == 0) && (core->result_write_o == 0) && (core->result_addr_o == 0) && (core->branch_o == 0) && (core->output_valid_o == 0),
-      "Failed to handle input handshake");
-
-  core->output_ready_i = 1;
-  tb->tick();
-
-  CHECK("tb_exm.wait_after_reset.10",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to handle input handshake");
-
-  tb->_sub(operand1, operand2, result_addr);
-  tb->tick();
-
-  CHECK("tb_exm.wait_after_reset.11",
-      (core->result_o == ((int32_t)operand1 - (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to handle input handshake");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_wait(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 20;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for ADD
+  //    tick 1. Unready output and set inputs for SUB (core holds output)
+  //    tick 2. Nothing (core holds output)
+  //    tick 3. Ready output (core outputs result of ADD)
+  //    tick 4. Nothing (core outputs result of SUB)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
-  tb->_nop();
+  
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 1;
   core->output_ready_i = 1;
@@ -1218,65 +1671,126 @@ void tb_exm_wait(TB_Exm * tb) {
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint8_t result_addr = rand() % 32;
-  tb->_xor(operand1, operand2, result_addr);
-  
-  tb->tick();
-
   tb->_add(operand1, operand2, result_addr);
-  tb->tick();
-
-  CHECK("tb_exm.wait.01",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
   
-  tb->_sub(operand1, operand2, result_addr + 10);
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->output_ready_i = 0;
+
+  tb->_sub(operand1, operand2, result_addr + 10);
+
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
-  CHECK("tb_exm.wait.02",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
-  CHECK("tb_exm.wait.03",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 + (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  tb->tick();
-
-  CHECK("tb_exm.wait.04",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
-
-  tb->tick();
-
-  CHECK("tb_exm.wait.05",
-      (core->result_o == ((int32_t)operand1 + (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to hold the output values");
-
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->output_ready_i = 1;
   
+  //=================================
+  //      Tick (4)
+  
   tb->tick();
 
-  CHECK("tb_exm.wait.06",
-      (core->result_o == ((int32_t)operand1 - (int32_t)operand2)) && (core->result_write_o == 1) && (core->result_addr_o == result_addr + 10) && (core->branch_o == 0) && (core->output_valid_o == 1),
-      "Failed to output values");
+  //`````````````````````````````````
+  //      Checks 
+  
+  result = ((int32_t)operand1 - (int32_t)operand2);
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
+  tb->check(COND_result,       (core->result_o        ==  result)  &&
+                               (core->result_write_o  ==  1)       &&
+                               (core->result_addr_o   ==  result_addr + 10));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
-  tb->_nop();
-  tb->tick();
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_exm.wait.01",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o", tb->err_cycles[COND_input_ready]);
+    
+  CHECK("tb_exm.wait.02",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.wait.03",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.wait.04",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_exm_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
   core->testcase = 21;
-  tb->reset();
-  tb->_nop();
 
-  core->input_valid_i = 1;
-  core->output_ready_i = 1;
+  // The following actions are performed in this test :
+  //    tick 0. Set random inputs and reset
+  //    tick 1. Unreset (output reset)
+  //    tick 2. Set random inputs
+  //    tick 3. Reset
+  //    tick 4. Nothing (output reset)
+  
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
   
   core->input_valid_i = 0;
+  core->output_ready_i = 1;
+  
   core->alu_operand1_i = rand();
   core->alu_operand2_i = core->alu_operand1_i;
   core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
@@ -1288,18 +1802,32 @@ void tb_exm_reset(TB_Exm * tb) {
   core->branch_offset_i = rand() % 0xFFFFF;
 
   core->rst_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->rst_i = 0;
 
-  CHECK("tb_exm.reset.01",
-      (core->result_write_o == 0),
-      "Failed to deassert result_write_o when reset");
-  CHECK("tb_exm.reset.02",
-      (core->branch_o == Vtb_exm_ecap5_dproc_pkg::NO_BRANCH),
-      "Failed to set branch to NO_BRANCH when reset");
-
+  //=================================
+  //      Tick (2)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->input_valid_i = 0;
   core->alu_operand1_i = rand();
   core->alu_operand2_i = core->alu_operand1_i;
@@ -1311,18 +1839,42 @@ void tb_exm_reset(TB_Exm * tb) {
   core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BEQ;
   core->branch_offset_i = rand() % 0xFFFFF;
 
+  //=================================
+  //      Tick (3)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->rst_i = 1;
+
+  //=================================
+  //      Tick (4)
+  
   tb->tick();
-  core->rst_i = 0;
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+    
+  CHECK("tb_exm.reset.01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.reset.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
   CHECK("tb_exm.reset.03",
-      (core->result_write_o == 0),
-      "Failed to deassert result_write_o when reset");
-  CHECK("tb_exm.reset.04",
-      (core->branch_o == Vtb_exm_ecap5_dproc_pkg::NO_BRANCH),
-      "Failed to set branch to NO_BRANCH when reset");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
 int main(int argc, char ** argv, char ** env) {
