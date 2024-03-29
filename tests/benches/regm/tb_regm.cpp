@@ -32,6 +32,12 @@
 
 class TB_Regm : public Testbench<Vtb_regm> {
 public:
+  void reset() {
+    this->set_register(0, 0);
+
+    Testbench<Vtb_regm>::reset();
+  }
+
   void set_register(uint8_t addr, uint32_t value) {
     const svScope scope = svGetScopeFromName("TOP.tb_regm.dut");
     assert(scope);
@@ -40,162 +46,274 @@ public:
   }
 };
 
+enum CondId {
+  COND_read,
+  COND_write,
+  __CondIdEnd
+};
+
 void tb_regm_read_port_a(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 1;
 
-  bool success = true;
+  // The following actions are performed in this test :
+  //    tick 0-31. Set the inputs to read i through port a
+
+  tb->reset();
+
   for(int i = 0; i < 32; i++) {
-    // set a random value inside the register to be read
+    //`````````````````````````````````
+    //      Set inputs
+    
     uint32_t value = rand();
     tb->set_register(i, value); 
 
-    // set core inputs
     core->raddr1_i = i;
     core->write_i = 0;
+
+    //=================================
+    //      Tick (0-31)
+    
     tb->tick();
 
-    if(core->rdata1_o != value) {
-      success = false;
-    }
+    //`````````````````````````````````
+    //      Checks 
+    
+    tb->check(COND_read, (core->rdata1_o == value));
   }
 
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_regm.read_port_a.01",
-    success,
-    "Failed to read registers from port A");
-
-  // reset register x0
-  tb->set_register(0, 0);
+    tb->conditions[COND_read],
+    "Failed to read registers from port A", tb->err_cycles[COND_read]);
 }
 
 void tb_regm_read_port_b(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 2;
 
-  bool success = true;
+  // The following actions are performed in this test :
+  //    tick 0-31. Set the inputs to read i through port b
+
+  tb->reset();
+
   for(int i = 0; i < 32; i++) {
-    // set a random value inside the register to be read
+    //`````````````````````````````````
+    //      Set inputs
+    
     uint32_t value = rand();
     tb->set_register(i, value); 
 
-    // set core inputs
     core->raddr2_i = i;
     core->write_i = 0;
+
+    //=================================
+    //      Tick (0-31)
+    
     tb->tick();
 
-    if(core->rdata2_o != value) {
-      success = false;
-    }
+    //`````````````````````````````````
+    //      Checks 
+    
+    tb->check(COND_read, (core->rdata2_o == value));
   }
 
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_regm.read_port_b.01",
-    success,
-    "Failed to read registers from port B");
-
-  // reset register x0
-  tb->set_register(0, 0);
+    tb->conditions[COND_read],
+    "Failed to read registers from port B", tb->err_cycles[COND_read]);
 }
 
 void tb_regm_write_x0(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 3;
 
-  // write to x0
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs to write random data to x0
+  //    tick 1. Set inputs to read x0
+
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->waddr_i = 0;
   core->wdata_i = rand();
   core->write_i = 1;
+
+  //=================================
+  //      Tick (0)
+  
   tb->tick();
 
-  // read back x0
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->raddr1_i = 0;
   core->write_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_write, (core->rdata1_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_regm.write_x0.01",
-    core->rdata1_o == 0,
-    "Failed to prevent writing to x0");
+    tb->conditions[COND_write],
+    "Failed to prevent writing to x0", tb->err_cycles[COND_write]);
 }
 
 void tb_regm_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 4;
 
-  bool success = true;
+  // The following actions are performed in this test :
+  //    tick 0, 2, 4, ..., 30. Set inputs to write random data to xi
+  //    tick 1, 3, 5, ..., 31. Set inputs to read xi
+
+  tb->reset();
+
   for(int i = 1; i < 32; i++) {
-    // write a random value
+    //`````````````````````````````````
+    //      Set inputs
+    
     uint32_t value = rand();
     core->waddr_i = i;
     core->wdata_i = value;
     core->write_i = 1;
+
+    //=================================
+    //      Tick (0, 2, 4, ..., 30)
+    
     tb->tick();
 
-    // read back the register
+    //`````````````````````````````````
+    //      Set inputs
+    
     core->raddr1_i = i;
     core->write_i = 0;
+
+    //=================================
+    //      Tick (1, 3, 5, ..., 31)
+    
     tb->tick();
 
-    if(core->rdata1_o != value) {
-      success = false;
-    }
+    //`````````````````````````````````
+    //      Checks 
+    
+    tb->check(COND_read, (core->rdata1_o == value));
   }
 
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_regm.write.01",
-    success,
-    "Failed writing to registers");
+    tb->conditions[COND_read],
+    "Failed writing to registers", tb->err_cycles[COND_read]);
 }
 
 void tb_regm_parallel_read(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 5;
 
-  // set a random value before reading back
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs to read register 5 with both port a and b
+
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   uint32_t value = rand();
   tb->set_register(5, value);
 
-  // reading the same register from both ports
   core->raddr1_i = 5;
   core->raddr2_i = 5;
   core->write_i = 0;
+
+  //=================================
+  //      Tick (0)
+  
   tb->tick();
 
-  CHECK("tb_regm.parallel_read.01",
-    core->rdata1_o == value,
-    "Failed reading from port A");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_read, (core->rdata1_o == value) &&
+                       (core->rdata2_o == value));
 
-  CHECK("tb_regm.parallel_read.02",
-    core->rdata1_o == value,
-    "Failed reading from port B");
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_regm.parallel_read.01",
+    tb->conditions[COND_read],
+    "Failed reading both port A and B in parallel", tb->err_cycles[COND_read]);
 }
 
 void tb_regm_read_before_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
   core->testcase = 6;
 
-  // write a value in the register
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs to read register 5 and write random data to register 5
+  //    tick 1. Set inputs to read register 5 
+
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
   uint32_t previous_value = rand();
   tb->set_register(5, previous_value);
 
-  // read and write to the same register
   uint32_t value = rand();
   core->raddr1_i = 5;
   core->waddr_i = 5;
   core->wdata_i = value;
   core->write_i = 1;
+
+  //=================================
+  //      Tick (0)
+  
   tb->tick();
 
-  // check that the read result is the value set at the start
-  CHECK("tb_regm.read_before_write.01",
-    core->rdata1_o == previous_value,
-    "Failed reading previous value");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_read, (core->rdata1_o == previous_value));
 
-  // read again
+  //`````````````````````````````````
+  //      Set inputs
+  
   core->write_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
   tb->tick();
 
-  // check that the read result is the new written value
-  CHECK("tb_regm.read_before_write.02",
-    core->rdata1_o == value,
-    "Failed reading the written value");
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_read, (core->rdata1_o == value));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_regm.read_before_write.01",
+    tb->conditions[COND_read],
+    "Failed writing to registers", tb->err_cycles[COND_read]);
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -209,6 +327,7 @@ int main(int argc, char ** argv, char ** env) {
   tb->open_trace("waves/regm.vcd");
   tb->open_testdata("testdata/regm.csv");
   tb->set_debug_log(verbose);
+  tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
 
