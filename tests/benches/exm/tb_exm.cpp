@@ -1811,6 +1811,7 @@ void tb_exm_reset(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
 
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
   tb->check(COND_result,       (core->result_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
@@ -1857,6 +1858,7 @@ void tb_exm_reset(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
+  tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
   tb->check(COND_result,       (core->result_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
@@ -1865,14 +1867,18 @@ void tb_exm_reset(TB_Exm * tb) {
   //      Formal Checks 
     
   CHECK("tb_exm.reset.01",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o", tb->err_cycles[COND_input_ready]);
+
+  CHECK("tb_exm.reset.02",
       tb->conditions[COND_result],
       "Failed to implement the result protocol", tb->err_cycles[COND_result]);
 
-  CHECK("tb_exm.reset.02",
+  CHECK("tb_exm.reset.03",
       tb->conditions[COND_branch],
       "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
-  CHECK("tb_exm.reset.03",
+  CHECK("tb_exm.reset.04",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
