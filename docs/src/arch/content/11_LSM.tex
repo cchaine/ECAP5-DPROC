@@ -49,6 +49,10 @@
           The \texttt{input\_ready\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} after leaving the \texttt{IDLE} state.
         }
 
+      \req{D\_LSM\_INPUT\_READY\_03}{
+          The \texttt{input\_ready\_o} signal shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{rst\_i}.
+        }
+
     \subsubsection{Request triggering}
       
       \event{EV\_LSM\_REQUEST\_TRIGGER\_01}{
