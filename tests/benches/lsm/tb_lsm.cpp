@@ -150,9 +150,10 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   
   tb->reset();
 
-  tb->check(COND_state,     (core->tb_lsm->dut->state_q  ==  0));
-  tb->check(COND_wishbone,  (core->wb_stb_o              ==  0)    &&
-                            (core->wb_cyc_o              ==  0));  
+  tb->check(COND_state,       (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready, (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,    (core->wb_stb_o              ==  0)    &&
+                              (core->wb_cyc_o              ==  0));  
 
   // LH
 
