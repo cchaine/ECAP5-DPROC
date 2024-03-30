@@ -16,6 +16,10 @@
           The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{output\_ready\_o} is deasserted.
         }
 
+      \req{D\_EXM\_INPUT\_READY\_02}{
+          The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{rst\_i} is asserted.
+        }
+
     \subsubsection{Output}
 
       \paragraph{Result address}
@@ -27,7 +31,11 @@
       \paragraph{Result write}
 
         \req{D\_EXM\_OUTPUT\_WRITE\_01}{
-            The \texttt{result\_write\_o} output shall be set to the value of \texttt{result\_write\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_i} is asserted.
+          The \texttt{result\_write\_o} output shall be set to the value of \texttt{result\_write\_i} on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted.
+          }
+
+        \req{D\_EXM\_OUTPUT\_WRITE\_02}{
+            The \texttt{result\_write\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} is deasserted.
           }
 
       \paragraph{Result}
@@ -75,44 +83,48 @@
       \paragraph{Branch}
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_01}{
-            The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{branch\_cond\_i} is \texttt{NO\_BRANCH}.
+            The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted and \texttt{branch\_cond\_i} is \texttt{NO\_BRANCH}.
           }
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_02}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BEQ} and the result of the ALU's sum is zero.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BEQ} and the result of the ALU's sum is zero.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's sum is the difference of both ALU operands.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_03}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BNE} and the result of the ALU's sum is not zero.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BNE} and the result of the ALU's sum is not zero.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's sum is the difference of both ALU operands.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_04}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLT} and the result of the ALU's slt.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLT} and the result of the ALU's slt.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using a signed comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_05}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLTU} and the result of the ALU's sltu.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BLTU} and the result of the ALU's sltu.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using an unsigned comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_06}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGE} and the inverse of result of the ALU's slt.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGE} and the inverse of result of the ALU's slt.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using a signed comparison. 0 otherwise.
           ]
 
         \req{D\_EXM\_OUTPUT\_BRANCH\_07}{
-            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGEU} and the inverse of result of the ALU's sltu.
+            The \texttt{branch\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when both \texttt{input\_ready\_o} and \texttt{input\_valid\_i} are asserted, \texttt{branch\_cond\_i} is \texttt{BRANCH\_BGEU} and the inverse of result of the ALU's sltu.
           }[
             rationale=The user shall setup the ALU so that the result of the ALU's slt is 1 when the first ALU operand is lower than the second operand using an unsigned comparison. 0 otherwise.
           ]
+
+        \req{D\_EXM\_OUTPUT\_BRANCH\_08}{
+            The \texttt{branch\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and \texttt{input\_valid\_i} are deasserted.
+          }
 
       \paragraph{Branch offset}
 
