@@ -20,10 +20,12 @@
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
 set(BENCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/benches/)
-set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+set(TEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src/)
+set(INCLUDE_DIR ${SRC_DIR}/include/)
 set(LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
 set(TESTDATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/testdata/)
+set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config/)
 
 # Create folders for the waves and testdata
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/waves)
@@ -46,7 +48,7 @@ macro(add_testbench module)
   list(TRANSFORM TESTBENCH_LIBS PREPEND ${LIBS_DIR})
   # Create the test executable
   add_executable(${TARGET} ${BENCH_DIR}/${module}/${TARGET}.cpp)
-  target_include_directories(${TARGET} PUBLIC ${INCLUDE_DIR})
+  target_include_directories(${TARGET} PUBLIC ${TEST_INCLUDE_DIR})
   verilate(${TARGET}
     PREFIX V${TARGET}
     SOURCES ${SV_HEADERS}
@@ -82,3 +84,9 @@ add_testbench(lsm)
 add_custom_target(build DEPENDS ${TEST_BINARIES})
 
 add_custom_target(tests DEPENDS ${TEST_TARGETS})
+
+file(GLOB SRC_FILES ${SRC_DIR}/*.sv)
+file(GLOB INCLUDE_FILES ${INCLUDE_DIR}/*.svh)
+add_custom_target(lint 
+  COMMAND verible-verilog-lint ${SRC_FILES} ${INCLUDE_FILES} --rules_config="${CONFIG_DIR}/verible-lint.rules" --waiver_files="${CONFIG_DIR}/verible-lint.waives"
+  DEPENDS ${SRC_FILES} ${INCLUDE_FILES})

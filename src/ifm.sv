@@ -47,14 +47,15 @@ module ifm
 );
 import ecap5_dproc_pkg::*; 
 
-enum logic [2:0] {
+typedef enum logic [2:0] {
   IDLE,          // 0
   REQUEST,       // 1
   MEMORY_WAIT,   // 2
   DONE,          // 3
   MEMORY_STALL,  // 4
   PIPELINE_STALL // 5
-} state_d, state_q /* verilator public */;
+} state_t; 
+state_t state_d, state_q /* verilator public */;
 
 /*****************************************/
 /*            Internal signals           */
@@ -224,11 +225,11 @@ always_comb begin : pc_update
   end
   // 1. External interrupt
   if (irq_i) begin
-    pc_d = ecap5_dproc_pkg::interrupt_address[31:0];
+    pc_d = ecap5_dproc_pkg::INTERRUPT_ADDRESS;
   end
   // 0. Debug
   if (drq_i) begin
-    pc_d = ecap5_dproc_pkg::debug_address[31:0];
+    pc_d = ecap5_dproc_pkg::DEBUG_ADDRESS;
   end
 end
 
@@ -240,7 +241,7 @@ always_ff @(posedge clk_i) begin
     wb_cyc_q        <=  0;
     output_valid_q  <=  0;
     instr_q         <=  0;
-    pc_q            <=  ecap5_dproc_pkg::boot_address[31:0];
+    pc_q            <=  ecap5_dproc_pkg::BOOT_ADDRESS;
     pending_jump_q  <=  0;
   end else begin
     state_q         <=  state_d;

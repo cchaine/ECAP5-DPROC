@@ -1,0 +1,3 @@
+-no-trailing-spaces
+-line-length
++parameter-name-style="localparam_style:ALL_CAPS"

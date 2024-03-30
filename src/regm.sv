@@ -34,7 +34,7 @@ module regm (
   input   logic[31:0]  wdata_i    
 );
 
-logic[31:0] registers [31:0];
+logic[31:0] registers [32];
 
 always @ (posedge clk_i) begin
   if (write_i & (waddr_i != 0)) begin
@@ -49,7 +49,7 @@ end
 
 `ifdef VERILATOR
   export "DPI-C" task set_register_value;
-  task set_register_value(input logic[4:0] addr, input logic[31:0] value);
+  task automatic set_register_value(input logic[4:0] addr, input logic[31:0] value);
     registers[addr] = value;
   endtask
 `endif

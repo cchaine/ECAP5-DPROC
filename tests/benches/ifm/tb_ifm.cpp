@@ -98,7 +98,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
@@ -142,7 +142,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::boot_address));
+                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //=================================
@@ -154,7 +154,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address + 4) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + 4) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
@@ -218,7 +218,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  4));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -232,7 +232,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  4));
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -251,7 +251,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  1));
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -486,7 +486,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::boot_address));
+                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //=================================
@@ -501,7 +501,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::boot_address));
+                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //`````````````````````````````````
@@ -521,7 +521,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::boot_address));
+                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //=================================
@@ -586,7 +586,7 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   
   //`````````````````````````````````
   //      Set inputs
@@ -626,7 +626,7 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -710,7 +710,7 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -818,7 +818,7 @@ void tb_ifm_debug_during_wait(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -937,7 +937,7 @@ void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1024,7 +1024,7 @@ void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -1126,7 +1126,7 @@ void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1214,7 +1214,7 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1265,7 +1265,7 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   
   //`````````````````````````````````
   //      Set inputs
@@ -1305,7 +1305,7 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1389,7 +1389,7 @@ void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1497,7 +1497,7 @@ void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1616,7 +1616,7 @@ void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1703,7 +1703,7 @@ void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -1805,7 +1805,7 @@ void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1894,7 +1894,7 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1947,7 +1947,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
   
   //`````````````````````````````````
   //      Set inputs
@@ -1987,7 +1987,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2073,7 +2073,7 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2183,7 +2183,7 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2304,7 +2304,7 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2393,7 +2393,7 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -2497,7 +2497,7 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2589,7 +2589,7 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2681,7 +2681,7 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
   //      Checks 
 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::debug_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::DEBUG_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2762,7 +2762,7 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::interrupt_address));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2842,7 +2842,7 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2913,7 +2913,7 @@ void tb_ifm_precedence_increment(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::boot_address + 4));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + 4));
   
   //`````````````````````````````````
   //      Formal Checks 
