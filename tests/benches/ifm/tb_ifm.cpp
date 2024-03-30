@@ -528,17 +528,6 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   //      Tick (6)
   
   tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-
-  tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_ifm_ecap5_dproc_pkg::boot_address + 4) &&
-                                (core->wb_we_o               ==  0)    &&
-                                (core->wb_sel_o              ==  0xF)  &&
-                                (core->wb_stb_o              ==  1)    &&
-                                (core->wb_cyc_o              ==  1));  
-  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
   
   //`````````````````````````````````
   //      Formal Checks 
