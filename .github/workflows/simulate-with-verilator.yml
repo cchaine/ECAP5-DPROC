@@ -10,6 +10,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   REPORT_ARTIFACT_NAME: ecap5-dproc-report-${{github.run_number}}-${{github.run_attempt}}
+  ARCH_ARTIFACT_NAME: ecap5-dproc-arch-${{github.run_number}}-${{github.run_attempt}}
 
 jobs:
   documentation:
@@ -26,6 +27,12 @@ jobs:
 
     - name: Check generated documentation
       run: (! grep -H "LaTeX Warning" ${{github.workspace}}/build/docs/**/*.log)
+
+    - name: Upload documentation
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.ARCH_ARTIFACT_NAME}}
+        path: ${{github.workspace}}/build/docs/arch/main.pdf
 
   simulate:
     runs-on: self-hosted
