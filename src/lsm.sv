@@ -57,13 +57,14 @@ module lsm import ecap5_dproc_pkg::*;
 /*****************************************/
 /*           Internal signals            */
 /*****************************************/
-enum logic [2:0] {
+typedef enum logic [2:0] {
   IDLE,           // 0
   REQUEST,        // 1
   MEMORY_WAIT,    // 2
   DONE,           // 3
   MEMORY_STALL   // 4
-} state_d, state_q /* verilator public */;
+} state_t;
+state_t state_d, state_q /* verilator public */;
 
 logic memory_request;
 
