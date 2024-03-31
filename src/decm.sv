@@ -78,6 +78,12 @@ module decm import ecap5_dproc_pkg::*;
 );
 
 /*****************************************/
+/*           Internal signals            */
+/*****************************************/
+logic[6:0] opcode;
+logic[31:0] immediate;
+
+/*****************************************/
 /*             Stage outputs             */
 /*****************************************/
 
@@ -103,6 +109,38 @@ logic[3:0]   ls_sel_d,            ls_sel_q;
 logic        output_valid_d,      output_valid_q;
 
 /*****************************************/
+
+assign opcode = instr_i[6:0];
+
+always_comb begin : compute_immediate
+  immediate = '0;
+  case(opcode)
+    OPCODE_LUI, 
+    OPCODE_AUIPC: immediate = {instr_i[31:12], 12'h0};
+    default: begin
+    end
+  endcase
+end
+
+always_comb begin : alu_interface
+  alu_operand1_d = 0;
+  alu_operand2_d = 0;
+  alu_op_d = ALU_ADD;
+
+  case(opcode)
+    OPCODE_LUI: begin
+      alu_operand1_d = immediate;
+      alu_operand2_d = 0;
+      alu_op_d = ALU_ADD;
+    end
+    default: begin
+    end
+  endcase
+end
+
+always_comb begin : branch_interface
+  branch_cond_d = NO_BRANCH;
+end
 
 always_comb begin : register_interface
   raddr1_o = instr_i[19:15]; 

@@ -26,6 +26,9 @@ localparam  logic[31:0]  BOOT_ADDRESS       /* verilator public */ =  32'h000000
 localparam  logic[31:0]  INTERRUPT_ADDRESS  /* verilator public */ =  32'hFF00000A;
 localparam  logic[31:0]  DEBUG_ADDRESS      /* verilator public */ =  32'hFF00000B;
 
+localparam  logic[6:0]  OPCODE_LUI   = 7'b0110111;
+localparam  logic[6:0]  OPCODE_AUIPC = 7'b0010111;
+
 localparam  logic[2:0]  ALU_ADD    /* verilator public */ = 3'h0;
 localparam  logic[2:0]  ALU_XOR    /* verilator public */ = 3'h1;
 localparam  logic[2:0]  ALU_OR     /* verilator public */ = 3'h2;

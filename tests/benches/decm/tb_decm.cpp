@@ -350,8 +350,10 @@ public:
 
 enum CondId {
   COND_input_ready,
-  COND_result,
+  COND_alu,
   COND_branch,
+  COND_writeback,
+  COND_loadstore,
   COND_output_valid,
   __CondIdEnd
 };
@@ -376,8 +378,8 @@ void tb_decm_lui(TB_Decm * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
-  uint32_t rd = 12;
-  uint32_t imm = 52;
+  uint32_t rd = rand() % 32;
+  uint32_t imm = rand() % 32;
   tb->_lui(pc, rd, imm);
 
   //=================================
@@ -387,10 +389,32 @@ void tb_decm_lui(TB_Decm * tb) {
 
   //`````````````````````````````````
   //      Checks 
-  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  (imm << 12)) &&
+                            (core->alu_operand2_o  ==  0)           &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_ADD));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
 
   //`````````````````````````````````
   //      Formal Checks 
+  
+  CHECK("tb_decm.lui.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.lui.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.lui.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.lui.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
 }
 
 void tb_decm_auipc(TB_Decm * tb) {
@@ -425,9 +449,32 @@ void tb_decm_auipc(TB_Decm * tb) {
   //`````````````````````````````````
   //      Checks 
   
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  (imm << 12)) &&
+                            (core->alu_operand2_o  ==  pc)           &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_ADD));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
 
   //`````````````````````````````````
   //      Formal Checks 
+  
+  CHECK("tb_decm.auipc.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.auipc.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.auipc.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.auipc.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
 }
 
 void tb_decm_jal(TB_Decm * tb) {
