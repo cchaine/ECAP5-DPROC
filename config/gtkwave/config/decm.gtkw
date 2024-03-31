@@ -1,0 +1,90 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sun Mar 31 07:30:01 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/decm.vcd"
+[dumpfile_mtime] "Sun Mar 31 07:24:27 2024"
+[dumpfile_size] 6055
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/decm.gtkw"
+[timestart] 8
+[size] 1360 829
+[pos] -581 -90
+*-4.696093 65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] TOP.
+[treeopen] TOP.tb_decm.
+[sst_width] 253
+[signals_width] 202
+[sst_expanded] 1
+[sst_vpaned_height] 239
+@2025
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_testcase_filter.gtkw
+TOP.tb_decm.testcase[31:0]
+@28
+TOP.tb_decm.clk_i
+TOP.tb_decm.rst_i
+@200
+-Input
+@28
+TOP.tb_decm.input_valid_i
+TOP.tb_decm.input_ready_o
+@22
+TOP.tb_decm.pc_i[31:0]
+TOP.tb_decm.instr_i[31:0]
+@200
+-Register
+@22
+[color] 2
+TOP.tb_decm.raddr1_o[4:0]
+[color] 2
+TOP.tb_decm.raddr2_o[4:0]
+[color] 2
+TOP.tb_decm.rdata1_o[31:0]
+[color] 2
+TOP.tb_decm.rdata2_o[31:0]
+@200
+-Output
+@28
+TOP.tb_decm.output_valid_o
+TOP.tb_decm.output_ready_i
+@200
+-Execute
+@22
+[color] 5
+TOP.tb_decm.alu_operand1_o[31:0]
+[color] 5
+TOP.tb_decm.alu_operand2_o[31:0]
+@28
+[color] 5
+TOP.tb_decm.alu_op_o[2:0]
+[color] 5
+TOP.tb_decm.alu_sub_o
+[color] 5
+TOP.tb_decm.alu_shift_left_o
+[color] 5
+TOP.tb_decm.alu_signed_shift_o
+[color] 7
+TOP.tb_decm.branch_cond_o[2:0]
+@22
+[color] 7
+TOP.tb_decm.branch_offset_o[19:0]
+@200
+-Load-Store
+@28
+[color] 3
+TOP.tb_decm.ls_enable_o
+[color] 3
+TOP.tb_decm.ls_write_o
+@22
+[color] 3
+TOP.tb_decm.ls_sel_o[3:0]
+@200
+-Write-back
+@28
+[color] 6
+TOP.tb_decm.reg_write_o
+@22
+[color] 6
+TOP.tb_decm.reg_addr_o[4:0]
+[pattern_trace] 1
+[pattern_trace] 0

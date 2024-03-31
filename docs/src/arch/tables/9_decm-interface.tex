@@ -12,6 +12,8 @@
   \hline
   clk\_i & I & 1 & Clock input. \\
   \hline
+  rst\_i & I & 1 & Reset input. \\
+  \hline
   \multicolumn{4}{|l|}{\textbf{INPUT LOGIC}} \\
   \hline
   input\_ready\_o & O & 1 & Input handshaking signal asserted when ready to re-
@@ -19,9 +21,11 @@ ceive inputs. \\
   \hline
   input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
   \hline
-  raw\_instr\_i & I & 32 & Raw instruction fetched from memory. \\
+  instr\_i & I & 32 & Instruction fetched from memory. \\
   \hline
-  \multicolumn{4}{|l|}{\textbf{REGISTER ACCESS}} \\
+  pc\_i & I & 32 & Instruction pointer for the fetched instruction. \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{REGISTER INTERFACE}} \\
   \hline
   raddr1\_o & O & 5 & Register selector for the first read port. \\
   \hline
@@ -37,15 +41,31 @@ ceive inputs. \\
   \hline
   output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
   \hline
-  instr\_o & O & TBC & Decoded instruction. \\
+  alu\_operand1\_o & O & 32 & First ALU operand \\
   \hline
-  param1\_o & O & 32 & First instruction parameter. \\
+  alu\_operand2\_o & O & 32 & Second ALU operand \\
   \hline
-  param2\_o & O & 32 & Second instruction parameter. \\
+  alu\_op\_o & O & 3 & ALU operation selector \\
   \hline
-  param3\_o & O & 32 & Third instruction parameter. \\
+  alu\_sub\_o & O & 1 & ALU ADD/SUB switch \\
   \hline
-  result\_addr\_o & O & 32 & Instruction result destination address. \\
+  alu\_shift\_left\_o & O & 1 & ALU shift direction switch \\
+  \hline
+  alu\_signed\_shift\_o & O & 1 & ALU shift sign switch \\
+  \hline
+  branch\_cond\_o & O & 3 & Branch condition selector \\
+  \hline
+  branch\_offset\_o & O & 1 & Branch offset \\
+  \hline
+  reg\_write\_o & O & 1 & Writeback enable \\
+  \hline
+  reg\_addr\_o & O & 5 & Writeback register address \\
+  \hline
+  ls\_enable\_o & O & 1 & Load-Store enable \\
+  \hline
+  ls\_write\_o & O & 1 & Load-Store read/write switch \\
+  \hline
+  ls\_sel\_o & O & 4 & Load-Store read/write size selector \\
   \hline
 \end{xltabular}
 }

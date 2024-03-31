@@ -91,6 +91,7 @@ endmacro()
 
 add_testbench(regm)
 add_testbench(ifm)
+add_testbench(decm)
 add_testbench(exm)
 add_testbench(lsm)
 

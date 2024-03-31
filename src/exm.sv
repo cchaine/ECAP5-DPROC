@@ -53,11 +53,11 @@ module exm import ecap5_dproc_pkg::*;
   output  logic[19:0]  branch_offset_o
 );
 
-logic        input_ready_q;
-
 /*****************************************/
 /*         ALU internal signals          */
 /*****************************************/
+
+logic        input_ready_q;
 
 logic signed[31:0] alu_signed_operand1,
                    alu_signed_operand2;
@@ -91,6 +91,8 @@ logic[31:0]  result_d, result_q;
 logic        branch_d, branch_q;
 logic[19:0]  branch_offset_q;
 logic        output_valid_d, output_valid_q;
+
+/*****************************************/
 
 always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_i);

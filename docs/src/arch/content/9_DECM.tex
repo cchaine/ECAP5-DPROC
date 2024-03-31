@@ -10,6 +10,30 @@
 
   \subsection{Specification}
 
+    \subsubsection{Input handshake}
+
+      \req{D\_DECM\_INPUT\_READY\_01}{
+          The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{output\_ready\_o} is deasserted.
+        }
+
+      \req{D\_DECM\_INPUT\_READY\_02}{
+          The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{rst\_i} is asserted.
+        }
+
+    \subsubsection{Output handshake}
+
+      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_01}{
+          The \texttt{output\_valid\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted.
+        }
+
+      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_02}{
+          When \texttt{output\_valid\_o} is asserted, the execute module shall hold the value of the following signals until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i} : \texttt{result\_write\_o}, \texttt{result\_addr\_o}, \texttt{result\_o}, \texttt{branch\_o} and \texttt{branch\_offset\_o}.
+        }
+
+      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_03}{
+          The \texttt{output\_valid\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
+        }
+
 
   \subsection{Behavior}
 
