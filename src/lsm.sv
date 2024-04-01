@@ -24,19 +24,32 @@ module lsm import ecap5_dproc_pkg::*;
 (
   input   logic        clk_i,
   input   logic        rst_i,
-  // Input handshake
+
+  //=================================
+  //    Input logic
+  
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  // Load-Store inputs
+
+  //`````````````````````````````````
+  //    Execute interface 
+   
   input   logic[31:0]  alu_result_i,
   input   logic        enable_i,
   input   logic        write_i,
   input   logic[31:0]  write_data_i,
   input   logic[3:0]   sel_i,
-  // Register write interface
+  input   logic        unsigned_load_i,
+
+  //`````````````````````````````````
+  //    Write-back pass-through
+   
   input   logic        reg_write_i,
   input   logic[4:0]   reg_addr_i,
-  // Wishbone master
+
+  //=================================
+  //    Wishbone interface 
+  
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i,
   output  logic[31:0]  wb_dat_o,
@@ -46,9 +59,15 @@ module lsm import ecap5_dproc_pkg::*;
   input   logic        wb_ack_i,
   output  logic        wb_cyc_o,
   input   logic        wb_stall_i,
-  // Output handshake
+
+  //=================================
+  //    Output logic
+  
   output  logic        output_valid_o,
-  // Output 
+
+  //`````````````````````````````````
+  //    Write-back interface
+   
   output  logic        reg_write_o,
   output  logic[4:0]   reg_addr_o,
   output  logic[31:0]  reg_data_o
@@ -62,7 +81,7 @@ typedef enum logic [2:0] {
   REQUEST,        // 1
   MEMORY_WAIT,    // 2
   DONE,           // 3
-  MEMORY_STALL   // 4
+  MEMORY_STALL    // 4
 } state_t;
 state_t state_d, state_q /* verilator public */;
 

@@ -290,6 +290,10 @@ always_ff @(posedge clk_i) begin
   end
 end
 
+/*****************************************/
+/*         Assign output signals         */
+/*****************************************/
+
 assign  input_ready_o       =  input_ready_q;
 
 assign  pc_o                =  pc_q;

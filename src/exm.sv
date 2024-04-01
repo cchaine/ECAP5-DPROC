@@ -24,33 +24,72 @@ module exm import ecap5_dproc_pkg::*;
 (
   input   logic        clk_i,
   input   logic        rst_i,
-  // Input handshake
+
+  //=================================
+  //    Input logic
+  
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  // PC
+
   input   logic[31:0]  pc_i,
-  // ALU inputs 
+
+  //`````````````````````````````````
+  //    ALU inputs 
+   
   input   logic[31:0]  alu_operand1_i,
   input   logic[31:0]  alu_operand2_i, 
   input   logic[2:0]   alu_op_i,
   input   logic        alu_sub_i,
   input   logic        alu_shift_left_i,
   input   logic        alu_signed_shift_i,
-  // Branch inputs 
+
+  //`````````````````````````````````
+  //    Branch inputs 
+   
   input   logic[2:0]   branch_cond_i,
   input   logic[19:0]  branch_offset_i,
-  // Output write inputs
-  input   logic        result_write_i,
-  input   logic[4:0]   result_addr_i,
-  // Output handshake
+
+  //`````````````````````````````````
+  //    Load-Store pass-through inputs 
+   
+  input   logic        ls_enable_i,
+  input   logic        ls_write_i,
+  input   logic[31:0]  ls_write_data_i,
+  input   logic[3:0]   ls_sel_i,
+  input   logic        ls_unsigned_load_i,
+
+  //`````````````````````````````````
+  //    Write-back pass-through inputs 
+   
+  input   logic        reg_write_i,
+  input   logic[4:0]   reg_addr_i,
+
+  //=================================
+  //    Output logic
+
   input   logic        output_ready_i,
   output  logic        output_valid_o,
-  // Output write outputs
-  output  logic        result_write_o,
-  output  logic[4:0]   result_addr_o,
-  // ALU output
-  output  logic[31:0]  result_o,
-  // Branch outputs
+
+  //`````````````````````````````````
+  //    Load-Store interface 
+  //
+  output   logic[31:0]  result_o,
+  output   logic        ls_enable_o,
+  output   logic        ls_write_o,
+  output   logic[31:0]  ls_write_data_o,
+  output   logic[3:0]   ls_sel_o,
+  output   logic        ls_unsigned_load_o,
+
+  //`````````````````````````````````
+  //    Write-back pass-through
+   
+  output  logic        reg_write_o,
+  output  logic[4:0]   reg_addr_o,
+
+  //`````````````````````````````````
+  //    Fetch interface 
+  //
+  
   output  logic        branch_o,
   output  logic[31:0]  branch_target_o
 );
@@ -92,6 +131,11 @@ logic[31:0] pc_next;
 logic        result_write_q;
 logic[4:0]   result_addr_q;
 logic[31:0]  result_d, result_q;
+logic        ls_enable_q;
+logic        ls_write_q;
+logic[31:0]  ls_write_data_q;
+logic[3:0]   ls_sel_q;
+logic        ls_unsigned_load_q;
 logic        branch_d, branch_q;
 logic[31:0]  branch_target_d, branch_target_q;
 logic        output_valid_d, output_valid_q;
@@ -201,12 +245,19 @@ always_ff @(posedge clk_i) begin
 
     if(output_ready_i) begin
       result_write_q      <=  input_valid_i
-                                  ? result_write_i
+                                  ? reg_write_i
                                   : 0;
-      result_addr_q       <=  result_addr_i;
+      result_addr_q       <=  reg_addr_i;
       branch_target_q     <=  branch_target_d;
 
       result_q          <=  result_d;
+
+      ls_enable_q         <=  ls_enable_i;
+      ls_write_q          <=  ls_write_i;
+      ls_write_data_q     <=  ls_write_data_i;
+      ls_sel_q            <=  ls_sel_i;
+      ls_unsigned_load_q  <=  ls_unsigned_load_i;
+
       branch_q          <=  input_valid_i
                                   ? branch_d
                                   : 0;
@@ -220,15 +271,22 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-assign input_ready_o = input_ready_q;
+assign  input_ready_o       =  input_ready_q;
 
-assign result_write_o = result_write_q;
-assign result_addr_o = result_addr_q;
-assign result_o = result_q;
+assign  result_o            =  result_q;
 
-assign branch_o = branch_q;
-assign branch_target_o = branch_target_q;
+assign  ls_enable_o         =  ls_enable_q;
+assign  ls_write_o          =  ls_write_q;
+assign  ls_write_data_o     =  ls_write_data_q;
+assign  ls_sel_o            =  ls_sel_q;
+assign  ls_unsigned_load_o  =  ls_unsigned_load_q;
 
-assign output_valid_o = output_valid_q;
+assign  branch_o            =  branch_q;
+assign  branch_target_o     =  branch_target_q;
+
+assign  reg_write_o         =  result_write_q;
+assign  reg_addr_o          =  result_addr_q;
+
+assign  output_valid_o      =  output_valid_q;
 
 endmodule // exm

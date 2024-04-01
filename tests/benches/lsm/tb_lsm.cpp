@@ -52,6 +52,7 @@ public:
     this->core->enable_i = 0;
     this->core->write_i = 0;
     this->core->sel_i = 0x0;
+    this->core->unsigned_load_i = 0;
     this->core->reg_write_i = 0;
     this->core->reg_addr_i = 0;
   }
@@ -62,6 +63,18 @@ public:
     this->core->enable_i = 1;
     this->core->write_i = 0;
     this->core->sel_i = 0x1;
+    this->core->unsigned_load_i = 0;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
+  }
+
+  void _lbu(uint32_t addr, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 0;
+    this->core->sel_i = 0x1;
+    this->core->unsigned_load_i = 1;
     this->core->reg_write_i = 1;
     this->core->reg_addr_i = reg_addr;
   }
@@ -72,6 +85,7 @@ public:
     this->core->enable_i = 1;
     this->core->write_i = 0;
     this->core->sel_i = 0x3;
+    this->core->unsigned_load_i = 0;
     this->core->reg_write_i = 1;
     this->core->reg_addr_i = reg_addr;
   }
@@ -82,6 +96,7 @@ public:
     this->core->enable_i = 1;
     this->core->write_i = 0;
     this->core->sel_i = 0xF;
+    this->core->unsigned_load_i = 0;
     this->core->reg_write_i = 1;
     this->core->reg_addr_i = reg_addr;
   }
@@ -276,6 +291,77 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   CHECK("tb_lsm.no_stall.LOAD_05",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_lsm_no_stall_unsigned_load(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = 7;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LBU 
+  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 2. Nothing (core latches response data)
+  //    tick 3. Nothing (core outputs result of LBU)
+  //    tick 4. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lbu(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data;
+
+  tb->_nop();
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_register, (core->reg_data_o            ==  0)); 
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_lsm.no_stall.UNSIGNED_LOAD_01",
+      tb->conditions[COND_register],
+      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
 }
 
 void tb_lsm_no_stall_store(TB_Lsm * tb) {
@@ -977,6 +1063,8 @@ int main(int argc, char ** argv, char ** env) {
 
   tb_lsm_no_stall_load(tb);
   tb_lsm_no_stall_store(tb);
+
+  tb_lsm_no_stall_unsigned_load(tb);
 
   tb_lsm_memory_stall(tb);
 
