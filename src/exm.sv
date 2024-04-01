@@ -27,6 +27,8 @@ module exm import ecap5_dproc_pkg::*;
   // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
+  // PC
+  input   logic[31:0]  pc_i,
   // ALU inputs 
   input   logic[31:0]  alu_operand1_i,
   input   logic[31:0]  alu_operand2_i, 
@@ -50,7 +52,7 @@ module exm import ecap5_dproc_pkg::*;
   output  logic[31:0]  result_o,
   // Branch outputs
   output  logic        branch_o,
-  output  logic[19:0]  branch_offset_o
+  output  logic[31:0]  branch_target_o
 );
 
 /*****************************************/
@@ -79,7 +81,9 @@ logic[31:0] alu_sum_output,
             alu_slt_output,
             alu_sltu_output,
             alu_shift_output;
+logic[31:0] alu_output;
 logic alu_sum_z;
+logic[31:0] pc_next;
 
 /*****************************************/
 /*             Stage outputs             */
@@ -89,10 +93,12 @@ logic        result_write_q;
 logic[4:0]   result_addr_q;
 logic[31:0]  result_d, result_q;
 logic        branch_d, branch_q;
-logic[19:0]  branch_offset_q;
+logic[31:0]  branch_target_d, branch_target_q;
 logic        output_valid_d, output_valid_q;
 
 /*****************************************/
+
+assign pc_next = pc_i + 32'h4;
 
 always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_i);
@@ -134,32 +140,41 @@ always_comb begin : alu
   alu_shift_output = alu_shift_left_i
                           ? {<<{alu_shift4}}
                           :     alu_shift4;
+
+  case(alu_op_i)
+    ALU_ADD:    alu_output  =  alu_sum_output;
+    ALU_XOR:    alu_output  =  alu_xor_output;
+    ALU_OR:     alu_output  =  alu_or_output;
+    ALU_AND:    alu_output  =  alu_and_output;
+    ALU_SLT:    alu_output  =  alu_slt_output;
+    ALU_SLTU:   alu_output  =  alu_sltu_output;
+    ALU_SHIFT:  alu_output  =  alu_shift_output;
+    default:    alu_output  =  '0;
+  endcase
 end
 
 always_comb begin : result_mux
-  case(alu_op_i)
-    ALU_ADD:    result_d  =  alu_sum_output;
-    ALU_XOR:    result_d  =  alu_xor_output;
-    ALU_OR:     result_d  =  alu_or_output;
-    ALU_AND:    result_d  =  alu_and_output;
-    ALU_SLT:    result_d  =  alu_slt_output;
-    ALU_SLTU:   result_d  =  alu_sltu_output;
-    ALU_SHIFT:  result_d  =  alu_shift_output;
-    default:    result_d  =  '0;
-  endcase
+  result_d = (branch_cond_i == BRANCH_UNCOND)
+                ? pc_next
+                : alu_output;
 end
 
-always_comb begin : branch_mux
+always_comb begin : branch_interface
   case(branch_cond_i)
-    NO_BRANCH:    branch_d  =   '0;
-    BRANCH_BEQ:   branch_d  =   alu_sum_z;
-    BRANCH_BNE:   branch_d  =  ~alu_sum_z;
-    BRANCH_BLT:   branch_d  =   alu_slt_output[0];
-    BRANCH_BLTU:  branch_d  =   alu_sltu_output[0];
-    BRANCH_BGE:   branch_d  =  ~alu_slt_output[0];
-    BRANCH_BGEU:  branch_d  =  ~alu_sltu_output[0];
-    default:      branch_d  =   '0;
+    NO_BRANCH:     branch_d  =   0;
+    BRANCH_BEQ:    branch_d  =   alu_sum_z;
+    BRANCH_BNE:    branch_d  =  ~alu_sum_z;
+    BRANCH_BLT:    branch_d  =   alu_slt_output[0];
+    BRANCH_BLTU:   branch_d  =   alu_sltu_output[0];
+    BRANCH_BGE:    branch_d  =  ~alu_slt_output[0];
+    BRANCH_BGEU:   branch_d  =  ~alu_sltu_output[0];
+    BRANCH_UNCOND: branch_d  =   1;
+    default:       branch_d  =   0;
   endcase
+
+  branch_target_d = (branch_cond_i == BRANCH_UNCOND)
+                        ? alu_sum_output
+                        : (pc_i + {12'h0, branch_offset_i}); 
 end
 
 always_comb begin : output_handshake
@@ -175,7 +190,7 @@ always_ff @(posedge clk_i) begin
 
     result_write_q      <=   0;
     result_addr_q       <=  '0;
-    branch_offset_q     <=  '0;
+    branch_target_q     <=  '0;
 
     result_q            <=  '0;
     branch_q            <=   0;
@@ -189,7 +204,7 @@ always_ff @(posedge clk_i) begin
                                   ? result_write_i
                                   : 0;
       result_addr_q       <=  result_addr_i;
-      branch_offset_q     <=  branch_offset_i;
+      branch_target_q     <=  branch_target_d;
 
       result_q          <=  result_d;
       branch_q          <=  input_valid_i
@@ -212,7 +227,7 @@ assign result_addr_o = result_addr_q;
 assign result_o = result_q;
 
 assign branch_o = branch_q;
-assign branch_offset_o = branch_offset_q;
+assign branch_target_o = branch_target_q;
 
 assign output_valid_o = output_valid_q;
 

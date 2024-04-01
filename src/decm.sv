@@ -41,9 +41,9 @@ module decm import ecap5_dproc_pkg::*;
   //    Register interface
    
   output  logic[4:0]    raddr1_o,
-  input   logic[31:0]   rdata1_o,
+  input   logic[31:0]   rdata1_i,
   output  logic[4:0]    raddr2_o,
-  input   logic[31:0]   rdata2_o,
+  input   logic[31:0]   rdata2_i,
 
   //=================================
   //    Output logic
@@ -53,7 +53,8 @@ module decm import ecap5_dproc_pkg::*;
 
   //`````````````````````````````````
   //    Execute interface 
-   
+  
+  output   logic[31:0]  pc_o,
   output   logic[31:0]  alu_operand1_o,
   output   logic[31:0]  alu_operand2_o, 
   output   logic[2:0]   alu_op_o,
@@ -74,20 +75,30 @@ module decm import ecap5_dproc_pkg::*;
    
   output   logic        ls_enable_o,
   output   logic        ls_write_o,
-  output   logic[3:0]   ls_sel_o
+  output   logic[31:0]  ls_write_data_o,
+  output   logic[3:0]   ls_sel_o,
+  output   logic        ls_unsigned_load_o
 );
 
 /*****************************************/
 /*           Internal signals            */
 /*****************************************/
+
 logic[6:0] opcode;
+logic[4:0] rd;
+logic[2:0] func3;
 logic[31:0] immediate;
+
+logic[2:0] branch_cond;
+logic[2:0] op_alu_op;
 
 /*****************************************/
 /*             Stage outputs             */
 /*****************************************/
 
 logic        input_ready_q;
+
+logic[31:0]  pc_q;
 
 logic[31:0]  alu_operand1_d,      alu_operand1_q;
 logic[31:0]  alu_operand2_d,      alu_operand2_q;      
@@ -104,58 +115,157 @@ logic[4:0]   reg_addr_d,          reg_addr_q;
 
 logic        ls_enable_d,         ls_enable_q;
 logic        ls_write_d,          ls_write_q;
+logic[31:0]  ls_write_data_d,     ls_write_data_q;
 logic[3:0]   ls_sel_d,            ls_sel_q;
+logic        ls_unsigned_load_d,    ls_unsigned_load_q;
 
 logic        output_valid_d,      output_valid_q;
 
 /*****************************************/
 
-assign opcode = instr_i[6:0];
+assign  opcode  =  instr_i[6:0];
+assign  rd      =  instr_i[11:7];
+assign  func3   =  instr_i[14:12];
 
-always_comb begin : compute_immediate
+assign raddr1_o = instr_i[19:15];
+assign raddr2_o = instr_i[24:20];
+
+always_comb begin : immediate_decoding
   immediate = '0;
   case(opcode)
+    // I encoding
+    OPCODE_JALR,
+    OPCODE_LOAD:   immediate = { {21{instr_i[31]}}, instr_i[30:20] };
+    OPCODE_OP_IMM: immediate = ((func3 == FUNC3_SLL) || (func3 == FUNC3_SRL))
+                                      ? { 27'h0, instr_i[24:20] }
+                                      : { {21{instr_i[31]}}, instr_i[30:20] };
+    // S encoding
+    OPCODE_STORE:  immediate = { {21{instr_i[31]}}, instr_i[30:25], instr_i[11:7] };
+    // B encoding
+    OPCODE_BRANCH: immediate = { {20{instr_i[31]}}, instr_i[7], instr_i[30:25], instr_i[11:8], 1'b0};
+    // U encoding
     OPCODE_LUI, 
-    OPCODE_AUIPC: immediate = {instr_i[31:12], 12'h0};
+    OPCODE_AUIPC:  immediate = { instr_i[31:12], 12'h0 };
+    // J encoding
+    OPCODE_JAL:    immediate = { {12{instr_i[31]}}, instr_i[19:12], instr_i[20], instr_i[30:21], 1'b0};
     default: begin
     end
   endcase
 end
 
 always_comb begin : alu_interface
-  alu_operand1_d = 0;
-  alu_operand2_d = 0;
-  alu_op_d = ALU_ADD;
+  case(opcode)
+    OPCODE_LUI, OPCODE_AUIPC, OPCODE_JAL:                  
+      alu_operand1_d = pc_i;
+    OPCODE_JALR, OPCODE_BRANCH, OPCODE_OP, OPCODE_OP_IMM, OPCODE_LOAD, OPCODE_STORE:  
+      alu_operand1_d = rdata1_i;
+    default:                                               
+      alu_operand1_d = '0;
+  endcase
 
   case(opcode)
-    OPCODE_LUI: begin
-      alu_operand1_d = immediate;
-      alu_operand2_d = 0;
-      alu_op_d = ALU_ADD;
-    end
-    default: begin
-    end
+    OPCODE_LUI,
+    OPCODE_AUIPC,
+    OPCODE_JAL,
+    OPCODE_JALR,
+    OPCODE_OP_IMM,
+    OPCODE_LOAD,
+    OPCODE_STORE: alu_operand2_d = immediate;
+    OPCODE_BRANCH,
+    OPCODE_OP:     alu_operand2_d = rdata2_i;
+    default:       alu_operand2_d = '0;
   endcase
+
+  case(func3)
+    FUNC3_ADD:            op_alu_op = ALU_ADD; 
+    FUNC3_SLT:            op_alu_op = ALU_SLT; 
+    FUNC3_SLTU:           op_alu_op = ALU_SLTU; 
+    FUNC3_XOR:            op_alu_op = ALU_XOR; 
+    FUNC3_OR:             op_alu_op = ALU_OR; 
+    FUNC3_AND:            op_alu_op = ALU_AND; 
+    FUNC3_SLL, FUNC3_SRL: op_alu_op = ALU_SHIFT; 
+  endcase
+  case(opcode)
+    OPCODE_OP,
+    OPCODE_OP_IMM: alu_op_d = op_alu_op;
+    default:       alu_op_d = '0;
+  endcase
+
+  alu_shift_left_d = (func3 == FUNC3_SLL);
+  alu_signed_shift_d = (instr_i[30] == 1'b1);
+  alu_sub_d = (opcode == OPCODE_OP) && (instr_i[30] == 1'b1);
 end
 
 always_comb begin : branch_interface
-  branch_cond_d = NO_BRANCH;
+  case(func3)
+    FUNC3_BEQ:  branch_cond = BRANCH_BEQ;
+    FUNC3_BNE:  branch_cond = BRANCH_BNE;
+    FUNC3_BLT:  branch_cond = BRANCH_BLT;
+    FUNC3_BGE:  branch_cond = BRANCH_BGE;
+    FUNC3_BLTU: branch_cond = BRANCH_BLTU;
+    FUNC3_BGEU: branch_cond = BRANCH_BGEU;
+    default:    branch_cond = NO_BRANCH;
+  endcase
+
+  if(opcode == OPCODE_BRANCH) begin
+    branch_cond_d = branch_cond;
+  end else if((opcode == OPCODE_JAL) || (opcode == OPCODE_JALR)) begin
+    branch_cond_d = BRANCH_UNCOND;
+  end else begin
+    branch_cond_d = NO_BRANCH;
+  end
+
+  branch_offset_d = immediate[19:0];
 end
 
-always_comb begin : register_interface
-  raddr1_o = instr_i[19:15]; 
-  raddr2_o = instr_i[24:20];
+always_comb begin : writeback_interface
+  reg_write_d = !((opcode == OPCODE_STORE) || (opcode == OPCODE_BRANCH));
+  reg_addr_d = rd;
+end
+
+always_comb begin : loadstore_interface
+  ls_enable_d = (opcode == OPCODE_LOAD) || (opcode == OPCODE_STORE);
+  ls_write_d = (opcode == OPCODE_STORE);
+  ls_write_data_d = rdata2_i;
+  case(func3[1:0])
+    2'b00:   ls_sel_d = 4'b0001;
+    2'b01:   ls_sel_d = 4'b0011;
+    2'b10:   ls_sel_d = 4'b1111;
+    default: ls_sel_d = '0;
+  endcase
+  ls_unsigned_load_d = (func3 == FUNC3_LBU) || (func3 == FUNC3_LHU);
 end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     input_ready_q       <=   0;
 
+    alu_operand1_q      <=  '0;
+    alu_operand2_q      <=  '0;
+    alu_op_q            <=  '0;
+    alu_sub_q           <=   0;
+    alu_shift_left_q    <=   0;
+    alu_signed_shift_q  <=   0;
+
+    branch_cond_q       <=  '0;
+    branch_offset_q     <=  '0;
+
+    reg_write_q         <=   0;
+    reg_addr_q          <=  '0;
+
+    ls_enable_q         <=   0;
+    ls_write_q          <=   0;
+    ls_write_data_q     <=  '0;
+    ls_sel_q            <=  '0;
+    ls_unsigned_load_q  <=   0;
+
     output_valid_q      <=   0;
   end else begin
     input_ready_q       <= output_ready_i;
 
     if(output_ready_i) begin
+      pc_q                <=  pc_i;
+
       alu_operand1_q      <=  alu_operand1_d;
       alu_operand2_q      <=  alu_operand2_d;
       alu_op_q            <=  alu_op_d;
@@ -171,7 +281,9 @@ always_ff @(posedge clk_i) begin
 
       ls_enable_q         <=  ls_enable_d;
       ls_write_q          <=  ls_write_d;
+      ls_write_data_q     <=  ls_write_data_d;
       ls_sel_q            <=  ls_sel_d;
+      ls_unsigned_load_q  <=  ls_unsigned_load_d;
     end
 
     output_valid_q    <= output_valid_d;
@@ -179,6 +291,8 @@ always_ff @(posedge clk_i) begin
 end
 
 assign  input_ready_o       =  input_ready_q;
+
+assign  pc_o                =  pc_q;
 
 assign  alu_operand1_o      =  alu_operand1_q;
 assign  alu_operand2_o      =  alu_operand2_q;
@@ -195,6 +309,8 @@ assign  reg_addr_o          =  reg_addr_q;
 
 assign  ls_enable_o         =  ls_enable_q;
 assign  ls_write_o          =  ls_write_q;
+assign  ls_write_data_o     =  ls_write_data_q;
 assign  ls_sel_o            =  ls_sel_q;
+assign  ls_unsigned_load_o    =  ls_unsigned_load_q;
 
 endmodule // decm

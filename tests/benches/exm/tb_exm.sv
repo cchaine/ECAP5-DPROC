@@ -28,6 +28,8 @@ module tb_exm import ecap5_dproc_pkg::*; (
   // Input handshake
   output  logic        input_ready_o,
   input   logic        input_valid_i,
+  // PC
+  input   logic[31:0]  pc_i,
   // ALU logic
   input   logic[31:0]  alu_operand1_i,
   input   logic[31:0]  alu_operand2_i, 
@@ -48,7 +50,7 @@ module tb_exm import ecap5_dproc_pkg::*; (
   output  logic[4:0]   result_addr_o,
   output  logic[31:0]  result_o,
   output  logic        branch_o,
-  output  logic[19:0]  branch_offset_o
+  output  logic[31:0]  branch_target_o
 );
 
 exm dut (
@@ -56,6 +58,7 @@ exm dut (
  .rst_i               (rst_i),
  .input_ready_o       (input_ready_o),
  .input_valid_i       (input_valid_i),
+ .pc_i                (pc_i),
  .alu_operand1_i      (alu_operand1_i),
  .alu_operand2_i      (alu_operand2_i), 
  .alu_op_i            (alu_op_i),
@@ -72,7 +75,7 @@ exm dut (
  .result_addr_o       (result_addr_o),
  .result_o            (result_o),
  .branch_o            (branch_o),
- .branch_offset_o     (branch_offset_o)
+ .branch_target_o     (branch_target_o)
 );
 
 endmodule // top

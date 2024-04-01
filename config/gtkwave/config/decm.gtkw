@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Mar 31 16:04:54 2024
+[*] Mon Apr  1 14:48:23 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/decm.vcd"
-[dumpfile_mtime] "Sun Mar 31 16:04:08 2024"
-[dumpfile_size] 6399
+[dumpfile_mtime] "Mon Apr  1 14:47:51 2024"
+[dumpfile_size] 56106
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/decm.gtkw"
-[timestart] 8
-[size] 1360 829
+[timestart] 887
+[size] 2160 829
 [pos] -1 -1
-*-4.654594 65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-4.654594 963 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -39,9 +39,9 @@
 [treeopen] TOP.
 [treeopen] TOP.tb_decm.
 [sst_width] 253
-[signals_width] 202
+[signals_width] 389
 [sst_expanded] 1
-[sst_vpaned_height] 359
+[sst_vpaned_height] 576
 @2024
 [color] 1
 ^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_testcase_filter.gtkw
@@ -56,7 +56,7 @@ TOP.tb_decm.input_valid_i
 TOP.tb_decm.input_ready_o
 @22
 TOP.tb_decm.pc_i[31:0]
-@4023
+@4022
 ^>1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_instr_filter_process.py
 TOP.tb_decm.instr_i[31:0]
 @200
@@ -65,11 +65,11 @@ TOP.tb_decm.instr_i[31:0]
 [color] 2
 TOP.tb_decm.raddr1_o[4:0]
 [color] 2
+TOP.tb_decm.rdata1_i[31:0]
+[color] 2
 TOP.tb_decm.raddr2_o[4:0]
 [color] 2
-TOP.tb_decm.rdata1_o[31:0]
-[color] 2
-TOP.tb_decm.rdata2_o[31:0]
+TOP.tb_decm.rdata2_i[31:0]
 @200
 -Output
 @28
@@ -79,19 +79,25 @@ TOP.tb_decm.output_ready_i
 -Execute
 @22
 [color] 5
+TOP.tb_decm.pc_o[31:0]
+[color] 5
 TOP.tb_decm.alu_operand1_o[31:0]
 [color] 5
 TOP.tb_decm.alu_operand2_o[31:0]
-@28
+@2024
 [color] 5
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_alu_op_filter.gtkw
 TOP.tb_decm.alu_op_o[2:0]
+@28
 [color] 5
 TOP.tb_decm.alu_sub_o
 [color] 5
 TOP.tb_decm.alu_shift_left_o
 [color] 5
 TOP.tb_decm.alu_signed_shift_o
+@2024
 [color] 7
+^3 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_branch_cond_filter.gtkw
 TOP.tb_decm.branch_cond_o[2:0]
 @22
 [color] 7
@@ -105,13 +111,15 @@ TOP.tb_decm.ls_enable_o
 TOP.tb_decm.ls_write_o
 @22
 [color] 3
+TOP.tb_decm.ls_write_data_o[31:0]
+[color] 3
 TOP.tb_decm.ls_sel_o[3:0]
 @200
 -Write-back
 @28
 [color] 6
 TOP.tb_decm.reg_write_o
-@22
+@24
 [color] 6
 TOP.tb_decm.reg_addr_o[4:0]
 [pattern_trace] 1

@@ -43,9 +43,9 @@ module tb_decm import ecap5_dproc_pkg::*;
   //    Register interface
    
   output  logic[4:0]    raddr1_o,
-  input   logic[31:0]   rdata1_o,
+  input   logic[31:0]   rdata1_i,
   output  logic[4:0]    raddr2_o,
-  input   logic[31:0]   rdata2_o,
+  input   logic[31:0]   rdata2_i,
 
   //=================================
   //    Output logic
@@ -56,6 +56,7 @@ module tb_decm import ecap5_dproc_pkg::*;
   //`````````````````````````````````
   //    Execute interface 
    
+  output   logic[31:0]  pc_o,
   output   logic[31:0]  alu_operand1_o,
   output   logic[31:0]  alu_operand2_o, 
   output   logic[2:0]   alu_op_o,
@@ -76,7 +77,9 @@ module tb_decm import ecap5_dproc_pkg::*;
    
   output   logic        ls_enable_o,
   output   logic        ls_write_o,
-  output   logic[3:0]   ls_sel_o
+  output   logic[31:0]  ls_write_data_o,
+  output   logic[3:0]   ls_sel_o,
+  output   logic        ls_unsigned_load_o
 );
 
 decm dut (
@@ -87,11 +90,12 @@ decm dut (
   .instr_i             (instr_i),
   .pc_i                (pc_i),
   .raddr1_o            (raddr1_o),
-  .rdata1_o            (rdata1_o),
+  .rdata1_i            (rdata1_i),
   .raddr2_o            (raddr2_o),
-  .rdata2_o            (rdata2_o),
+  .rdata2_i            (rdata2_i),
   .output_ready_i      (output_ready_i),
   .output_valid_o      (output_valid_o),
+  .pc_o                (pc_o),
   .alu_operand1_o      (alu_operand1_o),
   .alu_operand2_o      (alu_operand2_o), 
   .alu_op_o            (alu_op_o),
@@ -104,7 +108,9 @@ decm dut (
   .reg_addr_o          (reg_addr_o),
   .ls_enable_o         (ls_enable_o),
   .ls_write_o          (ls_write_o),
-  .ls_sel_o            (ls_sel_o)
+  .ls_write_data_o     (ls_write_data_o),
+  .ls_sel_o            (ls_sel_o),
+  .ls_unsigned_load_o  (ls_unsigned_load_o)
 );
 
 endmodule // top
