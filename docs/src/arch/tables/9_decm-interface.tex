@@ -21,6 +21,8 @@ ceive inputs. \\
   \hline
   input\_valid\_i & I & 1 & Input handshaking signal asserted when the provided inputs are valid. \\
   \hline
+  \multicolumn{4}{|l|}{\textbf{FETCH INTERFACE}} \\
+  \hline
   instr\_i & I & 32 & Instruction fetched from memory. \\
   \hline
   pc\_i & I & 32 & Instruction pointer for the fetched instruction. \\
@@ -41,6 +43,10 @@ ceive inputs. \\
   \hline
   output\_valid\_o & O & 1 & Output handshaking signal asserted when the output is valid. \\
   \hline
+  \multicolumn{4}{|l|}{\textbf{EXECUTE INTERFACE}} \\
+  \hline
+  pc\_o & O & 32 & Program counter \\
+  \hline
   alu\_operand1\_o & O & 32 & First ALU operand \\
   \hline
   alu\_operand2\_o & O & 32 & Second ALU operand \\
@@ -57,15 +63,23 @@ ceive inputs. \\
   \hline
   branch\_offset\_o & O & 1 & Branch offset \\
   \hline
+  \multicolumn{4}{|l|}{\textbf{WRITE-BACK PASS-THROUGH}} \\
+  \hline
   reg\_write\_o & O & 1 & Writeback enable \\
   \hline
   reg\_addr\_o & O & 5 & Writeback register address \\
+  \hline
+  \multicolumn{4}{|l|}{\textbf{LOAD-STORE PASS-THROUGH}} \\
   \hline
   ls\_enable\_o & O & 1 & Load-Store enable \\
   \hline
   ls\_write\_o & O & 1 & Load-Store read/write switch \\
   \hline
+  ls\_write\_data\_o & O & 32 & Load-Store write data \\
+  \hline
   ls\_sel\_o & O & 4 & Load-Store read/write size selector \\
+  \hline
+  ls\_unsigned\_load\_o & O & 1 & Load-Store unsigned load switch \\
   \hline
 \end{xltabular}
 }

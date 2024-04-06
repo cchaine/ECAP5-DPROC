@@ -10,207 +10,188 @@
 
   \subsection{Specification}
 
-    \subsubsection{Input handshake}
+  \subsubsection{Input interface}
 
-      \req{D\_DECM\_INPUT\_READY\_01}{
-          The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{output\_ready\_o} is deasserted.
-        }
+  % Instr imm
 
-      \req{D\_DECM\_INPUT\_READY\_02}{
-          The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{rst\_i} is asserted.
-        }
+  % Instr rd
 
-    \subsubsection{Immediate decoding}
+  \subsubsection{Execute interface}
 
-      \req{D\_DECM\_IMMEDIATE\_01}{
+  \paragraph{LUI}
 
-        }
+    \req{D\_DECM\_LUI\_01}{
+        When the decoded instruction is \texttt{LUI}, the module shall request the execute module to perform the sum of \texttt{pc\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass and with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_IMMEDIATE\_02}{
+  \paragraph{AUIPC}
 
-        }
+    \req{D\_DECM\_AUIPC\_01}{
+        When the decoded instruction is \texttt{AUIPC}, the module shall request the execute module to perform the ADD operation with \texttt{pc\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass and with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_IMMEDIATE\_03}{
+  \paragraph{JAL}
 
-        }
-      
-      \req{D\_DECM\_IMMEDIATE\_04}{
+    \req{D\_DECM\_JAL\_01}{
+        When the decoded instruction is \texttt{JAL}, the module shall request the execute module to perform the ADD operation with \texttt{pc\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, with an unconditional branch, with load-store bypass and with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-        }
+  \paragraph{JALR}
 
-      \req{D\_DECM\_IMMEDIATE\_05}{
+    \req{D\_DECM\_JALR\_01}{
+        When the decoded instruction is \texttt{JALR}, the module shall request the execute module to perform the ADD operation with the register value pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, with an unconditional branch, with load-store bypass and with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-        }
+  \paragraph{BRANCH}
 
-      \req{D\_DECM\_IMMEDIATE\_06}{
+    \req{D\_DECM\_BEQ\_01}{
+        When the decoded instruction is \texttt{BEQ}, the module shall request the execute module to perform a BEQ branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-        }
-    
-    \subsubsection{ALU interface}
+    \req{D\_DECM\_BNE\_01}{
+        When the decoded instruction is \texttt{BNE}, the module shall request the execute module to perform a BNE branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OPERAND1\_01}{
-          The \texttt{alu\_operand1\_o} signal shall be set to the value of \texttt{pc\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_LUI}, \texttt{OPCODE\_AUIPC} and \texttt{OPCODE\_JAL}.
-        }
+    \req{D\_DECM\_BLT\_01}{
+        When the decoded instruction is \texttt{BLT}, the module shall request the execute module to perform a BLT branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OPERAND1\_02}{
-          The \texttt{alu\_operand1\_o} signal shall be set to the value of \texttt{rdata1\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_JALR}, \texttt{OPCODE\_BRANCH}, \texttt{OPCODE\_OP}, \texttt{OPCODE\_OP\_IMM}, \texttt{OPCODE\_LOAD} and \texttt{OPCODE\_STORE}.
-        }
+    \req{D\_DECM\_BGE\_01}{
+        When the decoded instruction is \texttt{BGE}, the module shall request the execute module to perform a BGE branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OPERAND2\_01}{
-          The \texttt{alu\_operand2\_o} signal shall be set to the value of the decoded immediate on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_LUI}, \texttt{OPCODE\_AUIPC}, \texttt{OPCODE\_JAL}, \texttt{OPCODE\_JALR}, \texttt{OPCODE\_OP\_IMM}, \texttt{OPCODE\_LOAD} and \texttt{OPCODE\_STORE}.
-        }
+    \req{D\_DECM\_BLTU\_01}{
+        When the decoded instruction is \texttt{BLTU}, the module shall request the execute module to perform a BLTU branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OPERAND2\_02}{
-          The \texttt{alu\_operand2\_o} signal shall be set to the value of the \texttt{rdata2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_BRANCH} and \texttt{OPCODE\_OP}.
-        }
+    \req{D\_DECM\_BGEU\_01}{
+        When the decoded instruction is \texttt{BGEU}, the module shall request the execute module to perform a BGEU branch with both the values of the registers pointed by \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, to the offset given by the \texttt{imm} value encoded in \texttt{instr\_i}, with load-store bypass and no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OP\_01}{
+  \paragraph{LOAD}
 
-        }
+    \req{D\_DECM\_LB\_01}{
+        When the decoded instruction is \texttt{LB}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a one-byte signed load, with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_ALU\_OP\_02}{
+    \req{D\_DECM\_LBU\_01}{
+        When the decoded instruction is \texttt{LBU}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a one-byte unsigned load, with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_LH\_01}{
+        When the decoded instruction is \texttt{LH}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a two-byte signed load, with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_ALU\_OP\_03}{
+    \req{D\_DECM\_LHU\_01}{
+        When the decoded instruction is \texttt{LH}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a two-byte unsigned load, with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-        }
-        
-      \req{D\_DECM\_ALU\_OP\_04}{
+    \req{D\_DECM\_LW\_01}{
+        When the decoded instruction is \texttt{LH}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a four-byte load, with a register write to the register pointed by the \texttt{rd} field in \texttt{instr\_i}.
+      }
 
-        }
+  \paragraph{STORE}
 
-      \req{D\_DECM\_ALU\_OP\_05}{
+    \req{D\_DECM\_SB\_01}{
+        When the decoded instruction is \texttt{SB}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a one-byte write of the value of the register pointed by the \texttt{rs2} field of \texttt{instr\_i}, no register write.
+      }
 
-        }
+    \req{D\_DECM\_SH\_01}{
+        When the decoded instruction is \texttt{SH}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a two-byte write of the value of the register pointed by the \texttt{rs2} field of \texttt{instr\_i}, no register write.
+      }
 
-      \req{D\_DECM\_ALU\_OP\_06}{
+    \req{D\_DECM\_SW\_01}{
+        When the decoded instruction is \texttt{SW}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with a four-byte write of the value of the register pointed by the \texttt{rs2} field of \texttt{instr\_i}, no register write.
+      }
 
-        }
+  \paragraph{OP\_IMM}
 
-      \req{D\_DECM\_ALU\_OP\_07}{
+    \req{D\_DECM\_ADDI\_01}{
+        When the decoded instruction is \texttt{ADDI}, the module shall request the execute module to perform the ADD operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SLTI\_01}{
+        When the decoded instruction is \texttt{SLTI}, the module shall request the execute module to perform the SLT operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_ALU\_OP\_08}{
+    \req{D\_DECM\_SLTIU\_01}{
+        When the decoded instruction is \texttt{SLTIU}, the module shall request the execute module to perform the SLTU operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
-        
-      \req{D\_DECM\_ALU\_SHIFT\_LEFT\_01}{
+    \req{D\_DECM\_XORI\_01}{
+        When the decoded instruction is \texttt{XORI}, the module shall request the execute module to perform the XOR operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_ORI\_01}{
+        When the decoded instruction is \texttt{ORI}, the module shall request the execute module to perform the OR operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_ALU\_SIGNED\_SHIFT\_01}{
+    \req{D\_DECM\_ANDI\_01}{
+        When the decoded instruction is \texttt{ANDI}, the module shall request the execute module to perform the AND operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SLLI\_01}{
+        When the decoded instruction is \texttt{SLLI}, the module shall request the execute module to perform the left SHIFT operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_ALU\_SUB\_01}{
+    \req{D\_DECM\_SRLI\_01}{
+        When the decoded instruction is \texttt{SRLI}, the module shall request the execute module to perform the right unsigned SHIFT operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SRAI\_01}{
+        When the decoded instruction is \texttt{SRAI}, the module shall request the execute module to perform the right signed SHIFT operation with the value of the register pointed by the \texttt{rs1} field of \texttt{instr\_i} and the \texttt{imm} value encoded in \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-    \subsubsection{Branch interface}
+  \paragraph{OP}
 
-      \req{D\_DECM\_BRANCH\_COND\_01}{
+    \req{D\_DECM\_ADD\_01}{
+        When the decoded instruction is \texttt{ADD}, the module shall request the execute module to perform the ADD operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SUB\_01}{
+        When the decoded instruction is \texttt{SUB}, the module shall request the execute module to perform the SUB operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_BRANCH\_COND\_02}{
+    \req{D\_DECM\_SLT\_01}{
+        When the decoded instruction is \texttt{SLT}, the module shall request the execute module to perform the SLT operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SLTU\_01}{
+        When the decoded instruction is \texttt{SLTU}, the module shall request the execute module to perform the SLTU operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_BRANCH\_COND\_03}{
+    \req{D\_DECM\_XOR\_01}{
+        When the decoded instruction is \texttt{XOR}, the module shall request the execute module to perform the XOR operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
-        
-      \req{D\_DECM\_BRANCH\_COND\_04}{
+    \req{D\_DECM\_OR\_01}{
+        When the decoded instruction is \texttt{OR}, the module shall request the execute module to perform the OR operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_AND\_01}{
+        When the decoded instruction is \texttt{AND}, the module shall request the execute module to perform the AND operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_BRANCH\_COND\_05}{
+    \req{D\_DECM\_SLL\_01}{
+        When the decoded instruction is \texttt{SLL}, the module shall request the execute module to perform the left SHIFT operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+    \req{D\_DECM\_SRL\_01}{
+        When the decoded instruction is \texttt{SRL}, the module shall request the execute module to perform the right unsigned SHIFT operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-      \req{D\_DECM\_BRANCH\_COND\_06}{
+    \req{D\_DECM\_SRA\_01}{
+        When the decoded instruction is \texttt{SRL}, the module shall request the execute module to perform the right signed SHIFT operation with both value of the registers pointed by the \texttt{rs1} and \texttt{rs2} fields of \texttt{instr\_i}, no branch, with load-store bypass, with a register write to the register pointed by the \texttt{rd} field of \texttt{instr\_i}.
+      }
 
-        }
+  \subsubsection{Interface protocol}
 
-      \req{D\_DECM\_BRANCH\_COND\_07}{
+  % ALU request
 
-        }
+  % Branch request
 
-      \req{D\_DECM\_BRANCH\_COND\_08}{
+  % Load-Store bypass
 
-        }
-
-      \req{D\_DECM\_BRANCH\_OFFSET\_01}{
-
-        }
-
-    \subsubsection{Load-Store interface}
-
-      \req{D\_DECM\_LS\_ENABLE\_01}{
-
-        }
-
-      \req{D\_DECM\_LS\_WRITE\_01}{
-
-        }
-
-      \req{D\_DECM\_LS\_WRITE\_DATA\_01}{
-
-        }
-
-      \req{D\_DECM\_LS\_SEL\_01}{
-
-        }
-
-      \req{D\_DECM\_LS\_SEL\_02}{
-
-        }
-
-      \req{D\_DECM\_LS\_SEL\_03}{
-
-        }
-
-      \req{D\_DECM\_LS\_UNSIGNED\_LOAD\_01}{
-
-        }
-
-    \subsubsection{Write-Back interface}
-
-      \req{D\_DECM\_WB\_WRITE\_01}{
-        
-        }
-
-      \req{D\_DECM\_WB\_ADDR\_01}{
-
-        }
-
-
-    \subsubsection{Output handshake}
-
-      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_01}{
-          The \texttt{output\_valid\_o} output shall be asserted on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted.
-        }
-
-      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_02}{
-          When \texttt{output\_valid\_o} is asserted, the execute module shall hold the value of the following signals until the rising edge of \texttt{clk\_i} following the assertion of \texttt{output\_ready\_i} : \texttt{result\_write\_o}, \texttt{result\_addr\_o}, \texttt{result\_o}, \texttt{branch\_o} and \texttt{branch\_offset\_o}.
-        }
-
-      \req{D\_DECM\_OUTPUT\_HANDSHAKE\_03}{
-          The \texttt{output\_valid\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
-        }
-
-  \subsection{Behavior}
-
-    \begin{content}
-        TBC
-      \end{content}
-
-    \subsubsection{Hazard behaviors}
-
-      \begin{content}
-          Hazard behaviors are described in section \ref{pipeline-stall}.
-        \end{content}
+  % Register write
 
 \newpage
