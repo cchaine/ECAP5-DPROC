@@ -20,6 +20,173 @@
           The signal \texttt{input\_ready\_o} shall be deasserted when \texttt{rst\_i} is asserted.
         }
 
+    \subsubsection{Immediate decoding}
+
+      \req{D\_DECM\_IMMEDIATE\_01}{
+
+        }
+
+      \req{D\_DECM\_IMMEDIATE\_02}{
+
+        }
+
+      \req{D\_DECM\_IMMEDIATE\_03}{
+
+        }
+      
+      \req{D\_DECM\_IMMEDIATE\_04}{
+
+        }
+
+      \req{D\_DECM\_IMMEDIATE\_05}{
+
+        }
+
+      \req{D\_DECM\_IMMEDIATE\_06}{
+
+        }
+    
+    \subsubsection{ALU interface}
+
+      \req{D\_DECM\_ALU\_OPERAND1\_01}{
+          The \texttt{alu\_operand1\_o} signal shall be set to the value of \texttt{pc\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_LUI}, \texttt{OPCODE\_AUIPC} and \texttt{OPCODE\_JAL}.
+        }
+
+      \req{D\_DECM\_ALU\_OPERAND1\_02}{
+          The \texttt{alu\_operand1\_o} signal shall be set to the value of \texttt{rdata1\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_JALR}, \texttt{OPCODE\_BRANCH}, \texttt{OPCODE\_OP}, \texttt{OPCODE\_OP\_IMM}, \texttt{OPCODE\_LOAD} and \texttt{OPCODE\_STORE}.
+        }
+
+      \req{D\_DECM\_ALU\_OPERAND2\_01}{
+          The \texttt{alu\_operand2\_o} signal shall be set to the value of the decoded immediate on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_LUI}, \texttt{OPCODE\_AUIPC}, \texttt{OPCODE\_JAL}, \texttt{OPCODE\_JALR}, \texttt{OPCODE\_OP\_IMM}, \texttt{OPCODE\_LOAD} and \texttt{OPCODE\_STORE}.
+        }
+
+      \req{D\_DECM\_ALU\_OPERAND2\_02}{
+          The \texttt{alu\_operand2\_o} signal shall be set to the value of the \texttt{rdata2\_i} on the rising edge of \texttt{clk\_i} when \texttt{input\_ready\_o} is asserted and the opcode is one of the following : \texttt{OPCODE\_BRANCH} and \texttt{OPCODE\_OP}.
+        }
+
+      \req{D\_DECM\_ALU\_OP\_01}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_02}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_03}{
+
+        }
+        
+      \req{D\_DECM\_ALU\_OP\_04}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_05}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_06}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_07}{
+
+        }
+
+      \req{D\_DECM\_ALU\_OP\_08}{
+
+        }
+        
+      \req{D\_DECM\_ALU\_SHIFT\_LEFT\_01}{
+
+        }
+
+      \req{D\_DECM\_ALU\_SIGNED\_SHIFT\_01}{
+
+        }
+
+      \req{D\_DECM\_ALU\_SUB\_01}{
+
+        }
+
+    \subsubsection{Branch interface}
+
+      \req{D\_DECM\_BRANCH\_COND\_01}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_02}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_03}{
+
+        }
+        
+      \req{D\_DECM\_BRANCH\_COND\_04}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_05}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_06}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_07}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_COND\_08}{
+
+        }
+
+      \req{D\_DECM\_BRANCH\_OFFSET\_01}{
+
+        }
+
+    \subsubsection{Load-Store interface}
+
+      \req{D\_DECM\_LS\_ENABLE\_01}{
+
+        }
+
+      \req{D\_DECM\_LS\_WRITE\_01}{
+
+        }
+
+      \req{D\_DECM\_LS\_WRITE\_DATA\_01}{
+
+        }
+
+      \req{D\_DECM\_LS\_SEL\_01}{
+
+        }
+
+      \req{D\_DECM\_LS\_SEL\_02}{
+
+        }
+
+      \req{D\_DECM\_LS\_SEL\_03}{
+
+        }
+
+      \req{D\_DECM\_LS\_UNSIGNED\_LOAD\_01}{
+
+        }
+
+    \subsubsection{Write-Back interface}
+
+      \req{D\_DECM\_WB\_WRITE\_01}{
+        
+        }
+
+      \req{D\_DECM\_WB\_ADDR\_01}{
+
+        }
+
+
     \subsubsection{Output handshake}
 
       \req{D\_DECM\_OUTPUT\_HANDSHAKE\_01}{
@@ -33,7 +200,6 @@
       \req{D\_DECM\_OUTPUT\_HANDSHAKE\_03}{
           The \texttt{output\_valid\_o} output shall be deasserted on the rising edge of \texttt{clk\_i} when \texttt{rst\_i} is asserted.
         }
-
 
   \subsection{Behavior}
 
