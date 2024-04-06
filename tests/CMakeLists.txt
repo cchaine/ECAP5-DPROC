@@ -33,19 +33,32 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testdata)
 
 set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh)
 
+# Lint
+file(GLOB SRC_FILES ${SRC_DIR}/*.sv)
+file(GLOB INCLUDE_FILES ${INCLUDE_DIR}/*.svh)
+add_custom_target(lint 
+  COMMAND verible-verilog-lint ${SRC_FILES} ${INCLUDE_FILES} --rules_config="${CONFIG_DIR}/verible-lint.rules" --waiver_files="${CONFIG_DIR}/verible-lint.waives"
+  DEPENDS ${SRC_FILES} ${INCLUDE_FILES})
+
+# Testbench
 set(TEST_BINARIES)
 set(TEST_TARGETS)
 set(TEST_OUTPUTS)
-
 macro(add_testbench module)
-  set(TARGET tb_${module})
-  cmake_parse_arguments(TESTBENCH ""
-                                  ""
-                                  "LIBS"
-                                  ${ARGN})
+  cmake_parse_arguments(ARG ""
+                            "BENCH"
+                            "LIBS"
+                            ${ARGN})
+
+  if("${ARG_BENCH}" STREQUAL "")
+    set(ARG_BENCH ${module})
+  endif()
+  set(TARGET tb_${ARG_BENCH})
+
   # Make a file list for testing libraries
-  list(TRANSFORM TESTBENCH_LIBS APPEND ".sv")
-  list(TRANSFORM TESTBENCH_LIBS PREPEND ${LIBS_DIR})
+  list(TRANSFORM ARG_LIBS APPEND ".sv")
+  list(TRANSFORM ARG_LIBS PREPEND ${LIBS_DIR})
+
   # Create the test executable
   add_executable(${TARGET} ${BENCH_DIR}/${module}/${TARGET}.cpp)
   target_include_directories(${TARGET} PUBLIC ${TEST_INCLUDE_DIR})
@@ -53,12 +66,12 @@ macro(add_testbench module)
     PREFIX V${TARGET}
     SOURCES ${SV_HEADERS}
             ${BENCH_DIR}/${module}/${TARGET}.sv
-            ${TESTBENCH_LIBS}
+            ${ARG_LIBS}
     INCLUDE_DIRS ${SRC_DIR}
     TRACE)
 
-  set(TEST_TARGET simulate_${module})
-  set(TEST_OUTPUT ${TESTDATA_DIR}/${module}.csv)
+  set(TEST_TARGET simulate_${ARG_BENCH})
+  set(TEST_OUTPUT ${TESTDATA_DIR}/${ARG_BENCH}.csv)
   # Create the ${TEST_TARGET} command to run the test
   get_target_property(BINARY_DIR "${TARGET}" BINARY_DIR)
   if(${DEBUGLOG})
@@ -81,12 +94,7 @@ add_testbench(ifm)
 add_testbench(exm)
 add_testbench(lsm)
 
+# Main targets
 add_custom_target(build DEPENDS ${TEST_BINARIES})
-
 add_custom_target(tests DEPENDS ${TEST_TARGETS})
 
-file(GLOB SRC_FILES ${SRC_DIR}/*.sv)
-file(GLOB INCLUDE_FILES ${INCLUDE_DIR}/*.svh)
-add_custom_target(lint 
-  COMMAND verible-verilog-lint ${SRC_FILES} ${INCLUDE_FILES} --rules_config="${CONFIG_DIR}/verible-lint.rules" --waiver_files="${CONFIG_DIR}/verible-lint.waives"
-  DEPENDS ${SRC_FILES} ${INCLUDE_FILES})
