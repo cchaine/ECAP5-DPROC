@@ -1,7 +1,7 @@
 Architecture Overview
 =====================
 
-.. todo:: Add architecture overview diagram
+.. image:: ../_static/assets/architecture.svg
 
 Clock domains
 -------------
