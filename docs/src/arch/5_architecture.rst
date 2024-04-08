@@ -1,7 +1,7 @@
 Architecture Overview
 =====================
 
-.. image:: ../_static/assets/architecture.svg
+.. image:: ../assets/architecture.svg
 
 Clock domains
 -------------

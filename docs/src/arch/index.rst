@@ -1,7 +1,7 @@
 Architecture Document
 =====================
 
-.. image:: ../_static/assets/architecture.svg
+.. image:: ../assets/architecture.svg
 
 .. todo:: Find a way to add a Table of Contents title here.
 

@@ -3,20 +3,16 @@ include(FindPackageHandleStandardArgs)
 # Install sphinx
 execute_process(COMMAND bash "-c" "${Python3_EXECUTABLE} -m pip list | grep -w 'Sphinx'" RESULT_VARIABLE rv OUTPUT_QUIET)
 if("${rv}" STREQUAL "1")
-  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install sphinx)
+  message(STATUS "Collecting Sphinx")
+  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install sphinx OUTPUT_QUIET RESULT_VARIABLE rv)
 endif()
 
-# We are likely to find Sphinx near the Python interpreter
-find_package(PythonInterp)
-if(PYTHONINTERP_FOUND)
-    get_filename_component(_PYTHON_DIR "${Python3_EXECUTABLE}" DIRECTORY)
-    set(
-        _PYTHON_PATHS
-        "${_PYTHON_DIR}"
-        "${_PYTHON_DIR}/bin"
-        "${_PYTHON_DIR}/Scripts")
-endif()
-
+get_filename_component(_PYTHON_DIR "${Python3_EXECUTABLE}" DIRECTORY)
+set(
+      _PYTHON_PATHS
+    "${_PYTHON_DIR}"
+    "${_PYTHON_DIR}/bin"
+    "${_PYTHON_DIR}/Scripts")
 find_program(
     SPHINX_EXECUTABLE
     NAMES sphinx-build sphinx-build.exe
@@ -34,11 +30,8 @@ endif()
 # Install the sphinx theme dependency
 execute_process(COMMAND bash "-c" "${Python3_EXECUTABLE} -m pip list | grep -w 'sphinx-rtd-theme'" RESULT_VARIABLE rv OUTPUT_QUIET)
 if("${rv}" STREQUAL "1")
-  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install sphinx-rtd-theme)
-endif()
-execute_process(COMMAND bash "-c" "${Python3_EXECUTABLE} -m pip list | grep -w 'sphinx-toolbox'" RESULT_VARIABLE rv OUTPUT_QUIET)
-if("${rv}" STREQUAL "1")
-  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install sphinx-toolbox)
+  message(STATUS "Collecting Sphinx extensions")
+  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install sphinx-rtd-theme sphinx-toolbox OUTPUT_QUIET)
 endif()
 
 set(_SPHINX_SCRIPT_DIR ${CMAKE_CURRENT_LIST_DIR})
