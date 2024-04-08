@@ -787,17 +787,17 @@ XOR
 SRL
 ```
 
-.. requirement:: F_SLT_01
+.. requirement:: F_SRL_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
   The SRL behavior shall be applied when the opcode is OP, func3 is 0x5 and func7 is 0x0.
 
-.. requirement:: F_SLT_02
+.. requirement:: F_SRL_02
   :derivedfrom: U_INSTRUCTION_SET_01
 
   The result of SRL shall be its first parameter shifted right by the amount specified by the first 5 bits of its second parameter.
 
-.. requirement:: F_SLT_03
+.. requirement:: F_SRL_03
   :derivedfrom: U_INSTRUCTION_SET_01
 
   Zeros shall be inserted in the upper bits when shifting.

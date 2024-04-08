@@ -87,6 +87,10 @@ The memory address at which ECAP5-DPROC shall jump to when interrupted is not sp
 
    ECAP5-DPROC shall be compliant with the RISC-V External Debug Support specification.
 
+   ergerg
+
+   erg
+
 There is no performance goal required by ECAP5 for ECAP5-DPROC as ECAP5 is an educational platform.
 
 Assumptions and Dependencies
