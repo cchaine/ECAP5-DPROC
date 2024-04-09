@@ -1,12 +1,23 @@
 # Download external dependencies
 FetchContent_Declare(ECAP5_TREQ
   GIT_REPOSITORY https://github.com/cchaine/ECAP5-TREQ  
-  GIT_TAG tags/v2.0.0
+  GIT_TAG tags/v2.1.0
 )
 FetchContent_MakeAvailable(ECAP5_TREQ)
 if(NOT DEFINED ecap5_treq_EXECUTABLE)
-  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${ecap5_treq_SOURCE_DIR})
-  set(ecap5_treq_EXECUTABLE ${VENV_DIR}/bin/ecap5-treq CACHE STRING "path to the ecap5-treq executable")
+  message(STATUS "Collecting ECAP5-TREQ")
+  # Download external dependencies
+  FetchContent_Declare(ECAP5_TREQ
+    GIT_REPOSITORY https://github.com/cchaine/ECAP5-TREQ  
+    GIT_TAG 78-add-support-for-restructuredtext-specification-format
+  )
+  FetchContent_MakeAvailable(ECAP5_TREQ)
+
+  execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${ecap5_treq_SOURCE_DIR} OUTPUT_QUIET RESULT_VARIABLE rv)
+  if("${rv}" STREQUAL "0")
+    set(ecap5_treq_EXECUTABLE ${VENV_DIR}/bin/ecap5-treq CACHE STRING "path to the ecap5-treq executable")
+    message(STATUS "Collecting ECAP5-TREQ - Success")
+  endif()
 endif()
 
 # Define commands for using ECAP5-TREQ
