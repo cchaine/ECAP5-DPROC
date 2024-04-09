@@ -19,3 +19,4 @@
 19 wait_after_reset
 20 wait
 21 reset
+22 branch_jalr

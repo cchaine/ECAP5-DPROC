@@ -25,19 +25,32 @@ module tb_lsm import ecap5_dproc_pkg::*; (
 
   input   logic        clk_i,
   input   logic        rst_i,
-  // Input handshake
+
+  //=================================
+  //    Input logic
+  
   output  logic        input_ready_o,
   input   logic        input_valid_i,
-  // Load-Store inputs
+
+  //`````````````````````````````````
+  //    Execute interface 
+   
   input   logic[31:0]  alu_result_i,
   input   logic        enable_i,
   input   logic        write_i,
   input   logic[31:0]  write_data_i,
   input   logic[3:0]   sel_i,
-  // Register write interface
+  input   logic        unsigned_load_i,
+
+  //`````````````````````````````````
+  //    Write-back pass-through
+   
   input   logic        reg_write_i,
   input   logic[4:0]   reg_addr_i,
-  // Wishbone master
+
+  //=================================
+  //    Wishbone interface 
+  
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i,
   output  logic[31:0]  wb_dat_o,
@@ -47,39 +60,46 @@ module tb_lsm import ecap5_dproc_pkg::*; (
   input   logic        wb_ack_i,
   output  logic        wb_cyc_o,
   input   logic        wb_stall_i,
-  // Output handshake
+
+  //=================================
+  //    Output logic
+  
   output  logic        output_valid_o,
-  // Output 
+
+  //`````````````````````````````````
+  //    Write-back interface
+   
   output  logic        reg_write_o,
   output  logic[4:0]   reg_addr_o,
   output  logic[31:0]  reg_data_o
 );
 
 lsm dut (
- .clk_i          (clk_i),
- .rst_i          (rst_i),
- .input_ready_o  (input_ready_o),
- .input_valid_i  (input_valid_i),
- .alu_result_i   (alu_result_i),
- .enable_i       (enable_i),
- .write_i        (write_i),
- .write_data_i   (write_data_i),
- .sel_i          (sel_i),
- .reg_write_i    (reg_write_i),
- .reg_addr_i     (reg_addr_i),
- .wb_adr_o       (wb_adr_o),
- .wb_dat_i       (wb_dat_i),
- .wb_dat_o       (wb_dat_o),
- .wb_we_o        (wb_we_o),
- .wb_sel_o       (wb_sel_o),
- .wb_stb_o       (wb_stb_o),
- .wb_ack_i       (wb_ack_i),
- .wb_cyc_o       (wb_cyc_o),
- .wb_stall_i     (wb_stall_i),
- .output_valid_o (output_valid_o),
- .reg_write_o    (reg_write_o),
- .reg_addr_o     (reg_addr_o),
- .reg_data_o     (reg_data_o)
+ .clk_i           (clk_i),
+ .rst_i           (rst_i),
+ .input_ready_o   (input_ready_o),
+ .input_valid_i   (input_valid_i),
+ .alu_result_i    (alu_result_i),
+ .enable_i        (enable_i),
+ .write_i         (write_i),
+ .write_data_i    (write_data_i),
+ .sel_i           (sel_i),
+ .unsigned_load_i (unsigned_load_i),
+ .reg_write_i     (reg_write_i),
+ .reg_addr_i      (reg_addr_i),
+ .wb_adr_o        (wb_adr_o),
+ .wb_dat_i        (wb_dat_i),
+ .wb_dat_o        (wb_dat_o),
+ .wb_we_o         (wb_we_o),
+ .wb_sel_o        (wb_sel_o),
+ .wb_stb_o        (wb_stb_o),
+ .wb_ack_i        (wb_ack_i),
+ .wb_cyc_o        (wb_cyc_o),
+ .wb_stall_i      (wb_stall_i),
+ .output_valid_o  (output_valid_o),
+ .reg_write_o     (reg_write_o),
+ .reg_addr_o      (reg_addr_o),
+ .reg_data_o      (reg_data_o)
 );
 
 endmodule // top

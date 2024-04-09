@@ -51,85 +51,85 @@ public:
     this->core->alu_sub_i = 0;
     this->core->alu_shift_left_i = 0;
     this->core->alu_signed_shift_i = 0;
-    this->core->result_write_i = 0;
-    this->core->result_addr_i = 0;
+    this->core->reg_write_i = 0;
+    this->core->reg_addr_i = 0;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::NO_BRANCH;
     this->core->branch_offset_i = 0;
   }
 
-  void _add(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _add(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
     this->core->alu_sub_i = 0;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _sub(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _sub(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
     this->core->alu_sub_i = 1;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _xor(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _xor(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_XOR;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _or(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _or(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_OR;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _and(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _and(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_AND;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _slt(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _slt(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_SLT;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _sltu(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _sltu(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_SLTU;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _sll(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _sll(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
@@ -137,11 +137,11 @@ public:
     this->core->alu_shift_left_i = 1;
     this->core->alu_signed_shift_i = 0;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _srl(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _srl(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
@@ -149,11 +149,11 @@ public:
     this->core->alu_shift_left_i = 0;
     this->core->alu_signed_shift_i = 0;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _sra(uint32_t operand1, uint32_t operand2, uint32_t result_addr) {
+  void _sra(uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
     this->_nop();
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
@@ -161,56 +161,72 @@ public:
     this->core->alu_shift_left_i = 0;
     this->core->alu_signed_shift_i = 1;
     this->core->branch_cond_i = 0;
-    this->core->result_write_i = 1;
-    this->core->result_addr_i = result_addr;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 
-  void _beq(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _beq(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BEQ;
     this->core->branch_offset_i = branch_offset;
   }
 
-  void _bne(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _bne(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BNE;
     this->core->branch_offset_i = branch_offset;
   }
 
-  void _blt(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _blt(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BLT;
     this->core->branch_offset_i = branch_offset;
   }
 
-  void _bltu(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _bltu(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BLTU;
     this->core->branch_offset_i = branch_offset;
   }
 
-  void _bge(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _bge(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BGE;
     this->core->branch_offset_i = branch_offset;
   }
 
-  void _bgeu(uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
+  void _bgeu(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t branch_offset) {
     this->_nop();
+    this->core->pc_i = pc;
     this->core->alu_operand1_i = operand1;
     this->core->alu_operand2_i = operand2;
     this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BGEU;
     this->core->branch_offset_i = branch_offset;
+  }
+
+  void _jalr(uint32_t pc, uint32_t operand1, uint32_t operand2, uint32_t reg_addr) {
+    this->_nop();
+    this->core->pc_i = pc;
+    this->core->alu_operand1_i = operand1;
+    this->core->alu_operand2_i = operand2;
+    this->core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_UNCOND;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
   }
 };
 
@@ -243,8 +259,8 @@ void tb_exm_alu_add(TB_Exm * tb) {
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_add(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -256,8 +272,8 @@ void tb_exm_alu_add(TB_Exm * tb) {
   
   uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -298,8 +314,8 @@ void tb_exm_alu_sub(TB_Exm * tb) {
   
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint32_t result_addr = rand() % 32;
-  tb->_sub(operand1, operand2, result_addr);
+  uint32_t reg_addr = rand() % 32;
+  tb->_sub(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -311,8 +327,8 @@ void tb_exm_alu_sub(TB_Exm * tb) {
 
   uint32_t result = ((int32_t)operand1 - (int32_t)operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -353,8 +369,8 @@ void tb_exm_alu_xor(TB_Exm * tb) {
   
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_xor(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_xor(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -366,8 +382,8 @@ void tb_exm_alu_xor(TB_Exm * tb) {
   
   uint32_t result = (operand1 ^ operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -408,8 +424,8 @@ void tb_exm_alu_or(TB_Exm * tb) {
   
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_or(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_or(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -421,8 +437,8 @@ void tb_exm_alu_or(TB_Exm * tb) {
   
   uint32_t result = (operand1 | operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -463,8 +479,8 @@ void tb_exm_alu_and(TB_Exm * tb) {
   
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_and(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_and(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -476,8 +492,8 @@ void tb_exm_alu_and(TB_Exm * tb) {
   
   uint32_t result = (operand1 & operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -517,11 +533,11 @@ void tb_exm_alu_slt(TB_Exm * tb) {
   core->output_ready_i = 1;
   
   // Test values from operand2 - 8 to operand2 + 2
-  uint8_t result_addr = rand() % 32;
+  uint8_t reg_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
   uint32_t result;
   for(int i = 0; i < 10; i++) {
-    tb->_slt((int32_t)operand2 - 8 + i, operand2, result_addr);
+    tb->_slt((int32_t)operand2 - 8 + i, operand2, reg_addr);
 
     //=================================
     //      Tick (1 to 10)
@@ -533,8 +549,8 @@ void tb_exm_alu_slt(TB_Exm * tb) {
     
     result = (((int32_t)operand2 - 8 + i) < (int32_t)operand2);
     tb->check(COND_result,       (core->result_o        ==  result) && 
-                                 (core->result_write_o  ==  1)      &&
-                                 (core->result_addr_o   ==  result_addr));
+                                 (core->reg_write_o  ==  1)      &&
+                                 (core->reg_addr_o   ==  reg_addr));
     tb->check(COND_branch,       (core->branch_o        ==  0));
     tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   }
@@ -575,11 +591,11 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
   core->output_ready_i = 1;
   
   // Test values from operand2 - 8 to operand2 + 2
-  uint8_t result_addr = rand() % 32;
+  uint8_t reg_addr = rand() % 32;
   uint32_t operand2 = 2 + rand() % 5;
   uint32_t result;
   for(int i = 0; i < 10; i++) {
-    tb->_sltu((int32_t)operand2 - 8 + i, operand2, result_addr);
+    tb->_sltu((int32_t)operand2 - 8 + i, operand2, reg_addr);
 
     //=================================
     //      Tick (1 to 10)
@@ -591,8 +607,8 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
     
     result = ((uint32_t)((int32_t)operand2 - 8 + i) < (uint32_t)((int32_t)operand2));
     tb->check(COND_result,       (core->result_o        ==  result) && 
-                                 (core->result_write_o  ==  1)      &&
-                                 (core->result_addr_o   ==  result_addr));
+                                 (core->reg_write_o  ==  1)      &&
+                                 (core->reg_addr_o   ==  reg_addr));
     tb->check(COND_branch,       (core->branch_o        ==  0));
     tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   }
@@ -634,8 +650,8 @@ void tb_exm_alu_sll(TB_Exm * tb) {
   
   uint32_t operand1 = rand();
   uint32_t operand2 = 3 + rand() % 29;
-  uint32_t result_addr = rand() % 32;
-  tb->_sll(operand1, operand2, result_addr);
+  uint32_t reg_addr = rand() % 32;
+  tb->_sll(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -647,8 +663,8 @@ void tb_exm_alu_sll(TB_Exm * tb) {
   
   uint32_t result = (operand1 << (operand2 & 0x1F));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -690,8 +706,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
 
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
-  uint32_t result_addr = rand() % 32;
-  tb->_srl(operand1, operand2, result_addr);
+  uint32_t reg_addr = rand() % 32;
+  tb->_srl(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -703,8 +719,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   
   uint32_t result = (operand1 >> (operand2 & 0x1F));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -713,8 +729,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
-  result_addr = rand() % 32;
-  tb->_srl(operand1, operand2, result_addr);
+  reg_addr = rand() % 32;
+  tb->_srl(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (2)
@@ -726,8 +742,8 @@ void tb_exm_alu_srl(TB_Exm * tb) {
   
   result = (operand1 >> (operand2 & 0x1F));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   
@@ -769,8 +785,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
 
   uint32_t operand1 = rand() | 0x80000000; // enable the sign bit
   uint32_t operand2 = 3 + rand() % 29;
-  uint32_t result_addr = rand() % 32;
-  tb->_sra(operand1, operand2, result_addr);
+  uint32_t reg_addr = rand() % 32;
+  tb->_sra(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -783,8 +799,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   uint32_t result  = (operand1 >> (operand2 & 0x1F));
            result |= ((1 << (operand2 & 0x1F)) - 1) << (32 - (operand2 & 0x1F));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -793,8 +809,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
 
   operand1 = rand() & ~(0x80000000); // disable the sign bit
   operand2 = 3 + rand() % 29;
-  result_addr = rand() % 32;
-  tb->_sra(operand1, operand2, result_addr);
+  reg_addr = rand() % 32;
+  tb->_sra(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (2)
@@ -806,8 +822,8 @@ void tb_exm_alu_sra(TB_Exm * tb) {
   
   result = (operand1 >> (operand2 & 0x1F));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -847,10 +863,11 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_beq(operand1, operand2, branch_offset);
+  tb->_beq(pc, operand1, operand2, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -860,14 +877,14 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
 
-  tb->_beq(operand1, operand1, branch_offset);
+  tb->_beq(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -877,9 +894,9 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -918,10 +935,11 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_bne(operand1, operand1, branch_offset);
+  tb->_bne(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -931,14 +949,14 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
 
-  tb->_bne(operand1, operand2, branch_offset);
+  tb->_bne(pc, operand1, operand2, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -948,9 +966,9 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -990,9 +1008,10 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_blt((int32_t)operand1 + 10, operand1, branch_offset);
+  tb->_blt(pc, (int32_t)operand1 + 10, operand1, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -1002,14 +1021,14 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
 
-  tb->_blt(operand1, operand1, branch_offset);
+  tb->_blt(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -1019,14 +1038,14 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
 
-  tb->_blt((int32_t)operand1 - 10, operand1, branch_offset);
+  tb->_blt(pc, (int32_t)operand1 - 10, operand1, branch_offset);
 
   //=================================
   //      Tick (3)
@@ -1036,9 +1055,9 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1079,9 +1098,10 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = 2 % rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_bltu((int32_t)operand1 + 10, operand1, branch_offset);
+  tb->_bltu(pc, (int32_t)operand1 + 10, operand1, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -1091,14 +1111,14 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bltu(operand1, operand1, branch_offset);
+  tb->_bltu(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -1108,14 +1128,14 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bltu((int32_t)operand1 - 10, operand1, branch_offset);
+  tb->_bltu(pc, (int32_t)operand1 - 10, operand1, branch_offset);
 
   //=================================
   //      Tick (3)
@@ -1125,14 +1145,14 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bltu((int32_t)operand1 - 2, operand1, branch_offset);
+  tb->_bltu(pc, (int32_t)operand1 - 2, operand1, branch_offset);
 
   //=================================
   //      Tick (4)
@@ -1142,9 +1162,9 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
   
   //`````````````````````````````````
@@ -1184,9 +1204,10 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_bge((int32_t)operand1 - 10, operand1, branch_offset);
+  tb->_bge(pc, (int32_t)operand1 - 10, operand1, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -1196,14 +1217,14 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bge(operand1, operand1, branch_offset);
+  tb->_bge(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -1213,15 +1234,15 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bge((int32_t)operand1 + 10, operand1, branch_offset);
+  tb->_bge(pc, (int32_t)operand1 + 10, operand1, branch_offset);
 
   //=================================
   //      Tick (3)
@@ -1231,9 +1252,9 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
   
   //`````````````````````````````````
@@ -1274,9 +1295,10 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   core->input_valid_i = 1;
   core->output_ready_i = 1;
 
+  uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = 2 + rand() % 6;
   uint32_t branch_offset = rand() % 0xFFFFF;
-  tb->_bgeu((int32_t)operand1 - 10, operand1, branch_offset);
+  tb->_bgeu(pc, (int32_t)operand1 - 10, operand1, branch_offset);
 
   //=================================
   //      Tick (0)
@@ -1286,15 +1308,15 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bgeu(operand1, operand1, branch_offset);
+  tb->_bgeu(pc, operand1, operand1, branch_offset);
 
   //=================================
   //      Tick (1)
@@ -1304,15 +1326,15 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bgeu((int32_t)operand1 + 10, operand1, branch_offset);
+  tb->_bgeu(pc, (int32_t)operand1 + 10, operand1, branch_offset);
 
   //=================================
   //      Tick (2)
@@ -1322,15 +1344,15 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o   ==  0));
+  tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_offset_o  ==  branch_offset));
+                               (core->branch_target_o  ==  pc + branch_offset));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_bgeu((int32_t)operand1 - 2, operand1, branch_offset);
+  tb->_bgeu(pc, (int32_t)operand1 - 2, operand1, branch_offset);
 
   //=================================
   //      Tick (3)
@@ -1340,7 +1362,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   
@@ -1388,8 +1410,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_add(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -1401,8 +1423,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   
   uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1411,8 +1433,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   
   operand1 = rand();
   operand2 = rand();
-  result_addr = rand() % 32;
-  tb->_sub(operand1, operand2, result_addr);
+  reg_addr = rand() % 32;
+  tb->_sub(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (2)
@@ -1424,8 +1446,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   
   result = ((int32_t)operand1 - (int32_t)operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1434,8 +1456,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   
   operand1 = rand();
   operand2 = rand();
-  result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  reg_addr = rand() % 32;
+  tb->_add(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (3)
@@ -1447,8 +1469,8 @@ void tb_exm_back_to_back(TB_Exm * tb) {
   
   result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1493,8 +1515,8 @@ void tb_exm_bubble(TB_Exm * tb) {
   core->alu_sub_i = rand() % 2;
   core->alu_shift_left_i = rand() % 2;
   core->alu_signed_shift_i = rand() % 2;
-  core->result_write_i = 1;
-  core->result_addr_i = rand() % 32;
+  core->reg_write_i = 1;
+  core->reg_addr_i = rand() % 32;
   core->branch_cond_i = 1 + rand() % 6;
   core->branch_offset_i = rand() % 0xFFFFF;
 
@@ -1506,7 +1528,7 @@ void tb_exm_bubble(TB_Exm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   
@@ -1555,8 +1577,8 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_add(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (1)
@@ -1567,7 +1589,7 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
   //      Checks 
   
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
 
@@ -1580,7 +1602,7 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
   //      Checks 
   
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
 
@@ -1600,15 +1622,15 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
   uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_sub(operand1, operand2, result_addr);
+  tb->_sub(operand1, operand2, reg_addr);
 
   //=================================
   //      Tick (4)
@@ -1621,8 +1643,8 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
   result = ((int32_t)operand1 - (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   
@@ -1670,8 +1692,8 @@ void tb_exm_wait(TB_Exm * tb) {
 
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint8_t result_addr = rand() % 32;
-  tb->_add(operand1, operand2, result_addr);
+  uint8_t reg_addr = rand() % 32;
+  tb->_add(operand1, operand2, reg_addr);
   
   //=================================
   //      Tick (1)
@@ -1684,8 +1706,8 @@ void tb_exm_wait(TB_Exm * tb) {
   uint32_t result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
   
@@ -1694,7 +1716,7 @@ void tb_exm_wait(TB_Exm * tb) {
   
   core->output_ready_i = 0;
 
-  tb->_sub(operand1, operand2, result_addr + 10);
+  tb->_sub(operand1, operand2, reg_addr + 10);
 
   //=================================
   //      Tick (2)
@@ -1707,8 +1729,8 @@ void tb_exm_wait(TB_Exm * tb) {
   result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1723,8 +1745,8 @@ void tb_exm_wait(TB_Exm * tb) {
   result = ((int32_t)operand1 + (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1744,8 +1766,8 @@ void tb_exm_wait(TB_Exm * tb) {
   result = ((int32_t)operand1 - (int32_t)operand2);
   tb->check(COND_input_ready,  (core->input_ready_o   ==  1));
   tb->check(COND_result,       (core->result_o        ==  result)  &&
-                               (core->result_write_o  ==  1)       &&
-                               (core->result_addr_o   ==  result_addr + 10));
+                               (core->reg_write_o  ==  1)       &&
+                               (core->reg_addr_o   ==  reg_addr + 10));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  1));
 
@@ -1796,8 +1818,8 @@ void tb_exm_reset(TB_Exm * tb) {
   core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
   core->alu_shift_left_i = rand() % 2;
   core->alu_signed_shift_i = rand() % 2;
-  core->result_write_i = 1;
-  core->result_addr_i = rand() % 32;
+  core->reg_write_i = 1;
+  core->reg_addr_i = rand() % 32;
   core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BEQ;
   core->branch_offset_i = rand() % 0xFFFFF;
 
@@ -1812,7 +1834,7 @@ void tb_exm_reset(TB_Exm * tb) {
   //      Checks 
 
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
 
@@ -1835,8 +1857,8 @@ void tb_exm_reset(TB_Exm * tb) {
   core->alu_op_i = Vtb_exm_ecap5_dproc_pkg::ALU_ADD;
   core->alu_shift_left_i = rand() % 2;
   core->alu_signed_shift_i = rand() % 2;
-  core->result_write_i = rand() % 2;
-  core->result_addr_i = rand() % 32;
+  core->reg_write_i = rand() % 2;
+  core->reg_addr_i = rand() % 32;
   core->branch_cond_i = Vtb_exm_ecap5_dproc_pkg::BRANCH_BEQ;
   core->branch_offset_i = rand() % 0xFFFFF;
 
@@ -1859,7 +1881,7 @@ void tb_exm_reset(TB_Exm * tb) {
   //      Checks 
   
   tb->check(COND_input_ready,  (core->input_ready_o   ==  0));
-  tb->check(COND_result,       (core->result_write_o  ==  0));
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
   tb->check(COND_branch,       (core->branch_o        ==  0));
   tb->check(COND_output_valid, (core->output_valid_o  ==  0));
   
@@ -1879,6 +1901,62 @@ void tb_exm_reset(TB_Exm * tb) {
       "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
   CHECK("tb_exm.reset.04",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_exm_branch_jalr(TB_Exm * tb) {
+  Vtb_exm * core = tb->core;
+  core->testcase = 22;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for JALR
+  //    tick 1. Nothing (core outputs result of JALR)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand() % 0x7FFFFFFF;
+  uint32_t operand1 = rand() % 0x7FFFFFFF;
+  uint32_t operand2 = rand() % 0x7FFFFFFF;
+  uint8_t reg_addr = rand() % 32;
+  tb->_jalr(pc, operand1, operand2, reg_addr);
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->result_o         ==  pc + 4)  &&
+                               (core->reg_write_o   ==  1)       &&
+                               (core->reg_addr_o    ==  reg_addr));
+  tb->check(COND_branch,       (core->branch_o         ==  1) &&
+                               (core->branch_target_o  ==  operand1 + operand2));
+  tb->check(COND_output_valid, (core->output_valid_o   ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_exm.branch.JALR_01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_exm.branch.JALR_02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_exm.branch.JALR_03",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
@@ -1914,6 +1992,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_exm_branch_bltu(tb);
   tb_exm_branch_bge(tb);
   tb_exm_branch_bgeu(tb);
+
+  tb_exm_branch_jalr(tb);
 
   tb_exm_back_to_back(tb);
   tb_exm_bubble(tb);

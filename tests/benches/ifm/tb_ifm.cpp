@@ -1936,8 +1936,8 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   core->wb_stall_i = 0;
 
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (1)
@@ -1987,7 +1987,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2035,8 +2035,8 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   //      Set inputs
 
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   uint32_t data = rand();
   core->wb_dat_i = data;
@@ -2073,7 +2073,7 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2129,8 +2129,8 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   //      Set inputs
   
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -2183,7 +2183,7 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2240,8 +2240,8 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   //      Set inputs
   
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -2304,7 +2304,7 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2367,8 +2367,8 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   core->wb_ack_i = 0;
 
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -2393,7 +2393,7 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -2466,8 +2466,8 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   //      Set inputs
   
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (4)
@@ -2497,7 +2497,7 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2549,8 +2549,8 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   core->wb_ack_i = 1;
 
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (2)
@@ -2561,7 +2561,7 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   //      Set inputs
   
   core->branch_i = 1;
-  core->boffset_i = rand();
+  core->branch_target_i = rand();
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
@@ -2589,7 +2589,7 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -2658,7 +2658,7 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
   core->drq_i = 1;
   core->irq_i = 1;
   core->branch_i = 1;
-  core->boffset_i = rand() % 0x7FFFFFFF;
+  core->branch_target_i = rand() % 0x7FFFFFFF;
 
   //=================================
   //      Tick (3)
@@ -2741,7 +2741,7 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
 
   core->irq_i = 1;
   core->branch_i = 1;
-  core->boffset_i = rand() % 0x7FFFFFFF;
+  core->branch_target_i = rand() % 0x7FFFFFFF;
 
   //=================================
   //      Tick (3)
@@ -2821,8 +2821,8 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
   core->wb_ack_i = 0;
 
   core->branch_i = 1;
-  uint32_t boffset = rand() % 0xFFFFF;
-  core->boffset_i = boffset;
+  uint32_t branch_target = rand() % 0xFFFFF;
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -2842,7 +2842,7 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS + boffset));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
 
   //`````````````````````````````````
   //      Formal Checks 

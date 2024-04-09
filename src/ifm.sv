@@ -28,7 +28,7 @@ module ifm
   input   logic        irq_i,
   input   logic        drq_i,
   input   logic        branch_i,
-  input   logic[19:0]  boffset_i,
+  input   logic[31:0]  branch_target_i,
   // Wishbone master
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i,
@@ -221,7 +221,7 @@ always_comb begin : pc_update
   end
   // 2. Control flow change request
   if (branch_i && !pending_jump_q) begin
-    pc_d = pc_q + {12'h0, boffset_i[19:0]};
+    pc_d = branch_target_i;
   end
   // 1. External interrupt
   if (irq_i) begin

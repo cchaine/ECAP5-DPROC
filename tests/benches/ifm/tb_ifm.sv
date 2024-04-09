@@ -28,7 +28,7 @@ module tb_ifm (
   input   logic        irq_i,
   input   logic        drq_i,
   input   logic        branch_i,
-  input   logic[19:0]  boffset_i,
+  input   logic[31:0]  branch_target_i,
   /* Memory */
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i, 
@@ -51,7 +51,7 @@ ifm dut (
   .irq_i           (irq_i),
   .drq_i           (drq_i),
   .branch_i        (branch_i),
-  .boffset_i       (boffset_i),
+  .branch_target_i (branch_target_i),
   .wb_adr_o        (wb_adr_o),
   .wb_dat_i        (wb_dat_i),
   .wb_we_o         (wb_we_o),
