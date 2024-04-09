@@ -53,14 +53,11 @@ jobs:
     - name: Generate documentation
       run: make -C ${{github.workspace}}/build docs
 
-    - name: Check generated documentation
-      run: (! grep -H "LaTeX Warning" ${{github.workspace}}/build/docs/**/*.log)
-
     - name: Upload documentation
       uses: actions/upload-artifact@v4
       with:
         name: ${{env.ARCH_ARTIFACT_NAME}}
-        path: ${{github.workspace}}/build/docs/arch/main.pdf
+        path: ${{github.workspace}}/build/docs/documentation/build/html
 
   lint:
     runs-on: self-hosted
