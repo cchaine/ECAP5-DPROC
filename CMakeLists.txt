@@ -24,7 +24,11 @@ include(FetchContent)
 
 project(ECAP5_DPROC VERSION 1.0)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
 # Create python virtual env
+message(STATUS "Creating python venv")
 set(VENV_DIR ${CMAKE_BINARY_DIR}/venv)
 if(NOT EXISTS "${VENV_DIR}")
   find_package(Python3 COMPONENTS Interpreter)
@@ -35,14 +39,27 @@ endif()
 set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
 find_package(Python3 COMPONENTS Interpreter Development)
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+# Dependencies
+
+message(STATUS "Collecting dependencies")
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/dependency.cmake)
+
+add_dependency(ECAP5_TREQ 
+  GIT ecap5/ecap5-treq
+  TAG tags/v2.1.1
+  BINARY ecap5-treq)
+
+add_dependency(ECAP5_DTLIB
+  GIT ecap5/ecap5-dtlib
+  TAG main)
+
+# Configure dependencies
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
-
 # Find packages
 find_package(verilator HINTS $ENV{VERILATOR_ROOT})
 
+# Include subdirectories
+
 add_subdirectory(docs)
 add_subdirectory(tests)
-
