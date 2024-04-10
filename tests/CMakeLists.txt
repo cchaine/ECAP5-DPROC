@@ -20,7 +20,7 @@
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
 set(BENCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/benches/)
-set(TEST_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/)
+set(TEST_INCLUDE_DIR ${ecap5_dtlib_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src/)
 set(INCLUDE_DIR ${SRC_DIR}/include/)
 set(LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
