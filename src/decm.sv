@@ -184,6 +184,7 @@ always_comb begin : alu_interface
     FUNC3_OR:             op_alu_op = ALU_OR; 
     FUNC3_AND:            op_alu_op = ALU_AND; 
     FUNC3_SLL, FUNC3_SRL: op_alu_op = ALU_SHIFT; 
+    default:              op_alu_op = ALU_ADD;
   endcase
   case(opcode)
     OPCODE_OP,
