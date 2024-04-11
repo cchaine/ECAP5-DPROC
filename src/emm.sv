@@ -65,137 +65,60 @@ module emm import ecap5_dproc_pkg::*;
   input   logic        m_wb_stall_i
 );
 
-typedef enum logic [2:0] {
-  S_IDLE,           // 0
-  S_RESPONSE,       // 1
-  S_STALL    // 2
-} slave_state_t;
-slave_state_t s1_state_d, s1_state_q;
-slave_state_t s2_state_d, s2_state_q;
+logic switch_d, switch_q;
+logic in_request_q;
 
-logic s1_stall, s2_stall;
-assign s1_stall = 1;
-assign s2_stall = 1;
+logic[31:0] sel_wb_adr;
+logic[31:0] sel_wb_dat_o;
+logic       sel_wb_we;
+logic[3:0]  sel_wb_sel;
+logic       sel_wb_stb;
+logic       sel_wb_ack;
+logic       sel_wb_cyc;
 
-typedef enum logic [2:0] {
-  M_IDLE,           // 0
-  M_REQUEST,        // 1
-  M_WAIT,    // 2
-  M_DONE,           // 3
-  M_STALL    // 4
-} master_state_t;
-master_state_t m_state_d, m_state_q;
+always_comb begin
+  switch_d = switch_q;
 
-logic memory_request;
-assign memory_request = 0;
-
-always_comb begin : slave1_state_machine
-  s1_state_d = s1_state_q;
-
-  case(s1_state_q)
-    S_IDLE: begin
-      if(s1_wb_stb_i && s1_wb_cyc_i) begin
-        if(s1_stall) begin
-          s1_state_d = S_STALL;
-        end else begin
-          s1_state_d = S_RESPONSE;
-        end
-      end
-    end
-    S_STALL: begin
-      if(!s1_stall) begin
-        s1_state_d = S_RESPONSE;
-      end
-    end
-    S_RESPONSE: begin
-      s1_state_d = S_IDLE;
-    end
-    default: begin
-    end
-  endcase
-end
-
-always_comb begin : slave2_state_machine
-  s2_state_d = s2_state_q;
-
-  case(s2_state_q)
-    S_IDLE: begin
-      if(s2_wb_stb_i && s2_wb_cyc_i) begin
-        if(s2_stall) begin
-          s2_state_d = S_STALL;
-        end else begin
-          s2_state_d = S_RESPONSE;
-        end
-      end
-    end
-    S_STALL: begin
-      if(!s2_stall) begin
-        s2_state_d = S_RESPONSE;
-      end
-    end
-    S_RESPONSE: begin
-      s2_state_d = S_IDLE;
-    end
-    default: begin
-    end
-  endcase
-end
-
-always_comb begin : master_state_machine
-  m_state_d = m_state_q;
-
-  case(m_state_q)
-    M_IDLE: begin
-      if(memory_request) begin
-        // A memory request shall be triggered
-        if(m_wb_stall_i) begin
-          // The memory is stalled
-          m_state_d = M_STALL;
-        end else begin
-          // The memory is ready
-          m_state_d = M_REQUEST;
-        end
-      end
-    end
-    M_STALL: begin
-      if(!m_wb_stall_i) begin
-        // The memory is unstalled
-        m_state_d = M_REQUEST;
-      end
-    end
-    M_REQUEST: begin
-      if(m_wb_ack_i) begin
-        // The response has been received directly
-        m_state_d = M_DONE;
-      end else begin
-        // Wait for the response to be received
-        m_state_d = M_WAIT;
-      end
-    end
-    M_WAIT: begin
-      if(m_wb_ack_i) begin
-        // The response has been received
-        m_state_d = M_DONE;
-      end
-    end
-    M_DONE: begin
-      m_state_d = M_IDLE;
-    end
-    default: begin
-    end
-  endcase
+  if(~switch_q) begin
+    sel_wb_adr    =  s1_wb_adr_i;
+    sel_wb_dat_o  =  s1_wb_dat_i;
+    sel_wb_we     =  s1_wb_we_i;
+    sel_wb_sel    =  s1_wb_sel_i;
+    sel_wb_stb    =  s1_wb_stb_i;
+    sel_wb_cyc    =  s1_wb_cyc_i;
+  end else begin
+    sel_wb_adr    =  s2_wb_adr_i;
+    sel_wb_dat_o  =  s2_wb_dat_i;
+    sel_wb_we     =  s2_wb_we_i;
+    sel_wb_sel    =  s2_wb_sel_i;
+    sel_wb_stb    =  s2_wb_stb_i;
+    sel_wb_cyc    =  s2_wb_cyc_i;
+  end
 end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    s1_state_q <= S_IDLE;
-    s2_state_q <= S_IDLE;
-    m_state_q <= M_IDLE;
+    switch_q <= 0;
+    in_request_q <= 0;
   end else begin
-    s1_state_q <= s1_state_d; 
-    s2_state_q <= s2_state_d; 
-    m_state_q <= m_state_d;
+    if(sel_wb_stb && sel_wb_cyc && m_wb_stall_i == 0) begin
+      in_request_q <= 1;
+    end
+    if(in_request_q && sel_wb_cyc == 0) begin
+      in_request_q <= 0;
+    end
+    switch_q <= switch_d;
   end
 end
+
+assign m_wb_adr_o = sel_wb_adr;
+assign m_wb_dat_o = sel_wb_dat_o;
+assign m_wb_we_o = sel_wb_we;
+assign m_wb_sel_o = sel_wb_sel;
+assign m_wb_stb_o = sel_wb_stb;
+assign m_wb_cyc_o = sel_wb_cyc;
+
+assign s1_wb_stall_o = switch_q;
+assign s2_wb_stall_o = ~switch_q;
 
 endmodule // exm

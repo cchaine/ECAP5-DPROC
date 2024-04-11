@@ -47,6 +47,7 @@ public:
   void _nop() {
     this->_nop_port1();
     this->_nop_port2();
+    this->_nop_master();
   }
   
   void _nop_port1() {
@@ -65,6 +66,12 @@ public:
     this->core->s2_wb_sel_i = 0;
     this->core->s2_wb_stb_i = 0;
     this->core->s2_wb_cyc_i = 0;
+  }
+
+  void _nop_master() {
+    this->core->m_wb_dat_i = 0;
+    this->core->m_wb_ack_i = 0;
+    this->core->m_wb_stall_i = 0;
   }
 
   void read_request_port1(uint32_t addr, uint8_t sel) {
@@ -112,7 +119,10 @@ void tb_emm_port1_read(TB_Emm * tb) {
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 1
-  //    tick 1. 
+  //    tick 1. Acknowledge request with response data (core makes request)
+  //    tick 2. Nothing (core latches response)
+  //    tick 3. Nothing (core outputs response)
+  //    tick 4. Nothing (core makes request)
 
   //=================================
   //      Tick (0)
@@ -129,6 +139,42 @@ void tb_emm_port1_read(TB_Emm * tb) {
 
   //=================================
   //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_nop_port1();
+  core->s1_wb_cyc_i = 1;
+
+  uint32_t data = rand();
+  core->m_wb_dat_i = data;
+  core->m_wb_ack_i = 1;
+
+  //=================================
+  //      Tick (2)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->m_wb_dat_i = 0;
+  core->m_wb_ack_i = 0;
+
+  //=================================
+  //      Tick (3)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->s1_wb_cyc_i = 0;
+
+  //=================================
+  //      Tick (4)
 
   tb->tick();
 }
