@@ -27,21 +27,19 @@
 #include <verilated_vcd_c.h>
 #include <svdpi.h>
 
-#include "Vtb_ifm_with_mem.h"
+#include "Vtb_top.h"
 #include "testbench.h"
-#include "Vtb_ifm_with_mem_ecap5_dproc_pkg.h"
 
-class TB_Ifm_with_mem : public Testbench<Vtb_ifm_with_mem> {
+class TB_Top : public Testbench<Vtb_top> {
 public:
   void reset() {
-    this->_nop();
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
     }
     this->core->rst_i = 0;
 
-    Testbench<Vtb_ifm_with_mem>::reset();
+    Testbench<Vtb_top>::reset();
   }
 };
 
@@ -49,24 +47,63 @@ enum CondId {
   __CondIdEnd
 };
 
+void tb_top_alu(TB_Top * tb) {
+  Vtb_top * core = tb->core;
+  core->testcase = 1;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for LUI 
+  //    tick 1. Nothing (core outputs result of LUI)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+
+  tb->tick();
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
 
+  // Check arguments
   bool verbose = parse_verbose(argc, argv);
 
-  TB_Ifm_with_mem * tb = new TB_Ifm_with_mem;
-  tb->open_trace("waves/ifm_with_mem.vcd");
-  tb->open_testdata("testdata/ifm_with_mem.csv");
+  TB_Top * tb = new TB_Top();
+  tb->open_trace("waves/top.vcd");
+  tb->open_testdata("testdata/top.csv");
   tb->set_debug_log(verbose);
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
 
+  tb_top_alu(tb);
+  tb_top_lsm_enable(tb);
+  tb_top_branch(tb);
 
   /************************************************************/
 
-  printf("[IFM_WITH_MEM]: ");
+  printf("[TOP]: ");
   if(tb->success) {
     printf("Done\n");
   } else {

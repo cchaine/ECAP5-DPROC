@@ -96,8 +96,6 @@ logic[2:0] op_alu_op;
 /*             Stage outputs             */
 /*****************************************/
 
-logic        input_ready_q;
-
 logic[31:0]  pc_q;
 
 logic[31:0]  alu_operand1_d,      alu_operand1_q;
@@ -239,8 +237,6 @@ end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    input_ready_q       <=   0;
-
     alu_operand1_q      <=  '0;
     alu_operand2_q      <=  '0;
     alu_op_q            <=  '0;
@@ -262,8 +258,6 @@ always_ff @(posedge clk_i) begin
 
     output_valid_q      <=   0;
   end else begin
-    input_ready_q       <= output_ready_i;
-
     if(output_ready_i) begin
       pc_q                <=  pc_i;
 
@@ -295,7 +289,7 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-assign  input_ready_o       =  input_ready_q;
+assign  input_ready_o       =  output_ready_i;
 
 assign  pc_o                =  pc_q;
 

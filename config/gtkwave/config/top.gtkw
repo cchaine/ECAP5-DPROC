@@ -1,0 +1,249 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Wed Apr 10 08:42:12 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/top.vcd"
+[dumpfile_mtime] "Wed Apr 10 08:39:22 2024"
+[dumpfile_size] 22124
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/top.gtkw"
+[timestart] 8
+[size] 2560 1387
+[pos] -1 -1
+*-4.629932 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_top.
+[treeopen] TOP.tb_top.dut.
+[sst_width] 304
+[signals_width] 267
+[sst_expanded] 1
+[sst_vpaned_height] 1134
+@24
+[color] 1
+TOP.testcase[31:0]
+@28
+TOP.tb_top.dut.clk_i
+TOP.tb_top.dut.rst_i
+@22
+[color] 2
+TOP.tb_top.dut.wb_adr_o[31:0]
+[color] 2
+TOP.tb_top.dut.wb_dat_i[31:0]
+[color] 2
+TOP.tb_top.dut.wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_top.dut.wb_we_o
+@22
+[color] 2
+TOP.tb_top.dut.wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_top.dut.wb_stb_o
+[color] 2
+TOP.tb_top.dut.wb_ack_i
+[color] 2
+TOP.tb_top.dut.wb_cyc_o
+[color] 2
+TOP.tb_top.dut.wb_stall_i
+@200
+-IFM
+@28
+[color] 3
+TOP.tb_top.dut.drq_i
+[color] 3
+TOP.tb_top.dut.irq_i
+[color] 3
+TOP.tb_top.dut.branch
+@22
+[color] 3
+TOP.tb_top.dut.branch_target[31:0]
+[color] 3
+TOP.tb_top.dut.ifm_wb_adr_o[31:0]
+[color] 3
+TOP.tb_top.dut.ifm_wb_dat_i[31:0]
+@28
+[color] 3
+TOP.tb_top.dut.ifm_wb_we_o
+@22
+[color] 3
+TOP.tb_top.dut.ifm_wb_sel_o[3:0]
+@28
+[color] 3
+TOP.tb_top.dut.ifm_wb_stb_o
+[color] 3
+TOP.tb_top.dut.ifm_wb_ack_i
+[color] 3
+TOP.tb_top.dut.ifm_wb_cyc_o
+[color] 3
+TOP.tb_top.dut.ifm_wb_stall_i
+@200
+-IFM-DECM
+@4022
+[color] 3
+^>1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_instr_filter_process.py
+TOP.tb_top.dut.ifm_instr[31:0]
+@22
+[color] 3
+TOP.tb_top.dut.ifm_pc[31:0]
+@28
+TOP.tb_top.dut.ifm_decm_valid
+@200
+-DECM-EXM
+@28
+TOP.tb_top.dut.ifm_decm_ready
+@22
+[color] 5
+TOP.tb_top.dut.decm_pc[31:0]
+[color] 5
+TOP.tb_top.dut.decm_alu_operand1[31:0]
+[color] 5
+TOP.tb_top.dut.decm_alu_operand2[31:0]
+@2024
+[color] 5
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_alu_op_filter.gtkw
+TOP.tb_top.dut.decm_alu_op[2:0]
+@28
+[color] 5
+TOP.tb_top.dut.decm_alu_sub
+[color] 5
+TOP.tb_top.dut.decm_alu_shift_left
+[color] 5
+TOP.tb_top.dut.decm_alu_signed_shift
+@2025
+[color] 5
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_branch_cond_filter.gtkw
+TOP.tb_top.dut.decm_branch_cond[2:0]
+@22
+[color] 5
+TOP.tb_top.dut.decm_branch_offset[19:0]
+@28
+[color] 5
+TOP.tb_top.dut.decm_ls_enable
+[color] 5
+TOP.tb_top.dut.decm_ls_write
+@22
+[color] 5
+TOP.tb_top.dut.decm_ls_write_data[31:0]
+[color] 5
+TOP.tb_top.dut.decm_ls_sel[3:0]
+@28
+[color] 5
+TOP.tb_top.dut.decm_ls_unsigned_load
+[color] 5
+TOP.tb_top.dut.decm_reg_write
+@22
+[color] 5
+TOP.tb_top.dut.decm_reg_addr[4:0]
+@28
+TOP.tb_top.dut.decm_exm_valid
+@200
+-EXM-LSM
+@28
+TOP.tb_top.dut.decm_exm_ready
+@22
+[color] 7
+TOP.tb_top.dut.exm_result[31:0]
+@28
+[color] 7
+TOP.tb_top.dut.exm_ls_enable
+[color] 7
+TOP.tb_top.dut.exm_ls_write
+@22
+[color] 7
+TOP.tb_top.dut.exm_ls_write_data[31:0]
+[color] 7
+TOP.tb_top.dut.exm_ls_sel[3:0]
+@28
+[color] 7
+TOP.tb_top.dut.exm_ls_unsigned_load
+[color] 7
+TOP.tb_top.dut.exm_reg_write
+@22
+[color] 7
+TOP.tb_top.dut.exm_reg_addr[4:0]
+@28
+TOP.tb_top.dut.exm_lsm_valid
+@200
+-LSM
+@22
+[color] 2
+TOP.tb_top.dut.lsm_wb_adr_o[31:0]
+[color] 2
+TOP.tb_top.dut.lsm_wb_dat_i[31:0]
+[color] 2
+TOP.tb_top.dut.lsm_wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_top.dut.lsm_wb_we_o
+@22
+[color] 2
+TOP.tb_top.dut.lsm_wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_top.dut.lsm_wb_stb_o
+[color] 2
+TOP.tb_top.dut.lsm_wb_ack_i
+[color] 2
+TOP.tb_top.dut.lsm_wb_cyc_o
+[color] 2
+TOP.tb_top.dut.lsm_wb_stall_i
+@200
+-LSM-WBM
+@28
+TOP.tb_top.dut.exm_lsm_ready
+[color] 2
+TOP.tb_top.dut.lsm_reg_write
+@22
+[color] 2
+TOP.tb_top.dut.lsm_reg_addr[4:0]
+[color] 2
+TOP.tb_top.dut.lsm_reg_data[31:0]
+@28
+TOP.tb_top.dut.lsm_valid
+@200
+-REGM
+@22
+[color] 1
+TOP.tb_top.dut.reg_raddr1[4:0]
+[color] 1
+TOP.tb_top.dut.reg_raddr2[4:0]
+[color] 1
+TOP.tb_top.dut.reg_rdata1[31:0]
+[color] 1
+TOP.tb_top.dut.reg_rdata2[31:0]
+@28
+[color] 1
+TOP.tb_top.dut.reg_write
+@22
+[color] 1
+TOP.tb_top.dut.reg_waddr[4:0]
+[color] 1
+TOP.tb_top.dut.reg_wdata[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

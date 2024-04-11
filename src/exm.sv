@@ -98,8 +98,6 @@ module exm import ecap5_dproc_pkg::*;
 /*         ALU internal signals          */
 /*****************************************/
 
-logic        input_ready_q;
-
 logic signed[31:0] alu_signed_operand1,
                    alu_signed_operand2;
 
@@ -230,8 +228,6 @@ end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    input_ready_q       <=   0;
-
     result_write_q      <=   0;
     result_addr_q       <=  '0;
     branch_target_q     <=  '0;
@@ -241,8 +237,6 @@ always_ff @(posedge clk_i) begin
 
     output_valid_q      <=   0;
   end else begin
-    input_ready_q       <= output_ready_i;
-
     if(output_ready_i) begin
       result_write_q      <=  input_valid_i
                                   ? reg_write_i
@@ -271,7 +265,7 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-assign  input_ready_o       =  input_ready_q;
+  assign  input_ready_o       =  output_ready_i;
 
 assign  result_o            =  result_q;
 
