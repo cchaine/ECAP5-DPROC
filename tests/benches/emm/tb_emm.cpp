@@ -45,12 +45,135 @@ public:
   }
   
   void _nop() {
+    this->_nop_port1();
+    this->_nop_port2();
+  }
+  
+  void _nop_port1() {
+    this->core->s1_wb_adr_i = 0;
+    this->core->s1_wb_dat_i = 0;
+    this->core->s1_wb_we_i  = 0;
+    this->core->s1_wb_sel_i = 0;
+    this->core->s1_wb_stb_i = 0;
+    this->core->s1_wb_cyc_i = 0;
+  }
+
+  void _nop_port2() {
+    this->core->s2_wb_adr_i = 0;
+    this->core->s2_wb_dat_i = 0;
+    this->core->s2_wb_we_i  = 0;
+    this->core->s2_wb_sel_i = 0;
+    this->core->s2_wb_stb_i = 0;
+    this->core->s2_wb_cyc_i = 0;
+  }
+
+  void read_request_port1(uint32_t addr, uint8_t sel) {
+    this->core->s1_wb_adr_i = addr;
+    this->core->s1_wb_we_i = 0;
+    this->core->s1_wb_sel_i = sel;
+    this->core->s1_wb_stb_i = 1;
+    this->core->s1_wb_cyc_i = 1;
+  }
+
+  void read_request_port2(uint32_t addr, uint8_t sel) {
+    this->core->s2_wb_adr_i = addr;
+    this->core->s2_wb_we_i = 0;
+    this->core->s2_wb_sel_i = sel;
+    this->core->s2_wb_stb_i = 1;
+    this->core->s2_wb_cyc_i = 1;
+  }
+
+  void write_request_port1(uint32_t addr, uint32_t data, uint8_t sel) {
+    this->core->s1_wb_adr_i = addr;
+    this->core->s1_wb_dat_i = data;
+    this->core->s1_wb_we_i = 1;
+    this->core->s1_wb_sel_i = sel;
+    this->core->s1_wb_stb_i = 1;
+    this->core->s1_wb_cyc_i = 1;
+  }
+
+  void write_request_port2(uint32_t addr, uint32_t data, uint8_t sel) {
+    this->core->s2_wb_adr_i = addr;
+    this->core->s2_wb_dat_i = data;
+    this->core->s2_wb_we_i = 1;
+    this->core->s2_wb_sel_i = sel;
+    this->core->s2_wb_stb_i = 1;
+    this->core->s2_wb_cyc_i = 1;
   }
 };
 
 enum CondId {
   __CondIdEnd
 };
+
+void tb_emm_port1_read(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 1;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for read on port 1
+  //    tick 1. 
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t addr = rand();
+  uint8_t sel = 0x3;
+  tb->read_request_port1(addr, sel);
+  tb->_nop_port2();
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+}
+
+void tb_emm_port1_write(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 2;
+
+  tb->reset();
+}
+
+void tb_emm_port2_read(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 3;
+
+  tb->reset();
+}
+
+void tb_emm_port2_write(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 4;
+
+  tb->reset();
+}
+
+void tb_emm_parallel(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 5;
+
+  tb->reset();
+}
+
+void tb_emm_parallel_multiple(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 6;
+
+  tb->reset();
+}
+
+void tb_emm_priority(TB_Emm * tb) {
+  Vtb_emm * core = tb->core;
+  core->testcase = 7;
+
+  tb->reset();
+}
 
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
@@ -66,6 +189,16 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
+  tb_emm_port1_read(tb);
+  tb_emm_port1_write(tb);
+
+  tb_emm_port2_read(tb);
+  tb_emm_port2_write(tb);
+
+  tb_emm_parallel(tb);
+  tb_emm_parallel_multiple(tb);
+
+  tb_emm_priority(tb);
 
   /************************************************************/
 

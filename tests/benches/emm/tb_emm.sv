@@ -24,46 +24,55 @@ module tb_emm import ecap5_dproc_pkg::*;
 (
   input   int          testcase,
 
+  input   logic        clk_i,
+  input   logic        rst_i,
+
   //=================================
   //    Slave port 1
   
-  output  logic[31:0]  s1_wb_adr_i,
-  input   logic[31:0]  s1_wb_dat_o,
-  output  logic        s1_wb_we_i,
-  output  logic[3:0]   s1_wb_sel_i,
-  output  logic        s1_wb_stb_i,
-  input   logic        s1_wb_ack_o,
-  output  logic        s1_wb_cyc_i,
-  input   logic        s1_wb_stall_o,
+  input   logic[31:0]  s1_wb_adr_i,
+  output  logic[31:0]  s1_wb_dat_o,
+  input   logic[31:0]  s1_wb_dat_i,
+  input   logic        s1_wb_we_i,
+  input   logic[3:0]   s1_wb_sel_i,
+  input   logic        s1_wb_stb_i,
+  output  logic        s1_wb_ack_o,
+  input   logic        s1_wb_cyc_i,
+  output  logic        s1_wb_stall_o,
   
   //=================================
   //    Slave port 2
   
-  output  logic[31:0]  s2_wb_adr_i,
-  input   logic[31:0]  s2_wb_dat_o,
-  output  logic        s2_wb_we_i,
-  output  logic[3:0]   s2_wb_sel_i,
-  output  logic        s2_wb_stb_i,
-  input   logic        s2_wb_ack_o,
-  output  logic        s2_wb_cyc_i,
-  input   logic        s2_wb_stall_o,
+  input   logic[31:0]  s2_wb_adr_i,
+  output  logic[31:0]  s2_wb_dat_o,
+  input   logic[31:0]  s2_wb_dat_i,
+  input   logic        s2_wb_we_i,
+  input   logic[3:0]   s2_wb_sel_i,
+  input   logic        s2_wb_stb_i,
+  output  logic        s2_wb_ack_o,
+  input   logic        s2_wb_cyc_i,
+  output  logic        s2_wb_stall_o,
 
   //=================================
   //    Master port
   
   output  logic[31:0]  m_wb_adr_o,
   input   logic[31:0]  m_wb_dat_i,
+  output  logic[31:0]  m_wb_dat_o,
   output  logic        m_wb_we_o,
   output  logic[3:0]   m_wb_sel_o,
   output  logic        m_wb_stb_o,
   input   logic        m_wb_ack_i,
   output  logic        m_wb_cyc_o,
-  input   logic        m_wb_stall_i,
+  input   logic        m_wb_stall_i
 );
 
 emm dut (
+  .clk_i (clk_i),
+  .rst_i (rst_i),
   .s1_wb_adr_i   (s1_wb_adr_i),
   .s1_wb_dat_o   (s1_wb_dat_o),
+  .s1_wb_dat_i   (s1_wb_dat_i),
   .s1_wb_we_i    (s1_wb_we_i),
   .s1_wb_sel_i   (s1_wb_sel_i),
   .s1_wb_stb_i   (s1_wb_stb_i),
@@ -73,6 +82,7 @@ emm dut (
 
   .s2_wb_adr_i   (s2_wb_adr_i),
   .s2_wb_dat_o   (s2_wb_dat_o),
+  .s2_wb_dat_i   (s2_wb_dat_i),
   .s2_wb_we_i    (s2_wb_we_i),
   .s2_wb_sel_i   (s2_wb_sel_i),
   .s2_wb_stb_i   (s2_wb_stb_i),
@@ -82,6 +92,7 @@ emm dut (
 
   .m_wb_adr_o    (m_wb_adr_o),
   .m_wb_dat_i    (m_wb_dat_i),
+  .m_wb_dat_o    (m_wb_dat_o),
   .m_wb_we_o     (m_wb_we_o),
   .m_wb_sel_o    (m_wb_sel_o),
   .m_wb_stb_o    (m_wb_stb_o),

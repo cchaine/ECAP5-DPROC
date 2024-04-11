@@ -1,0 +1,131 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Apr 11 18:16:31 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/emm.vcd"
+[dumpfile_mtime] "Thu Apr 11 18:10:36 2024"
+[dumpfile_size] 7909
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/emm.gtkw"
+[timestart] 8
+[size] 1288 600
+[pos] -1 -1
+*-5.255767 63 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_emm.
+[sst_width] 253
+[signals_width] 225
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@2024
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/emm_testcase_filter.gtkw
+TOP.tb_emm.testcase[31:0]
+@28
+TOP.tb_emm.clk_i
+TOP.tb_emm.rst_i
+@800200
+-Slave1
+@22
+[color] 7
+TOP.tb_emm.s1_wb_adr_i[31:0]
+[color] 7
+TOP.tb_emm.s1_wb_dat_i[31:0]
+[color] 7
+TOP.tb_emm.s1_wb_dat_o[31:0]
+@28
+[color] 7
+TOP.tb_emm.s1_wb_we_i
+@22
+[color] 7
+TOP.tb_emm.s1_wb_sel_i[3:0]
+@28
+[color] 7
+TOP.tb_emm.s1_wb_stb_i
+[color] 7
+TOP.tb_emm.s1_wb_ack_o
+[color] 7
+TOP.tb_emm.s1_wb_cyc_i
+[color] 7
+TOP.tb_emm.s1_wb_stall_o
+@1000200
+-Slave1
+@800200
+-Slave2
+@22
+[color] 2
+TOP.tb_emm.s2_wb_adr_i[31:0]
+[color] 2
+TOP.tb_emm.s2_wb_dat_i[31:0]
+[color] 2
+TOP.tb_emm.s2_wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_emm.s2_wb_we_i
+@22
+[color] 2
+TOP.tb_emm.s2_wb_sel_i[3:0]
+@28
+[color] 2
+TOP.tb_emm.s2_wb_stb_i
+[color] 2
+TOP.tb_emm.s2_wb_ack_o
+[color] 2
+TOP.tb_emm.s2_wb_cyc_i
+[color] 2
+TOP.tb_emm.s2_wb_stall_o
+@1000200
+-Slave2
+@800201
+-Master
+@23
+[color] 5
+TOP.tb_emm.m_wb_adr_o[31:0]
+[color] 5
+TOP.tb_emm.m_wb_dat_o[31:0]
+[color] 5
+TOP.tb_emm.m_wb_dat_i[31:0]
+@29
+[color] 5
+TOP.tb_emm.m_wb_we_o
+@23
+[color] 5
+TOP.tb_emm.m_wb_sel_o[3:0]
+@29
+[color] 5
+TOP.tb_emm.m_wb_stb_o
+[color] 5
+TOP.tb_emm.m_wb_ack_i
+[color] 5
+TOP.tb_emm.m_wb_cyc_o
+[color] 5
+TOP.tb_emm.m_wb_stall_i
+@1000201
+-Master
+[pattern_trace] 1
+[pattern_trace] 0

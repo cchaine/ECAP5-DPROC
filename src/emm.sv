@@ -28,44 +28,47 @@ module emm import ecap5_dproc_pkg::*;
   //=================================
   //    Slave port 1
   
-  output  logic[31:0]  s1_wb_adr_i,
-  input   logic[31:0]  s1_wb_dat_o,
-  output  logic        s1_wb_we_i,
-  output  logic[3:0]   s1_wb_sel_i,
-  output  logic        s1_wb_stb_i,
-  input   logic        s1_wb_ack_o,
-  output  logic        s1_wb_cyc_i,
-  input   logic        s1_wb_stall_o,
+  input   logic[31:0]  s1_wb_adr_i,
+  output  logic[31:0]  s1_wb_dat_o,
+  input   logic[31:0]  s1_wb_dat_i,
+  input   logic        s1_wb_we_i,
+  input   logic[3:0]   s1_wb_sel_i,
+  input   logic        s1_wb_stb_i,
+  output  logic        s1_wb_ack_o,
+  input   logic        s1_wb_cyc_i,
+  output  logic        s1_wb_stall_o,
   
   //=================================
   //    Slave port 2
   
-  output  logic[31:0]  s2_wb_adr_i,
-  input   logic[31:0]  s2_wb_dat_o,
-  output  logic        s2_wb_we_i,
-  output  logic[3:0]   s2_wb_sel_i,
-  output  logic        s2_wb_stb_i,
-  input   logic        s2_wb_ack_o,
-  output  logic        s2_wb_cyc_i,
-  input   logic        s2_wb_stall_o,
+  input   logic[31:0]  s2_wb_adr_i,
+  output  logic[31:0]  s2_wb_dat_o,
+  input   logic[31:0]  s2_wb_dat_i,
+  input   logic        s2_wb_we_i,
+  input   logic[3:0]   s2_wb_sel_i,
+  input   logic        s2_wb_stb_i,
+  output  logic        s2_wb_ack_o,
+  input   logic        s2_wb_cyc_i,
+  output  logic        s2_wb_stall_o,
 
   //=================================
   //    Master port
   
   output  logic[31:0]  m_wb_adr_o,
   input   logic[31:0]  m_wb_dat_i,
+  output  logic[31:0]  m_wb_dat_o,
   output  logic        m_wb_we_o,
   output  logic[3:0]   m_wb_sel_o,
   output  logic        m_wb_stb_o,
   input   logic        m_wb_ack_i,
   output  logic        m_wb_cyc_o,
-  input   logic        m_wb_stall_i,
+  input   logic        m_wb_stall_i
 );
 
 typedef enum logic [2:0] {
-  IDLE,           // 0
-  RESPONSE,       // 1
-  MEMORY_STALL    // 2
+  S_IDLE,           // 0
+  S_RESPONSE,       // 1
+  S_STALL    // 2
 } slave_state_t;
 slave_state_t s1_state_d, s1_state_q;
 slave_state_t s2_state_d, s2_state_q;
@@ -75,13 +78,13 @@ assign s1_stall = 1;
 assign s2_stall = 1;
 
 typedef enum logic [2:0] {
-  IDLE,           // 0
-  REQUEST,        // 1
-  MEMORY_WAIT,    // 2
-  DONE,           // 3
-  MEMORY_STALL    // 4
+  M_IDLE,           // 0
+  M_REQUEST,        // 1
+  M_WAIT,    // 2
+  M_DONE,           // 3
+  M_STALL    // 4
 } master_state_t;
-state_t m_state_d, m_state_q;
+master_state_t m_state_d, m_state_q;
 
 logic memory_request;
 assign memory_request = 0;
@@ -90,22 +93,22 @@ always_comb begin : slave1_state_machine
   s1_state_d = s1_state_q;
 
   case(s1_state_q)
-    IDLE: begin
-      if(s1_wb_stb_i && s1_wb_cyc_o) begin
+    S_IDLE: begin
+      if(s1_wb_stb_i && s1_wb_cyc_i) begin
         if(s1_stall) begin
-          s1_state_d = STALL;
+          s1_state_d = S_STALL;
         end else begin
-          s1_state_d = RESPONSE;
+          s1_state_d = S_RESPONSE;
         end
       end
     end
-    STALL: begin
+    S_STALL: begin
       if(!s1_stall) begin
-        s1_state_d = RESPONSE;
+        s1_state_d = S_RESPONSE;
       end
     end
-    RESPONSE: begin
-      s1_state_d = IDLE;
+    S_RESPONSE: begin
+      s1_state_d = S_IDLE;
     end
     default: begin
     end
@@ -116,22 +119,22 @@ always_comb begin : slave2_state_machine
   s2_state_d = s2_state_q;
 
   case(s2_state_q)
-    IDLE: begin
-      if(s2_wb_stb_i && s2_wb_cyc_o) begin
+    S_IDLE: begin
+      if(s2_wb_stb_i && s2_wb_cyc_i) begin
         if(s2_stall) begin
-          s2_state_d = STALL;
+          s2_state_d = S_STALL;
         end else begin
-          s2_state_d = RESPONSE;
+          s2_state_d = S_RESPONSE;
         end
       end
     end
-    STALL: begin
+    S_STALL: begin
       if(!s2_stall) begin
-        s2_state_d = RESPONSE;
+        s2_state_d = S_RESPONSE;
       end
     end
-    RESPONSE: begin
-      s2_state_d = IDLE;
+    S_RESPONSE: begin
+      s2_state_d = S_IDLE;
     end
     default: begin
     end
@@ -142,41 +145,41 @@ always_comb begin : master_state_machine
   m_state_d = m_state_q;
 
   case(m_state_q)
-    IDLE: begin
+    M_IDLE: begin
       if(memory_request) begin
         // A memory request shall be triggered
         if(m_wb_stall_i) begin
           // The memory is stalled
-          m_state_d = MEMORY_STALL;
+          m_state_d = M_STALL;
         end else begin
           // The memory is ready
-          m_state_d = REQUEST;
+          m_state_d = M_REQUEST;
         end
       end
     end
-    MEMORY_STALL: begin
+    M_STALL: begin
       if(!m_wb_stall_i) begin
         // The memory is unstalled
-        m_state_d = REQUEST;
+        m_state_d = M_REQUEST;
       end
     end
-    REQUEST: begin
+    M_REQUEST: begin
       if(m_wb_ack_i) begin
         // The response has been received directly
-        m_state_d = DONE;
+        m_state_d = M_DONE;
       end else begin
         // Wait for the response to be received
-        m_state_d = MEMORY_WAIT;
+        m_state_d = M_WAIT;
       end
     end
-    MEMORY_WAIT: begin
+    M_WAIT: begin
       if(m_wb_ack_i) begin
         // The response has been received
-        m_state_d = DONE;
+        m_state_d = M_DONE;
       end
     end
-    DONE: begin
-      m_state_d = IDLE;
+    M_DONE: begin
+      m_state_d = M_IDLE;
     end
     default: begin
     end
@@ -185,9 +188,9 @@ end
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    s1_state_q <= IDLE;
-    s2_state_q <= IDLE;
-    m_state_q <= IDLE;
+    s1_state_q <= S_IDLE;
+    s2_state_q <= S_IDLE;
+    m_state_q <= M_IDLE;
   end else begin
     s1_state_q <= s1_state_d; 
     s2_state_q <= s2_state_d; 
