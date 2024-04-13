@@ -1,6 +1,6 @@
 1 read_request_port1
-2 read_request_port2
-3 write_request_port1
+2 write_request_port1
+3 read_request_port2
 4 write_request_port2
 5 parallel
 6 parallel_multiple

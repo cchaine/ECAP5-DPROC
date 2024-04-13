@@ -433,7 +433,7 @@ void tb_emm_port2_read(TB_Emm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
   tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
   tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&

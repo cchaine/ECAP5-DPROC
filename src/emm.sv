@@ -83,7 +83,7 @@ logic       sel_wb_ack;
 logic       sel_wb_cyc;
 
 always_comb begin
-  if(~switch_q) begin
+  if(~switch_q || (switch_q && s2_stall_q)) begin
     sel_wb_adr    =  s1_wb_adr_i;
     sel_wb_dat_o  =  s1_wb_dat_i;
     sel_wb_we     =  s1_wb_we_i;
@@ -108,19 +108,22 @@ always_ff @(posedge clk_i) begin
     s2_stall_q <= 1;
     in_request_q <= 0;
   end else begin
-    if(m_wb_stall_i == 0) begin
-      if(s1_request || s2_request) begin
-        in_request_q <= 1;
-      end
+    // Begining of request
+    if(m_wb_stall_i == 0 && ((~switch_q && s1_request) || (switch_q && s2_request))) begin
+      in_request_q <= 1;
     end
+    // End of request
     if(in_request_q && sel_wb_cyc == 0) begin
       in_request_q <= 0;
       switch_q <= 0;
       s2_stall_q <= 1;
     end
-
+    // s2 bus request
     if(in_request_q == 0 && s2_request) begin
       switch_q <= 1;
+    end
+    // s2 bus grant
+    if(switch_q && s2_request) begin
       s2_stall_q <= 0;
     end
   end
