@@ -66,7 +66,13 @@ module emm import ecap5_dproc_pkg::*;
 );
 
 logic switch_d, switch_q;
-logic in_request_q;
+logic in_request_d, in_request_q;
+logic s1_request, s2_request;
+
+assign s1_request = s1_wb_stb_i && s1_wb_cyc_i;
+assign s2_request = s2_wb_stb_i && s2_wb_cyc_i;
+
+logic s2_stall_q;
 
 logic[31:0] sel_wb_adr;
 logic[31:0] sel_wb_dat_o;
@@ -77,8 +83,6 @@ logic       sel_wb_ack;
 logic       sel_wb_cyc;
 
 always_comb begin
-  switch_d = switch_q;
-
   if(~switch_q) begin
     sel_wb_adr    =  s1_wb_adr_i;
     sel_wb_dat_o  =  s1_wb_dat_i;
@@ -96,18 +100,29 @@ always_comb begin
   end
 end
 
+assign in_request_d = sel_wb_stb && sel_wb_cyc && m_wb_stall_i == 0;
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     switch_q <= 0;
+    s2_stall_q <= 1;
     in_request_q <= 0;
   end else begin
-    if(sel_wb_stb && sel_wb_cyc && m_wb_stall_i == 0) begin
-      in_request_q <= 1;
+    if(m_wb_stall_i == 0) begin
+      if(s1_request || s2_request) begin
+        in_request_q <= 1;
+      end
     end
     if(in_request_q && sel_wb_cyc == 0) begin
       in_request_q <= 0;
+      switch_q <= 0;
+      s2_stall_q <= 1;
     end
-    switch_q <= switch_d;
+
+    if(in_request_q == 0 && s2_request) begin
+      switch_q <= 1;
+      s2_stall_q <= 0;
+    end
   end
 end
 
@@ -118,7 +133,13 @@ assign m_wb_sel_o = sel_wb_sel;
 assign m_wb_stb_o = sel_wb_stb;
 assign m_wb_cyc_o = sel_wb_cyc;
 
+assign s1_wb_dat_o = ~switch_q ? m_wb_dat_i : '0;
+assign s2_wb_dat_o =  switch_q ? m_wb_dat_i : '0;
+
+assign s1_wb_ack_o = ~switch_q ? m_wb_ack_i : 0;
+assign s2_wb_ack_o =  switch_q ? m_wb_ack_i : 0;
+
 assign s1_wb_stall_o = switch_q;
-assign s2_wb_stall_o = ~switch_q;
+assign s2_wb_stall_o = s2_stall_q;
 
 endmodule // exm
