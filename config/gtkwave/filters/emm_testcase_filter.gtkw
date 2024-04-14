@@ -1,7 +1,8 @@
-1 read_request_port1
-2 write_request_port1
-3 read_request_port2
-4 write_request_port2
-5 parallel
-6 parallel_multiple
+1 port1_read
+2 port1_write
+3 port2_read
+4 port2_write
+5 two_during_one
+6 one_during_two
 7 priority
+8 back_to_back

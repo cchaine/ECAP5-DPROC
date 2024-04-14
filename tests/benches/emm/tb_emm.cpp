@@ -959,7 +959,7 @@ void tb_emm_two_during_one(TB_Emm * tb) {
 
 void tb_emm_one_during_two(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = 6;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 2
@@ -1220,7 +1220,7 @@ void tb_emm_priority(TB_Emm * tb) {
 
 void tb_emm_back_to_back(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = 8;
 
   tb->reset();
 }
