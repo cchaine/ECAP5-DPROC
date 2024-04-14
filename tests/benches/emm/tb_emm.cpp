@@ -714,7 +714,249 @@ void tb_emm_two_during_one(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
   core->testcase = 5;
 
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for read on port 1
+  //    tick 1. Acknowledge request and set inputs for read on port 2 (port 1 request selected)
+  //    tick 2. Nothing (port 1 latches response)
+  //    tick 3. Nothing (port 1 ends request)
+  //    tick 4. Hold port 2 request (port 2 is behing chosen)
+  //    tick 5. Acknowledge request (port 2 request selected)
+  //    tick 6. Nothing (port 2 latches response)
+  //    tick 7. Nothing (port 2 ends request)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t addr = rand();
+  uint8_t sel = 0x3;
+  tb->read_request_port1(addr, sel);
+  tb->_nop_port2();
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_nop_port1();
+  core->s1_wb_cyc_i = 1;
+
+  addr = rand();
+  sel = rand();
+  tb->read_request_port2(addr, sel);
+
+  uint32_t data = rand();
+  core->m_wb_dat_i = data;
+  core->m_wb_ack_i = 1;
+
+  //=================================
+  //      Tick (2)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->m_wb_dat_i = 0;
+  core->m_wb_ack_i = 0;
+
+  //=================================
+  //      Tick (3)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->s1_wb_cyc_i = 0;
+
+  //=================================
+  //      Tick (4)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
+  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
+                       (core->s1_wb_dat_o == 0)  &&
+                       (core->m_wb_we_o == 0)    &&
+                       (core->m_wb_sel_o == 0)  &&
+                       (core->m_wb_stb_o == 0)  &&
+                       (core->m_wb_cyc_o == 0));
+
+  //=================================
+  //      Tick (5)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
+  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_nop_port2();
+  core->s2_wb_cyc_i = 1;
+
+  data = rand();
+  core->m_wb_dat_i = data;
+  core->m_wb_ack_i = 1;
+
+  //=================================
+  //      Tick (6)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
+  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->m_wb_dat_i = 0;
+  core->m_wb_ack_i = 0;
+
+  //=================================
+  //      Tick (7)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
+  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->s2_wb_cyc_i = 0;
+
+  //=================================
+  //      Tick (8)
+
+  tb->tick();
+  
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+    
+  CHECK("tb_emm.two_during_one.01",
+      tb->conditions[COND_s1_stall],
+      "Failed to implement s1 stalling", tb->err_cycles[COND_s1_stall]);
+  
+  CHECK("tb_emm.two_during_one.02",
+      tb->conditions[COND_s2_stall],
+      "Failed to implement s2 stalling", tb->err_cycles[COND_s2_stall]);
+
+  CHECK("tb_emm.two_during_one.03",
+      tb->conditions[COND_s1_ack],
+      "Failed to block s1 acknowledge", tb->err_cycles[COND_s1_ack]);
+
+  CHECK("tb_emm.two_during_one.04",
+      tb->conditions[COND_s2_ack],
+      "Failed to block s2 acknowledge", tb->err_cycles[COND_s2_ack]);
+
+  CHECK("tb_emm.two_during_one.05",
+      tb->conditions[COND_m_wb],
+      "Failed to implement master muxing", tb->err_cycles[COND_m_wb]);
 }
 
 void tb_emm_one_during_two(TB_Emm * tb) {

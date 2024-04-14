@@ -115,7 +115,11 @@ always_ff @(posedge clk_i) begin
     // End of request
     if(in_request_q && sel_wb_cyc == 0) begin
       in_request_q <= 0;
-      switch_q <= 0;
+      if(s2_request) begin
+        switch_q <= 1;
+      end else begin
+        switch_q <= 0;
+      end
       s2_stall_q <= 1;
     end
     // s2 bus request
