@@ -82,6 +82,20 @@ void tb_top_alu(TB_Top * tb) {
   tb->tick();
 }
 
+void tb_top_lsm_enable(TB_Top * tb) {
+  Vtb_top * core = tb->core;
+  core->testcase = 2;
+
+  tb->reset();
+}
+
+void tb_top_branch(TB_Top * tb) {
+  Vtb_top * core = tb->core;
+  core->testcase = 3;
+
+  tb->reset();
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);

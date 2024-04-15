@@ -285,19 +285,39 @@ wbm wbm_inst (
   .reg_data_o     (reg_wdata)
 );
 
-assign wb_adr_o = '0;
-assign wb_dat_o = '0;
-assign wb_sel_o = '0;
-assign wb_we_o = 0;
-assign wb_stb_o = 0;
-assign wb_cyc_o = 0;
+emm emm_inst (
+  .clk_i (clk_i),
+  .rst_i (rst_i),
 
-assign ifm_wb_dat_i = 0;
-assign ifm_wb_ack_i = 0;
-assign ifm_wb_stall_i = 1;
+  .s1_wb_adr_i   (ifm_wb_adr_o),
+  .s1_wb_dat_o   (ifm_wb_dat_i),
+  .s1_wb_dat_i   ('0),
+  .s1_wb_we_i    (ifm_wb_we_o),
+  .s1_wb_sel_i   (ifm_wb_sel_o),
+  .s1_wb_stb_i   (ifm_wb_stb_o),
+  .s1_wb_ack_o   (ifm_wb_ack_i),
+  .s1_wb_cyc_i   (ifm_wb_cyc_o),
+  .s1_wb_stall_o (ifm_wb_stall_i),
 
-assign lsm_wb_dat_i = 0;
-assign lsm_wb_ack_i = 0;
-assign lsm_wb_stall_i = 1;
+  .s2_wb_adr_i   (lsm_wb_adr_o),
+  .s2_wb_dat_o   (lsm_wb_dat_i),
+  .s2_wb_dat_i   (lsm_wb_dat_o),
+  .s2_wb_we_i    (lsm_wb_we_o),
+  .s2_wb_sel_i   (lsm_wb_sel_o),
+  .s2_wb_stb_i   (lsm_wb_stb_o),
+  .s2_wb_ack_o   (lsm_wb_ack_i),
+  .s2_wb_cyc_i   (lsm_wb_cyc_o),
+  .s2_wb_stall_o (lsm_wb_stall_i),
+
+  .m_wb_adr_o   (wb_adr_o),
+  .m_wb_dat_i   (wb_dat_i),
+  .m_wb_dat_o   (wb_dat_o),
+  .m_wb_we_o    (wb_we_o),
+  .m_wb_sel_o   (wb_sel_o),
+  .m_wb_stb_o   (wb_stb_o),
+  .m_wb_ack_i   (wb_ack_i),
+  .m_wb_cyc_o   (wb_cyc_o),
+  .m_wb_stall_i (wb_stall_i)
+);
 
 endmodule // top

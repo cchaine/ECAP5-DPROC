@@ -103,9 +103,8 @@ always_comb begin : state_machine
       // if correct interface, go to request
       if(s1_request) begin
         state_d = REQUEST;
-      end
-      // if switch needed, go to switching
-      if(s2_request) begin
+      end else if(s2_request) begin
+        // if switch needed, go to switching
         switch_d = 1;
         s1_stall_d = 1;
         state_d = SWITCHING;

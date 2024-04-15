@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Apr 10 08:42:12 2024
+[*] Mon Apr 15 19:20:43 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/top.vcd"
-[dumpfile_mtime] "Wed Apr 10 08:39:22 2024"
-[dumpfile_size] 22124
+[dumpfile_mtime] "Mon Apr 15 19:20:43 2024"
+[dumpfile_size] 24533
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/top.gtkw"
 [timestart] 8
-[size] 2560 1387
+[size] 1424 742
 [pos] -1 -1
-*-4.629932 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-5.809053 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -42,13 +42,15 @@
 [sst_width] 304
 [signals_width] 267
 [sst_expanded] 1
-[sst_vpaned_height] 1134
+[sst_vpaned_height] 450
 @24
 [color] 1
 TOP.testcase[31:0]
 @28
 TOP.tb_top.dut.clk_i
 TOP.tb_top.dut.rst_i
+@c00200
+-Master Wishbone
 @22
 [color] 2
 TOP.tb_top.dut.wb_adr_o[31:0]
@@ -71,7 +73,9 @@ TOP.tb_top.dut.wb_ack_i
 TOP.tb_top.dut.wb_cyc_o
 [color] 2
 TOP.tb_top.dut.wb_stall_i
-@200
+@1401200
+-Master Wishbone
+@c00200
 -IFM
 @28
 [color] 3
@@ -83,6 +87,9 @@ TOP.tb_top.dut.branch
 @22
 [color] 3
 TOP.tb_top.dut.branch_target[31:0]
+@c00200
+-IFM Wishbone
+@22
 [color] 3
 TOP.tb_top.dut.ifm_wb_adr_o[31:0]
 [color] 3
@@ -102,8 +109,8 @@ TOP.tb_top.dut.ifm_wb_ack_i
 TOP.tb_top.dut.ifm_wb_cyc_o
 [color] 3
 TOP.tb_top.dut.ifm_wb_stall_i
-@200
--IFM-DECM
+@1401200
+-IFM Wishbone
 @4022
 [color] 3
 ^>1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_instr_filter_process.py
@@ -111,12 +118,13 @@ TOP.tb_top.dut.ifm_instr[31:0]
 @22
 [color] 3
 TOP.tb_top.dut.ifm_pc[31:0]
+@1401200
+-IFM
 @28
 TOP.tb_top.dut.ifm_decm_valid
-@200
--DECM-EXM
-@28
 TOP.tb_top.dut.ifm_decm_ready
+@c00200
+-DECM
 @22
 [color] 5
 TOP.tb_top.dut.decm_pc[31:0]
@@ -135,7 +143,7 @@ TOP.tb_top.dut.decm_alu_sub
 TOP.tb_top.dut.decm_alu_shift_left
 [color] 5
 TOP.tb_top.dut.decm_alu_signed_shift
-@2025
+@2024
 [color] 5
 ^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decm_branch_cond_filter.gtkw
 TOP.tb_top.dut.decm_branch_cond[2:0]
@@ -160,12 +168,13 @@ TOP.tb_top.dut.decm_reg_write
 @22
 [color] 5
 TOP.tb_top.dut.decm_reg_addr[4:0]
+@1401200
+-DECM
 @28
 TOP.tb_top.dut.decm_exm_valid
-@200
--EXM-LSM
-@28
 TOP.tb_top.dut.decm_exm_ready
+@c00200
+-EXM
 @22
 [color] 7
 TOP.tb_top.dut.exm_result[31:0]
@@ -187,10 +196,14 @@ TOP.tb_top.dut.exm_reg_write
 @22
 [color] 7
 TOP.tb_top.dut.exm_reg_addr[4:0]
+@1401200
+-EXM
 @28
 TOP.tb_top.dut.exm_lsm_valid
-@200
+TOP.tb_top.dut.exm_lsm_ready
+@c00200
 -LSM
+-LSM Wishbone
 @22
 [color] 2
 TOP.tb_top.dut.lsm_wb_adr_o[31:0]
@@ -213,10 +226,9 @@ TOP.tb_top.dut.lsm_wb_ack_i
 TOP.tb_top.dut.lsm_wb_cyc_o
 [color] 2
 TOP.tb_top.dut.lsm_wb_stall_i
-@200
--LSM-WBM
+@1401200
+-LSM Wishbone
 @28
-TOP.tb_top.dut.exm_lsm_ready
 [color] 2
 TOP.tb_top.dut.lsm_reg_write
 @22
@@ -224,11 +236,13 @@ TOP.tb_top.dut.lsm_reg_write
 TOP.tb_top.dut.lsm_reg_addr[4:0]
 [color] 2
 TOP.tb_top.dut.lsm_reg_data[31:0]
+@1401200
+-LSM
 @28
 TOP.tb_top.dut.lsm_valid
-@200
+@c00201
 -REGM
-@22
+@23
 [color] 1
 TOP.tb_top.dut.reg_raddr1[4:0]
 [color] 1
@@ -237,13 +251,15 @@ TOP.tb_top.dut.reg_raddr2[4:0]
 TOP.tb_top.dut.reg_rdata1[31:0]
 [color] 1
 TOP.tb_top.dut.reg_rdata2[31:0]
-@28
+@29
 [color] 1
 TOP.tb_top.dut.reg_write
-@22
+@23
 [color] 1
 TOP.tb_top.dut.reg_waddr[4:0]
 [color] 1
 TOP.tb_top.dut.reg_wdata[31:0]
+@1401201
+-REGM
 [pattern_trace] 1
 [pattern_trace] 0
