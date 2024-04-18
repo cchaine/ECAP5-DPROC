@@ -2973,6 +2973,81 @@ void tb_decm_sra(TB_Decm * tb) {
       "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
+void tb_decm_bubble(TB_Decm * tb) {
+  Vtb_decm * core = tb->core;
+  core->testcase = 38;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for LB without input valid
+  //    tick 1. Nothing (core outputs bubble)
+  
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 0;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand();
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t imm = (10 + rand() % (0xFFFF - 10));
+  tb->_lb(pc, rd, rs1, imm);
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o     ==  0)  &&
+                            (core->alu_operand2_o     ==  0)  &&
+                            (core->alu_op_o           ==  Vtb_decm_ecap5_dproc_pkg::ALU_ADD) &&
+                            (core->alu_sub_o          ==  0));
+  tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o        ==  0));
+  tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_decm.bubble.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol bubble bypass", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.bubble.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol bubble bypass", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.bubble.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol bubble bypass", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.bubble.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol bubble bypass", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bubble.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_decm_pipeline_stall(TB_Decm * tb) {
+  Vtb_decm * core = tb->core;
+  core->testcase = 39;
+
+  CHECK("tb_decm.pipeline_stall.01",
+      false,
+      "TODO: pipeline_stall");
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -3024,6 +3099,10 @@ int main(int argc, char ** argv, char ** env) {
   tb_decm_sll(tb);
   tb_decm_srl(tb);
   tb_decm_sra(tb);
+
+  tb_decm_bubble(tb);
+
+  tb_decm_pipeline_stall(tb);
 
   /************************************************************/
 

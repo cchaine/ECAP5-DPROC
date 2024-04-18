@@ -268,20 +268,20 @@ always_ff @(posedge clk_i) begin
     if(output_ready_i) begin
       pc_q                <=  pc_i;
 
-      alu_operand1_q      <=  alu_operand1_d;
-      alu_operand2_q      <=  alu_operand2_d;
-      alu_op_q            <=  alu_op_d;
-      alu_sub_q           <=  alu_sub_d;
+      alu_operand1_q      <=  input_valid_i ? alu_operand1_d : '0;
+      alu_operand2_q      <=  input_valid_i ? alu_operand2_d : '0;
+      alu_op_q            <=  input_valid_i ? alu_op_d : ALU_ADD;
+      alu_sub_q           <=  input_valid_i ? alu_sub_d : 0;
       alu_shift_left_q    <=  alu_shift_left_d;
       alu_signed_shift_q  <=  alu_signed_shift_d;
 
-      branch_cond_q       <=  branch_cond_d;
+      branch_cond_q       <=  input_valid_i ? branch_cond_d : NO_BRANCH;
       branch_offset_q     <=  branch_offset_d;
 
-      reg_write_q         <=  reg_write_d;
+      reg_write_q         <=  input_valid_i ? reg_write_d : 0;
       reg_addr_q          <=  reg_addr_d;
 
-      ls_enable_q         <=  ls_enable_d;
+      ls_enable_q         <=  input_valid_i ? ls_enable_d : 0;
       ls_write_q          <=  ls_write_d;
       ls_write_data_q     <=  ls_write_data_d;
       ls_sel_q            <=  ls_sel_d;

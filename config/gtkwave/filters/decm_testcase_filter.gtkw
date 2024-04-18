@@ -35,3 +35,5 @@
 35 sll
 36 srl
 37 sra
+38 bubble
+39 pipeline_stall
