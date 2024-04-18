@@ -363,6 +363,7 @@ void tb_decm_lui(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -382,6 +383,10 @@ void tb_decm_lui(TB_Decm * tb) {
   CHECK("tb_decm.lui.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lui.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_auipc(TB_Decm * tb) {
@@ -424,6 +429,7 @@ void tb_decm_auipc(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -443,6 +449,10 @@ void tb_decm_auipc(TB_Decm * tb) {
   CHECK("tb_decm.auipc.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.auipc.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_jal(TB_Decm * tb) {
@@ -485,6 +495,7 @@ void tb_decm_jal(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -504,6 +515,10 @@ void tb_decm_jal(TB_Decm * tb) {
   CHECK("tb_decm.jal.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.jal.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_jalr(TB_Decm * tb) {
@@ -550,6 +565,7 @@ void tb_decm_jalr(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -569,6 +585,10 @@ void tb_decm_jalr(TB_Decm * tb) {
   CHECK("tb_decm.jalr.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.jalr.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_beq(TB_Decm * tb) {
@@ -616,6 +636,7 @@ void tb_decm_beq(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -639,6 +660,10 @@ void tb_decm_beq(TB_Decm * tb) {
   CHECK("tb_decm.beq.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.beq.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bne(TB_Decm * tb) {
@@ -686,6 +711,7 @@ void tb_decm_bne(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -709,6 +735,10 @@ void tb_decm_bne(TB_Decm * tb) {
   CHECK("tb_decm.bne.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bne.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_blt(TB_Decm * tb) {
@@ -756,6 +786,7 @@ void tb_decm_blt(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -779,6 +810,10 @@ void tb_decm_blt(TB_Decm * tb) {
   CHECK("tb_decm.blt.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.blt.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bge(TB_Decm * tb) {
@@ -826,6 +861,7 @@ void tb_decm_bge(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -849,6 +885,10 @@ void tb_decm_bge(TB_Decm * tb) {
   CHECK("tb_decm.bge.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bge.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bltu(TB_Decm * tb) {
@@ -896,6 +936,7 @@ void tb_decm_bltu(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -919,6 +960,10 @@ void tb_decm_bltu(TB_Decm * tb) {
   CHECK("tb_decm.bltu.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bltu.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bgeu(TB_Decm * tb) {
@@ -966,6 +1011,7 @@ void tb_decm_bgeu(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -989,6 +1035,10 @@ void tb_decm_bgeu(TB_Decm * tb) {
   CHECK("tb_decm.bgeu.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bgeu.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lb(TB_Decm * tb) {
@@ -1036,6 +1086,7 @@ void tb_decm_lb(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x1) &&
                             (core->ls_unsigned_load_o ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1055,6 +1106,10 @@ void tb_decm_lb(TB_Decm * tb) {
   CHECK("tb_decm.lb.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lb.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lbu(TB_Decm * tb) {
@@ -1102,6 +1157,7 @@ void tb_decm_lbu(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x1) &&
                             (core->ls_unsigned_load_o ==  1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1121,6 +1177,10 @@ void tb_decm_lbu(TB_Decm * tb) {
   CHECK("tb_decm.lbu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lbu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lh(TB_Decm * tb) {
@@ -1168,6 +1228,7 @@ void tb_decm_lh(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x3) &&
                             (core->ls_unsigned_load_o ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1187,6 +1248,10 @@ void tb_decm_lh(TB_Decm * tb) {
   CHECK("tb_decm.lh.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lh.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lhu(TB_Decm * tb) {
@@ -1234,6 +1299,7 @@ void tb_decm_lhu(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x3) &&
                             (core->ls_unsigned_load_o ==  1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1253,6 +1319,10 @@ void tb_decm_lhu(TB_Decm * tb) {
   CHECK("tb_decm.lhu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lhu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lw(TB_Decm * tb) {
@@ -1299,6 +1369,7 @@ void tb_decm_lw(TB_Decm * tb) {
   tb->check(COND_loadstore, (core->ls_enable_o        ==  1) &&
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0xF));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1318,6 +1389,10 @@ void tb_decm_lw(TB_Decm * tb) {
   CHECK("tb_decm.lw.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lw.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sb(TB_Decm * tb) {
@@ -1366,6 +1441,7 @@ void tb_decm_sb(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0x1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1385,6 +1461,10 @@ void tb_decm_sb(TB_Decm * tb) {
   CHECK("tb_decm.sb.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sb.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sh(TB_Decm * tb) {
@@ -1433,6 +1513,7 @@ void tb_decm_sh(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0x3));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1452,6 +1533,10 @@ void tb_decm_sh(TB_Decm * tb) {
   CHECK("tb_decm.sh.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sh.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sw(TB_Decm * tb) {
@@ -1500,6 +1585,7 @@ void tb_decm_sw(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0xF));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1519,6 +1605,10 @@ void tb_decm_sw(TB_Decm * tb) {
   CHECK("tb_decm.sw.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sw.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_addi(TB_Decm * tb) {
@@ -1567,6 +1657,7 @@ void tb_decm_addi(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1586,6 +1677,10 @@ void tb_decm_addi(TB_Decm * tb) {
   CHECK("tb_decm.addi.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.addi.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slti(TB_Decm * tb) {
@@ -1633,6 +1728,7 @@ void tb_decm_slti(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1652,6 +1748,10 @@ void tb_decm_slti(TB_Decm * tb) {
   CHECK("tb_decm.slti.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slti.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sltiu(TB_Decm * tb) {
@@ -1699,6 +1799,7 @@ void tb_decm_sltiu(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1718,6 +1819,10 @@ void tb_decm_sltiu(TB_Decm * tb) {
   CHECK("tb_decm.sltiu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sltiu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_xori(TB_Decm * tb) {
@@ -1765,6 +1870,7 @@ void tb_decm_xori(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1784,6 +1890,10 @@ void tb_decm_xori(TB_Decm * tb) {
   CHECK("tb_decm.xori.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.xori.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_ori(TB_Decm * tb) {
@@ -1831,6 +1941,7 @@ void tb_decm_ori(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1850,6 +1961,10 @@ void tb_decm_ori(TB_Decm * tb) {
   CHECK("tb_decm.ori.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.ori.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_andi(TB_Decm * tb) {
@@ -1897,6 +2012,7 @@ void tb_decm_andi(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1916,6 +2032,10 @@ void tb_decm_andi(TB_Decm * tb) {
   CHECK("tb_decm.andi.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.andi.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slli(TB_Decm * tb) {
@@ -1964,6 +2084,7 @@ void tb_decm_slli(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o      ==  1) &&
                             (core->reg_addr_o       ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o      ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1983,6 +2104,10 @@ void tb_decm_slli(TB_Decm * tb) {
   CHECK("tb_decm.slli.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slli.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srli(TB_Decm * tb) {
@@ -2032,6 +2157,7 @@ void tb_decm_srli(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2051,6 +2177,10 @@ void tb_decm_srli(TB_Decm * tb) {
   CHECK("tb_decm.srli.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srli.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srai(TB_Decm * tb) {
@@ -2100,6 +2230,7 @@ void tb_decm_srai(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2119,6 +2250,10 @@ void tb_decm_srai(TB_Decm * tb) {
   CHECK("tb_decm.srai.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srai.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_add(TB_Decm * tb) {
@@ -2167,6 +2302,7 @@ void tb_decm_add(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2186,6 +2322,10 @@ void tb_decm_add(TB_Decm * tb) {
   CHECK("tb_decm.add.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.add.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sub(TB_Decm * tb) {
@@ -2234,6 +2374,7 @@ void tb_decm_sub(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2253,6 +2394,10 @@ void tb_decm_sub(TB_Decm * tb) {
   CHECK("tb_decm.sub.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sub.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slt(TB_Decm * tb) {
@@ -2300,6 +2445,7 @@ void tb_decm_slt(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2319,6 +2465,10 @@ void tb_decm_slt(TB_Decm * tb) {
   CHECK("tb_decm.slt.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slt.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sltu(TB_Decm * tb) {
@@ -2366,6 +2516,7 @@ void tb_decm_sltu(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2385,6 +2536,10 @@ void tb_decm_sltu(TB_Decm * tb) {
   CHECK("tb_decm.sltu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sltu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_xor(TB_Decm * tb) {
@@ -2432,6 +2587,7 @@ void tb_decm_xor(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2451,6 +2607,10 @@ void tb_decm_xor(TB_Decm * tb) {
   CHECK("tb_decm.xor.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.xor.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_or(TB_Decm * tb) {
@@ -2498,6 +2658,7 @@ void tb_decm_or(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2517,6 +2678,10 @@ void tb_decm_or(TB_Decm * tb) {
   CHECK("tb_decm.or.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.or.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_and(TB_Decm * tb) {
@@ -2564,6 +2729,7 @@ void tb_decm_and(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2583,6 +2749,10 @@ void tb_decm_and(TB_Decm * tb) {
   CHECK("tb_decm.and.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.and.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sll(TB_Decm * tb) {
@@ -2631,6 +2801,7 @@ void tb_decm_sll(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o      ==  1) &&
                             (core->reg_addr_o       ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o      ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2650,6 +2821,10 @@ void tb_decm_sll(TB_Decm * tb) {
   CHECK("tb_decm.sll.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sll.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srl(TB_Decm * tb) {
@@ -2699,6 +2874,7 @@ void tb_decm_srl(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2718,6 +2894,10 @@ void tb_decm_srl(TB_Decm * tb) {
   CHECK("tb_decm.srl.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srl.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sra(TB_Decm * tb) {
@@ -2767,6 +2947,7 @@ void tb_decm_sra(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2786,6 +2967,10 @@ void tb_decm_sra(TB_Decm * tb) {
   CHECK("tb_decm.sra.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sra.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 int main(int argc, char ** argv, char ** env) {

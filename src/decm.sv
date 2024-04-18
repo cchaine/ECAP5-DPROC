@@ -235,6 +235,13 @@ always_comb begin : loadstore_interface
   ls_unsigned_load_d = (func3 == FUNC3_LBU) || (func3 == FUNC3_LHU);
 end
 
+always_comb begin : output_handshake
+  output_valid_d = output_valid_q;
+  if(output_ready_i) begin
+    output_valid_d = 1;
+  end
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     alu_operand1_q      <=  '0;
@@ -311,5 +318,7 @@ assign  ls_write_o          =  ls_write_q;
 assign  ls_write_data_o     =  ls_write_data_q;
 assign  ls_sel_o            =  ls_sel_q;
 assign  ls_unsigned_load_o    =  ls_unsigned_load_q;
+
+assign  output_valid_o = output_valid_q;
 
 endmodule // decm
