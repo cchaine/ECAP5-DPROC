@@ -56,8 +56,7 @@ add_dependency(ECAP5_DTLIB
 # Configure dependencies
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
-# Find packages
-find_package(verilator HINTS $ENV{VERILATOR_ROOT})
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/verilator-config.cmake)
 
 # Include subdirectories
 

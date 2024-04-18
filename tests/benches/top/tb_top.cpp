@@ -27,7 +27,10 @@
 #include <verilated_vcd_c.h>
 #include <svdpi.h>
 
+#include "Vtb_top_ecap5_dproc_pkg.h"
 #include "Vtb_top.h"
+#include "Vtb_top_top.h"
+#include "Vtb_top_tb_top.h"
 #include "testbench.h"
 
 class TB_Top : public Testbench<Vtb_top> {
@@ -44,8 +47,106 @@ public:
 };
 
 enum CondId {
+  COND_ready,
+  COND_valid,
+  COND_decm_bubble,
+  COND_exm_bubble,
+  COND_lsm_bubble,
+  COND_wbm_bubble,
   __CondIdEnd
 };
+
+void tb_top_nop(TB_Top * tb) {
+  Vtb_top * core = tb->core;
+  core->testcase = 1;
+
+  // The following actions are performed in this test :
+  //    tick 0. Stall the memory interface
+  //    tick 1. Nothing
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_stall_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->ifm_decm_ready == 1) &&
+                        (core->tb_top->dut->decm_exm_ready == 1) &&
+                        (core->tb_top->dut->exm_lsm_ready  == 1));
+  tb->check(COND_decm_bubble, (core->tb_top->dut->decm_alu_operand1 == 0)         &&
+                              (core->tb_top->dut->decm_alu_operand2 == 0)         &&
+                              (core->tb_top->dut->decm_alu_op       == Vtb_top_ecap5_dproc_pkg::ALU_ADD)   &&
+                              (core->tb_top->dut->decm_alu_sub      == 0)         &&
+                              (core->tb_top->dut->decm_branch_cond  == Vtb_top_ecap5_dproc_pkg::NO_BRANCH) &&
+                              (core->tb_top->dut->decm_ls_enable    == 0)         &&
+                              (core->tb_top->dut->decm_reg_write    == 0));
+  tb->check(COND_exm_bubble, (core->tb_top->dut->exm_ls_enable  == 0) &&
+                             (core->tb_top->dut->exm_reg_write  == 0));
+  tb->check(COND_lsm_bubble, (core->tb_top->dut->lsm_reg_write  == 0));
+  tb->check(COND_wbm_bubble, (core->tb_top->dut->reg_write      == 0));
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_top->dut->decm_exm_valid == 1) &&
+                        (core->tb_top->dut->exm_lsm_valid  == 1) &&
+                        (core->tb_top->dut->lsm_valid      == 1));
+  tb->check(COND_decm_bubble, (core->tb_top->dut->decm_alu_operand1 == 0)         &&
+                              (core->tb_top->dut->decm_alu_operand2 == 0)         &&
+                              (core->tb_top->dut->decm_alu_op       == Vtb_top_ecap5_dproc_pkg::ALU_ADD)   &&
+                              (core->tb_top->dut->decm_alu_sub      == 0)         &&
+                              (core->tb_top->dut->decm_branch_cond  == Vtb_top_ecap5_dproc_pkg::NO_BRANCH) &&
+                              (core->tb_top->dut->decm_ls_enable    == 0)         &&
+                              (core->tb_top->dut->decm_reg_write    == 0));
+  tb->check(COND_exm_bubble, (core->tb_top->dut->exm_ls_enable  == 0) &&
+                             (core->tb_top->dut->exm_reg_write  == 0));
+  tb->check(COND_lsm_bubble, (core->tb_top->dut->lsm_reg_write  == 0));
+  tb->check(COND_wbm_bubble, (core->tb_top->dut->reg_write      == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_top.nop.01",
+      tb->conditions[COND_ready],
+      "Failed to implement the ready signal", tb->err_cycles[COND_ready]);
+
+  CHECK("tb_top.nop.02",
+      tb->conditions[COND_valid],
+      "Failed to implement the valid signal", tb->err_cycles[COND_valid]);
+
+  CHECK("tb_top.nop.03",
+      tb->conditions[COND_decm_bubble],
+      "Failed to implement the decm bubble", tb->err_cycles[COND_decm_bubble]);
+
+  CHECK("tb_top.nop.04",
+      tb->conditions[COND_exm_bubble],
+      "Failed to implement the exm bubble", tb->err_cycles[COND_exm_bubble]);
+
+  CHECK("tb_top.nop.05",
+      tb->conditions[COND_lsm_bubble],
+      "Failed to implement the lsm bubble", tb->err_cycles[COND_lsm_bubble]);
+
+  CHECK("tb_top.nop.06",
+      tb->conditions[COND_wbm_bubble],
+      "Failed to implement the wbm bubble", tb->err_cycles[COND_wbm_bubble]);
+}
 
 void tb_top_alu(TB_Top * tb) {
   Vtb_top * core = tb->core;
@@ -63,22 +164,6 @@ void tb_top_alu(TB_Top * tb) {
   //=================================
   //      Tick (1)
   
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
-  tb->tick();
-
   tb->tick();
 }
 
@@ -111,6 +196,7 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
+  tb_top_nop(tb);
   tb_top_alu(tb);
   tb_top_lsm_enable(tb);
   tb_top_branch(tb);
