@@ -115,7 +115,7 @@ regm regm_inst (
   .clk_i     (clk_i),
 
   .raddr1_i  (reg_raddr1),
-  .rdata1_o  (reg_rdata2),
+  .rdata1_o  (reg_rdata1),
 
   .raddr2_i  (reg_raddr2),
   .rdata2_o  (reg_rdata2),
