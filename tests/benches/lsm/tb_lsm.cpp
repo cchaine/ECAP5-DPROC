@@ -34,6 +34,31 @@
 #include "Vtb_lsm_lsm.h"
 #include "Vtb_lsm_ecap5_dproc_pkg.h"
 
+enum CondId {
+  COND_state,
+  COND_input_ready,
+  COND_wishbone,
+  COND_register,
+  COND_output_valid,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_NO_STALL_LB   =  0,
+  T_NO_STALL_LBU  =  1,
+  T_NO_STALL_LH   =  2,
+  T_NO_STALL_LHU  =  3,
+  T_NO_STALL_LW   =  4,
+  T_NO_STALL_SB   =  5,
+  T_NO_STALL_SH   =  6,
+  T_NO_STALL_SW   =  7,
+  T_MEMORY_STALL  =  8,
+  T_MEMORY_WAIT   =  9,
+  T_BYPASS        =  10,
+  T_BUBBLE        =  11,
+  T_BACK_TO_BACK  =  12
+};
+
 class TB_Lsm : public Testbench<Vtb_lsm> {
 public:
   void reset() {
@@ -140,18 +165,89 @@ public:
   }
 };
 
-enum CondId {
-  COND_state,
-  COND_input_ready,
-  COND_wishbone,
-  COND_register,
-  COND_output_valid,
-  __CondIdEnd
-};
-
-void tb_lsm_no_stall_load(TB_Lsm * tb) {
+void tb_lsm_no_stall_lb(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_NO_STALL_LB;
+
+  CHECK("tb_lsm.no_stall.LB_01",
+      false,
+      "TODO: no_stall LB");
+}
+
+void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_LBU;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LBU 
+  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 2. Nothing (core latches response data)
+  //    tick 3. Nothing (core outputs result of LBU)
+  //    tick 4. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lbu(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data;
+
+  tb->_nop();
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_register, (core->reg_data_o            ==  0)); 
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_lsm.no_stall.LBU_01",
+      tb->conditions[COND_register],
+      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+}
+
+void tb_lsm_no_stall_lh(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_LH;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a LH 
@@ -272,101 +368,66 @@ void tb_lsm_no_stall_load(TB_Lsm * tb) {
   //`````````````````````````````````
   //      Formal Checks 
 
-  CHECK("tb_lsm.no_stall.LOAD_01",
+  CHECK("tb_lsm.no_stall.LH_01",
       tb->conditions[COND_state],
       "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_lsm.no_stall.LOAD_02",
+  CHECK("tb_lsm.no_stall.LH_02",
       tb->conditions[COND_input_ready],
       "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
 
-  CHECK("tb_lsm.no_stall.LOAD_03",
+  CHECK("tb_lsm.no_stall.LH_03",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_lsm.no_stall.LOAD_04",
+  CHECK("tb_lsm.no_stall.LH_04",
       tb->conditions[COND_register],
       "Failed to implement the register protocol", tb->err_cycles[COND_register]);
 
-  CHECK("tb_lsm.no_stall.LOAD_05",
+  CHECK("tb_lsm.no_stall.LH_05",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_lsm_no_stall_unsigned_load(TB_Lsm * tb) {
+void tb_lsm_no_stall_lhu(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_NO_STALL_LHU;
 
-  // The following actions are performed in this test :
-  //    tick 0. Set the inputs to request a LBU 
-  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
-  //    tick 2. Nothing (core latches response data)
-  //    tick 3. Nothing (core outputs result of LBU)
-  //    tick 4. Nothing (core outputs result of nop)
-
-  //=================================
-  //      Tick (0)
-  
-  tb->reset();
-
-  // LH
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->wb_stall_i = 0;
-  core->input_valid_i = 1;
-
-  uint32_t addr = rand();
-  uint32_t reg_addr = 1 + rand() % 31;
-  tb->_lbu(addr, reg_addr);
-
-  //=================================
-  //      Tick (1)
-
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-
-  uint32_t data = rand();
-  core->wb_ack_i = 1;
-  core->wb_dat_i = data;
-
-  tb->_nop();
-
-  //=================================
-  //      Tick (2)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-
-  core->wb_ack_i = 0;
-  core->wb_dat_i = 0;
-
-  //=================================
-  //      Tick (3)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-  
-  tb->check(COND_register, (core->reg_data_o            ==  0)); 
-
-  //`````````````````````````````````
-  //      Formal Checks 
-
-  CHECK("tb_lsm.no_stall.UNSIGNED_LOAD_01",
-      tb->conditions[COND_register],
-      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+  CHECK("tb_lsm.no_stall.LHU_01",
+      false,
+      "TODO: no_stall LHU");
 }
 
-void tb_lsm_no_stall_store(TB_Lsm * tb) {
+void tb_lsm_no_stall_lw(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_NO_STALL_LW;
+
+  CHECK("tb_lsm.no_stall.LW_01",
+      false,
+      "TODO: no_stall LW");
+}
+
+void tb_lsm_no_stall_sb(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_SB;
+
+  CHECK("tb_lsm.no_stall.SB_01",
+      false,
+      "TODO: no_stall SB");
+}
+
+void tb_lsm_no_stall_sh(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_SH;
+
+  CHECK("tb_lsm.no_stall.SH_01",
+      false,
+      "TODO: no_stall SH");
+}
+
+void tb_lsm_no_stall_sw(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_SW;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a SW
@@ -477,30 +538,30 @@ void tb_lsm_no_stall_store(TB_Lsm * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_lsm.no_stall.STORE_01",
+  CHECK("tb_lsm.no_stall.SW_01",
       tb->conditions[COND_state],
       "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_lsm.no_stall.STORE_02",
+  CHECK("tb_lsm.no_stall.SW_02",
       tb->conditions[COND_input_ready],
       "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
 
-  CHECK("tb_lsm.no_stall.STORE_03",
+  CHECK("tb_lsm.no_stall.SW_03",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_lsm.no_stall.STORE_04",
+  CHECK("tb_lsm.no_stall.SW_04",
       tb->conditions[COND_register],
       "Failed to implement the register protocol", tb->err_cycles[COND_register]);
 
-  CHECK("tb_lsm.no_stall.STORE_05",
+  CHECK("tb_lsm.no_stall.SW_05",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_lsm_memory_stall(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_MEMORY_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a LH with a stalled memory
@@ -631,7 +692,7 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
 
 void tb_lsm_memory_wait(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_MEMORY_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a LH
@@ -765,7 +826,7 @@ void tb_lsm_memory_wait(TB_Lsm * tb) {
 
 void tb_lsm_bypass(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_BYPASS;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a bypass with write
@@ -818,7 +879,7 @@ void tb_lsm_bypass(TB_Lsm * tb) {
 
 void tb_lsm_bubble(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_BUBBLE;
 
   // The following actions are performed in this test :
   //    tick 0. Set the inputs to request a bypass with write
@@ -880,7 +941,7 @@ void tb_lsm_bubble(TB_Lsm * tb) {
 
 void tb_lsm_back_to_back(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs to request LH
@@ -1061,10 +1122,15 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
-  tb_lsm_no_stall_load(tb);
-  tb_lsm_no_stall_store(tb);
+  tb_lsm_no_stall_lb(tb);
+  tb_lsm_no_stall_lbu(tb);
+  tb_lsm_no_stall_lh(tb);
+  tb_lsm_no_stall_lhu(tb);
+  tb_lsm_no_stall_lw(tb);
 
-  tb_lsm_no_stall_unsigned_load(tb);
+  tb_lsm_no_stall_sb(tb);
+  tb_lsm_no_stall_sh(tb);
+  tb_lsm_no_stall_sw(tb);
 
   tb_lsm_memory_stall(tb);
 

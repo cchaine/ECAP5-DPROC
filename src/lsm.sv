@@ -100,7 +100,7 @@ logic        wb_cyc_d,        wb_cyc_q;
 /*****************************************/
 /*             Output signals            */
 /*****************************************/
-logic input_ready_q;
+logic input_ready_d, input_ready_q;
 logic output_valid_q;
 logic reg_write_d, reg_write_q;
 logic[4:0] reg_addr_d, reg_addr_q;
@@ -194,6 +194,19 @@ always_comb begin : reg_output
   end
 end
 
+always_comb begin : input_ready
+  input_ready_d = input_ready_q;
+  if(state_q == IDLE) begin
+    input_ready_d = 1;
+  end
+  if(state_q == DONE) begin
+    input_ready_d = 1;
+  end
+  if(state_q == IDLE && memory_request) begin
+    input_ready_d = 0;
+  end
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
     state_q         <= IDLE;
@@ -215,7 +228,7 @@ always_ff @(posedge clk_i) begin
   end else begin
     state_q         <=  state_d;
 
-    input_ready_q  <= (state_q == IDLE);
+    input_ready_q  <= input_ready_d;
 
     wb_adr_q        <=  wb_adr_d;
     wb_dat_q        <=  wb_dat_d;
@@ -224,7 +237,7 @@ always_ff @(posedge clk_i) begin
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
 
-    output_valid_q  <= (state_q == IDLE && ~enable_i) || (state_q == DONE);
+    output_valid_q  <= (input_ready_q && ~enable_i) || (state_q == DONE);
 
     reg_write_q <= reg_write_d;
     reg_addr_q <= reg_addr_d;

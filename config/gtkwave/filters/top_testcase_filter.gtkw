@@ -1,4 +1,5 @@
-1 alu
-2 lsm_enable
-3 branch
-4 back_to_back
+1 T_NOP
+2 T_ALU
+3 T_LSM_ENABLE
+4 T_BRANCH
+5 T_BACK_TO_BACK

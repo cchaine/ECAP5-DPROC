@@ -30,6 +30,21 @@
 #include "Vtb_regm.h"
 #include "testbench.h"
 
+enum CondId {
+  COND_read,
+  COND_write,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_READ_PORTA         =  1,
+  T_READ_PORTB         =  2,
+  T_WRITE_X0           =  3,
+  T_WRITE              =  4,
+  T_PARALLEL_READ      =  5,
+  T_READ_BEFORE_WRITE  =  6
+};
+
 class TB_Regm : public Testbench<Vtb_regm> {
 public:
   void reset() {
@@ -46,15 +61,9 @@ public:
   }
 };
 
-enum CondId {
-  COND_read,
-  COND_write,
-  __CondIdEnd
-};
-
 void tb_regm_read_port_a(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_READ_PORTA;
 
   // The following actions are performed in this test :
   //    tick 0-31. Set the inputs to read i through port a
@@ -92,7 +101,7 @@ void tb_regm_read_port_a(TB_Regm * tb) {
 
 void tb_regm_read_port_b(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_READ_PORTB;
 
   // The following actions are performed in this test :
   //    tick 0-31. Set the inputs to read i through port b
@@ -130,7 +139,7 @@ void tb_regm_read_port_b(TB_Regm * tb) {
 
 void tb_regm_write_x0(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_WRITE_X0;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs to write random data to x0
@@ -176,7 +185,7 @@ void tb_regm_write_x0(TB_Regm * tb) {
 
 void tb_regm_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_WRITE;
 
   // The following actions are performed in this test :
   //    tick 0, 2, 4, ..., 30. Set inputs to write random data to xi
@@ -225,7 +234,7 @@ void tb_regm_write(TB_Regm * tb) {
 
 void tb_regm_parallel_read(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_PARALLEL_READ;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs to read register 5 with both port a and b
@@ -263,7 +272,7 @@ void tb_regm_parallel_read(TB_Regm * tb) {
 
 void tb_regm_read_before_write(TB_Regm * tb) {
   Vtb_regm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_READ_BEFORE_WRITE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs to read register 5 and write random data to register 5

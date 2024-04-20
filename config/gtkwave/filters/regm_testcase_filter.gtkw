@@ -1,6 +1,6 @@
-1 read_port_a
-2 read_port_b
-3 write_x0
-4 write
-5 parallel_read
-6 read_before_write
+1 T_READ_PORTA
+2 T_READ_PORTB
+3 T_WRITE_X0
+4 T_WRITE
+5 T_PARALLEL_READ
+6 T_READ_BEFORE_WRITE

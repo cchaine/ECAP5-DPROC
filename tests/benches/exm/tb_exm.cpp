@@ -31,6 +31,39 @@
 #include "testbench.h"
 #include "Vtb_exm_ecap5_dproc_pkg.h"
 
+enum CondId {
+  COND_input_ready,
+  COND_result,
+  COND_branch,
+  COND_output_valid,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_ALU_ADD           =  1,
+  T_ALU_SUB           =  2,
+  T_ALU_XOR           =  3,
+  T_ALU_OR            =  4,
+  T_ALU_AND           =  5,
+  T_ALU_SLT           =  6,
+  T_ALU_SLTU          =  7,
+  T_ALU_SLL           =  8,
+  T_ALU_SRL           =  9,
+  T_ALU_SRA           =  10,
+  T_BRANCH_BEQ        =  11,
+  T_BRANCH_BNE        =  12,
+  T_BRANCH_BLT        =  13,
+  T_BRANCH_BLTU       =  14,
+  T_BRANCH_BGE        =  15,
+  T_BRANCH_BGEU       =  16,
+  T_BACK_TO_BACK      =  17,
+  T_BUBBLE            =  18,
+  T_WAIT_AFTER_RESET  =  19,
+  T_WAIT              =  20,
+  T_RESET             =  21,
+  T_BRANCH_JALR       =  22
+};
+
 class TB_Exm : public Testbench<Vtb_exm> {
 public:
   void reset() {
@@ -230,17 +263,9 @@ public:
   }
 };
 
-enum CondId {
-  COND_input_ready,
-  COND_result,
-  COND_branch,
-  COND_output_valid,
-  __CondIdEnd
-};
-
 void tb_exm_alu_add(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_ALU_ADD;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -295,7 +320,7 @@ void tb_exm_alu_add(TB_Exm * tb) {
 
 void tb_exm_alu_sub(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_ALU_SUB;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SUB
@@ -350,7 +375,7 @@ void tb_exm_alu_sub(TB_Exm * tb) {
 
 void tb_exm_alu_xor(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_ALU_XOR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for XOR
@@ -405,7 +430,7 @@ void tb_exm_alu_xor(TB_Exm * tb) {
 
 void tb_exm_alu_or(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_ALU_OR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for OR
@@ -460,7 +485,7 @@ void tb_exm_alu_or(TB_Exm * tb) {
 
 void tb_exm_alu_and(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_ALU_AND;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for AND
@@ -515,7 +540,7 @@ void tb_exm_alu_and(TB_Exm * tb) {
 
 void tb_exm_alu_slt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_ALU_SLT;
 
   // The following actions are performed in this test :
   //    tick 0.    Set inputs for SLT starting with false
@@ -573,7 +598,7 @@ void tb_exm_alu_slt(TB_Exm * tb) {
 
 void tb_exm_alu_sltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_ALU_SLTU;
 
   // The following actions are performed in this test :
   //    tick 0.    Set inputs for SLTU starting with false
@@ -631,7 +656,7 @@ void tb_exm_alu_sltu(TB_Exm * tb) {
 
 void tb_exm_alu_sll(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 8;
+  core->testcase = T_ALU_SLL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLL
@@ -686,7 +711,7 @@ void tb_exm_alu_sll(TB_Exm * tb) {
 
 void tb_exm_alu_srl(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 9;
+  core->testcase = T_ALU_SRL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRL with negative number
@@ -765,7 +790,7 @@ void tb_exm_alu_srl(TB_Exm * tb) {
 
 void tb_exm_alu_sra(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 10;
+  core->testcase = T_ALU_SRA;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRA with negative number
@@ -845,7 +870,7 @@ void tb_exm_alu_sra(TB_Exm * tb) {
 
 void tb_exm_branch_beq(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 11;
+  core->testcase = T_BRANCH_BEQ;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BEQ with different values
@@ -917,7 +942,7 @@ void tb_exm_branch_beq(TB_Exm * tb) {
 
 void tb_exm_branch_bne(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 12;
+  core->testcase = T_BRANCH_BNE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BNE with equal values
@@ -989,7 +1014,7 @@ void tb_exm_branch_bne(TB_Exm * tb) {
 
 void tb_exm_branch_blt(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 13;
+  core->testcase = T_BRANCH_BLT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BLT with greater value
@@ -1078,7 +1103,7 @@ void tb_exm_branch_blt(TB_Exm * tb) {
 
 void tb_exm_branch_bltu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 14;
+  core->testcase = T_BRANCH_BLTU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BLTU with greater value
@@ -1185,7 +1210,7 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
 
 void tb_exm_branch_bge(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 15;
+  core->testcase = T_BRANCH_BGE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BGE with lower value
@@ -1275,7 +1300,7 @@ void tb_exm_branch_bge(TB_Exm * tb) {
 
 void tb_exm_branch_bgeu(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 16;
+  core->testcase = T_BRANCH_BGEU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BLT with lower negative value
@@ -1384,7 +1409,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
 
 void tb_exm_back_to_back(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 17;
+  core->testcase = T_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -1492,7 +1517,7 @@ void tb_exm_back_to_back(TB_Exm * tb) {
 
 void tb_exm_bubble(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 18;
+  core->testcase = T_BUBBLE;
 
   // The following actions are performed in this test :
   //    tick 0. Set random invalidated inputs
@@ -1550,7 +1575,7 @@ void tb_exm_bubble(TB_Exm * tb) {
 
 void tb_exm_wait_after_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 19;
+  core->testcase = T_WAIT_AFTER_RESET;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD with unready output
@@ -1670,7 +1695,7 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
 
 void tb_exm_wait(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 20;
+  core->testcase = T_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -1793,7 +1818,7 @@ void tb_exm_wait(TB_Exm * tb) {
 
 void tb_exm_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 21;
+  core->testcase = T_RESET;
 
   // The following actions are performed in this test :
   //    tick 0. Set random inputs and reset
@@ -1907,7 +1932,7 @@ void tb_exm_reset(TB_Exm * tb) {
 
 void tb_exm_branch_jalr(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = 22;
+  core->testcase = T_BRANCH_JALR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for JALR

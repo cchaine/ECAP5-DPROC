@@ -45,6 +45,13 @@ enum CondId {
   __CondIdEnd
 };
 
+enum TestcaseId {
+  T_NOP           =  1,
+  T_ALU           =  2,
+  T_LSM_ENABLE    =  3,
+  T_BRANCH        =  4,
+  T_BACK_TO_BACK  =  5
+};
 
 class TB_Top : public Testbench<Vtb_top> {
 public:
@@ -138,7 +145,7 @@ public:
 
 void tb_top_nop(TB_Top * tb) {
   Vtb_top * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_NOP;
 
   // The following actions are performed in this test :
   //    tick 0. Stall the memory interface
@@ -224,7 +231,7 @@ void tb_top_nop(TB_Top * tb) {
 
 void tb_top_alu(TB_Top * tb) {
   Vtb_top * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_ALU;
 
   // The following actions are performed in this test :
   //    tick 0. Nothing
@@ -385,7 +392,7 @@ void tb_top_alu(TB_Top * tb) {
 
 void tb_top_lsm_enable(TB_Top * tb) {
   Vtb_top * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_LSM_ENABLE;
 
   // The following actions are performed in this test :
   //    tick 0. Nothing
@@ -443,15 +450,46 @@ void tb_top_lsm_enable(TB_Top * tb) {
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ifm, (core->tb_top->dut->ifm_instr == instr));
+
   //=================================
   //      Tick (4)
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_decm, (core->tb_top->dut->decm_alu_operand1 == rs1_val) &&
+                       (core->tb_top->dut->decm_alu_operand2 == tb->sign_extend(imm, 12)) &&
+                       (core->tb_top->dut->decm_alu_op == Vtb_top_ecap5_dproc_pkg::ALU_ADD) &&
+                       (core->tb_top->dut->decm_alu_sub == 0) &&
+                       (core->tb_top->dut->decm_ls_enable == 1) &&
+                       (core->tb_top->dut->decm_ls_write == 0) &&
+                       (core->tb_top->dut->decm_ls_sel == 1) &&
+                       (core->tb_top->dut->decm_ls_unsigned_load == 0) &&
+                       (core->tb_top->dut->decm_reg_write == 1) &&
+                       (core->tb_top->dut->decm_reg_addr == rd));
+
   //=================================
   //      Tick (5)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 1));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 1));
+  tb->check(COND_exm, (core->tb_top->dut->exm_result == rs1_val + tb->sign_extend(imm, 12)) &&
+                      (core->tb_top->dut->exm_ls_enable == 1) &&
+                      (core->tb_top->dut->exm_ls_write == 0) &&
+                      (core->tb_top->dut->exm_ls_unsigned_load == 0) &&
+                      (core->tb_top->dut->exm_reg_write == 1) &&
+                      (core->tb_top->dut->exm_reg_addr == rd));
 
   //`````````````````````````````````
   //      Set inputs
@@ -465,6 +503,12 @@ void tb_top_lsm_enable(TB_Top * tb) {
   tb->tick();
 
   //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
+
+  //`````````````````````````````````
   //      Set inputs
   
   core->wb_dat_i = 0;
@@ -475,20 +519,44 @@ void tb_top_lsm_enable(TB_Top * tb) {
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
+
   //=================================
   //      Tick (8)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
 
   //=================================
   //      Tick (9)
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
+
   //=================================
   //      Tick (10)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -503,6 +571,12 @@ void tb_top_lsm_enable(TB_Top * tb) {
   tb->tick();
 
   //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
+
+  //`````````````````````````````````
   //      Set inputs
   
   core->wb_dat_i = 0;
@@ -513,22 +587,73 @@ void tb_top_lsm_enable(TB_Top * tb) {
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 1));
+  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 1));
+  tb->check(COND_lsm, (core->tb_top->dut->lsm_reg_write == 1) &&
+                      (core->tb_top->dut->lsm_reg_addr == rd) &&
+                      (core->tb_top->dut->lsm_reg_data == (lb_data & 0xFF)));
+
   //=================================
   //      Tick (13)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_wbm, (core->tb_top->dut->reg_write == 1) &&
+                      (core->tb_top->dut->reg_waddr == rd) &&
+                      (core->tb_top->dut->reg_wdata == (lb_data & 0xFF)));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_top.lsm_enable.01",
+      tb->conditions[COND_bubble],
+      "Failed to implement the pipeline bubbles", tb->err_cycles[COND_bubble]);
+
+  CHECK("tb_top.lsm_enable.02",
+      tb->conditions[COND_valid],
+      "Failed to implement the valid signal", tb->err_cycles[COND_valid]);
+
+  CHECK("tb_top.lsm_enable.03",
+      tb->conditions[COND_ready],
+      "Failed to implement the ready signal", tb->err_cycles[COND_ready]);
+
+  CHECK("tb_top.lsm_enable.04",
+      tb->conditions[COND_ifm],
+      "Failed to implement the ifm", tb->err_cycles[COND_ifm]);
+
+  CHECK("tb_top.lsm_enable.05",
+      tb->conditions[COND_decm],
+      "Failed to implement the decm", tb->err_cycles[COND_decm]);
+
+  CHECK("tb_top.lsm_enable.06",
+      tb->conditions[COND_exm],
+      "Failed to implement the exm", tb->err_cycles[COND_exm]);
+
+  CHECK("tb_top.lsm_enable.07",
+      tb->conditions[COND_lsm],
+      "Failed to implement the lsm", tb->err_cycles[COND_lsm]);
+
+  CHECK("tb_top.lsm_enable.08",
+      tb->conditions[COND_wbm],
+      "Failed to implement the wbm", tb->err_cycles[COND_wbm]);
 }
 
 void tb_top_branch(TB_Top * tb) {
   Vtb_top * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_BRANCH;
 
   tb->reset();
 }
 
 void tb_top_back_to_back(TB_Top * tb) {
   Vtb_top * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_BACK_TO_BACK;
 
   tb->reset();
 }

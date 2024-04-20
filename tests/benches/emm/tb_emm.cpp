@@ -31,6 +31,27 @@
 #include "testbench.h"
 #include "Vtb_emm_ecap5_dproc_pkg.h"
 
+enum CondId {
+  COND_s1_stall,
+  COND_s1_ack,
+  COND_s2_stall,
+  COND_s2_ack,
+  COND_m_wb,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_PORT1_READ      =  1,
+  T_PORT1_WRITE     =  2,
+  T_PORT2_READ      =  3,
+  T_PORT2_WRITE     =  4,
+  T_TWO_DURING_ONE  =  5,
+  T_ONE_DURING_TWO  =  6,
+  T_PRIORITY        =  7,
+  T_MASTER_STALL    =  8,
+  T_BACK_TO_BACK    =  9
+};
+
 class TB_Emm : public Testbench<Vtb_emm> {
 public:
   void reset() {
@@ -109,18 +130,9 @@ public:
   }
 };
 
-enum CondId {
-  COND_s1_stall,
-  COND_s1_ack,
-  COND_s2_stall,
-  COND_s2_ack,
-  COND_m_wb,
-  __CondIdEnd
-};
-
 void tb_emm_port1_read(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_PORT1_READ;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 1
@@ -259,7 +271,7 @@ void tb_emm_port1_read(TB_Emm * tb) {
 
 void tb_emm_port1_write(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_PORT1_WRITE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for write on port 1
@@ -396,7 +408,7 @@ void tb_emm_port1_write(TB_Emm * tb) {
 
 void tb_emm_port2_read(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_PORT2_READ;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 2
@@ -554,7 +566,7 @@ void tb_emm_port2_read(TB_Emm * tb) {
 
 void tb_emm_port2_write(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_PORT2_WRITE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for write on port 2
@@ -710,7 +722,7 @@ void tb_emm_port2_write(TB_Emm * tb) {
 
 void tb_emm_two_during_one(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_TWO_DURING_ONE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 1
@@ -959,7 +971,7 @@ void tb_emm_two_during_one(TB_Emm * tb) {
 
 void tb_emm_one_during_two(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_ONE_DURING_TWO;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 2
@@ -1213,7 +1225,7 @@ void tb_emm_one_during_two(TB_Emm * tb) {
 
 void tb_emm_priority(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_PRIORITY;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 1 and port 2
@@ -1466,7 +1478,7 @@ void tb_emm_master_stall(TB_Emm * tb) {
 
 void tb_emm_back_to_back(TB_Emm * tb) {
   Vtb_emm * core = tb->core;
-  core->testcase = 8;
+  core->testcase = T_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for read on port 1

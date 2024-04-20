@@ -1,8 +1,9 @@
-1 port1_read
-2 port1_write
-3 port2_read
-4 port2_write
-5 two_during_one
-6 one_during_two
-7 priority
-8 back_to_back
+1 T_PORT1_READ
+2 T_PORT1_WRITE
+3 T_PORT2_READ
+4 T_PORT2_WRITE
+5 T_TWO_DURING_ONE
+6 T_ONE_DURING_TWO
+7 T_PRIORITY
+8 T_MASTER_STALL
+9 T_BACK_TO_BACK
