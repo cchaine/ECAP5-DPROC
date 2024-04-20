@@ -119,6 +119,14 @@ public:
     return instr_i(Vtb_top_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_top_ecap5_dproc_pkg::FUNC3_XOR, rs1, imm);
   }
 
+  uint32_t _lb(uint32_t rd, uint32_t rs1, uint32_t imm) {
+    return instr_i(Vtb_top_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_top_ecap5_dproc_pkg::FUNC3_LB, rs1, imm);
+  }
+
+  uint32_t _addi(uint32_t rd, uint32_t rs1, uint32_t imm) {
+    return instr_i(Vtb_top_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_top_ecap5_dproc_pkg::FUNC3_ADD, rs1, imm);
+  }
+
   void set_register(uint8_t addr, uint32_t value) {
     const svScope scope = svGetScopeFromName("TOP.tb_top.dut.regm_inst");
     assert(scope);
@@ -379,12 +387,148 @@ void tb_top_lsm_enable(TB_Top * tb) {
   Vtb_top * core = tb->core;
   core->testcase = 2;
 
+  // The following actions are performed in this test :
+  //    tick 0. Nothing
+  //    tick 1. Acknowledge request with LB instruction (core requests instruction)
+  //    tick 2. Nothing (core ends request)
+  //    tick 3. Nothing (decm processes instruction)
+  //    tick 4. Nothing (exm processes instruction)
+  //    tick 5. Acknowledge instr request with nop (lsm processes instruction and makes request)
+  //    tick 6. Nothing (lsm holds request)
+  //    tick 7. Nothing (lsm holds request)
+  //    tick 8. Nothing (lsm holds request)
+  //    tick 9. Nothing (lsm holds request)
+  //    tick 10. Acknowledge lsm request (lsm makes request)
+  //    tick 11. Nothing (lsm latches response)
+  //    tick 12. Nothing (wbm processes instruction)
+  //    tick 13. Nothing (instruction processed)
+  
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t rs1_val = rand();
+  // Artificially set the source register value
+  tb->set_register(rs1, rs1_val);
+  uint32_t imm = rand() % 0xFFF;
+  uint32_t instr = tb->_lb(rd, rs1, imm);
+
+  core->wb_dat_i = instr;
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = tb->_addi(0, 0, 0);
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (6)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (7)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (8)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (9)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (10)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t lb_data = rand();
+  core->wb_dat_i = lb_data;
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (11)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (12)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (13)
+  
+  tb->tick();
 }
 
 void tb_top_branch(TB_Top * tb) {
   Vtb_top * core = tb->core;
   core->testcase = 3;
+
+  tb->reset();
+}
+
+void tb_top_back_to_back(TB_Top * tb) {
+  Vtb_top * core = tb->core;
+  core->testcase = 4;
 
   tb->reset();
 }
@@ -408,6 +552,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_top_alu(tb);
   tb_top_lsm_enable(tb);
   tb_top_branch(tb);
+
+  tb_top_back_to_back(tb);
 
   /************************************************************/
 
