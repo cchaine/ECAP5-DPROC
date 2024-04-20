@@ -40,28 +40,28 @@ enum CondId {
 };
 
 enum TestcaseId {
-  T_ALU_ADD           =  1,
-  T_ALU_SUB           =  2,
-  T_ALU_XOR           =  3,
-  T_ALU_OR            =  4,
-  T_ALU_AND           =  5,
-  T_ALU_SLT           =  6,
-  T_ALU_SLTU          =  7,
-  T_ALU_SLL           =  8,
-  T_ALU_SRL           =  9,
-  T_ALU_SRA           =  10,
-  T_BRANCH_BEQ        =  11,
-  T_BRANCH_BNE        =  12,
-  T_BRANCH_BLT        =  13,
-  T_BRANCH_BLTU       =  14,
-  T_BRANCH_BGE        =  15,
-  T_BRANCH_BGEU       =  16,
-  T_BACK_TO_BACK      =  17,
-  T_BUBBLE            =  18,
-  T_WAIT_AFTER_RESET  =  19,
-  T_WAIT              =  20,
-  T_RESET             =  21,
-  T_BRANCH_JALR       =  22
+  T_ALU_ADD                     =  1,
+  T_ALU_SUB                     =  2,
+  T_ALU_XOR                     =  3,
+  T_ALU_OR                      =  4,
+  T_ALU_AND                     =  5,
+  T_ALU_SLT                     =  6,
+  T_ALU_SLTU                    =  7,
+  T_ALU_SLL                     =  8,
+  T_ALU_SRL                     =  9,
+  T_ALU_SRA                     =  10,
+  T_BRANCH_BEQ                  =  11,
+  T_BRANCH_BNE                  =  12,
+  T_BRANCH_BLT                  =  13,
+  T_BRANCH_BLTU                 =  14,
+  T_BRANCH_BGE                  =  15,
+  T_BRANCH_BGEU                 =  16,
+  T_BACK_TO_BACK                =  17,
+  T_BUBBLE                      =  18,
+  T_PIPELINE_STALL_AFTER_RESET  =  19,
+  T_PIPELINE_STALL              =  20,
+  T_RESET                       =  21,
+  T_BRANCH_JALR                 =  22
 };
 
 class TB_Exm : public Testbench<Vtb_exm> {
@@ -1573,9 +1573,9 @@ void tb_exm_bubble(TB_Exm * tb) {
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_exm_wait_after_reset(TB_Exm * tb) {
+void tb_exm_pipeline_stall_after_reset(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = T_WAIT_AFTER_RESET;
+  core->testcase = T_PIPELINE_STALL_AFTER_RESET;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD with unready output
@@ -1693,9 +1693,9 @@ void tb_exm_wait_after_reset(TB_Exm * tb) {
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_exm_wait(TB_Exm * tb) {
+void tb_exm_pipeline_stall(TB_Exm * tb) {
   Vtb_exm * core = tb->core;
-  core->testcase = T_WAIT;
+  core->testcase = T_PIPELINE_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -2023,8 +2023,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_exm_back_to_back(tb);
   tb_exm_bubble(tb);
   tb_exm_reset(tb);
-  tb_exm_wait_after_reset(tb);
-  tb_exm_wait(tb);
+  tb_exm_pipeline_stall_after_reset(tb);
+  tb_exm_pipeline_stall(tb);
 
   /************************************************************/
 

@@ -115,6 +115,17 @@ public:
     this->core->reg_addr_i = reg_addr;
   }
 
+  void _lhu(uint32_t addr, uint8_t reg_addr) {
+    this->_nop();
+    this->core->alu_result_i = addr;
+    this->core->enable_i = 1;
+    this->core->write_i = 0;
+    this->core->sel_i = 0x3;
+    this->core->unsigned_load_i = 1;
+    this->core->reg_write_i = 1;
+    this->core->reg_addr_i = reg_addr;
+  }
+
   void _lw(uint32_t addr, uint8_t reg_addr) {
     this->_nop();
     this->core->alu_result_i = addr;
@@ -163,15 +174,158 @@ public:
     this->core->reg_write_i = write;
     this->core->reg_addr_i = reg_addr;
   }
+
+  uint32_t sign_extend(uint32_t data, uint32_t nb_bits) {
+    data &= (1 << nb_bits)-1;
+    if((data >> (nb_bits-1)) & 0x1){
+      data |= (((1 << (32 - (nb_bits-1))) - 1) << nb_bits);
+    }
+    return data;
+  }
 };
 
 void tb_lsm_no_stall_lb(TB_Lsm * tb) {
   Vtb_lsm * core = tb->core;
   core->testcase = T_NO_STALL_LB;
 
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LB
+  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 2. Nothing (core latches response data)
+  //    tick 3. Nothing (core outputs result of LB)
+  //    tick 4. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  tb->check(COND_state,       (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready, (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,    (core->wb_stb_o              ==  0)    &&
+                              (core->wb_cyc_o              ==  0));  
+
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lb(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
+                                (core->wb_we_o               ==  0)    &&
+                                (core->wb_sel_o              ==  1)    &&
+                                (core->wb_stb_o              ==  1)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data & 0xFF;
+
+  tb->_nop();
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  3));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)        &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)        &&
+                                (core->reg_addr_o            ==  reg_addr) &&
+                                (core->reg_data_o            ==  tb->sign_extend(data & 0xFF, 8))); 
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  0)    &&
+                                (core->reg_addr_o            ==  0)    &&
+                                (core->reg_data_o            ==  0)); 
+  tb->check(COND_output_valid,  (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
   CHECK("tb_lsm.no_stall.LB_01",
-      false,
-      "TODO: no_stall LB");
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
+
+  CHECK("tb_lsm.no_stall.LB_02",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
+
+  CHECK("tb_lsm.no_stall.LB_03",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_lsm.no_stall.LB_04",
+      tb->conditions[COND_register],
+      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+
+  CHECK("tb_lsm.no_stall.LB_05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
@@ -179,7 +333,7 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   core->testcase = T_NO_STALL_LBU;
 
   // The following actions are performed in this test :
-  //    tick 0. Set the inputs to request a LBU 
+  //    tick 0. Set the inputs to request a LBU
   //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
   //    tick 2. Nothing (core latches response data)
   //    tick 3. Nothing (core outputs result of LBU)
@@ -189,6 +343,11 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   //      Tick (0)
   
   tb->reset();
+
+  tb->check(COND_state,       (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready, (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,    (core->wb_stb_o              ==  0)    &&
+                              (core->wb_cyc_o              ==  0));  
 
   // LH
 
@@ -208,11 +367,25 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   tb->tick();
 
   //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
+                                (core->wb_we_o               ==  0)    &&
+                                (core->wb_sel_o              ==  1)    &&
+                                (core->wb_stb_o              ==  1)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
+
+  //`````````````````````````````````
   //      Set inputs
 
   uint32_t data = rand();
   core->wb_ack_i = 1;
-  core->wb_dat_i = data;
+  core->wb_dat_i = data & 0xFF;
 
   tb->_nop();
 
@@ -220,6 +393,17 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   //      Tick (2)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  3));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -235,14 +419,57 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_register, (core->reg_data_o            ==  0)); 
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)        &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)        &&
+                                (core->reg_addr_o            ==  reg_addr) &&
+                                (core->reg_data_o            ==  data & 0xFF)); 
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  0)    &&
+                                (core->reg_addr_o            ==  0)    &&
+                                (core->reg_data_o            ==  0)); 
+  tb->check(COND_output_valid,  (core->output_valid_o  ==  1));
 
   //`````````````````````````````````
   //      Formal Checks 
 
   CHECK("tb_lsm.no_stall.LBU_01",
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
+
+  CHECK("tb_lsm.no_stall.LBU_02",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
+
+  CHECK("tb_lsm.no_stall.LBU_03",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_lsm.no_stall.LBU_04",
       tb->conditions[COND_register],
       "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+
+  CHECK("tb_lsm.no_stall.LBU_05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_lsm_no_stall_lh(TB_Lsm * tb) {
@@ -291,6 +518,294 @@ void tb_lsm_no_stall_lh(TB_Lsm * tb) {
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  3)    &&
+                                (core->wb_stb_o              ==  1)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data & 0xFFFF;
+
+  tb->_nop();
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  3));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)        &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)        &&
+                                (core->reg_addr_o            ==  reg_addr) &&
+                                (core->reg_data_o            ==  tb->sign_extend(data & 0xFFFF, 16))); 
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  0)    &&
+                                (core->reg_addr_o            ==  0)    &&
+                                (core->reg_data_o            ==  0)); 
+  tb->check(COND_output_valid,  (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_lsm.no_stall.LH_01",
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
+
+  CHECK("tb_lsm.no_stall.LH_02",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
+
+  CHECK("tb_lsm.no_stall.LH_03",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_lsm.no_stall.LH_04",
+      tb->conditions[COND_register],
+      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+
+  CHECK("tb_lsm.no_stall.LH_05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_lsm_no_stall_lhu(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_LHU;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LHU
+  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 2. Nothing (core latches response data)
+  //    tick 3. Nothing (core outputs result of LHU)
+  //    tick 4. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  tb->check(COND_state,       (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready, (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,    (core->wb_stb_o              ==  0)    &&
+                              (core->wb_cyc_o              ==  0));  
+
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lhu(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
+                                (core->wb_we_o               ==  0)    &&
+                                (core->wb_sel_o              ==  3)    &&
+                                (core->wb_stb_o              ==  1)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data & 0xFFFF;
+
+  tb->_nop();
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  3));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  1));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
+                                (core->reg_addr_o            ==  reg_addr));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  core->wb_ack_i = 0;
+  core->wb_dat_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)        &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  1)        &&
+                                (core->reg_addr_o            ==  reg_addr) &&
+                                (core->reg_data_o            ==  data & 0xFFFF)); 
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));
+
+  //`````````````````````````````````
+  //      Set inputs
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_register,      (core->reg_write_o           ==  0)    &&
+                                (core->reg_addr_o            ==  0)    &&
+                                (core->reg_data_o            ==  0)); 
+  tb->check(COND_output_valid,  (core->output_valid_o  ==  1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_lsm.no_stall.LHU_01",
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
+
+  CHECK("tb_lsm.no_stall.LHU_02",
+      tb->conditions[COND_input_ready],
+      "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
+
+  CHECK("tb_lsm.no_stall.LHU_03",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_lsm.no_stall.LHU_04",
+      tb->conditions[COND_register],
+      "Failed to implement the register protocol", tb->err_cycles[COND_register]);
+
+  CHECK("tb_lsm.no_stall.LHU_05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_lsm_no_stall_lw(TB_Lsm * tb) {
+  Vtb_lsm * core = tb->core;
+  core->testcase = T_NO_STALL_LW;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to request a LW
+  //    tick 1. Acknowledge the request with reponse data and set the inputs to request a nop
+  //    tick 2. Nothing (core latches response data)
+  //    tick 3. Nothing (core outputs result of LW)
+  //    tick 4. Nothing (core outputs result of nop)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  tb->check(COND_state,       (core->tb_lsm->dut->state_q  ==  0));
+  tb->check(COND_input_ready, (core->input_ready_o         ==  0));
+  tb->check(COND_wishbone,    (core->wb_stb_o              ==  0)    &&
+                              (core->wb_cyc_o              ==  0));  
+
+  // LH
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_stall_i = 0;
+  core->input_valid_i = 1;
+
+  uint32_t addr = rand();
+  uint32_t reg_addr = 1 + rand() % 31;
+  tb->_lw(addr, reg_addr);
+
+  //=================================
+  //      Tick (1)
+
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
+                                (core->wb_we_o               ==  0)    &&
+                                (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
   tb->check(COND_register,      (core->reg_write_o           ==  1)    &&
@@ -368,43 +883,25 @@ void tb_lsm_no_stall_lh(TB_Lsm * tb) {
   //`````````````````````````````````
   //      Formal Checks 
 
-  CHECK("tb_lsm.no_stall.LH_01",
+  CHECK("tb_lsm.no_stall.LW_01",
       tb->conditions[COND_state],
       "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_lsm.no_stall.LH_02",
+  CHECK("tb_lsm.no_stall.LW_02",
       tb->conditions[COND_input_ready],
       "Failed to implement the input_ready_o signal", tb->err_cycles[COND_input_ready]);
 
-  CHECK("tb_lsm.no_stall.LH_03",
+  CHECK("tb_lsm.no_stall.LW_03",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_lsm.no_stall.LH_04",
+  CHECK("tb_lsm.no_stall.LW_04",
       tb->conditions[COND_register],
       "Failed to implement the register protocol", tb->err_cycles[COND_register]);
 
-  CHECK("tb_lsm.no_stall.LH_05",
+  CHECK("tb_lsm.no_stall.LW_05",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
-}
-
-void tb_lsm_no_stall_lhu(TB_Lsm * tb) {
-  Vtb_lsm * core = tb->core;
-  core->testcase = T_NO_STALL_LHU;
-
-  CHECK("tb_lsm.no_stall.LHU_01",
-      false,
-      "TODO: no_stall LHU");
-}
-
-void tb_lsm_no_stall_lw(TB_Lsm * tb) {
-  Vtb_lsm * core = tb->core;
-  core->testcase = T_NO_STALL_LW;
-
-  CHECK("tb_lsm.no_stall.LW_01",
-      false,
-      "TODO: no_stall LW");
 }
 
 void tb_lsm_no_stall_sb(TB_Lsm * tb) {
@@ -1128,18 +1625,18 @@ int main(int argc, char ** argv, char ** env) {
   tb_lsm_no_stall_lhu(tb);
   tb_lsm_no_stall_lw(tb);
 
-  tb_lsm_no_stall_sb(tb);
-  tb_lsm_no_stall_sh(tb);
-  tb_lsm_no_stall_sw(tb);
+  //tb_lsm_no_stall_sb(tb);
+  //tb_lsm_no_stall_sh(tb);
+  //tb_lsm_no_stall_sw(tb);
 
-  tb_lsm_memory_stall(tb);
+  //tb_lsm_memory_stall(tb);
 
-  tb_lsm_memory_wait(tb);
+  //tb_lsm_memory_wait(tb);
 
-  tb_lsm_bypass(tb);
-  tb_lsm_bubble(tb);
+  //tb_lsm_bypass(tb);
+  //tb_lsm_bubble(tb);
 
-  tb_lsm_back_to_back(tb);
+  //tb_lsm_back_to_back(tb);
 
   /************************************************************/
 

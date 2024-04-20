@@ -86,6 +86,10 @@ typedef enum logic [2:0] {
 state_t state_d, state_q /* verilator public */;
 
 logic memory_request;
+logic[31:0] write_data;
+logic[31:0] signed_read_data;
+logic[3:0] sel_q;
+logic unsigned_load_q;
 
 /*****************************************/
 /*        Wishbone output signals        */
@@ -153,6 +157,24 @@ always_comb begin : state_machine
   endcase
 end
 
+always_comb begin : data_size
+  write_data = 0;
+  case(sel_q)
+    4'h1: write_data = {24'h0, write_data_i[7:0]};
+    4'h3: write_data = {16'h0, write_data_i[15:0]};
+    4'hF: write_data = write_data_i[31:0];
+    default: begin end
+  endcase
+
+  signed_read_data = 0;
+  case(sel_q)
+    4'h1: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
+    4'h3: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
+    4'hF: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
+    default: begin end
+  endcase
+end
+
 always_comb begin : wishbone_read
   wb_adr_d = wb_adr_q;
   wb_stb_d = wb_stb_q;
@@ -162,7 +184,7 @@ always_comb begin : wishbone_read
     IDLE: begin
       if(memory_request) begin
         wb_adr_d = alu_result_i;
-        wb_dat_d = write_data_i;
+        wb_dat_d = write_data;
         wb_we_d  = write_i;
         wb_sel_d = sel_i;
         wb_stb_d = 1;
@@ -190,7 +212,7 @@ always_comb begin : reg_output
     reg_data_d = alu_result_i;
     reg_write_d = input_valid_i ? reg_write_i : 0;
   end else if(wb_ack_i) begin
-    reg_data_d = wb_dat_i;
+    reg_data_d = unsigned_load_q ? wb_dat_i : signed_read_data;
   end
 end
 
@@ -242,6 +264,12 @@ always_ff @(posedge clk_i) begin
     reg_write_q <= reg_write_d;
     reg_addr_q <= reg_addr_d;
     reg_data_q <= reg_data_d;
+
+    if(state_q == IDLE) begin
+      // These internal signals need to register the inputs signals
+      sel_q <= sel_i;
+      unsigned_load_q <= unsigned_load_i;
+    end
   end
 end
 
