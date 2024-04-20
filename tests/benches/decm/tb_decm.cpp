@@ -3085,9 +3085,159 @@ void tb_decm_pipeline_stall(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
   core->testcase = T_PIPELINE_STALL;
 
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for AND
+  //    tick 1. Stall the pipeline (core holds outputs result of AND)
+  //    tick 2. Nothing (core holds outputs result of AND)
+  //    tick 3. Unstall pipeline (core holds outputs result of AND)
+  //    tick 4. Set inputs for OR (core holds result of AND)
+  //    tick 5. Nothing (core outputs result of OR)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand();
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t rs2 = rand() % 32;
+  tb->_and(pc, rd, rs1, rs2);
+
+  uint32_t rdata1 = rand() % 0x7FFFFFFF;
+  core->rdata1_i = rdata1;
+  uint32_t rdata2 = rand() % 0x7FFFFFFF;
+  core->rdata2_i = rdata2;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->output_ready_i = 0;
+  tb->_or(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->output_ready_i = 1;
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_OR));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_and(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_decm.pipeline_stall.01",
-      false,
-      "TODO: pipeline_stall");
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.pipeline_stall.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.pipeline_stall.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.pipeline_stall.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.pipeline_stall.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 int main(int argc, char ** argv, char ** env) {

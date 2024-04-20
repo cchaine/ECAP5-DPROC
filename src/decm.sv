@@ -115,7 +115,7 @@ logic        ls_enable_d,         ls_enable_q;
 logic        ls_write_d,          ls_write_q;
 logic[31:0]  ls_write_data_d,     ls_write_data_q;
 logic[3:0]   ls_sel_d,            ls_sel_q;
-logic        ls_unsigned_load_d,    ls_unsigned_load_q;
+logic        ls_unsigned_load_d,  ls_unsigned_load_q;
 
 logic        output_valid_d,      output_valid_q;
 
