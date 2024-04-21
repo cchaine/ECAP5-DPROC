@@ -111,12 +111,6 @@ always_comb begin : state_machine
       end
     end
     SWITCHING: begin
-      // Unstall the granted interface
-      if(~switch_q) begin
-        s1_stall_d = 0;
-      end else begin
-        s2_stall_d = 0;
-      end
       state_d = REQUEST;
     end
     REQUEST: begin
@@ -128,7 +122,9 @@ always_comb begin : state_machine
           // Stall the current interface
           if(~switch_q) begin
             s1_stall_d = 1;
+            s2_stall_d = 0;
           end else begin
+            s1_stall_d = 0;
             s2_stall_d = 1;
           end
           state_d = SWITCHING; 

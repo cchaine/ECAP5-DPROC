@@ -536,28 +536,6 @@ void tb_top_lsm_enable(TB_Top * tb) {
   tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
   tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
 
-  //=================================
-  //      Tick (9)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-  
-  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
-  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
-
-  //=================================
-  //      Tick (10)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-  
-  tb->check(COND_ready, (core->tb_top->dut->exm_lsm_ready == 0));
-  tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 0));
-
   //`````````````````````````````````
   //      Set inputs
   
@@ -566,7 +544,7 @@ void tb_top_lsm_enable(TB_Top * tb) {
   core->wb_ack_i = 1;
 
   //=================================
-  //      Tick (11)
+  //      Tick (9)
   
   tb->tick();
 
@@ -583,7 +561,7 @@ void tb_top_lsm_enable(TB_Top * tb) {
   core->wb_ack_i = 0;
 
   //=================================
-  //      Tick (12)
+  //      Tick (10)
   
   tb->tick();
 
@@ -594,10 +572,10 @@ void tb_top_lsm_enable(TB_Top * tb) {
   tb->check(COND_valid, (core->tb_top->dut->lsm_valid == 1));
   tb->check(COND_lsm, (core->tb_top->dut->lsm_reg_write == 1) &&
                       (core->tb_top->dut->lsm_reg_addr == rd) &&
-                      (core->tb_top->dut->lsm_reg_data == (lb_data & 0xFF)));
+                      (core->tb_top->dut->lsm_reg_data == tb->sign_extend(lb_data & 0xFF, 8)));
 
   //=================================
-  //      Tick (13)
+  //      Tick (11)
   
   tb->tick();
 
@@ -606,7 +584,7 @@ void tb_top_lsm_enable(TB_Top * tb) {
   
   tb->check(COND_wbm, (core->tb_top->dut->reg_write == 1) &&
                       (core->tb_top->dut->reg_waddr == rd) &&
-                      (core->tb_top->dut->reg_wdata == (lb_data & 0xFF)));
+                      (core->tb_top->dut->reg_wdata == tb->sign_extend(lb_data & 0xFF, 8)));
 
   //`````````````````````````````````
   //      Formal Checks 
