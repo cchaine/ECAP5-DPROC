@@ -63,6 +63,8 @@ class TB_Lsm : public Testbench<Vtb_lsm> {
 public:
   void reset() {
     this->_nop();
+    this->core->input_valid_i = 0;
+
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
@@ -229,7 +231,7 @@ void tb_lsm_no_stall_lb(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  1)    &&
@@ -303,7 +305,7 @@ void tb_lsm_no_stall_lb(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  1)    &&
@@ -429,7 +431,7 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  1)    &&
@@ -503,7 +505,7 @@ void tb_lsm_no_stall_lbu(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  1)    &&
@@ -629,7 +631,7 @@ void tb_lsm_no_stall_lh(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  3)    &&
@@ -703,7 +705,7 @@ void tb_lsm_no_stall_lh(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  3)    &&
@@ -829,7 +831,7 @@ void tb_lsm_no_stall_lhu(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  3)    &&
@@ -903,7 +905,7 @@ void tb_lsm_no_stall_lhu(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  3)    &&
@@ -1027,7 +1029,7 @@ void tb_lsm_no_stall_lw(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));         
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));         
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));         
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
@@ -1166,7 +1168,7 @@ void tb_lsm_no_stall_sb(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_dat_o              ==  (data & 0xFF)) &&
                                 (core->wb_we_o               ==  1)    &&
@@ -1300,7 +1302,7 @@ void tb_lsm_no_stall_sh(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_dat_o              ==  (data & 0xFFFF)) &&
                                 (core->wb_we_o               ==  1)    &&
@@ -1434,7 +1436,7 @@ void tb_lsm_no_stall_sw(TB_Lsm * tb) {
   //      Checks 
   
   tb->check(COND_state,         (core->tb_lsm->dut->state_q  ==  1));
-  tb->check(COND_input_ready,   (core->input_ready_o         ==  1));
+  tb->check(COND_input_ready,   (core->input_ready_o         ==  0));
   tb->check(COND_wishbone,      (core->wb_adr_o              ==  addr) &&
                                 (core->wb_dat_o              ==  data) &&
                                 (core->wb_we_o               ==  1)    &&

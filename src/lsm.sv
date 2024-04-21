@@ -130,8 +130,7 @@ always_comb begin : state_machine
     end
     MEMORY_STALL: begin
       if(!wb_stall_i) begin
-        // The memory is unstalled
-        state_d = REQUEST;
+        state_d = MEMORY_WAIT;
       end
     end
     REQUEST: begin
@@ -179,6 +178,9 @@ always_comb begin : wishbone_read
   wb_adr_d = wb_adr_q;
   wb_stb_d = wb_stb_q;
   wb_cyc_d = wb_cyc_q;
+  wb_dat_d = wb_dat_q;
+  wb_we_d = wb_we_q;
+  wb_sel_d = wb_sel_q;
 
   case(state_q)
     IDLE: begin
@@ -189,6 +191,11 @@ always_comb begin : wishbone_read
         wb_sel_d = sel_i;
         wb_stb_d = 1;
         wb_cyc_d = 1;
+      end
+    end
+    MEMORY_STALL: begin
+      if(!wb_stall_i) begin
+        wb_stb_d = 0;
       end
     end
     REQUEST: begin
@@ -224,7 +231,7 @@ always_comb begin : input_ready
   if(state_q == DONE) begin
     input_ready_d = 1;
   end
-  if(state_q == REQUEST || state_q == MEMORY_STALL) begin
+  if(state_q == IDLE && memory_request) begin
     input_ready_d = 0;
   end
 end

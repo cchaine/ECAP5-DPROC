@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Mon Apr 15 19:20:43 2024
+[*] Sun Apr 21 06:52:59 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/top.vcd"
-[dumpfile_mtime] "Mon Apr 15 19:20:43 2024"
-[dumpfile_size] 24533
+[dumpfile_mtime] "Sun Apr 21 06:44:10 2024"
+[dumpfile_size] 54521
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/top.gtkw"
-[timestart] 8
-[size] 1424 742
+[timestart] 70
+[size] 2320 1305
 [pos] -1 -1
-*-5.809053 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-5.572440 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -43,8 +43,9 @@
 [signals_width] 267
 [sst_expanded] 1
 [sst_vpaned_height] 450
-@24
+@2024
 [color] 1
+^3 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/top_testcase_filter.gtkw
 TOP.testcase[31:0]
 @28
 TOP.tb_top.dut.clk_i
@@ -201,7 +202,7 @@ TOP.tb_top.dut.exm_reg_addr[4:0]
 @28
 TOP.tb_top.dut.exm_lsm_valid
 TOP.tb_top.dut.exm_lsm_ready
-@c00200
+@c00201
 -LSM
 -LSM Wishbone
 @22
@@ -226,23 +227,23 @@ TOP.tb_top.dut.lsm_wb_ack_i
 TOP.tb_top.dut.lsm_wb_cyc_o
 [color] 2
 TOP.tb_top.dut.lsm_wb_stall_i
-@1401200
+@1401201
 -LSM Wishbone
-@28
+@29
 [color] 2
 TOP.tb_top.dut.lsm_reg_write
-@22
+@23
 [color] 2
 TOP.tb_top.dut.lsm_reg_addr[4:0]
 [color] 2
 TOP.tb_top.dut.lsm_reg_data[31:0]
-@1401200
+@1401201
 -LSM
 @28
 TOP.tb_top.dut.lsm_valid
-@c00201
+@c00200
 -REGM
-@23
+@22
 [color] 1
 TOP.tb_top.dut.reg_raddr1[4:0]
 [color] 1
@@ -251,15 +252,15 @@ TOP.tb_top.dut.reg_raddr2[4:0]
 TOP.tb_top.dut.reg_rdata1[31:0]
 [color] 1
 TOP.tb_top.dut.reg_rdata2[31:0]
-@29
+@28
 [color] 1
 TOP.tb_top.dut.reg_write
-@23
+@22
 [color] 1
 TOP.tb_top.dut.reg_waddr[4:0]
 [color] 1
 TOP.tb_top.dut.reg_wdata[31:0]
-@1401201
+@1401200
 -REGM
 [pattern_trace] 1
 [pattern_trace] 0
