@@ -68,6 +68,9 @@ class TB_Exm : public Testbench<Vtb_exm> {
 public:
   void reset() {
     this->_nop();
+    this->core->input_valid_i = 0;
+    this->core->output_ready_i = 0;
+
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
@@ -1849,6 +1852,8 @@ void tb_exm_reset(TB_Exm * tb) {
   core->branch_offset_i = rand() % 0xFFFFF;
 
   core->rst_i = 1;
+  core->input_valid_i = 0;
+  core->output_ready_i = 0;
 
   //=================================
   //      Tick (1)
@@ -1867,6 +1872,8 @@ void tb_exm_reset(TB_Exm * tb) {
   //      Set inputs
   
   core->rst_i = 0;
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
 
   //=================================
   //      Tick (2)
@@ -1896,6 +1903,8 @@ void tb_exm_reset(TB_Exm * tb) {
   //      Set inputs
   
   core->rst_i = 1;
+  core->input_valid_i = 0;
+  core->output_ready_i = 0;
 
   //=================================
   //      Tick (4)

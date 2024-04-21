@@ -265,7 +265,7 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-  assign  input_ready_o       =  output_ready_i;
+assign  input_ready_o       =  output_ready_i;
 
 assign  result_o            =  result_q;
 

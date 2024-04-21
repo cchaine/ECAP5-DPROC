@@ -88,6 +88,9 @@ class TB_Decm : public Testbench<Vtb_decm> {
 public:
   void reset() {
     this->_nop();
+    this->core->input_valid_i = 0;
+    this->core->output_ready_i = 0;
+
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
