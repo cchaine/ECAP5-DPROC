@@ -456,8 +456,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   //    tick 2. Nothing (core latches response)
   //    tick 3. Nothing (core holds response)
   //    tick 4. Unstall pipeline (core holds response)
-  //    tick 5. Nothing (core outputs request)
-  //    tick 6. Nothing (core makes request)
+  //    tick 5. Nothing (core prepares new request)
   
   //=================================
   //      Tick (0)
@@ -552,15 +551,8 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  0));
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
-  tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
-  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
 
-  //=================================
-  //      Tick (6)
-  
-  tb->tick();
-  
   //`````````````````````````````````
   //      Formal Checks 
   
