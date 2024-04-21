@@ -51,7 +51,7 @@ add_dependency(ECAP5_TREQ
 
 add_dependency(ECAP5_DTLIB
   GIT ecap5/ecap5-dtlib
-  TAG main)
+  TAG 2-implement-an-instrumented-wishbone-slave)
 
 # Configure dependencies
 
