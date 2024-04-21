@@ -159,7 +159,7 @@ end
 
 always_comb begin : data_size
   write_data = 0;
-  case(sel_q)
+  case(sel_i) // sel_i is used here as this is used on the cycle where the inputs are valid
     4'h1: write_data = {24'h0, write_data_i[7:0]};
     4'h3: write_data = {16'h0, write_data_i[15:0]};
     4'hF: write_data = write_data_i[31:0];
@@ -167,10 +167,10 @@ always_comb begin : data_size
   endcase
 
   signed_read_data = 0;
-  case(sel_q)
+  case(sel_q) // sel_i is used here as this is used after the inputs are invalidated
     4'h1: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
-    4'h3: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
-    4'hF: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
+    4'h3: signed_read_data = {{16{wb_dat_i[15]}}, wb_dat_i[15:0]};
+    4'hF: signed_read_data = wb_dat_i[31:0];
     default: begin end
   endcase
 end
@@ -224,7 +224,7 @@ always_comb begin : input_ready
   if(state_q == DONE) begin
     input_ready_d = 1;
   end
-  if(state_q == IDLE && memory_request) begin
+  if(state_q == REQUEST || state_q == MEMORY_STALL) begin
     input_ready_d = 0;
   end
 end
@@ -259,7 +259,7 @@ always_ff @(posedge clk_i) begin
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
 
-    output_valid_q  <= (input_ready_q && ~enable_i) || (state_q == DONE);
+    output_valid_q  <= (state_q == IDLE && ~enable_i) || (state_q == DONE);
 
     reg_write_q <= reg_write_d;
     reg_addr_q <= reg_addr_d;
