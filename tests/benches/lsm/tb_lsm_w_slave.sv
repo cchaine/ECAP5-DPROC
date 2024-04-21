@@ -63,6 +63,7 @@ module tb_lsm_w_slave import ecap5_dproc_pkg::*; (
   //=================================
   //    Instrumentation input
   
+  input logic       stall_request_i,
   input logic[31:0] injected_data_i
 );
 
@@ -113,6 +114,7 @@ instr_wb_slave wb_slave (
  .wb_cyc_i        (wb_cyc_o),
  .wb_stall_o      (wb_stall_i),
 
+ .stall_request_i (stall_request_i),
  .injected_data_i (injected_data_i)
 );
 

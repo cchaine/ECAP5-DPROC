@@ -409,14 +409,6 @@ void tb_lsm_w_slave_no_stall_sw(TB_Lsm_w_slave * tb) {
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_lsm_w_slave_memory_stall(TB_Lsm_w_slave * tb) {
-  
-}
-
-void tb_lsm_w_slave_memory_wait(TB_Lsm_w_slave * tb) {
-  
-}
-
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -434,10 +426,6 @@ int main(int argc, char ** argv, char ** env) {
   tb_lsm_w_slave_no_stall_lw(tb);
 
   tb_lsm_w_slave_no_stall_sw(tb);
-
-  tb_lsm_w_slave_memory_stall(tb);
-
-  tb_lsm_w_slave_memory_wait(tb);
 
   /************************************************************/
 
