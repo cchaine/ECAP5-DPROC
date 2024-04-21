@@ -130,7 +130,11 @@ always_comb begin : state_machine
     end
     MEMORY_STALL: begin
       if(!wb_stall_i) begin
-        state_d = MEMORY_WAIT;
+        if(wb_ack_i) begin
+          state_d = DONE;
+        end else begin
+          state_d = MEMORY_WAIT;
+        end
       end
     end
     REQUEST: begin

@@ -1598,6 +1598,10 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   
   core->wb_stall_i = 0;
 
+  uint32_t data = rand();
+  core->wb_ack_i = 1;
+  core->wb_dat_i = data;
+
   //=================================
   //      Tick (3)
   
@@ -1606,26 +1610,7 @@ void tb_lsm_memory_stall(TB_Lsm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_state,        (core->tb_lsm->dut->state_q  ==  1));
-  tb->check(COND_wishbone,     (core->wb_stb_o              ==  1)    &&
-                               (core->wb_cyc_o              ==  1));  
-  tb->check(COND_output_valid, (core->output_valid_o        ==  0));
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  uint32_t data = rand();
-  core->wb_ack_i = 1;
-  core->wb_dat_i = data;
-
-  //=================================
-  //      Tick (4)
-
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-  
+  tb->check(COND_state,        (core->tb_lsm->dut->state_q  ==  3));
   tb->check(COND_wishbone,     (core->wb_stb_o              ==  0)    &&
                                (core->wb_cyc_o              ==  1));  
   tb->check(COND_output_valid, (core->output_valid_o        ==  0));
