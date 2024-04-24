@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Thu Apr 11 20:14:25 2024
+[*] Wed Apr 24 19:55:08 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/emm.vcd"
-[dumpfile_mtime] "Thu Apr 11 20:13:48 2024"
-[dumpfile_size] 8298
+[dumpfile_mtime] "Wed Apr 24 19:53:27 2024"
+[dumpfile_size] 16907
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/emm.gtkw"
-[timestart] 8
-[size] 1424 742
+[timestart] 167
+[size] 1440 783
 [pos] -1 -1
-*-5.408576 78 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-5.353710 251 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -51,8 +51,10 @@ TOP.tb_emm.clk_i
 TOP.tb_emm.rst_i
 [color] 3
 TOP.tb_emm.dut.switch_q
+@2025
 [color] 3
-TOP.tb_emm.dut.in_request_q
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/emm_state_filter.gtkw
+TOP.tb_emm.dut.state_q[2:0]
 @800200
 -Slave1
 @22
@@ -79,7 +81,7 @@ TOP.tb_emm.s1_wb_cyc_i
 TOP.tb_emm.s1_wb_stall_o
 @1000200
 -Slave1
-@c00200
+@800200
 -Slave2
 @22
 [color] 2
@@ -103,7 +105,7 @@ TOP.tb_emm.s2_wb_ack_o
 TOP.tb_emm.s2_wb_cyc_i
 [color] 2
 TOP.tb_emm.s2_wb_stall_o
-@1401200
+@1000200
 -Slave2
 @800200
 -Master

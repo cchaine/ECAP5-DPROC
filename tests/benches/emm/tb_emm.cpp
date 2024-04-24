@@ -447,13 +447,14 @@ void tb_emm_port2_read(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //=================================
   //      Tick (2)
@@ -543,7 +544,7 @@ void tb_emm_port2_read(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
   tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  
+
   //`````````````````````````````````
   //      Formal Checks 
     
@@ -606,13 +607,14 @@ void tb_emm_port2_write(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->m_wb_dat_o == core->s2_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //=================================
   //      Tick (2)
@@ -840,13 +842,14 @@ void tb_emm_two_during_one(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //=================================
   //      Tick (5)
@@ -1008,13 +1011,14 @@ void tb_emm_one_during_two(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //=================================
   //      Tick (2)
@@ -1092,15 +1096,16 @@ void tb_emm_one_during_two(TB_Emm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
-  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
   tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
   tb->check(COND_s2_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
 
   //=================================
   //      Tick (6)
@@ -1341,13 +1346,14 @@ void tb_emm_priority(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //=================================
   //      Tick (5)
@@ -1595,13 +1601,14 @@ void tb_emm_back_to_back(TB_Emm * tb) {
   
   tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
   tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
-  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
-  tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s2_wb_adr_i)  &&
+                       (core->s2_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s2_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s2_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s2_wb_stb_i)  &&
+                       (core->s2_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s2_wb_cyc_i));
 
   //`````````````````````````````````
   //      Set inputs
@@ -1696,15 +1703,16 @@ void tb_emm_back_to_back(TB_Emm * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 1));
-  tb->check(COND_s1_ack, (core->s1_wb_ack_o == 0));
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
   tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
   tb->check(COND_s2_ack, (core->s2_wb_ack_o == 0));
-  tb->check(COND_m_wb, (core->m_wb_adr_o == 0)  &&
-                       (core->m_wb_we_o == 0)    &&
-                       (core->m_wb_sel_o == 0)  &&
-                       (core->m_wb_stb_o == 0)  &&
-                       (core->m_wb_cyc_o == 0));
+  tb->check(COND_m_wb, (core->m_wb_adr_o == core->s1_wb_adr_i)  &&
+                       (core->s1_wb_dat_o == core->m_wb_dat_i)  &&
+                       (core->m_wb_we_o == core->s1_wb_we_i)    &&
+                       (core->m_wb_sel_o == core->s1_wb_sel_i)  &&
+                       (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->s1_wb_ack_o == core->m_wb_ack_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
 
   //=================================
   //      Tick (9)

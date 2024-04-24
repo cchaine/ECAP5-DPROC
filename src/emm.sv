@@ -107,6 +107,7 @@ always_comb begin : state_machine
         // if switch needed, go to switching
         switch_d = 1;
         s1_stall_d = 1;
+        s2_stall_d = 0;
         state_d = SWITCHING;
       end
     end
