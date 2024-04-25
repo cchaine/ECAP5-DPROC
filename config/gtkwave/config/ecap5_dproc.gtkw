@@ -1,0 +1,194 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu Apr 25 15:50:13 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/ecap5_dproc.vcd"
+[dumpfile_mtime] "Thu Apr 25 15:39:04 2024"
+[dumpfile_size] 62521
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/ecap5_dproc.gtkw"
+[timestart] 70
+[size] 2320 783
+[pos] -1 -1
+*-5.572440 33 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_ecap5_dproc.
+[treeopen] TOP.tb_ecap5_dproc.dut.
+[sst_width] 253
+[signals_width] 351
+[sst_expanded] 1
+[sst_vpaned_height] 450
+@2024
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/ecap5_dproc_testcase_filter.gtkw
+TOP.testcase[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.clk_i
+TOP.tb_ecap5_dproc.dut.rst_i
+TOP.tb_ecap5_dproc.dut.drq_i
+TOP.tb_ecap5_dproc.dut.irq_i
+@c00200
+-Master Wishbone
+@22
+TOP.tb_ecap5_dproc.dut.wb_adr_o[31:0]
+TOP.tb_ecap5_dproc.dut.wb_dat_i[31:0]
+TOP.tb_ecap5_dproc.dut.wb_dat_o[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.wb_we_o
+@22
+TOP.tb_ecap5_dproc.dut.wb_sel_o[3:0]
+@28
+TOP.tb_ecap5_dproc.dut.wb_stb_o
+TOP.tb_ecap5_dproc.dut.wb_ack_i
+TOP.tb_ecap5_dproc.dut.wb_cyc_o
+TOP.tb_ecap5_dproc.dut.wb_stall_i
+@1401200
+-Master Wishbone
+@c00200
+-IFM
+@28
+TOP.tb_ecap5_dproc.dut.branch
+@22
+TOP.tb_ecap5_dproc.dut.branch_target[31:0]
+@c00200
+-IFM Wishbone
+@22
+TOP.tb_ecap5_dproc.dut.if_wb_adr_o[31:0]
+TOP.tb_ecap5_dproc.dut.if_wb_dat_i[31:0]
+TOP.tb_ecap5_dproc.dut.if_wb_sel_o[3:0]
+@28
+TOP.tb_ecap5_dproc.dut.if_wb_we_o
+TOP.tb_ecap5_dproc.dut.if_wb_stb_o
+TOP.tb_ecap5_dproc.dut.if_wb_ack_i
+TOP.tb_ecap5_dproc.dut.if_wb_cyc_o
+TOP.tb_ecap5_dproc.dut.if_wb_stall_i
+@1401200
+-IFM Wishbone
+@22
+TOP.tb_ecap5_dproc.dut.if_instr[31:0]
+TOP.tb_ecap5_dproc.dut.if_pc[31:0]
+@1401200
+-IFM
+@28
+TOP.tb_ecap5_dproc.dut.if_dec_ready
+TOP.tb_ecap5_dproc.dut.if_dec_valid
+@c00200
+-DECM
+@22
+TOP.tb_ecap5_dproc.dut.dec_pc[31:0]
+TOP.tb_ecap5_dproc.dut.dec_alu_operand1[31:0]
+TOP.tb_ecap5_dproc.dut.dec_alu_operand2[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.dec_alu_op[2:0]
+TOP.tb_ecap5_dproc.dut.dec_alu_sub
+TOP.tb_ecap5_dproc.dut.dec_alu_shift_left
+TOP.tb_ecap5_dproc.dut.dec_alu_signed_shift
+TOP.tb_ecap5_dproc.dut.dec_branch_cond[2:0]
+@22
+TOP.tb_ecap5_dproc.dut.dec_branch_offset[19:0]
+@28
+TOP.tb_ecap5_dproc.dut.dec_ls_enable
+TOP.tb_ecap5_dproc.dut.dec_ls_write
+@22
+TOP.tb_ecap5_dproc.dut.dec_ls_write_data[31:0]
+TOP.tb_ecap5_dproc.dut.dec_ls_sel[3:0]
+@28
+TOP.tb_ecap5_dproc.dut.dec_ls_unsigned_load
+TOP.tb_ecap5_dproc.dut.dec_reg_write
+@22
+TOP.tb_ecap5_dproc.dut.dec_reg_addr[4:0]
+@1401200
+-DECM
+@28
+TOP.tb_ecap5_dproc.dut.dec_ex_ready
+TOP.tb_ecap5_dproc.dut.dec_ex_valid
+@c00200
+-EXM
+@22
+TOP.tb_ecap5_dproc.dut.ex_result[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.ex_ls_enable
+@22
+TOP.tb_ecap5_dproc.dut.ex_ls_sel[3:0]
+@28
+TOP.tb_ecap5_dproc.dut.ex_ls_unsigned_load
+TOP.tb_ecap5_dproc.dut.ex_ls_write
+@22
+TOP.tb_ecap5_dproc.dut.ex_ls_write_data[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.ex_reg_write
+@22
+TOP.tb_ecap5_dproc.dut.ex_reg_addr[4:0]
+@1401200
+-EXM
+@28
+TOP.tb_ecap5_dproc.dut.ex_ls_valid
+TOP.tb_ecap5_dproc.dut.ex_ls_ready
+@c00200
+-LSM
+-LSM Wishbone
+@22
+TOP.tb_ecap5_dproc.dut.ls_wb_adr_o[31:0]
+TOP.tb_ecap5_dproc.dut.ls_wb_dat_i[31:0]
+TOP.tb_ecap5_dproc.dut.ls_wb_dat_o[31:0]
+@28
+TOP.tb_ecap5_dproc.dut.ls_wb_we_o
+@22
+TOP.tb_ecap5_dproc.dut.ls_wb_sel_o[3:0]
+@28
+TOP.tb_ecap5_dproc.dut.ls_wb_stb_o
+TOP.tb_ecap5_dproc.dut.ls_wb_ack_i
+TOP.tb_ecap5_dproc.dut.ls_wb_cyc_o
+TOP.tb_ecap5_dproc.dut.ls_wb_stall_i
+@1401200
+-LSM Wishbone
+@28
+TOP.tb_ecap5_dproc.dut.ls_reg_write
+@22
+TOP.tb_ecap5_dproc.dut.ls_reg_addr[4:0]
+TOP.tb_ecap5_dproc.dut.ls_reg_data[31:0]
+@1401200
+-LSM
+@28
+TOP.tb_ecap5_dproc.dut.ls_valid
+@c00201
+-REGM
+@23
+TOP.tb_ecap5_dproc.dut.reg_raddr1[4:0]
+TOP.tb_ecap5_dproc.dut.reg_rdata1[31:0]
+TOP.tb_ecap5_dproc.dut.reg_raddr2[4:0]
+TOP.tb_ecap5_dproc.dut.reg_rdata2[31:0]
+@29
+TOP.tb_ecap5_dproc.dut.reg_write
+@23
+TOP.tb_ecap5_dproc.dut.reg_waddr[4:0]
+TOP.tb_ecap5_dproc.dut.reg_wdata[31:0]
+@1401201
+-REGM
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,163 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon Apr  1 13:03:36 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/fetch.vcd"
+[dumpfile_mtime] "Mon Apr  1 13:02:30 2024"
+[dumpfile_size] 42796
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/fetch.gtkw"
+[timestart] 2000
+[size] 1360 829
+[pos] -1 -1
+*-6.371864 2058 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_fetch.
+[sst_width] 253
+[signals_width] 202
+[sst_expanded] 1
+[sst_vpaned_height] 270
+@c02024
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+TOP.tb_fetch.testcase[31:0]
+@2028
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(0)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(1)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(2)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(3)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(4)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(5)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(6)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(7)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(8)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(9)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(10)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(11)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(12)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(13)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(14)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(15)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(16)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(17)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(18)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(19)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(20)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(21)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(22)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(23)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(24)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(25)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(26)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(27)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(28)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(29)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(30)TOP.tb_fetch.testcase[31:0]
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_testcase_filter.gtkw
+(31)TOP.tb_fetch.testcase[31:0]
+@1401200
+-group_end
+@28
+TOP.tb_fetch.clk_i
+TOP.tb_fetch.rst_i
+TOP.tb_fetch.drq_i
+TOP.tb_fetch.irq_i
+TOP.tb_fetch.branch_i
+@23
+TOP.tb_fetch.branch_target_i[31:0]
+@200
+-Memory
+@2028
+[color] 2
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/fetch_state_filter.gtkw
+TOP.tb_fetch.dut.state_q[2:0]
+@22
+[color] 2
+TOP.tb_fetch.wb_adr_o[31:0]
+[color] 2
+TOP.tb_fetch.wb_dat_i[31:0]
+@28
+[color] 2
+TOP.tb_fetch.wb_we_o
+@22
+[color] 2
+TOP.tb_fetch.wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_fetch.wb_stb_o
+[color] 2
+TOP.tb_fetch.wb_ack_i
+[color] 2
+TOP.tb_fetch.wb_cyc_o
+[color] 2
+TOP.tb_fetch.wb_stall_i
+@200
+-Output
+@28
+[color] 5
+TOP.tb_fetch.output_ready_i
+[color] 5
+TOP.tb_fetch.output_valid_o
+@22
+[color] 5
+TOP.tb_fetch.instr_o[31:0]
+[color] 5
+TOP.tb_fetch.pc_o[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

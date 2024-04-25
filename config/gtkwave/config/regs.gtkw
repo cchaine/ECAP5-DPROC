@@ -1,0 +1,48 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sun Mar 24 17:57:54 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/regs.vcd"
+[dumpfile_mtime] "Sun Mar 24 17:55:31 2024"
+[dumpfile_size] 17644
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/regs.gtkw"
+[timestart] 8
+[size] 1288 600
+[pos] 20 60
+*-7.000000 769 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] TOP.
+[treeopen] TOP.tb_regs.
+[sst_width] 253
+[signals_width] 144
+[sst_expanded] 1
+[sst_vpaned_height] 159
+@2025
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/regs_testcase_filter.gtkw
+TOP.tb_regs.testcase[31:0]
+@28
+TOP.tb_regs.clk_i
+@200
+-Input
+@22
+[color] 7
+TOP.tb_regs.raddr1_i[4:0]
+[color] 7
+TOP.tb_regs.raddr2_i[4:0]
+@28
+[color] 7
+TOP.tb_regs.write_i
+@22
+[color] 7
+TOP.tb_regs.waddr_i[4:0]
+[color] 7
+TOP.tb_regs.wdata_i[31:0]
+@200
+-Output
+@22
+[color] 5
+TOP.tb_regs.rdata1_o[31:0]
+[color] 5
+TOP.tb_regs.rdata2_o[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
