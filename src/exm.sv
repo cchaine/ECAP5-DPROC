@@ -216,7 +216,7 @@ always_comb begin : branch_interface
 
   branch_target_d = (branch_cond_i == BRANCH_UNCOND)
                         ? alu_sum_output
-                        : (pc_i + {12'h0, branch_offset_i}); 
+                        : (pc_i + {{12{branch_offset_i[19]}}, branch_offset_i}); 
 end
 
 always_comb begin : output_handshake

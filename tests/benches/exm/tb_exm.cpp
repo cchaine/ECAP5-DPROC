@@ -79,6 +79,14 @@ public:
 
     Testbench<Vtb_exm>::reset();
   }
+
+  uint32_t sign_extend(uint32_t data, uint32_t nb_bits) {
+    data &= (1 << nb_bits)-1;
+    if((data >> (nb_bits-1)) & 0x1){
+      data |= (((1 << (32 - (nb_bits-1))) - 1) << nb_bits);
+    }
+    return data;
+  }
   
   void _nop() {
     this->core->alu_operand1_i = 0;
@@ -894,7 +902,7 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   uint32_t pc = rand() % 0x7FFFFFFF;
   uint32_t operand1 = rand();
   uint32_t operand2 = rand();
-  uint32_t branch_offset = rand() % 0xFFFFF;
+  uint32_t branch_offset = rand() % 0xFFFFF | 0x80000; // negative branch offset
   tb->_beq(pc, operand1, operand2, branch_offset);
 
   //=================================
@@ -924,7 +932,7 @@ void tb_exm_branch_beq(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -996,7 +1004,7 @@ void tb_exm_branch_bne(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1085,7 +1093,7 @@ void tb_exm_branch_blt(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1192,7 +1200,7 @@ void tb_exm_branch_bltu(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
   
   //`````````````````````````````````
@@ -1264,7 +1272,7 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1282,7 +1290,7 @@ void tb_exm_branch_bge(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
   
   //`````````````````````````````````
@@ -1338,7 +1346,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1356,7 +1364,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````
@@ -1374,7 +1382,7 @@ void tb_exm_branch_bgeu(TB_Exm * tb) {
   
   tb->check(COND_result,       (core->reg_write_o   ==  0));
   tb->check(COND_branch,       (core->branch_o         ==  1) &&
-                               (core->branch_target_o  ==  pc + branch_offset));
+                               (core->branch_target_o  ==  pc + tb->sign_extend(branch_offset, 20)));
   tb->check(COND_output_valid, (core->output_valid_o   ==  1));
 
   //`````````````````````````````````

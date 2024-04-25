@@ -122,6 +122,19 @@ public:
     return instr;
   }
 
+  uint32_t instr_b(uint32_t opcode, uint32_t func3, uint32_t rs1, uint32_t rs2, uint32_t imm) {
+    uint32_t instr = 0;
+    instr |= opcode & 0x7F;
+    instr |= ((imm >> 11) & 1) << 7;
+    instr |= ((imm >> 1) & 0xF) << 8;
+    instr |= (func3 & 0x7) << 12;
+    instr |= (rs1 & 0x1F) << 15;
+    instr |= (rs2 & 0x1F) << 20;
+    instr |= ((imm >> 5) & 0x3F) << 25;
+    instr |= ((imm >> 12) & 1) << 31;
+    return instr;
+  }
+
   uint32_t _xori(uint32_t rd, uint32_t rs1, uint32_t imm) {
     return instr_i(Vtb_top_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_top_ecap5_dproc_pkg::FUNC3_XOR, rs1, imm);
   }
@@ -132,6 +145,10 @@ public:
 
   uint32_t _addi(uint32_t rd, uint32_t rs1, uint32_t imm) {
     return instr_i(Vtb_top_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_top_ecap5_dproc_pkg::FUNC3_ADD, rs1, imm);
+  }
+
+  uint32_t _beq(uint32_t rs1, uint32_t rs2, uint32_t imm) {
+    return instr_b(Vtb_top_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_top_ecap5_dproc_pkg::FUNC3_BEQ, rs1, rs2, imm);
   }
 
   void set_register(uint8_t addr, uint32_t value) {
@@ -254,10 +271,6 @@ void tb_top_alu(TB_Top * tb) {
   tb->tick();
 
   //`````````````````````````````````
-  //      Checks 
-  
-
-  //`````````````````````````````````
   //      Set inputs
   
   uint32_t rd = rand() % 32;
@@ -332,7 +345,8 @@ void tb_top_alu(TB_Top * tb) {
   tb->check(COND_exm, (core->tb_top->dut->exm_result    == result) &&
                       (core->tb_top->dut->exm_ls_enable == 0)      &&
                       (core->tb_top->dut->exm_reg_write == 1)      &&
-                      (core->tb_top->dut->exm_reg_addr  == rd));
+                      (core->tb_top->dut->exm_reg_addr  == rd)     &&
+                      (core->tb_top->dut->branch == 0));
 
   //=================================
   //      Tick (6)
@@ -489,7 +503,8 @@ void tb_top_lsm_enable(TB_Top * tb) {
                       (core->tb_top->dut->exm_ls_write == 0) &&
                       (core->tb_top->dut->exm_ls_unsigned_load == 0) &&
                       (core->tb_top->dut->exm_reg_write == 1) &&
-                      (core->tb_top->dut->exm_reg_addr == rd));
+                      (core->tb_top->dut->exm_reg_addr == rd) &&
+                      (core->tb_top->dut->branch == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -626,7 +641,159 @@ void tb_top_branch(TB_Top * tb) {
   Vtb_top * core = tb->core;
   core->testcase = T_BRANCH;
 
+  // The following actions are performed in this test :
+  //    tick 0. Nothing
+  //    tick 1. Acknowledge request with BEQ instruction (core requests instruction)
+  //    tick 2. Nothing (core ends request)
+  //    tick 3. Nothing (decm processes instruction)
+  //    tick 4. Acknowledge instr2 with nop (exm processes instruction)
+  //    tick 5. Nothing (ifm requests branch target)
+
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t rs1 = rand() % 32;
+  uint32_t val = rand();
+  // Artificially set the first source register value
+  tb->set_register(rs1, val);
+  uint32_t rs2 = rand() % 32;
+  // Artificially set the second source register value
+  tb->set_register(rs2, val);
+  uint32_t imm = (rand() % 0x1FFF) & ~(0x1);
+  uint32_t instr = tb->_beq(rs1, rs2, imm);
+
+  core->wb_dat_i = instr;
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_top->dut->ifm_decm_valid == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_top->dut->ifm_decm_valid == 1));
+  tb->check(COND_ifm, (core->tb_top->dut->ifm_instr == instr) &&
+                      (core->tb_top->dut->ifm_pc == Vtb_top_ecap5_dproc_pkg::BOOT_ADDRESS));
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_top->dut->ifm_decm_valid   == 0));
+  tb->check(COND_decm, (core->tb_top->dut->decm_pc           == Vtb_top_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+                       (core->tb_top->dut->decm_alu_operand1 == val)                                   &&
+                       (core->tb_top->dut->decm_alu_operand2 == val)                                   &&
+                       (core->tb_top->dut->decm_alu_op       == Vtb_top_ecap5_dproc_pkg::ALU_ADD)      &&
+                       (core->tb_top->dut->decm_branch_cond  == Vtb_top_ecap5_dproc_pkg::BRANCH_BEQ)   &&
+                       (core->tb_top->dut->decm_ls_enable    == 0)                                     &&
+                       (core->tb_top->dut->decm_reg_write    == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = tb->_addi(0, 0, 0);
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_exm, (core->tb_top->dut->exm_ls_enable == 0)      &&
+                      (core->tb_top->dut->exm_reg_write == 0) &&
+                      (core->tb_top->dut->branch == 1) &&
+                      (core->tb_top->dut->branch_target == tb->sign_extend(imm, 13)));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (6)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (7)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_ifm, (core->wb_adr_o == tb->sign_extend(imm, 13)));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_top.branch.01",
+      tb->conditions[COND_bubble],
+      "Failed to implement the pipeline bubbles", tb->err_cycles[COND_bubble]);
+
+  CHECK("tb_top.branch.02",
+      tb->conditions[COND_valid],
+      "Failed to implement the valid signal", tb->err_cycles[COND_valid]);
+
+  CHECK("tb_top.branch.03",
+      tb->conditions[COND_ready],
+      "Failed to implement the ready signal", tb->err_cycles[COND_ready]);
+
+  CHECK("tb_top.branch.04",
+      tb->conditions[COND_ifm],
+      "Failed to implement the ifm", tb->err_cycles[COND_ifm]);
+
+  CHECK("tb_top.branch.05",
+      tb->conditions[COND_decm],
+      "Failed to implement the decm", tb->err_cycles[COND_decm]);
+
+  CHECK("tb_top.branch.06",
+      tb->conditions[COND_exm],
+      "Failed to implement the exm", tb->err_cycles[COND_exm]);
+
+  CHECK("tb_top.branch.07",
+      tb->conditions[COND_lsm],
+      "Failed to implement the lsm", tb->err_cycles[COND_lsm]);
+
+  CHECK("tb_top.branch.08",
+      tb->conditions[COND_wbm],
+      "Failed to implement the wbm", tb->err_cycles[COND_wbm]);
 }
 
 void tb_top_back_to_back(TB_Top * tb) {

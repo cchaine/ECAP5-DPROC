@@ -194,7 +194,7 @@ assign s2_wb_dat_o =  switch_q ? m_wb_dat_i : '0;
 assign s1_wb_ack_o = ~switch_q ? m_wb_ack_i : 0;
 assign s2_wb_ack_o =  switch_q ? m_wb_ack_i : 0;
 
-assign s1_wb_stall_o = s1_stall_q;
-assign s2_wb_stall_o = s2_stall_q;
+assign s1_wb_stall_o = s1_stall_q || m_wb_stall_i;
+assign s2_wb_stall_o = s2_stall_q || m_wb_stall_i;
 
 endmodule // exm

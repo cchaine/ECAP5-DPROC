@@ -658,7 +658,7 @@ void tb_decm_beq(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_beq(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -733,7 +733,7 @@ void tb_decm_bne(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bne(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -808,7 +808,7 @@ void tb_decm_blt(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_blt(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -883,7 +883,7 @@ void tb_decm_bge(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bge(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -958,7 +958,7 @@ void tb_decm_bltu(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bltu(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -1033,7 +1033,7 @@ void tb_decm_bgeu(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bgeu(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
