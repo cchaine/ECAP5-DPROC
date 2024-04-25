@@ -33,6 +33,46 @@
 #include "Vtb_ifm_ifm.h"
 #include "Vtb_ifm_tb_ifm.h"
 
+enum CondId {
+  COND_state,
+  COND_wishbone,
+  COND_output,
+  COND_output_valid,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_NO_STALL                         =  1,
+  T_MEMORY_STALL                     =  2,
+  T_MEMORY_WAIT                      =  3,
+  T_PIPELINE_STALL                   =  4,
+  T_DEBUG_DURING_REQUEST             =  5,
+  T_DEBUG_DURING_ACK                 =  6,
+  T_DEBUG_DURING_WAIT                =  7,
+  T_DEBUG_DURING_MEMORY_STALL        =  8,
+  T_DEBUG_ON_OUTPUT_HANDSHAKE        =  9,
+  T_DEBUG_DURING_PIPELINE_STALL      =  10,
+  T_DEBUG_BACK_TO_BACK               =  11,
+  T_INTERRUPT_DURING_REQUEST         =  12,
+  T_INTERRUPT_DURING_ACK             =  13,
+  T_INTERRUPT_DURING_WAIT            =  14,
+  T_INTERRUPT_DURING_MEMORY_STALL    =  15,
+  T_INTERRUPT_ON_OUTPUT_HANDSHAKE    =  16,
+  T_INTERRUPT_DURING_PIPELINE_STALL  =  17,
+  T_INTERRUPT_BACK_TO_BACK           =  19,
+  T_BRANCH_DURING_REQUEST            =  20,
+  T_BRANCH_DURING_ACK                =  21,
+  T_BRANCH_DURING_WAIT               =  22,
+  T_BRANCH_DURING_MEMORY_STALL       =  23,
+  T_BRANCH_ON_OUTPUT_HANDSHAKE       =  24,
+  T_BRANCH_DURING_PIPELINE_STALL     =  25,
+  T_BRANCH_BACK_TO_BACK              =  26,
+  T_PRECEDENCE_DEBUG                 =  27,
+  T_PRECEDENCE_INTERRUPT             =  28,
+  T_PRECEDENCE_BRANCH                =  29,
+  T_PRECEDENCE_INCREMENT             =  30
+};
+
 class TB_Ifm : public Testbench<Vtb_ifm> {
 public:
   void reset() {
@@ -46,17 +86,9 @@ public:
   }
 };
 
-enum CondId {
-  COND_state,
-  COND_wishbone,
-  COND_output,
-  COND_output_valid,
-  __CondIdEnd
-};
-
 void tb_ifm_no_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_NO_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -183,7 +215,7 @@ void tb_ifm_no_stall(TB_Ifm * tb) {
 
 void tb_ifm_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_MEMORY_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no memory stall, no interrupt
@@ -307,7 +339,7 @@ void tb_ifm_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_memory_wait_state(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_MEMORY_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall, no interrupt
@@ -416,7 +448,7 @@ void tb_ifm_memory_wait_state(TB_Ifm * tb) {
 
 void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_PIPELINE_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall, no interrupt
@@ -424,8 +456,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   //    tick 2. Nothing (core latches response)
   //    tick 3. Nothing (core holds response)
   //    tick 4. Unstall pipeline (core holds response)
-  //    tick 5. Nothing (core outputs request)
-  //    tick 6. Nothing (core makes request)
+  //    tick 5. Nothing (core prepares new request)
   
   //=================================
   //      Tick (0)
@@ -520,15 +551,8 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
   tb->check(COND_state,         (core->tb_ifm->dut->state_q  ==  0));
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
-  tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_ifm_ecap5_dproc_pkg::BOOT_ADDRESS));
-  tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));
 
-  //=================================
-  //      Tick (6)
-  
-  tb->tick();
-  
   //`````````````````````````````````
   //      Formal Checks 
   
@@ -555,7 +579,7 @@ void tb_ifm_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_DEBUG_DURING_REQUEST;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall with debug request
@@ -642,7 +666,7 @@ void tb_ifm_debug_during_request(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_DEBUG_DURING_ACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -726,7 +750,7 @@ void tb_ifm_debug_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_DEBUG_DURING_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -834,7 +858,7 @@ void tb_ifm_debug_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 8;
+  core->testcase = T_DEBUG_DURING_MEMORY_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for memory stall not interrupt
@@ -953,7 +977,7 @@ void tb_ifm_debug_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 9;
+  core->testcase = T_DEBUG_ON_OUTPUT_HANDSHAKE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1040,7 +1064,7 @@ void tb_ifm_debug_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 10;
+  core->testcase = T_DEBUG_DURING_PIPELINE_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall not interrupt
@@ -1142,7 +1166,7 @@ void tb_ifm_debug_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 11;
+  core->testcase = T_DEBUG_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1234,7 +1258,7 @@ void tb_ifm_debug_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 12;
+  core->testcase = T_INTERRUPT_DURING_REQUEST;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall with interrupt request
@@ -1321,7 +1345,7 @@ void tb_ifm_interrupt_during_request(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 13;
+  core->testcase = T_INTERRUPT_DURING_ACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1405,7 +1429,7 @@ void tb_ifm_interrupt_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 14;
+  core->testcase = T_INTERRUPT_DURING_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1513,7 +1537,7 @@ void tb_ifm_interrupt_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 15;
+  core->testcase = T_INTERRUPT_DURING_MEMORY_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for memory stall not interrupt
@@ -1632,7 +1656,7 @@ void tb_ifm_interrupt_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 16;
+  core->testcase = T_INTERRUPT_ON_OUTPUT_HANDSHAKE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1719,7 +1743,7 @@ void tb_ifm_interrupt_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 17;
+  core->testcase = T_INTERRUPT_DURING_PIPELINE_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall not interrupt
@@ -1821,7 +1845,7 @@ void tb_ifm_interrupt_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 18;
+  core->testcase = T_INTERRUPT_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -1914,7 +1938,7 @@ void tb_ifm_interrupt_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_request(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 19;
+  core->testcase = T_BRANCH_DURING_REQUEST;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall with branch request
@@ -2003,7 +2027,7 @@ void tb_ifm_branch_during_request(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_ack(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 20;
+  core->testcase = T_BRANCH_DURING_ACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2089,7 +2113,7 @@ void tb_ifm_branch_during_ack(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_wait(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 21;
+  core->testcase = T_BRANCH_DURING_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2199,7 +2223,7 @@ void tb_ifm_branch_during_wait(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 22;
+  core->testcase = T_BRANCH_DURING_MEMORY_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for memory stall not interrupt
@@ -2320,7 +2344,7 @@ void tb_ifm_branch_during_memory_stall(TB_Ifm * tb) {
 
 void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 23;
+  core->testcase = T_BRANCH_ON_OUTPUT_HANDSHAKE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2409,7 +2433,7 @@ void tb_ifm_branch_on_output_handshake(TB_Ifm * tb) {
 
 void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 24;
+  core->testcase = T_BRANCH_DURING_PIPELINE_STALL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall not interrupt
@@ -2513,7 +2537,7 @@ void tb_ifm_branch_during_pipeline_stall(TB_Ifm * tb) {
 
 void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 25;
+  core->testcase = T_BRANCH_BACK_TO_BACK;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2609,7 +2633,7 @@ void tb_ifm_branch_back_to_back(TB_Ifm * tb) {
 
 void tb_ifm_precedence_debug(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 26;
+  core->testcase = T_PRECEDENCE_DEBUG;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2693,7 +2717,7 @@ void tb_ifm_precedence_debug(TB_Ifm * tb) {
 
 void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 27;
+  core->testcase = T_PRECEDENCE_INTERRUPT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2774,7 +2798,7 @@ void tb_ifm_precedence_interrupt(TB_Ifm * tb) {
 
 void tb_ifm_precedence_branch(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 28;
+  core->testcase = T_PRECEDENCE_BRANCH;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
@@ -2854,7 +2878,7 @@ void tb_ifm_precedence_branch(TB_Ifm * tb) {
 
 void tb_ifm_precedence_increment(TB_Ifm * tb) {
   Vtb_ifm * core = tb->core;
-  core->testcase = 29;
+  core->testcase = T_PRECEDENCE_INCREMENT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt

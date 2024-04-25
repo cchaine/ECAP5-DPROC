@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed Mar 20 15:26:24 2024
+[*] Sun Apr 21 06:20:46 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/lsm.vcd"
-[dumpfile_mtime] "Wed Mar 20 15:26:07 2024"
-[dumpfile_size] 11983
+[dumpfile_mtime] "Sun Apr 21 06:18:35 2024"
+[dumpfile_size] 9200
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/lsm.gtkw"
 [timestart] 8
-[size] 2112 867
+[size] 2320 1305
 [pos] -1 -1
-*-6.701643 188 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-4.730112 180 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -39,10 +39,10 @@
 [treeopen] TOP.
 [treeopen] TOP.tb_lsm.
 [sst_width] 253
-[signals_width] 177
+[signals_width] 210
 [sst_expanded] 1
 [sst_vpaned_height] 449
-@2025
+@2024
 [color] 1
 ^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/lsm_testcase_filter.gtkw
 TOP.testcase[31:0]
@@ -60,7 +60,10 @@ TOP.tb_lsm.alu_result_i[31:0]
 TOP.tb_lsm.enable_i
 TOP.tb_lsm.write_i
 @22
+TOP.tb_lsm.write_data_i[31:0]
 TOP.tb_lsm.sel_i[3:0]
+@29
+TOP.tb_lsm.unsigned_load_i
 @28
 TOP.tb_lsm.reg_write_i
 @22
@@ -105,5 +108,6 @@ TOP.tb_lsm.reg_write_o
 TOP.tb_lsm.reg_addr_o[4:0]
 [color] 5
 TOP.tb_lsm.reg_data_o[31:0]
+TOP.tb_lsm.dut.write_data[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

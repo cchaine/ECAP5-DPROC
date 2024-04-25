@@ -197,7 +197,7 @@ always_comb begin : output_management
       end
     end
     PIPELINE_STALL: begin
-      if(pending_jump_q) begin
+      if(output_ready_i || pending_jump_q) begin
         output_valid_d = 0;
       end
     end

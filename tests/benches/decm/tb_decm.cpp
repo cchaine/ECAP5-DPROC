@@ -31,10 +31,66 @@
 #include "testbench.h"
 #include "Vtb_decm_ecap5_dproc_pkg.h"
 
+enum CondId {
+  COND_input_ready,
+  COND_pc,
+  COND_alu,
+  COND_branch,
+  COND_writeback,
+  COND_loadstore,
+  COND_output_valid,
+  __CondIdEnd
+};
+
+enum TestcaseId {
+  T_LUI             =  0,
+  T_AUIPC           =  1,
+  T_JAL             =  2,
+  T_JALR            =  3,
+  T_BEQ             =  4,
+  T_BNE             =  5,
+  T_BLT             =  6,
+  T_BGE             =  7,
+  T_BLTU            =  8,
+  T_BGEU            =  9,
+  T_LB              =  10,
+  T_LBU             =  11,
+  T_LH              =  12,
+  T_LHU             =  13,
+  T_LW              =  14,
+  T_SB              =  15,
+  T_SH              =  16,
+  T_SW              =  17,
+  T_ADDI            =  18,
+  T_SLTI            =  19,
+  T_SLTIU           =  20,
+  T_XORI            =  21,
+  T_ORI             =  22,
+  T_ANDI            =  23,
+  T_SLLI            =  24,
+  T_SRLI            =  25,
+  T_SRAI            =  26,
+  T_ADD             =  27,
+  T_SUB             =  28,
+  T_SLT             =  29,
+  T_SLTU            =  30,
+  T_XOR             =  31,
+  T_OR              =  32,
+  T_AND             =  33,
+  T_SLL             =  34,
+  T_SRL             =  35,
+  T_SRA             =  36,
+  T_BUBBLE          =  37,
+  T_PIPELINE_STALL  =  38
+};
+
 class TB_Decm : public Testbench<Vtb_decm> {
 public:
   void reset() {
     this->_nop();
+    this->core->input_valid_i = 0;
+    this->core->output_ready_i = 0;
+
     this->core->rst_i = 1;
     for(int i = 0; i < 5; i++) {
       this->tick();
@@ -313,20 +369,9 @@ public:
   }
 };
 
-enum CondId {
-  COND_input_ready,
-  COND_pc,
-  COND_alu,
-  COND_branch,
-  COND_writeback,
-  COND_loadstore,
-  COND_output_valid,
-  __CondIdEnd
-};
-
 void tb_decm_lui(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 1;
+  core->testcase = T_LUI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LUI 
@@ -363,6 +408,7 @@ void tb_decm_lui(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -382,11 +428,15 @@ void tb_decm_lui(TB_Decm * tb) {
   CHECK("tb_decm.lui.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lui.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_auipc(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 2;
+  core->testcase = T_AUIPC;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for AUIPC
@@ -424,6 +474,7 @@ void tb_decm_auipc(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -443,11 +494,15 @@ void tb_decm_auipc(TB_Decm * tb) {
   CHECK("tb_decm.auipc.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.auipc.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_jal(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 3;
+  core->testcase = T_JAL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for JAL
@@ -485,6 +540,7 @@ void tb_decm_jal(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -504,11 +560,15 @@ void tb_decm_jal(TB_Decm * tb) {
   CHECK("tb_decm.jal.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.jal.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_jalr(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 4;
+  core->testcase = T_JALR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for JALR
@@ -550,6 +610,7 @@ void tb_decm_jalr(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1)  &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -569,11 +630,15 @@ void tb_decm_jalr(TB_Decm * tb) {
   CHECK("tb_decm.jalr.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.jalr.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_beq(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 5;
+  core->testcase = T_BEQ;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BEQ
@@ -593,7 +658,7 @@ void tb_decm_beq(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_beq(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -616,6 +681,7 @@ void tb_decm_beq(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -639,11 +705,15 @@ void tb_decm_beq(TB_Decm * tb) {
   CHECK("tb_decm.beq.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.beq.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bne(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 6;
+  core->testcase = T_BNE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BNE
@@ -663,7 +733,7 @@ void tb_decm_bne(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bne(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -686,6 +756,7 @@ void tb_decm_bne(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -709,11 +780,15 @@ void tb_decm_bne(TB_Decm * tb) {
   CHECK("tb_decm.bne.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bne.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_blt(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 7;
+  core->testcase = T_BLT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BLT
@@ -733,7 +808,7 @@ void tb_decm_blt(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_blt(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -756,6 +831,7 @@ void tb_decm_blt(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -779,11 +855,15 @@ void tb_decm_blt(TB_Decm * tb) {
   CHECK("tb_decm.blt.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.blt.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bge(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 8;
+  core->testcase = T_BGE;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BGE
@@ -803,7 +883,7 @@ void tb_decm_bge(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bge(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -826,6 +906,7 @@ void tb_decm_bge(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -849,11 +930,15 @@ void tb_decm_bge(TB_Decm * tb) {
   CHECK("tb_decm.bge.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bge.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bltu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 9;
+  core->testcase = T_BLTU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BLTU
@@ -873,7 +958,7 @@ void tb_decm_bltu(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bltu(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -896,6 +981,7 @@ void tb_decm_bltu(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -919,11 +1005,15 @@ void tb_decm_bltu(TB_Decm * tb) {
   CHECK("tb_decm.bltu.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bltu.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_bgeu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 10;
+  core->testcase = T_BGEU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for BGEU
@@ -943,7 +1033,7 @@ void tb_decm_bgeu(TB_Decm * tb) {
   uint32_t pc = rand();
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  uint32_t imm = (10 + rand() % (0x1FFFF - 10)) & ~(0x1) ;
+  uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
   tb->_bgeu(pc, rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
@@ -966,6 +1056,7 @@ void tb_decm_bgeu(TB_Decm * tb) {
                             (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -989,11 +1080,15 @@ void tb_decm_bgeu(TB_Decm * tb) {
   CHECK("tb_decm.bgeu.05",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bgeu.06",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lb(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 11;
+  core->testcase = T_LB;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LB
@@ -1036,6 +1131,7 @@ void tb_decm_lb(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x1) &&
                             (core->ls_unsigned_load_o ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1055,11 +1151,15 @@ void tb_decm_lb(TB_Decm * tb) {
   CHECK("tb_decm.lb.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lb.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lbu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 12;
+  core->testcase = T_LBU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LBU
@@ -1102,6 +1202,7 @@ void tb_decm_lbu(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x1) &&
                             (core->ls_unsigned_load_o ==  1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1121,11 +1222,15 @@ void tb_decm_lbu(TB_Decm * tb) {
   CHECK("tb_decm.lbu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lbu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lh(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 13;
+  core->testcase = T_LH;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LH
@@ -1168,6 +1273,7 @@ void tb_decm_lh(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x3) &&
                             (core->ls_unsigned_load_o ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1187,11 +1293,15 @@ void tb_decm_lh(TB_Decm * tb) {
   CHECK("tb_decm.lh.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lh.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lhu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 14;
+  core->testcase = T_LHU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LHU
@@ -1234,6 +1344,7 @@ void tb_decm_lhu(TB_Decm * tb) {
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0x3) &&
                             (core->ls_unsigned_load_o ==  1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1253,11 +1364,15 @@ void tb_decm_lhu(TB_Decm * tb) {
   CHECK("tb_decm.lhu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lhu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_lw(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 15;
+  core->testcase = T_LW;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for LW
@@ -1299,6 +1414,7 @@ void tb_decm_lw(TB_Decm * tb) {
   tb->check(COND_loadstore, (core->ls_enable_o        ==  1) &&
                             (core->ls_write_o         ==  0) &&
                             (core->ls_sel_o           ==  0xF));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1318,11 +1434,15 @@ void tb_decm_lw(TB_Decm * tb) {
   CHECK("tb_decm.lw.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.lw.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sb(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 16;
+  core->testcase = T_SB;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SB
@@ -1366,6 +1486,7 @@ void tb_decm_sb(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0x1));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1385,11 +1506,15 @@ void tb_decm_sb(TB_Decm * tb) {
   CHECK("tb_decm.sb.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sb.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sh(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 17;
+  core->testcase = T_SH;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SH
@@ -1433,6 +1558,7 @@ void tb_decm_sh(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0x3));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1452,11 +1578,15 @@ void tb_decm_sh(TB_Decm * tb) {
   CHECK("tb_decm.sh.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sh.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sw(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 18;
+  core->testcase = T_SW;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SW
@@ -1500,6 +1630,7 @@ void tb_decm_sw(TB_Decm * tb) {
                             (core->ls_write_o         ==  1) &&
                             (core->ls_write_data_o    ==  rdata2) &&
                             (core->ls_sel_o           ==  0xF));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1519,11 +1650,15 @@ void tb_decm_sw(TB_Decm * tb) {
   CHECK("tb_decm.sw.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sw.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_addi(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 19;
+  core->testcase = T_ADDI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADDI
@@ -1567,6 +1702,7 @@ void tb_decm_addi(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1586,11 +1722,15 @@ void tb_decm_addi(TB_Decm * tb) {
   CHECK("tb_decm.addi.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.addi.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slti(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 20;
+  core->testcase = T_SLTI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLTI
@@ -1633,6 +1773,7 @@ void tb_decm_slti(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1652,11 +1793,15 @@ void tb_decm_slti(TB_Decm * tb) {
   CHECK("tb_decm.slti.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slti.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sltiu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 21;
+  core->testcase = T_SLTIU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLTIU
@@ -1699,6 +1844,7 @@ void tb_decm_sltiu(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1718,11 +1864,15 @@ void tb_decm_sltiu(TB_Decm * tb) {
   CHECK("tb_decm.sltiu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sltiu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_xori(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 22;
+  core->testcase = T_XORI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for XORI
@@ -1765,6 +1915,7 @@ void tb_decm_xori(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1784,11 +1935,15 @@ void tb_decm_xori(TB_Decm * tb) {
   CHECK("tb_decm.xori.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.xori.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_ori(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 23;
+  core->testcase = T_ORI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ORI
@@ -1831,6 +1986,7 @@ void tb_decm_ori(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1850,11 +2006,15 @@ void tb_decm_ori(TB_Decm * tb) {
   CHECK("tb_decm.ori.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.ori.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_andi(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 24;
+  core->testcase = T_ANDI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ANDI
@@ -1897,6 +2057,7 @@ void tb_decm_andi(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1916,11 +2077,15 @@ void tb_decm_andi(TB_Decm * tb) {
   CHECK("tb_decm.andi.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.andi.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slli(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 25;
+  core->testcase = T_SLLI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLLI
@@ -1964,6 +2129,7 @@ void tb_decm_slli(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o      ==  1) &&
                             (core->reg_addr_o       ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o      ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1983,11 +2149,15 @@ void tb_decm_slli(TB_Decm * tb) {
   CHECK("tb_decm.slli.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slli.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srli(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 26;
+  core->testcase = T_SRLI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRLI
@@ -2032,6 +2202,7 @@ void tb_decm_srli(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2051,11 +2222,15 @@ void tb_decm_srli(TB_Decm * tb) {
   CHECK("tb_decm.srli.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srli.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srai(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 27;
+  core->testcase = T_SRAI;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRAI
@@ -2100,6 +2275,7 @@ void tb_decm_srai(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2119,11 +2295,15 @@ void tb_decm_srai(TB_Decm * tb) {
   CHECK("tb_decm.srai.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srai.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_add(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 28;
+  core->testcase = T_ADD;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -2167,6 +2347,7 @@ void tb_decm_add(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2186,11 +2367,15 @@ void tb_decm_add(TB_Decm * tb) {
   CHECK("tb_decm.add.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.add.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sub(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 29;
+  core->testcase = T_SUB;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SUB
@@ -2234,6 +2419,7 @@ void tb_decm_sub(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2253,11 +2439,15 @@ void tb_decm_sub(TB_Decm * tb) {
   CHECK("tb_decm.sub.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sub.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_slt(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 30;
+  core->testcase = T_SLT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLT
@@ -2300,6 +2490,7 @@ void tb_decm_slt(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2319,11 +2510,15 @@ void tb_decm_slt(TB_Decm * tb) {
   CHECK("tb_decm.slt.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.slt.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sltu(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 31;
+  core->testcase = T_SLTU;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLTU
@@ -2366,6 +2561,7 @@ void tb_decm_sltu(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2385,11 +2581,15 @@ void tb_decm_sltu(TB_Decm * tb) {
   CHECK("tb_decm.sltu.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sltu.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_xor(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 32;
+  core->testcase = T_XOR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for XOR
@@ -2432,6 +2632,7 @@ void tb_decm_xor(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2451,11 +2652,15 @@ void tb_decm_xor(TB_Decm * tb) {
   CHECK("tb_decm.xor.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.xor.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_or(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 33;
+  core->testcase = T_OR;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for OR
@@ -2498,6 +2703,7 @@ void tb_decm_or(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2517,11 +2723,15 @@ void tb_decm_or(TB_Decm * tb) {
   CHECK("tb_decm.or.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.or.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_and(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 34;
+  core->testcase = T_AND;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for AND
@@ -2564,6 +2774,7 @@ void tb_decm_and(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
                             (core->reg_addr_o      ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2583,11 +2794,15 @@ void tb_decm_and(TB_Decm * tb) {
   CHECK("tb_decm.and.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.and.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sll(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 35;
+  core->testcase = T_SLL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SLL
@@ -2631,6 +2846,7 @@ void tb_decm_sll(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o      ==  1) &&
                             (core->reg_addr_o       ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o      ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2650,11 +2866,15 @@ void tb_decm_sll(TB_Decm * tb) {
   CHECK("tb_decm.sll.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sll.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_srl(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 36;
+  core->testcase = T_SRL;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRL
@@ -2699,6 +2919,7 @@ void tb_decm_srl(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2718,11 +2939,15 @@ void tb_decm_srl(TB_Decm * tb) {
   CHECK("tb_decm.srl.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.srl.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decm_sra(TB_Decm * tb) {
   Vtb_decm * core = tb->core;
-  core->testcase = 37;
+  core->testcase = T_SRA;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for SRA
@@ -2767,6 +2992,7 @@ void tb_decm_sra(TB_Decm * tb) {
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -2786,6 +3012,235 @@ void tb_decm_sra(TB_Decm * tb) {
   CHECK("tb_decm.sra.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.sra.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_decm_bubble(TB_Decm * tb) {
+  Vtb_decm * core = tb->core;
+  core->testcase = T_BUBBLE;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for LB without input valid
+  //    tick 1. Nothing (core outputs bubble)
+  
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 0;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand();
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t imm = (10 + rand() % (0xFFFF - 10));
+  tb->_lb(pc, rd, rs1, imm);
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o     ==  0)  &&
+                            (core->alu_operand2_o     ==  0)  &&
+                            (core->alu_op_o           ==  Vtb_decm_ecap5_dproc_pkg::ALU_ADD) &&
+                            (core->alu_sub_o          ==  0));
+  tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o        ==  0));
+  tb->check(COND_loadstore, (core->ls_enable_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_decm.bubble.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol bubble bypass", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.bubble.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol bubble bypass", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.bubble.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol bubble bypass", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.bubble.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol bubble bypass", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.bubble.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
+}
+
+void tb_decm_pipeline_stall(TB_Decm * tb) {
+  Vtb_decm * core = tb->core;
+  core->testcase = T_PIPELINE_STALL;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for AND
+  //    tick 1. Stall the pipeline (core holds outputs result of AND)
+  //    tick 2. Nothing (core holds outputs result of AND)
+  //    tick 3. Unstall pipeline (core holds outputs result of AND)
+  //    tick 4. Set inputs for OR (core holds result of AND)
+  //    tick 5. Nothing (core outputs result of OR)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand();
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t rs2 = rand() % 32;
+  tb->_and(pc, rd, rs1, rs2);
+
+  uint32_t rdata1 = rand() % 0x7FFFFFFF;
+  core->rdata1_i = rdata1;
+  uint32_t rdata2 = rand() % 0x7FFFFFFF;
+  core->rdata2_i = rdata2;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->output_ready_i = 0;
+  tb->_or(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->output_ready_i = 1;
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_OR));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_and(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decm_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decm_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_decm.pipeline_stall.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decm.pipeline_stall.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decm.pipeline_stall.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decm.pipeline_stall.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decm.pipeline_stall.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -2839,6 +3294,10 @@ int main(int argc, char ** argv, char ** env) {
   tb_decm_sll(tb);
   tb_decm_srl(tb);
   tb_decm_sra(tb);
+
+  tb_decm_bubble(tb);
+
+  tb_decm_pipeline_stall(tb);
 
   /************************************************************/
 

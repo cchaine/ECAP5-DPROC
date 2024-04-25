@@ -96,8 +96,6 @@ logic[2:0] op_alu_op;
 /*             Stage outputs             */
 /*****************************************/
 
-logic        input_ready_q;
-
 logic[31:0]  pc_q;
 
 logic[31:0]  alu_operand1_d,      alu_operand1_q;
@@ -117,7 +115,7 @@ logic        ls_enable_d,         ls_enable_q;
 logic        ls_write_d,          ls_write_q;
 logic[31:0]  ls_write_data_d,     ls_write_data_q;
 logic[3:0]   ls_sel_d,            ls_sel_q;
-logic        ls_unsigned_load_d,    ls_unsigned_load_q;
+logic        ls_unsigned_load_d,  ls_unsigned_load_q;
 
 logic        output_valid_d,      output_valid_q;
 
@@ -237,10 +235,15 @@ always_comb begin : loadstore_interface
   ls_unsigned_load_d = (func3 == FUNC3_LBU) || (func3 == FUNC3_LHU);
 end
 
+always_comb begin : output_handshake
+  output_valid_d = output_valid_q;
+  if(output_ready_i) begin
+    output_valid_d = 1;
+  end
+end
+
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    input_ready_q       <=   0;
-
     alu_operand1_q      <=  '0;
     alu_operand2_q      <=  '0;
     alu_op_q            <=  '0;
@@ -262,25 +265,23 @@ always_ff @(posedge clk_i) begin
 
     output_valid_q      <=   0;
   end else begin
-    input_ready_q       <= output_ready_i;
-
     if(output_ready_i) begin
       pc_q                <=  pc_i;
 
-      alu_operand1_q      <=  alu_operand1_d;
-      alu_operand2_q      <=  alu_operand2_d;
-      alu_op_q            <=  alu_op_d;
-      alu_sub_q           <=  alu_sub_d;
+      alu_operand1_q      <=  input_valid_i ? alu_operand1_d : '0;
+      alu_operand2_q      <=  input_valid_i ? alu_operand2_d : '0;
+      alu_op_q            <=  input_valid_i ? alu_op_d : ALU_ADD;
+      alu_sub_q           <=  input_valid_i ? alu_sub_d : 0;
       alu_shift_left_q    <=  alu_shift_left_d;
       alu_signed_shift_q  <=  alu_signed_shift_d;
 
-      branch_cond_q       <=  branch_cond_d;
+      branch_cond_q       <=  input_valid_i ? branch_cond_d : NO_BRANCH;
       branch_offset_q     <=  branch_offset_d;
 
-      reg_write_q         <=  reg_write_d;
+      reg_write_q         <=  input_valid_i ? reg_write_d : 0;
       reg_addr_q          <=  reg_addr_d;
 
-      ls_enable_q         <=  ls_enable_d;
+      ls_enable_q         <=  input_valid_i ? ls_enable_d : 0;
       ls_write_q          <=  ls_write_d;
       ls_write_data_q     <=  ls_write_data_d;
       ls_sel_q            <=  ls_sel_d;
@@ -295,7 +296,7 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-assign  input_ready_o       =  input_ready_q;
+assign  input_ready_o       =  output_ready_i;
 
 assign  pc_o                =  pc_q;
 
@@ -317,5 +318,7 @@ assign  ls_write_o          =  ls_write_q;
 assign  ls_write_data_o     =  ls_write_data_q;
 assign  ls_sel_o            =  ls_sel_q;
 assign  ls_unsigned_load_o    =  ls_unsigned_load_q;
+
+assign  output_valid_o = output_valid_q;
 
 endmodule // decm

@@ -1,37 +1,39 @@
-1 lui
-2 auipc
-3 jal
-4 jalr
-5 beq
-6 bne
-7 blt
-8 bge
-9 bltu
-10 bgeu
-11 lb
-12 lbu
-13 lh
-14 lhu
-15 lw
-16 sb
-17 sh
-18 sw
-19 addi
-20 slti
-21 sltiu
-22 xori
-23 ori
-24 andi
-25 slli
-26 srli
-27 srai
-28 add
-29 sub
-30 slt
-31 sltu
-32 xor
-33 or
-34 and
-35 sll
-36 srl
-37 sra
+ 0 T_LUI
+ 1 T_AUIPC
+ 2 T_JAL  
+ 3 T_JALR  
+ 4 T_BEQ  
+ 5 T_BNE  
+ 6 T_BLT  
+ 7 T_BGE  
+ 8 T_BLTU  
+ 9 T_BGEU  
+ 10 T_LB
+ 11 T_LBU
+ 12 T_LH
+ 13 T_LHU
+ 14 T_LW
+ 15 T_SB
+ 16 T_SH
+ 17 T_SW
+ 18 T_ADDI
+ 19 T_SLTI
+ 20 T_SLTIU
+ 21 T_XORI
+ 22 T_ORI
+ 23 T_ANDI
+ 24 T_SLLI
+ 25 T_SRLI
+ 26 T_SRAI
+ 27 T_ADD
+ 28 T_SUB
+ 29 T_SLT
+ 30 T_SLTU
+ 31 T_XOR
+ 32 T_OR
+ 33 T_AND
+ 34 T_SLL
+ 35 T_SRL
+ 36 T_SRA
+ 37 T_BUBBLE
+ 38 T_PIPELINE_STALL  

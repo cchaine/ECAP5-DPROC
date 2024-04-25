@@ -86,6 +86,10 @@ typedef enum logic [2:0] {
 state_t state_d, state_q /* verilator public */;
 
 logic memory_request;
+logic[31:0] write_data;
+logic[31:0] signed_read_data;
+logic[3:0] sel_q;
+logic unsigned_load_q;
 
 /*****************************************/
 /*        Wishbone output signals        */
@@ -100,7 +104,7 @@ logic        wb_cyc_d,        wb_cyc_q;
 /*****************************************/
 /*             Output signals            */
 /*****************************************/
-logic input_ready_q;
+logic input_ready_d, input_ready_q;
 logic output_valid_q;
 logic reg_write_d, reg_write_q;
 logic[4:0] reg_addr_d, reg_addr_q;
@@ -126,8 +130,11 @@ always_comb begin : state_machine
     end
     MEMORY_STALL: begin
       if(!wb_stall_i) begin
-        // The memory is unstalled
-        state_d = REQUEST;
+        if(wb_ack_i) begin
+          state_d = DONE;
+        end else begin
+          state_d = MEMORY_WAIT;
+        end
       end
     end
     REQUEST: begin
@@ -153,20 +160,46 @@ always_comb begin : state_machine
   endcase
 end
 
+always_comb begin : data_size
+  write_data = 0;
+  case(sel_i) // sel_i is used here as this is used on the cycle where the inputs are valid
+    4'h1: write_data = {24'h0, write_data_i[7:0]};
+    4'h3: write_data = {16'h0, write_data_i[15:0]};
+    4'hF: write_data = write_data_i[31:0];
+    default: begin end
+  endcase
+
+  signed_read_data = 0;
+  case(sel_q) // sel_i is used here as this is used after the inputs are invalidated
+    4'h1: signed_read_data = {{24{wb_dat_i[7]}}, wb_dat_i[7:0]};
+    4'h3: signed_read_data = {{16{wb_dat_i[15]}}, wb_dat_i[15:0]};
+    4'hF: signed_read_data = wb_dat_i[31:0];
+    default: begin end
+  endcase
+end
+
 always_comb begin : wishbone_read
   wb_adr_d = wb_adr_q;
   wb_stb_d = wb_stb_q;
   wb_cyc_d = wb_cyc_q;
+  wb_dat_d = wb_dat_q;
+  wb_we_d = wb_we_q;
+  wb_sel_d = wb_sel_q;
 
   case(state_q)
     IDLE: begin
       if(memory_request) begin
         wb_adr_d = alu_result_i;
-        wb_dat_d = write_data_i;
+        wb_dat_d = write_data;
         wb_we_d  = write_i;
         wb_sel_d = sel_i;
         wb_stb_d = 1;
         wb_cyc_d = 1;
+      end
+    end
+    MEMORY_STALL: begin
+      if(!wb_stall_i) begin
+        wb_stb_d = 0;
       end
     end
     REQUEST: begin
@@ -190,7 +223,20 @@ always_comb begin : reg_output
     reg_data_d = alu_result_i;
     reg_write_d = input_valid_i ? reg_write_i : 0;
   end else if(wb_ack_i) begin
-    reg_data_d = wb_dat_i;
+    reg_data_d = unsigned_load_q ? wb_dat_i : signed_read_data;
+  end
+end
+
+always_comb begin : input_ready
+  input_ready_d = input_ready_q;
+  if(state_q == IDLE) begin
+    input_ready_d = 1;
+  end
+  if(state_q == DONE) begin
+    input_ready_d = 1;
+  end
+  if(state_q == IDLE && memory_request) begin
+    input_ready_d = 0;
   end
 end
 
@@ -215,7 +261,7 @@ always_ff @(posedge clk_i) begin
   end else begin
     state_q         <=  state_d;
 
-    input_ready_q  <= (state_q == IDLE);
+    input_ready_q  <= input_ready_d;
 
     wb_adr_q        <=  wb_adr_d;
     wb_dat_q        <=  wb_dat_d;
@@ -229,6 +275,12 @@ always_ff @(posedge clk_i) begin
     reg_write_q <= reg_write_d;
     reg_addr_q <= reg_addr_d;
     reg_data_q <= reg_data_d;
+
+    if(state_q == IDLE) begin
+      // These internal signals need to register the inputs signals
+      sel_q <= sel_i;
+      unsigned_load_q <= unsigned_load_i;
+    end
   end
 end
 

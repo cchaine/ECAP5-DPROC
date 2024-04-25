@@ -23,7 +23,7 @@ set(BENCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/benches/)
 set(TEST_INCLUDE_DIR ${ecap5_dtlib_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src/)
 set(INCLUDE_DIR ${SRC_DIR}/include/)
-set(LIBS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/)
+set(LIBS_DIR ${ecap5_dtlib_SOURCE_DIR}/src/)
 set(TESTDATA_DIR ${CMAKE_CURRENT_BINARY_DIR}/testdata/)
 set(CONFIG_DIR ${CMAKE_SOURCE_DIR}/config/)
 
@@ -45,7 +45,7 @@ set(TEST_BINARIES)
 set(TEST_TARGETS)
 set(TEST_OUTPUTS)
 macro(add_testbench module)
-  cmake_parse_arguments(ARG ""
+  cmake_parse_arguments(ARG "PUBLIC"
                             "BENCH"
                             "LIBS"
                             ${ARGN})
@@ -62,13 +62,24 @@ macro(add_testbench module)
   # Create the test executable
   add_executable(${TARGET} ${BENCH_DIR}/${module}/${TARGET}.cpp)
   target_include_directories(${TARGET} PUBLIC ${TEST_INCLUDE_DIR})
-  verilate(${TARGET}
-    PREFIX V${TARGET}
-    SOURCES ${SV_HEADERS}
-            ${BENCH_DIR}/${module}/${TARGET}.sv
-            ${ARG_LIBS}
-    INCLUDE_DIRS ${SRC_DIR}
-    TRACE)
+  if(${ARG_PUBLIC})
+    verilate(${TARGET}
+      PREFIX V${TARGET}
+      SOURCES ${SV_HEADERS}
+              ${BENCH_DIR}/${module}/${TARGET}.sv
+              ${ARG_LIBS}
+      INCLUDE_DIRS ${SRC_DIR}
+      TRACE
+      PUBLIC)
+  else()
+    verilate(${TARGET}
+      PREFIX V${TARGET}
+      SOURCES ${SV_HEADERS}
+              ${BENCH_DIR}/${module}/${TARGET}.sv
+              ${ARG_LIBS}
+      INCLUDE_DIRS ${SRC_DIR}
+      TRACE)
+  endif()
 
   set(TEST_TARGET simulate_${ARG_BENCH})
   set(TEST_OUTPUT ${TESTDATA_DIR}/${ARG_BENCH}.csv)
@@ -94,6 +105,9 @@ add_testbench(ifm)
 add_testbench(decm)
 add_testbench(exm)
 add_testbench(lsm)
+add_testbench(lsm BENCH lsm_w_slave LIBS instr_wb_slave PUBLIC)
+add_testbench(emm)
+add_testbench(top PUBLIC)
 
 # Main targets
 add_custom_target(build DEPENDS ${TEST_BINARIES})

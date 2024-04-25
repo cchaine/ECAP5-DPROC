@@ -1,0 +1,117 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sun Apr 21 15:44:17 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/lsm_w_slave.vcd"
+[dumpfile_mtime] "Sun Apr 21 15:34:35 2024"
+[dumpfile_size] 15884
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/lsm_w_slave.gtkw"
+[timestart] 8
+[size] 2320 1305
+[pos] -1 -1
+*-4.987477 58 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_lsm_w_slave.
+[sst_width] 253
+[signals_width] 202
+[sst_expanded] 1
+[sst_vpaned_height] 392
+@24
+[color] 1
+TOP.tb_lsm_w_slave.testcase[31:0]
+@28
+TOP.tb_lsm_w_slave.clk_i
+TOP.tb_lsm_w_slave.rst_i
+@22
+[color] 5
+TOP.tb_lsm_w_slave.injected_data_i[31:0]
+@28
+TOP.tb_lsm_w_slave.input_valid_i
+TOP.tb_lsm_w_slave.input_ready_o
+[color] 3
+TOP.tb_lsm_w_slave.enable_i
+@22
+[color] 3
+TOP.tb_lsm_w_slave.alu_result_i[31:0]
+@28
+[color] 3
+TOP.tb_lsm_w_slave.write_i
+@22
+[color] 3
+TOP.tb_lsm_w_slave.write_data_i[31:0]
+[color] 3
+TOP.tb_lsm_w_slave.sel_i[3:0]
+@28
+[color] 3
+TOP.tb_lsm_w_slave.unsigned_load_i
+[color] 3
+TOP.tb_lsm_w_slave.reg_write_i
+@22
+[color] 3
+TOP.tb_lsm_w_slave.reg_addr_i[4:0]
+@800200
+-Wishbone
+@2029
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/lsm_state_filter.gtkw
+TOP.tb_lsm_w_slave.dut.state_q[2:0]
+@22
+[color] 2
+TOP.tb_lsm_w_slave.wb_adr_o[31:0]
+[color] 2
+TOP.tb_lsm_w_slave.wb_dat_i[31:0]
+[color] 2
+TOP.tb_lsm_w_slave.wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_lsm_w_slave.wb_we_o
+@22
+[color] 2
+TOP.tb_lsm_w_slave.wb_sel_o[3:0]
+@28
+[color] 2
+TOP.tb_lsm_w_slave.wb_stb_o
+[color] 2
+TOP.tb_lsm_w_slave.wb_ack_i
+[color] 2
+TOP.tb_lsm_w_slave.wb_cyc_o
+[color] 2
+TOP.tb_lsm_w_slave.wb_stall_i
+@1000200
+-Wishbone
+@28
+TOP.tb_lsm_w_slave.output_valid_o
+[color] 7
+TOP.tb_lsm_w_slave.reg_write_o
+@22
+[color] 7
+TOP.tb_lsm_w_slave.reg_addr_o[4:0]
+[color] 7
+TOP.tb_lsm_w_slave.reg_data_o[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

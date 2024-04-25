@@ -51,13 +51,12 @@ add_dependency(ECAP5_TREQ
 
 add_dependency(ECAP5_DTLIB
   GIT ecap5/ecap5-dtlib
-  TAG main)
+  TAG 2-implement-an-instrumented-wishbone-slave)
 
 # Configure dependencies
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
-# Find packages
-find_package(verilator HINTS $ENV{VERILATOR_ROOT})
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/verilator-config.cmake)
 
 # Include subdirectories
 
