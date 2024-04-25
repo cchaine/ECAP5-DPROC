@@ -24,7 +24,7 @@ jobs:
     - uses: actions/checkout@v4.1.1
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build
+      run: cmake -B ${{github.workspace}}/build -GNinja
 
     - name: Cache build directory
       if: always()
@@ -51,7 +51,7 @@ jobs:
         key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
 
     - name: Generate documentation
-      run: make -C ${{github.workspace}}/build docs
+      run: ninja -C ${{github.workspace}}/build docs
 
     - name: Upload documentation
       uses: actions/upload-artifact@v4
@@ -76,10 +76,10 @@ jobs:
         key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
 
     - name: Lint
-      run: make -C ${{github.workspace}}/build lint
+      run: ninja -C ${{github.workspace}}/build lint
 
     - name: Delete Previous Cache
-      if: steps.import-build.outputs.cache-hit == 'true'
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
       run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -110,7 +110,7 @@ jobs:
         key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
 
     - name: Build simulation
-      run: make -C ${{github.workspace}}/build build
+      run: ninja -C ${{github.workspace}}/build build
 
     - name: Simulate
       id: simulate
@@ -118,12 +118,12 @@ jobs:
       # Checks if there is any testdata
       # Check if there is any fail in that testdata
       run: >-
-        make -C ${{github.workspace}}/build -k tests &&
+        ninja -C ${{github.workspace}}/build -k 0 tests &&
         ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
         (! grep -qe "[^;]*;0" ${{github.workspace}}/build/tests/testdata/*)
 
     - name: Delete Previous Cache
-      if: steps.import-build.outputs.cache-hit == 'true'
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
       run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -155,8 +155,8 @@ jobs:
 
     - name: Generate report
       run: >-
-        make -C ${{github.workspace}}/build report_markdown &&
-        make -C ${{github.workspace}}/build report
+        ninja -C ${{github.workspace}}/build report_markdown &&
+        ninja -C ${{github.workspace}}/build report
 
     - name: Write summary
       run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
@@ -172,7 +172,7 @@ jobs:
 
     - name: Generate badges
       if: ${{ github.ref == 'refs/heads/main' }}
-      run: make -C ${{github.workspace}}/build badges;
+      run: ninja -C ${{github.workspace}}/build badges;
 
     - name: Check generated badges
       if: ${{ always() && github.ref == 'refs/heads/main' }}
