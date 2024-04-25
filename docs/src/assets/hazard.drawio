@@ -1,0 +1,277 @@
+<mxfile host="Electron" modified="2024-04-25T14:50:19.230Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.2.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="Bg3E2LGyNqf7vKBGnobY" version="24.2.5" type="device">
+  <diagram name="Page-1" id="9YyX6JoDsKKTDv5C8_LZ">
+    <mxGraphModel dx="2120" dy="1356" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-1" value="Control Hazard" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="80" y="138" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-6" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-7" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-8" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-9" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-10" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-11" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-12" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-13" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-14" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-15" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-16" value="branch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="80" y="380" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-17" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-18" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-19" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-20" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-21" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-22" value="branch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="220" y="510" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-23" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-24" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-25" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-26" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-27" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-28" value="branch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="360" y="650" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-30" value="wrong" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="80" y="510" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-31" value="wrong" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="220" y="650" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-32" value="wrong" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="80" y="650" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-33" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-34" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-35" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-36" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-37" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-38" value="branch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="500" y="780" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-39" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="360" y="780" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-40" value="wrong" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="220" y="780" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-41" value="right" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="80" y="780" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-42" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="80" y="850" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-43" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="220" y="850" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-44" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="360" y="850" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-45" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="500" y="850" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-46" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="640" y="850" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-47" value="branch" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="640" y="910" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-48" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="500" y="910" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-49" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="360" y="910" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-50" value="right" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="220" y="910" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-51" value="right" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="80" y="910" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-53" value="&lt;p style=&quot;margin-top: 0px;&quot;&gt;When a branch is taken, the hazard module shall alert the EXM module to discard the following two instructions&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="80" y="980" width="620" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-54" value="Data hazard" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="827" y="138" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-55" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="827" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-56" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="967" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-57" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-58" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-59" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="190" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-60" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="827" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-61" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="967" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-62" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-63" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-64" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="320" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-65" value="w rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="380" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-66" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="827" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-67" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="967" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-68" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-69" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-70" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="450" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-72" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="827" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-73" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="967" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-74" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-75" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-76" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="585" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-81" value="IFM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="827" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-82" value="DECM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="967" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-83" value="EXM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-84" value="LSM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-85" value="WBM" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="720" width="80" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-101" value="w rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="380" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-102" value="w rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="380" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-103" value="r rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="967" y="380" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-104" value="w rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="500" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-105" value="w rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="500" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-106" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="500" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-107" value="r rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="967" y="500" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-108" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="640" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-109" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="640" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-110" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="640" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-111" value="r rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="967" y="640" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-117" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1387" y="770" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-118" value="bubble" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1247" y="770" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-119" value="r rX" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="1107" y="770" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="eP7-M_6xIBFRrfAVnVib-120" value="&lt;p style=&quot;margin-top: 0px;&quot;&gt;The hazard module shall alert the DECM to not validate its output until there are no pending write to any of the read registers.&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="827" y="980" width="620" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

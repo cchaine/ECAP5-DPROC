@@ -75,48 +75,48 @@ Functional partitioning
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_01
 
-  The External Memory Module (EMM) shall arbitrate memory requests from both the IFM and EXM.
+  The Memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_02
   
-  The Instruction Fetch Module (IFM) shall implement the instruction fetch stage of the pipeline.
+  The Fetch module shall implement the instruction fetch stage of the pipeline.
 
 .. requirement:: A_INSTRUCTION_FETCH_01
   :rationale: Pipeline stages are all run in parallel, refer to section 5.2.
 
-  The IFM shall fetch instructions continuously starting on the clock cycle after rst i is deasserted, providing them to the DECM one after the other.
+  The fetch module shall fetch instructions continuously starting on the clock cycle after rst i is deasserted, providing them to the decode module one after the other.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_03
 
-  The Decode Module (DECM) shall implement the decode stage of the pipeline.
+  The Decode module shall implement the decode stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_04
 
-   The Register Module (REGM) shall implement the internal general-purpose registers.
+   The Register module shall implement the internal general-purpose registers.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_05
 
-   The Execute Module (EXM) shall implement the execute stage of the pipeline.
+   The Execute module shall implement the execute stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_06
 
-   The Load-Store Module (LSM) shall implement the load/store stage of the pipeline.
+   The Loadstore module shall implement the load/store stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_07
 
-   The Write-Back Module (WBM) shall implement the write-back stage of the pipeline.
+   The Writeback module shall implement the write-back stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_08
 
-  The Hazard Module (HZDM) shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
+  The Hazard module shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
 
 Interface protocols
 ^^^^^^^^^^^^^^^^^^^
 
 .. requirement:: A_MEMORY_BUS_01
 
-   The bus interface between the IFM and EMM shall be compliant with the pipelined wishbone B4 specification.
+   The bus interface between the fetch module and memory module shall be compliant with the pipelined wishbone B4 specification.
 
 .. requirement:: A_MEMORY_BUS_02
 
-   The bus interface between the LSM and EMM shall be compliant with the pipelined wishbone B4 specification.
+   The bus interface between the loadstore module and memory module shall be compliant with the pipelined wishbone B4 specification.

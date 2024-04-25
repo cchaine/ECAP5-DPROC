@@ -1,0 +1,137 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Wed Apr 24 19:55:08 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/memory.vcd"
+[dumpfile_mtime] "Wed Apr 24 19:53:27 2024"
+[dumpfile_size] 16907
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/memory.gtkw"
+[timestart] 167
+[size] 1440 783
+[pos] -1 -1
+*-5.353710 251 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_memory.
+[sst_width] 253
+[signals_width] 225
+[sst_expanded] 1
+[sst_vpaned_height] 273
+@2024
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/memory_testcase_filter.gtkw
+TOP.tb_memory.testcase[31:0]
+@28
+TOP.tb_memory.clk_i
+TOP.tb_memory.rst_i
+[color] 3
+TOP.tb_memory.dut.switch_q
+@2025
+[color] 3
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/memory_state_filter.gtkw
+TOP.tb_memory.dut.state_q[2:0]
+@800200
+-Slave1
+@22
+[color] 7
+TOP.tb_memory.s1_wb_adr_i[31:0]
+[color] 7
+TOP.tb_memory.s1_wb_dat_i[31:0]
+[color] 7
+TOP.tb_memory.s1_wb_dat_o[31:0]
+@28
+[color] 7
+TOP.tb_memory.s1_wb_we_i
+@22
+[color] 7
+TOP.tb_memory.s1_wb_sel_i[3:0]
+@28
+[color] 7
+TOP.tb_memory.s1_wb_stb_i
+[color] 7
+TOP.tb_memory.s1_wb_ack_o
+[color] 7
+TOP.tb_memory.s1_wb_cyc_i
+[color] 7
+TOP.tb_memory.s1_wb_stall_o
+@1000200
+-Slave1
+@800200
+-Slave2
+@22
+[color] 2
+TOP.tb_memory.s2_wb_adr_i[31:0]
+[color] 2
+TOP.tb_memory.s2_wb_dat_i[31:0]
+[color] 2
+TOP.tb_memory.s2_wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_memory.s2_wb_we_i
+@22
+[color] 2
+TOP.tb_memory.s2_wb_sel_i[3:0]
+@28
+[color] 2
+TOP.tb_memory.s2_wb_stb_i
+[color] 2
+TOP.tb_memory.s2_wb_ack_o
+[color] 2
+TOP.tb_memory.s2_wb_cyc_i
+[color] 2
+TOP.tb_memory.s2_wb_stall_o
+@1000200
+-Slave2
+@800200
+-Master
+@22
+[color] 5
+TOP.tb_memory.m_wb_adr_o[31:0]
+[color] 5
+TOP.tb_memory.m_wb_dat_o[31:0]
+[color] 5
+TOP.tb_memory.m_wb_dat_i[31:0]
+@28
+[color] 5
+TOP.tb_memory.m_wb_we_o
+@22
+[color] 5
+TOP.tb_memory.m_wb_sel_o[3:0]
+@28
+[color] 5
+TOP.tb_memory.m_wb_stb_o
+[color] 5
+TOP.tb_memory.m_wb_ack_i
+[color] 5
+TOP.tb_memory.m_wb_cyc_o
+[color] 5
+TOP.tb_memory.m_wb_stall_i
+@1000200
+-Master
+[pattern_trace] 1
+[pattern_trace] 0

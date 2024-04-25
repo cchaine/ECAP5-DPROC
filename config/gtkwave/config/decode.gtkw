@@ -1,0 +1,126 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon Apr  1 14:48:23 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/decode.vcd"
+[dumpfile_mtime] "Mon Apr  1 14:47:51 2024"
+[dumpfile_size] 56106
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/decode.gtkw"
+[timestart] 887
+[size] 2160 829
+[pos] -1 -1
+*-4.654594 963 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] TOP.
+[treeopen] TOP.tb_decode.
+[sst_width] 253
+[signals_width] 389
+[sst_expanded] 1
+[sst_vpaned_height] 576
+@2024
+[color] 1
+^1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decode_testcase_filter.gtkw
+TOP.tb_decode.testcase[31:0]
+@28
+TOP.tb_decode.clk_i
+TOP.tb_decode.rst_i
+@200
+-Input
+@28
+TOP.tb_decode.input_valid_i
+TOP.tb_decode.input_ready_o
+@22
+TOP.tb_decode.pc_i[31:0]
+@4022
+^>1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decode_instr_filter_process.py
+TOP.tb_decode.instr_i[31:0]
+@200
+-Register
+@22
+[color] 2
+TOP.tb_decode.raddr1_o[4:0]
+[color] 2
+TOP.tb_decode.rdata1_i[31:0]
+[color] 2
+TOP.tb_decode.raddr2_o[4:0]
+[color] 2
+TOP.tb_decode.rdata2_i[31:0]
+@200
+-Output
+@28
+TOP.tb_decode.output_valid_o
+TOP.tb_decode.output_ready_i
+@200
+-Execute
+@22
+[color] 5
+TOP.tb_decode.pc_o[31:0]
+[color] 5
+TOP.tb_decode.alu_operand1_o[31:0]
+[color] 5
+TOP.tb_decode.alu_operand2_o[31:0]
+@2024
+[color] 5
+^2 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decode_alu_op_filter.gtkw
+TOP.tb_decode.alu_op_o[2:0]
+@28
+[color] 5
+TOP.tb_decode.alu_sub_o
+[color] 5
+TOP.tb_decode.alu_shift_left_o
+[color] 5
+TOP.tb_decode.alu_signed_shift_o
+@2024
+[color] 7
+^3 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decode_branch_cond_filter.gtkw
+TOP.tb_decode.branch_cond_o[2:0]
+@22
+[color] 7
+TOP.tb_decode.branch_offset_o[19:0]
+@200
+-Load-Store
+@28
+[color] 3
+TOP.tb_decode.ls_enable_o
+[color] 3
+TOP.tb_decode.ls_write_o
+@22
+[color] 3
+TOP.tb_decode.ls_write_data_o[31:0]
+[color] 3
+TOP.tb_decode.ls_sel_o[3:0]
+@200
+-Write-back
+@28
+[color] 6
+TOP.tb_decode.reg_write_o
+@24
+[color] 6
+TOP.tb_decode.reg_addr_o[4:0]
+[pattern_trace] 1
+[pattern_trace] 0
