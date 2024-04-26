@@ -61,7 +61,8 @@ enum TestcaseId {
   T_PIPELINE_STALL_AFTER_RESET  =  19,
   T_PIPELINE_STALL              =  20,
   T_RESET                       =  21,
-  T_BRANCH_JALR                 =  22
+  T_BRANCH_JALR                 =  22,
+  T_HAZARD                      =  23
 };
 
 class TB_Execute : public Testbench<Vtb_execute> {
@@ -2003,6 +2004,10 @@ void tb_execute_branch_jalr(TB_Execute * tb) {
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
+void tb_execute_hazard(TB_Execute * tb) {
+  CHECK("tb_execute.hazard.01", false, "TODO");
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -2042,6 +2047,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_execute_reset(tb);
   tb_execute_pipeline_stall_after_reset(tb);
   tb_execute_pipeline_stall(tb);
+
+  tb_execute_hazard(tb);
 
   /************************************************************/
 

@@ -105,6 +105,10 @@ logic       ls_reg_write;
 logic[4:0]  ls_reg_addr;
 logic[31:0] ls_reg_data;
 
+// hazard output
+logic       hzd_ex_discard_request;
+logic       hzd_dec_stall_request;
+
 // handshake
 logic  if_dec_ready,  if_dec_valid,
        dec_ex_ready,  dec_ex_valid,  
@@ -188,7 +192,9 @@ decode decode_inst (
   .ls_write_o          (dec_ls_write),
   .ls_write_data_o     (dec_ls_write_data),
   .ls_sel_o            (dec_ls_sel),
-  .ls_unsigned_load_o  (dec_ls_unsigned_load)
+  .ls_unsigned_load_o  (dec_ls_unsigned_load),
+
+  .stall_request_i     (hzd_dec_stall_request)
 );
 
 execute execute_inst (
@@ -234,7 +240,9 @@ execute execute_inst (
   .reg_addr_o          (ex_reg_addr),
 
   .branch_o            (branch),
-  .branch_target_o     (branch_target)
+  .branch_target_o     (branch_target),
+
+  .discard_request_i   (hzd_ex_discard_request)
 );
 
 loadstore loadstore_inst (
@@ -318,6 +326,24 @@ memory memory_inst (
   .m_wb_ack_i   (wb_ack_i),
   .m_wb_cyc_o   (wb_cyc_o),
   .m_wb_stall_i (wb_stall_i)
+);
+
+hazard hazard_inst (
+  .clk_i (clk_i),
+  .rst_i (rst_i),
+
+  .branch_i (branch),
+  .ex_discard_o  (hzd_ex_discard_request),
+
+  .dec_raddr1_i (reg_raddr1),
+  .dec_raddr2_i (reg_raddr2),
+  .ex_reg_write_i (ex_reg_write),
+  .ex_reg_addr_i (ex_reg_addr),
+  .ls_reg_write_i (ls_reg_write),
+  .ls_reg_addr_i (ls_reg_addr),
+  .rw_reg_write_i (reg_write),
+  .rw_reg_addr_i (reg_waddr),
+  .dec_stall_request_o (hzd_dec_stall_request)
 );
 
 endmodule // ecap5_dproc

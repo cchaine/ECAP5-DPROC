@@ -81,7 +81,8 @@ enum TestcaseId {
   T_SRL             =  35,
   T_SRA             =  36,
   T_BUBBLE          =  37,
-  T_PIPELINE_STALL  =  38
+  T_PIPELINE_STALL  =  38,
+  T_HAZARD          =  39
 };
 
 class TB_Decode : public Testbench<Vtb_decode> {
@@ -3243,6 +3244,10 @@ void tb_decode_pipeline_stall(TB_Decode * tb) {
       "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
+void tb_decode_hazard(TB_Decode * tb) {
+  CHECK("tb_decode.hazard.01", false, "TODO");
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -3298,6 +3303,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_decode_bubble(tb);
 
   tb_decode_pipeline_stall(tb);
+
+  tb_decode_hazard(tb);
 
   /************************************************************/
 
