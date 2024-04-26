@@ -33,11 +33,16 @@
 
 enum CondId {
   COND_control,
+  COND_data,
   __CondIdEnd
 };
 
 enum TestcaseId {
-  T_CONTROL
+  T_CONTROL = 1,
+  T_DATA_X0 = 2,
+  T_DATA_PORT1 = 3,
+  T_DATA_PORT2 = 4,
+  T_DATA_MULTIPLE = 5
 };
 
 class TB_Hazard : public Testbench<Vtb_hazard> {
@@ -71,6 +76,375 @@ void tb_hazard_control(TB_Hazard * tb) {
   
   tb->reset();
   
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->branch_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_control, (core->ex_discard_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->branch_i = 0;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_control, (core->ex_discard_o == 1));
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_control, (core->ex_discard_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_hazard.control.01",
+      tb->conditions[COND_control],
+      "Failed to protect against control hazards", tb->err_cycles[COND_control]);
+}
+
+void tb_hazard_data_x0(TB_Hazard * tb) {
+  Vtb_hazard * core = tb->core;
+  core->testcase = T_DATA_X0;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for data hazard
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->dec_raddr1_i = 0;
+  core->dec_raddr2_i = 0;
+
+  core->ex_reg_write_i = 1;
+  core->ex_reg_addr_i = 0;
+
+  core->ls_reg_write_i = 1;
+  core->ls_reg_addr_i = 0;
+
+  core->rw_reg_write_i = 1;
+  core->rw_reg_addr_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_hazard.data.X0_01",
+      tb->conditions[COND_data],
+      "Failed to protect against data hazards", tb->err_cycles[COND_data]);
+}
+
+void tb_hazard_data_port1(TB_Hazard * tb) {
+  Vtb_hazard * core = tb->core;
+  core->testcase = T_DATA_PORT1;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for data hazard
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t reg1 = 1 + rand() % 31;
+  core->dec_raddr1_i = reg1;
+  core->dec_raddr2_i = 0;
+
+  core->ex_reg_write_i = 0;
+  core->ex_reg_addr_i = reg1;
+
+  core->ls_reg_write_i = 0;
+  core->ls_reg_addr_i = reg1;
+
+  core->rw_reg_write_i = 0;
+  core->rw_reg_addr_i = reg1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ex_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ex_reg_write_i = 0;
+  core->ls_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ls_reg_write_i = 0;
+  core->rw_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_hazard.data.PORT1_01",
+      tb->conditions[COND_data],
+      "Failed to protect against data hazards", tb->err_cycles[COND_data]);
+}
+
+void tb_hazard_data_port2(TB_Hazard * tb) {
+  Vtb_hazard * core = tb->core;
+  core->testcase = T_DATA_PORT2;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for data hazard
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->dec_raddr1_i = 0;
+  uint32_t reg2 = 1 + rand() % 31;
+  core->dec_raddr2_i = reg2;
+
+  core->ex_reg_write_i = 0;
+  core->ex_reg_addr_i = reg2;
+
+  core->ls_reg_write_i = 0;
+  core->ls_reg_addr_i = reg2;
+
+  core->rw_reg_write_i = 0;
+  core->rw_reg_addr_i = reg2;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ex_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ex_reg_write_i = 0;
+  core->ls_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ls_reg_write_i = 0;
+  core->rw_reg_write_i = 1;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_hazard.data.PORT2_01",
+      tb->conditions[COND_data],
+      "Failed to protect against data hazards", tb->err_cycles[COND_data]);
+}
+
+void tb_hazard_data_multiple(TB_Hazard * tb) {
+  Vtb_hazard * core = tb->core;
+  core->testcase = T_DATA_MULTIPLE;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for data hazard
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t reg1 = 1 + rand() % 31;
+  core->dec_raddr1_i = reg1;
+  uint32_t reg2 = 1 + rand() % 31;
+  core->dec_raddr2_i = reg2;
+
+  core->ex_reg_write_i = 1;
+  core->ex_reg_addr_i = reg1;
+
+  core->ls_reg_write_i = 1;
+  core->ls_reg_addr_i = reg2;
+
+  core->rw_reg_write_i = 1;
+  core->rw_reg_addr_i = reg2;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ex_reg_write_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->ls_reg_write_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->rw_reg_write_i = 0;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
+  CHECK("tb_hazard.data.MULTIPLE_01",
+      tb->conditions[COND_data],
+      "Failed to protect against data hazards", tb->err_cycles[COND_data]);
 }
 
 int main(int argc, char ** argv, char ** env) {
@@ -88,6 +462,10 @@ int main(int argc, char ** argv, char ** env) {
   /************************************************************/
 
   tb_hazard_control(tb);
+  tb_hazard_data_x0(tb);
+  tb_hazard_data_port1(tb);
+  tb_hazard_data_port2(tb);
+  tb_hazard_data_multiple(tb);
 
   /************************************************************/
 
