@@ -243,8 +243,8 @@ end
 
 always_comb begin : output_handshake
   output_valid_d = output_valid_q;
-  if(output_ready_i && ~stall_request_i) begin
-    output_valid_d = 1;
+  if(output_ready_i) begin
+    output_valid_d = ~stall_request_i;
   end
 end
 

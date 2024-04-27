@@ -27,53 +27,44 @@ module hazard import ecap5_dproc_pkg::*;
   input   logic         rst_i,
 
   input   logic  branch_i,
-  output  logic  ex_discard_o,
+  output  logic  ex_discard_request_o,
 
-  input   logic[4:0] dec_raddr1_i,
-  input   logic[4:0] dec_raddr2_i,
+  input   logic[4:0] reg_raddr1_i,
+  input   logic[4:0] reg_raddr2_i,
+  input   logic      dec_reg_write_i,
+  input   logic[4:0] dec_reg_addr_i,
   input   logic      ex_reg_write_i,
   input   logic[4:0] ex_reg_addr_i,
   input   logic      ls_reg_write_i,
   input   logic[4:0] ls_reg_addr_i,
-  input   logic      rw_reg_write_i,
-  input   logic[4:0] rw_reg_addr_i,
+  input   logic      reg_write_i,
+  input   logic[4:0] reg_waddr_i,
   output  logic      dec_stall_request_o
 );
 
-logic[1:0] discard_cnt_d, discard_cnt_q;
+logic branch_q;
 logic control_hazard;
-logic ex_data_hazard, ls_data_hazard, rw_data_hazard;
+logic dec_data_hazard, ex_data_hazard, ls_data_hazard, rw_data_hazard;
 
-assign control_hazard = discard_cnt_q > 0;
-
-always_comb begin
-  discard_cnt_d = discard_cnt_q;
-  if(branch_i) begin
-    discard_cnt_d = 2;
-  end else begin
-    if(control_hazard) begin
-      discard_cnt_d = discard_cnt_q - 1;
-    end
-  end
-end
+assign dec_data_hazard = dec_reg_write_i && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == dec_reg_addr_i) || 
+                                            ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == dec_reg_addr_i)));
+assign ex_data_hazard  = ex_reg_write_i  && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == ex_reg_addr_i) || 
+                                            ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == ex_reg_addr_i)));
+assign ls_data_hazard  = ls_reg_write_i  && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == ls_reg_addr_i) || 
+                                            ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == ls_reg_addr_i)));
+  assign rw_data_hazard  = reg_write_i; //    && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == reg_waddr_i) || 
+                                     //       ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == reg_waddr_i)));
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
-    discard_cnt_q <= '0;
+    branch_q <= 0;
   end else begin
-    discard_cnt_q <= discard_cnt_d;
+    branch_q <= branch_i;
   end
 end
 
-assign ex_discard_o = control_hazard;
+assign ex_discard_request_o = branch_i || branch_q;
 
-assign ex_data_hazard = ex_reg_write_i && ((dec_raddr1_i != 5'h0) && (dec_raddr1_i == ex_reg_addr_i) || 
-                                          ((dec_raddr2_i != 5'h0) && (dec_raddr2_i == ex_reg_addr_i)));
-assign ls_data_hazard = ls_reg_write_i && ((dec_raddr1_i != 5'h0) && (dec_raddr1_i == ls_reg_addr_i) || 
-                                          ((dec_raddr2_i != 5'h0) && (dec_raddr2_i == ls_reg_addr_i)));
-assign rw_data_hazard = rw_reg_write_i && ((dec_raddr1_i != 5'h0) && (dec_raddr1_i == rw_reg_addr_i) || 
-                                          ((dec_raddr2_i != 5'h0) && (dec_raddr2_i == rw_reg_addr_i)));
-
-assign dec_stall_request_o = ex_data_hazard || ls_data_hazard || rw_data_hazard;
+assign dec_stall_request_o = dec_data_hazard || ex_data_hazard || ls_data_hazard || rw_data_hazard;
 
 endmodule // hazard

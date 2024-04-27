@@ -60,6 +60,14 @@ public:
   }
   
   void _nop() {
+    core->dec_reg_write_i = 0;
+    core->dec_reg_addr_i = 0;
+    core->ex_reg_write_i = 0;
+    core->ex_reg_addr_i = 0;
+    core->ls_reg_write_i = 0;
+    core->ls_reg_addr_i = 0;
+    core->reg_write_i = 0;
+    core->reg_waddr_i = 0;
   }
 
 };
@@ -81,6 +89,14 @@ void tb_hazard_control(TB_Hazard * tb) {
   
   core->branch_i = 1;
 
+  // the output is asynchrounous
+  core->eval();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_control, (core->ex_discard_request_o == 1));
+
   //=================================
   //      Tick (1)
   
@@ -89,7 +105,7 @@ void tb_hazard_control(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_control, (core->ex_discard_o == 1));
+  tb->check(COND_control, (core->ex_discard_request_o == 1));
 
   //`````````````````````````````````
   //      Set inputs
@@ -104,17 +120,12 @@ void tb_hazard_control(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_control, (core->ex_discard_o == 1));
+  tb->check(COND_control, (core->ex_discard_request_o == 0));
 
   //=================================
   //      Tick (3)
   
   tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-
-  tb->check(COND_control, (core->ex_discard_o == 0));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -139,8 +150,11 @@ void tb_hazard_data_x0(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->dec_raddr1_i = 0;
-  core->dec_raddr2_i = 0;
+  core->reg_raddr1_i = 0;
+  core->reg_raddr2_i = 0;
+
+  core->dec_reg_write_i = 1;
+  core->dec_reg_addr_i = 0;
 
   core->ex_reg_write_i = 1;
   core->ex_reg_addr_i = 0;
@@ -148,8 +162,8 @@ void tb_hazard_data_x0(TB_Hazard * tb) {
   core->ls_reg_write_i = 1;
   core->ls_reg_addr_i = 0;
 
-  core->rw_reg_write_i = 1;
-  core->rw_reg_addr_i = 0;
+  core->reg_write_i = 1;
+  core->reg_waddr_i = 0;
 
   //=================================
   //      Tick (1)
@@ -185,8 +199,11 @@ void tb_hazard_data_port1(TB_Hazard * tb) {
   //      Set inputs
   
   uint32_t reg1 = 1 + rand() % 31;
-  core->dec_raddr1_i = reg1;
-  core->dec_raddr2_i = 0;
+  core->reg_raddr1_i = reg1;
+  core->reg_raddr2_i = 0;
+
+  core->dec_reg_write_i = 0;
+  core->dec_reg_addr_i = reg1;
 
   core->ex_reg_write_i = 0;
   core->ex_reg_addr_i = reg1;
@@ -194,8 +211,8 @@ void tb_hazard_data_port1(TB_Hazard * tb) {
   core->ls_reg_write_i = 0;
   core->ls_reg_addr_i = reg1;
 
-  core->rw_reg_write_i = 0;
-  core->rw_reg_addr_i = reg1;
+  core->reg_write_i = 0;
+  core->reg_waddr_i = reg1;
 
   //=================================
   //      Tick (1)
@@ -210,10 +227,26 @@ void tb_hazard_data_port1(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Set inputs
   
+  core->dec_reg_write_i = 1;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->dec_reg_write_i = 0;
   core->ex_reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (3)
   
   tb->tick();
 
@@ -229,7 +262,7 @@ void tb_hazard_data_port1(TB_Hazard * tb) {
   core->ls_reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (4)
   
   tb->tick();
 
@@ -242,10 +275,10 @@ void tb_hazard_data_port1(TB_Hazard * tb) {
   //      Set inputs
   
   core->ls_reg_write_i = 0;
-  core->rw_reg_write_i = 1;
+  core->reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (5)
   
   tb->tick();
 
@@ -277,9 +310,12 @@ void tb_hazard_data_port2(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->dec_raddr1_i = 0;
+  core->reg_raddr1_i = 0;
   uint32_t reg2 = 1 + rand() % 31;
-  core->dec_raddr2_i = reg2;
+  core->reg_raddr2_i = reg2;
+
+  core->dec_reg_write_i = 0;
+  core->dec_reg_addr_i = reg2;
 
   core->ex_reg_write_i = 0;
   core->ex_reg_addr_i = reg2;
@@ -287,8 +323,8 @@ void tb_hazard_data_port2(TB_Hazard * tb) {
   core->ls_reg_write_i = 0;
   core->ls_reg_addr_i = reg2;
 
-  core->rw_reg_write_i = 0;
-  core->rw_reg_addr_i = reg2;
+  core->reg_write_i = 0;
+  core->reg_waddr_i = reg2;
 
   //=================================
   //      Tick (1)
@@ -303,10 +339,26 @@ void tb_hazard_data_port2(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Set inputs
   
+  core->dec_reg_write_i = 1;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->dec_reg_write_i = 0;
   core->ex_reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (3)
   
   tb->tick();
 
@@ -322,7 +374,7 @@ void tb_hazard_data_port2(TB_Hazard * tb) {
   core->ls_reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (4)
   
   tb->tick();
 
@@ -335,10 +387,10 @@ void tb_hazard_data_port2(TB_Hazard * tb) {
   //      Set inputs
   
   core->ls_reg_write_i = 0;
-  core->rw_reg_write_i = 1;
+  core->reg_write_i = 1;
 
   //=================================
-  //      Tick (1)
+  //      Tick (5)
   
   tb->tick();
 
@@ -371,9 +423,12 @@ void tb_hazard_data_multiple(TB_Hazard * tb) {
   //      Set inputs
   
   uint32_t reg1 = 1 + rand() % 31;
-  core->dec_raddr1_i = reg1;
+  core->reg_raddr1_i = reg1;
   uint32_t reg2 = 1 + rand() % 31;
-  core->dec_raddr2_i = reg2;
+  core->reg_raddr2_i = reg2;
+
+  core->dec_reg_write_i = 1;
+  core->dec_reg_addr_i = reg2;
 
   core->ex_reg_write_i = 1;
   core->ex_reg_addr_i = reg1;
@@ -381,11 +436,26 @@ void tb_hazard_data_multiple(TB_Hazard * tb) {
   core->ls_reg_write_i = 1;
   core->ls_reg_addr_i = reg2;
 
-  core->rw_reg_write_i = 1;
-  core->rw_reg_addr_i = reg2;
+  core->reg_write_i = 1;
+  core->reg_waddr_i = reg2;
 
   //=================================
   //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_data, (core->dec_stall_request_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->dec_reg_write_i = 0;
+
+  //=================================
+  //      Tick (2)
   
   tb->tick();
 
@@ -400,7 +470,7 @@ void tb_hazard_data_multiple(TB_Hazard * tb) {
   core->ex_reg_write_i = 0;
 
   //=================================
-  //      Tick (1)
+  //      Tick (3)
   
   tb->tick();
 
@@ -415,7 +485,7 @@ void tb_hazard_data_multiple(TB_Hazard * tb) {
   core->ls_reg_write_i = 0;
 
   //=================================
-  //      Tick (1)
+  //      Tick (4)
   
   tb->tick();
 
@@ -427,10 +497,10 @@ void tb_hazard_data_multiple(TB_Hazard * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->rw_reg_write_i = 0;
+  core->reg_write_i = 0;
 
   //=================================
-  //      Tick (1)
+  //      Tick (5)
   
   tb->tick();
 

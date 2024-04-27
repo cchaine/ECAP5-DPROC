@@ -333,16 +333,18 @@ hazard hazard_inst (
   .rst_i (rst_i),
 
   .branch_i (branch),
-  .ex_discard_o  (hzd_ex_discard_request),
+  .ex_discard_request_o  (hzd_ex_discard_request),
 
-  .dec_raddr1_i (reg_raddr1),
-  .dec_raddr2_i (reg_raddr2),
+  .reg_raddr1_i (reg_raddr1),
+  .reg_raddr2_i (reg_raddr2),
+  .dec_reg_write_i (dec_reg_write),
+  .dec_reg_addr_i (dec_reg_addr),
   .ex_reg_write_i (ex_reg_write),
   .ex_reg_addr_i (ex_reg_addr),
   .ls_reg_write_i (ls_reg_write),
   .ls_reg_addr_i (ls_reg_addr),
-  .rw_reg_write_i (reg_write),
-  .rw_reg_addr_i (reg_waddr),
+  .reg_write_i (reg_write),
+  .reg_waddr_i (reg_waddr),
   .dec_stall_request_o (hzd_dec_stall_request)
 );
 

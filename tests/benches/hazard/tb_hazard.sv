@@ -28,16 +28,18 @@ module tb_hazard import ecap5_dproc_pkg::*;
   input   logic         rst_i,
 
   input   logic  branch_i,
-  output  logic  ex_discard_o,
+  output  logic  ex_discard_request_o,
 
-  input   logic[4:0] dec_raddr1_i,
-  input   logic[4:0] dec_raddr2_i,
+  input   logic[4:0] reg_raddr1_i,
+  input   logic[4:0] reg_raddr2_i,
+  input   logic      dec_reg_write_i,
+  input   logic[4:0] dec_reg_addr_i,
   input   logic      ex_reg_write_i,
   input   logic[4:0] ex_reg_addr_i,
   input   logic      ls_reg_write_i,
   input   logic[4:0] ls_reg_addr_i,
-  input   logic      rw_reg_write_i,
-  input   logic[4:0] rw_reg_addr_i,
+  input   logic      reg_write_i,
+  input   logic[4:0] reg_waddr_i,
   output  logic      dec_stall_request_o
 );
 
@@ -46,16 +48,18 @@ hazard dut (
   .rst_i (rst_i),
 
   .branch_i (branch_i),
-  .ex_discard_o (ex_discard_o),
+  .ex_discard_request_o (ex_discard_request_o),
 
-  .dec_raddr1_i         (dec_raddr1_i),
-  .dec_raddr2_i         (dec_raddr2_i),
+  .reg_raddr1_i         (reg_raddr1_i),
+  .reg_raddr2_i         (reg_raddr2_i),
+  .dec_reg_write_i      (dec_reg_write_i),
+  .dec_reg_addr_i       (dec_reg_addr_i),
   .ex_reg_write_i       (ex_reg_write_i),
   .ex_reg_addr_i        (ex_reg_addr_i),
   .ls_reg_write_i       (ls_reg_write_i),
   .ls_reg_addr_i        (ls_reg_addr_i),
-  .rw_reg_write_i       (rw_reg_write_i),
-  .rw_reg_addr_i        (rw_reg_addr_i),
+  .reg_write_i          (ls_reg_write_i),
+  .reg_waddr_i          (ls_reg_addr_i),
   .dec_stall_request_o  (dec_stall_request_o)
 );
 
