@@ -42,10 +42,10 @@ always @ (posedge clk_i) begin
   end else begin
     registers[waddr_i] <= registers[waddr_i];
   end
-
-  rdata1_o <= registers[raddr1_i];
-  rdata2_o <= registers[raddr2_i];
 end
+
+assign rdata1_o = registers[raddr1_i];
+assign rdata2_o = registers[raddr2_i];
 
 `ifdef VERILATOR
   export "DPI-C" task set_register_value;

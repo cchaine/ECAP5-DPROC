@@ -827,6 +827,8 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
   
   tb->reset();
 
+  tb->set_register(1, 0);
+
   //=================================
   //      Tick (1)
   
@@ -869,10 +871,20 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
   //=================================
   //      Tick (5)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -885,8 +897,64 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
   
   tb->tick();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
   //=================================
   //      Tick (7)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
+  //=================================
+  //      Tick (8)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 1));
+
+  //=================================
+  //      Tick (9)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_alu_operand1 == 1));
+
+  //=================================
+  //      Tick (10)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (11)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (12)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_writeback, (core->tb_ecap5_dproc->dut->reg_write == 1) &&
+                            (core->tb_ecap5_dproc->dut->reg_wdata == 2));
+
+  //=================================
+  //      Tick (13)
   
   tb->tick();
 
@@ -902,22 +970,10 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
       "Failed to implement the valid signal", tb->err_cycles[COND_valid]);
 
   CHECK("tb_ecap5_dproc.data_hazard.03",
-      tb->conditions[COND_fetch],
-      "Failed to implement the if", tb->err_cycles[COND_fetch]);
-
-  CHECK("tb_ecap5_dproc.data_hazard.04",
       tb->conditions[COND_decode],
       "Failed to implement the decode stage", tb->err_cycles[COND_decode]);
 
-  CHECK("tb_ecap5_dproc.data_hazard.05",
-      tb->conditions[COND_execute],
-      "Failed to implement the execute stage", tb->err_cycles[COND_execute]);
-
-  CHECK("tb_ecap5_dproc.data_hazard.06",
-      tb->conditions[COND_loadstore],
-      "Failed to implement the loadstore stage", tb->err_cycles[COND_loadstore]);
-
-  CHECK("tb_ecap5_dproc.data_hazard.07",
+  CHECK("tb_ecap5_dproc.data_hazard.04",
       tb->conditions[COND_writeback],
       "Failed to implement the writeback stage", tb->err_cycles[COND_writeback]);
 }
