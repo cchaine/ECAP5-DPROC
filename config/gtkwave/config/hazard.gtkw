@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri Apr 26 21:04:12 2024
+[*] Sat Apr 27 11:30:28 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/hazard.vcd"
-[dumpfile_mtime] "Fri Apr 26 21:02:55 2024"
-[dumpfile_size] 5928
+[dumpfile_mtime] "Sat Apr 27 11:30:16 2024"
+[dumpfile_size] 6372
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/hazard.gtkw"
-[timestart] 1
+[timestart] 177
 [size] 1288 600
 [pos] -1 -1
-*-7.093879 60 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-5.093879 235 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -53,26 +53,38 @@ TOP.tb_hazard.rst_i
 -Control
 @28
 TOP.tb_hazard.branch_i
-TOP.tb_hazard.ex_discard_o
+TOP.tb_hazard.ex_discard_request_o
 @1000200
 -Control
 @800200
 -Data
 @22
-TOP.tb_hazard.dec_raddr1_i[4:0]
-TOP.tb_hazard.dec_raddr2_i[4:0]
+TOP.tb_hazard.reg_raddr1_i[4:0]
+TOP.tb_hazard.reg_raddr2_i[4:0]
 @28
+[color] 2
+TOP.tb_hazard.dec_reg_write_i
+@22
+[color] 2
+TOP.tb_hazard.dec_reg_addr_i[4:0]
+@28
+[color] 2
 TOP.tb_hazard.ex_reg_write_i
 @22
+[color] 2
 TOP.tb_hazard.ex_reg_addr_i[4:0]
 @28
+[color] 2
 TOP.tb_hazard.ls_reg_write_i
 @22
+[color] 2
 TOP.tb_hazard.ls_reg_addr_i[4:0]
 @28
-TOP.tb_hazard.rw_reg_write_i
+[color] 2
+TOP.tb_hazard.reg_write_i
 @22
-TOP.tb_hazard.rw_reg_addr_i[4:0]
+[color] 2
+TOP.tb_hazard.reg_waddr_i[4:0]
 @28
 TOP.tb_hazard.dec_stall_request_o
 @1000200

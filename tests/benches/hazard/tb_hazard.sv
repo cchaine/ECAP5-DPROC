@@ -58,8 +58,8 @@ hazard dut (
   .ex_reg_addr_i        (ex_reg_addr_i),
   .ls_reg_write_i       (ls_reg_write_i),
   .ls_reg_addr_i        (ls_reg_addr_i),
-  .reg_write_i          (ls_reg_write_i),
-  .reg_waddr_i          (ls_reg_addr_i),
+  .reg_write_i          (reg_write_i),
+  .reg_waddr_i          (reg_waddr_i),
   .dec_stall_request_o  (dec_stall_request_o)
 );
 

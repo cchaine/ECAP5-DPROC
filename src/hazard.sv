@@ -52,8 +52,8 @@ assign ex_data_hazard  = ex_reg_write_i  && ((reg_raddr1_i != 5'h0) && (reg_radd
                                             ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == ex_reg_addr_i)));
 assign ls_data_hazard  = ls_reg_write_i  && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == ls_reg_addr_i) || 
                                             ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == ls_reg_addr_i)));
-  assign rw_data_hazard  = reg_write_i; //    && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == reg_waddr_i) || 
-                                     //       ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == reg_waddr_i)));
+assign rw_data_hazard  = reg_write_i     && ((reg_raddr1_i != 5'h0) && (reg_raddr1_i == reg_waddr_i) || 
+                                            ((reg_raddr2_i != 5'h0) && (reg_raddr2_i == reg_waddr_i)));
 
 always_ff @(posedge clk_i) begin
   if(rst_i) begin
