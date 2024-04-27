@@ -292,15 +292,18 @@ void tb_regs_read_before_write(TB_Regs * tb) {
   core->wdata_i = value;
   core->write_i = 1;
 
-  //=================================
-  //      Tick (0)
-  
-  tb->tick();
+  // this change is asynchronous
+  core->eval();
 
   //`````````````````````````````````
   //      Checks 
   
   tb->check(COND_read, (core->rdata1_o == previous_value));
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
 
   //`````````````````````````````````
   //      Set inputs
@@ -308,7 +311,7 @@ void tb_regs_read_before_write(TB_Regs * tb) {
   core->write_i = 0;
 
   //=================================
-  //      Tick (1)
+  //      Tick (2)
   
   tb->tick();
 

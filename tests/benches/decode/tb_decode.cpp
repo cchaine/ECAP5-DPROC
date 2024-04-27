@@ -81,7 +81,8 @@ enum TestcaseId {
   T_SRL             =  35,
   T_SRA             =  36,
   T_BUBBLE          =  37,
-  T_PIPELINE_STALL  =  38
+  T_PIPELINE_STALL  =  38,
+  T_HAZARD          =  39
 };
 
 class TB_Decode : public Testbench<Vtb_decode> {
@@ -3243,6 +3244,165 @@ void tb_decode_pipeline_stall(TB_Decode * tb) {
       "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
+void tb_decode_hazard(TB_Decode * tb) {
+  Vtb_decode * core = tb->core;
+  core->testcase = T_HAZARD;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set inputs for AND
+  //    tick 1. Set hazard (core holds outputs result of AND)
+  //    tick 2. Nothing (core holds outputs result of AND)
+  //    tick 3. Unstall pipeline (core holds outputs result of AND)
+  //    tick 4. Set inputs for OR (core holds result of AND)
+  //    tick 5. Nothing (core outputs result of OR)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+  
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+
+  uint32_t pc = rand();
+  uint32_t rd = rand() % 32;
+  uint32_t rs1 = rand() % 32;
+  uint32_t rs2 = rand() % 32;
+  tb->_and(pc, rd, rs1, rs2);
+
+  uint32_t rdata1 = rand() % 0x7FFFFFFF;
+  core->rdata1_i = rdata1;
+  uint32_t rdata2 = rand() % 0x7FFFFFFF;
+  core->rdata2_i = rdata2;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->stall_request_i = 1;
+  tb->_or(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_OR));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->stall_request_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_OR));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_OR));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  tb->_and(pc, rd, rs1, rs2);
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
+                            (core->alu_operand2_o  ==  rdata2)  &&
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_AND));
+  tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
+  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
+                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o == 1));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_decode.hazard.01",
+      tb->conditions[COND_alu],
+      "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
+
+  CHECK("tb_decode.hazard.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_decode.hazard.03",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_decode.hazard.04",
+      tb->conditions[COND_loadstore],
+      "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
+
+  CHECK("tb_decode.hazard.05",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -3298,6 +3458,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_decode_bubble(tb);
 
   tb_decode_pipeline_stall(tb);
+
+  tb_decode_hazard(tb);
 
   /************************************************************/
 

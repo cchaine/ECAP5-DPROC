@@ -61,7 +61,8 @@ enum TestcaseId {
   T_PIPELINE_STALL_AFTER_RESET  =  19,
   T_PIPELINE_STALL              =  20,
   T_RESET                       =  21,
-  T_BRANCH_JALR                 =  22
+  T_BRANCH_JALR                 =  22,
+  T_HAZARD                      =  23
 };
 
 class TB_Execute : public Testbench<Vtb_execute> {
@@ -2003,6 +2004,65 @@ void tb_execute_branch_jalr(TB_Execute * tb) {
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
+void tb_execute_hazard(TB_Execute * tb) {
+  Vtb_execute * core = tb->core;
+  core->testcase = T_HAZARD;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set random invalidated inputs
+  //    tick 1. Nothing (core outputs bubble)
+
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->input_valid_i = 1;
+  core->output_ready_i = 1;
+  core->discard_request_i = 1;
+  
+  core->alu_operand1_i = rand();
+  core->alu_operand2_i = rand();
+  core->alu_op_i = rand() % 7;
+  core->alu_sub_i = rand() % 2;
+  core->alu_shift_left_i = rand() % 2;
+  core->alu_signed_shift_i = rand() % 2;
+  core->reg_write_i = 1;
+  core->reg_addr_i = rand() % 32;
+  core->branch_cond_i = 1 + rand() % 6;
+  core->branch_offset_i = rand() % 0xFFFFF;
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_result,       (core->reg_write_o  ==  0));
+  tb->check(COND_branch,       (core->branch_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  1));
+  
+  //`````````````````````````````````
+  //      Formal Checks 
+   
+  CHECK("tb_execute.hazard.01",
+      tb->conditions[COND_result],
+      "Failed to implement the result protocol", tb->err_cycles[COND_result]);
+
+  CHECK("tb_execute.hazard.02",
+      tb->conditions[COND_branch],
+      "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
+
+  CHECK("tb_execute.hazard.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
+}
+
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -2042,6 +2102,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_execute_reset(tb);
   tb_execute_pipeline_stall_after_reset(tb);
   tb_execute_pipeline_stall(tb);
+
+  tb_execute_hazard(tb);
 
   /************************************************************/
 

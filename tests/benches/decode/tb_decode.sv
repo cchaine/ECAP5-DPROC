@@ -79,7 +79,9 @@ module tb_decode import ecap5_dproc_pkg::*;
   output   logic        ls_write_o,
   output   logic[31:0]  ls_write_data_o,
   output   logic[3:0]   ls_sel_o,
-  output   logic        ls_unsigned_load_o
+  output   logic        ls_unsigned_load_o,
+
+  input  logic  stall_request_i
 );
 
 decode dut (
@@ -110,7 +112,8 @@ decode dut (
   .ls_write_o          (ls_write_o),
   .ls_write_data_o     (ls_write_data_o),
   .ls_sel_o            (ls_sel_o),
-  .ls_unsigned_load_o  (ls_unsigned_load_o)
+  .ls_unsigned_load_o  (ls_unsigned_load_o),
+  .stall_request_i     (stall_request_i)
 );
 
 endmodule // tb_decode

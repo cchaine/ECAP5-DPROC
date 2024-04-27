@@ -77,7 +77,13 @@ module decode import ecap5_dproc_pkg::*;
   output   logic        ls_write_o,
   output   logic[31:0]  ls_write_data_o,
   output   logic[3:0]   ls_sel_o,
-  output   logic        ls_unsigned_load_o
+  output   logic        ls_unsigned_load_o,
+
+  //=================================
+  //    Hazard interface
+  
+  input    logic   stall_request_i
+
 );
 
 /*****************************************/
@@ -238,7 +244,7 @@ end
 always_comb begin : output_handshake
   output_valid_d = output_valid_q;
   if(output_ready_i) begin
-    output_valid_d = 1;
+    output_valid_d = ~stall_request_i;
   end
 end
 
@@ -296,7 +302,7 @@ end
 /*         Assign output signals         */
 /*****************************************/
 
-assign  input_ready_o       =  output_ready_i;
+assign  input_ready_o       =  output_ready_i && ~stall_request_i;
 
 assign  pc_o                =  pc_q;
 

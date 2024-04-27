@@ -42,6 +42,7 @@ enum CondId {
   COND_execute,
   COND_loadstore,
   COND_writeback,
+  COND_hazard,
   __CondIdEnd
 };
 
@@ -50,7 +51,8 @@ enum TestcaseId {
   T_ALU           =  2,
   T_LSM_ENABLE    =  3,
   T_BRANCH        =  4,
-  T_BACK_TO_BACK  =  5
+  T_BACK_TO_BACK  =  5,
+  T_DATA_HAZARD   =  6
 };
 
 class TB_Ecap5_dproc : public Testbench<Vtb_ecap5_dproc> {
@@ -738,6 +740,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
                       (core->tb_ecap5_dproc->dut->ex_reg_write == 0) &&
                       (core->tb_ecap5_dproc->dut->branch == 1) &&
                       (core->tb_ecap5_dproc->dut->branch_target == tb->sign_extend(imm, 13)));
+  tb->check(COND_hazard, (core->tb_ecap5_dproc->dut->hzd_ex_discard_request == 1));
 
   //`````````````````````````````````
   //      Set inputs
@@ -749,6 +752,11 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   //      Tick (6)
   
   tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_hazard, (core->tb_ecap5_dproc->dut->hzd_ex_discard_request == 1));
 
   //=================================
   //      Tick (7)
@@ -794,6 +802,180 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   CHECK("tb_ecap5_dproc.branch.08",
       tb->conditions[COND_writeback],
       "Failed to implement the writeback stage", tb->err_cycles[COND_writeback]);
+
+  CHECK("tb_ecap5_dproc.branch.09",
+      tb->conditions[COND_hazard],
+      "Failed to implement the hazard module", tb->err_cycles[COND_hazard]);
+}
+
+void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
+  Vtb_ecap5_dproc * core = tb->core;
+  core->testcase = T_DATA_HAZARD;
+
+  // The following actions are performed in this test :
+  //    tick 0. Nothing
+  //    tick 1. Acknowledge request with ADDI x1, x0, 1 instruction (core requests instruction)
+  //    tick 2. Nothing (core ends request)
+  //    tick 3. Nothing (dec processes instruction)
+  //    tick 4. Acknowledge request with ADDI x2, x1, 1 (ex processes instruction)
+  //    tick 5. Nothing (ls processes instruction)
+  //    tick 6. Nothing (wb processes instruction)
+  //    tick 7. Nothing (intruction processed)
+  
+  //=================================
+  //      Tick (0)
+  
+  tb->reset();
+
+  tb->set_register(1, 0);
+
+  //=================================
+  //      Tick (1)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  uint32_t instr = tb->_addi(1, 0, 1);
+
+  core->wb_dat_i = instr;
+  core->wb_ack_i = 1;
+
+  //=================================
+  //      Tick (2)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (3)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (4)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  instr = tb->_addi(2, 1, 1);
+
+  core->wb_dat_i = instr;
+  core->wb_ack_i = 1;
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
+  //=================================
+  //      Tick (5)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+  
+  core->wb_dat_i = 0;
+  core->wb_ack_i = 0;
+
+  //=================================
+  //      Tick (6)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
+  //=================================
+  //      Tick (7)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 0));
+
+  //=================================
+  //      Tick (8)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_ready == 1));
+
+  //=================================
+  //      Tick (9)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_alu_operand1 == 1));
+
+  //=================================
+  //      Tick (10)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (11)
+  
+  tb->tick();
+
+  //=================================
+  //      Tick (12)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_writeback, (core->tb_ecap5_dproc->dut->reg_write == 1) &&
+                            (core->tb_ecap5_dproc->dut->reg_wdata == 2));
+
+  //=================================
+  //      Tick (13)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_ecap5_dproc.data_hazard.01",
+      tb->conditions[COND_bubble],
+      "Failed to implement the pipeline bubbles", tb->err_cycles[COND_bubble]);
+
+  CHECK("tb_ecap5_dproc.data_hazard.02",
+      tb->conditions[COND_valid],
+      "Failed to implement the valid signal", tb->err_cycles[COND_valid]);
+
+  CHECK("tb_ecap5_dproc.data_hazard.03",
+      tb->conditions[COND_decode],
+      "Failed to implement the decode stage", tb->err_cycles[COND_decode]);
+
+  CHECK("tb_ecap5_dproc.data_hazard.04",
+      tb->conditions[COND_writeback],
+      "Failed to implement the writeback stage", tb->err_cycles[COND_writeback]);
 }
 
 void tb_ecap5_dproc_back_to_back(TB_Ecap5_dproc * tb) {
@@ -822,6 +1004,8 @@ int main(int argc, char ** argv, char ** env) {
   tb_ecap5_dproc_alu(tb);
   tb_ecap5_dproc_ls_enable(tb);
   tb_ecap5_dproc_branch(tb);
+
+  tb_ecap5_dproc_data_hazard(tb);
 
   tb_ecap5_dproc_back_to_back(tb);
 

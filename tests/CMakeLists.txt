@@ -107,6 +107,7 @@ add_testbench(execute)
 add_testbench(loadstore)
 add_testbench(loadstore BENCH loadstore_w_slave LIBS instr_wb_slave PUBLIC)
 add_testbench(memory)
+add_testbench(hazard)
 add_testbench(ecap5_dproc PUBLIC)
 
 # Main targets

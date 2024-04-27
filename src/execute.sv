@@ -91,7 +91,13 @@ module execute import ecap5_dproc_pkg::*;
   //
   
   output  logic        branch_o,
-  output  logic[31:0]  branch_target_o
+  output  logic[31:0]  branch_target_o,
+
+  //=================================
+  //    Hazard interface 
+  //
+
+  input   logic  discard_request_i
 );
 
 /*****************************************/
@@ -121,6 +127,7 @@ logic[31:0] alu_sum_output,
 logic[31:0] alu_output;
 logic alu_sum_z;
 logic[31:0] pc_next;
+logic is_bubble;
 
 /*****************************************/
 /*             Stage outputs             */
@@ -141,6 +148,8 @@ logic        output_valid_d, output_valid_q;
 /*****************************************/
 
 assign pc_next = pc_i + 32'h4;
+
+assign is_bubble = ~input_valid_i || discard_request_i;
 
 always_comb begin : alu
   alu_signed_operand1 = $signed(alu_operand1_i);
@@ -238,23 +247,19 @@ always_ff @(posedge clk_i) begin
     output_valid_q      <=   0;
   end else begin
     if(output_ready_i) begin
-      result_write_q      <=  input_valid_i
-                                  ? reg_write_i
-                                  : 0;
+      result_write_q      <=  is_bubble ? 0 : reg_write_i;
       result_addr_q       <=  reg_addr_i;
       branch_target_q     <=  branch_target_d;
 
       result_q          <=  result_d;
 
-      ls_enable_q         <=  ls_enable_i;
-      ls_write_q          <=  ls_write_i;
+      ls_enable_q         <=  is_bubble ? 0 : ls_enable_i;
+      ls_write_q          <=  is_bubble ? 0 : ls_write_i;
       ls_write_data_q     <=  ls_write_data_i;
       ls_sel_q            <=  ls_sel_i;
       ls_unsigned_load_q  <=  ls_unsigned_load_i;
 
-      branch_q          <=  input_valid_i
-                                  ? branch_d
-                                  : 0;
+      branch_q          <= is_bubble ? 0 : branch_d; 
     end
 
     output_valid_q    <= output_valid_d;

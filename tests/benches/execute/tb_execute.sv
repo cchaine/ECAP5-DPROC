@@ -92,7 +92,13 @@ module tb_execute import ecap5_dproc_pkg::*; (
   //
   
   output  logic        branch_o,
-  output  logic[31:0]  branch_target_o
+  output  logic[31:0]  branch_target_o,
+
+  //=================================
+  //    Hazard interface 
+  //
+
+  input   logic  discard_request_i
 );
 
 execute dut (
@@ -127,7 +133,8 @@ execute dut (
  .ls_sel_o            (ls_sel_o),
  .ls_unsigned_load_o  (ls_unsigned_load_o),
  .branch_o            (branch_o),
- .branch_target_o     (branch_target_o)
+ .branch_target_o     (branch_target_o),
+ .discard_request_i   (discard_request_i)
 );
 
 endmodule // top
