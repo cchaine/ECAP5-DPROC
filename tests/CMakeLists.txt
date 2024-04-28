@@ -114,3 +114,4 @@ add_testbench(ecap5_dproc PUBLIC)
 add_custom_target(build DEPENDS ${TEST_BINARIES})
 add_custom_target(tests DEPENDS ${TEST_TARGETS})
 
+add_subdirectory(riscv-tests)
