@@ -28,9 +28,7 @@ set(TE p)       # Target Environment
 
 # Paths
 set(SOURCE_DIR ${riscv_tests_SOURCE_DIR}/isa/${TVM}/)
-set(ENV_DIR ${riscv_tests_SOURCE_DIR}/env/${TE}/)
-set(INCLUDE_DIRS ${ENV_DIR} 
-                 ${riscv_tests_SOURCE_DIR}/isa/macros/scalar)
+set(ENV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/env/)
 
 # Compile options
 set(CC_OPTS -static
@@ -38,6 +36,9 @@ set(CC_OPTS -static
             -fvisibility=hidden
             -nostdlib
             -nostartfiles)
+set(CC_INCS ${riscv_tests_SOURCE_DIR}/env
+            ${ENV_DIR}
+            ${riscv_tests_SOURCE_DIR}/isa/macros/scalar)
 
 set(TARGETS simple
             add addi 
@@ -64,10 +65,15 @@ foreach(TARGET IN LISTS TARGETS)
   set(FULL_TARGET ${TVM}-${TE}-${TARGET})
   add_executable(${FULL_TARGET} ${SOURCE_DIR}/${TARGET}.S)
   add_compile_options(${CC_OPTS} -march=rv32g -mabi=ilp32)
-  target_include_directories(${FULL_TARGET} PRIVATE ${INCLUDE_DIRS})
+  target_include_directories(${FULL_TARGET} PRIVATE ${CC_INCS})
   target_link_options(${FULL_TARGET} PRIVATE -T${ENV_DIR}/link.ld)
 
   list(APPEND ALL_TARGETS ${FULL_TARGET})
 endforeach()
 
-add_custom_target(riscv-tests DEPENDS ${ALL_TARGETS})
+add_custom_target(riscv-tests-binaries DEPENDS ${ALL_TARGETS})
+
+# Generate simulation executable
+
+set(TEST_INCLUDE_DIR ${ecap5_dtlib_SOURCE_DIR}/include)
+set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh)

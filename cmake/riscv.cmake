@@ -48,7 +48,6 @@ message(STATUS "RISC-V Cross Compile: ${CROSS_COMPILE}" )
 # CMake
 set( CMAKE_SYSTEM_NAME          Generic )
 set( CMAKE_SYSTEM_PROCESSOR     rv32imac_zicsr )
-set( CMAKE_EXECUTABLE_SUFFIX    ".elf")
 
 # specify the cross compiler. We force the compiler so that CMake doesn't
 # attempt to build a simple test program as this will fail without us using
