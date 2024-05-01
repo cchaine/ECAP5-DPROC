@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Wed May  1 15:51:54 2024
+[*] Wed May  1 17:00:22 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/riscv-tests.vcd"
-[dumpfile_mtime] "Wed May  1 15:45:54 2024"
+[dumpfile_mtime] "Wed May  1 16:54:54 2024"
 [dumpfile_size] 81947
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/riscv-tests.gtkw"
-[timestart] 1
-[size] 2320 982
-[pos] -32 -107
+[timestart] 928
+[size] 2320 783
+[pos] -1 -1
 *-5.572440 153 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
@@ -38,9 +38,9 @@
 [markername] ZZ
 [treeopen] TOP.
 [sst_width] 253
-[signals_width] 351
+[signals_width] 285
 [sst_expanded] 1
-[sst_vpaned_height] 342
+[sst_vpaned_height] 480
 @28
 TOP.clk_i
 TOP.drq_i
@@ -72,22 +72,16 @@ TOP.wb_cyc_o
 TOP.wb_stall_i
 @1401200
 -Master Wishbone
-@c00200
+@800200
 -IFM
 @28
+[color] 2
 TOP.ecap5_dproc.branch
 @22
+[color] 2
 TOP.ecap5_dproc.branch_target[31:0]
-@800200
+@c00200
 -IFM Wishbone
-@1000200
--IFM Wishbone
-@28
-TOP.ecap5_dproc.if_dec_ready
-TOP.ecap5_dproc.if_dec_valid
-@22
-TOP.ecap5_dproc.if_instr[31:0]
-TOP.ecap5_dproc.if_pc[31:0]
 @28
 TOP.ecap5_dproc.if_wb_ack_i
 @22
@@ -102,69 +96,99 @@ TOP.ecap5_dproc.if_wb_stall_i
 TOP.ecap5_dproc.if_wb_stb_o
 TOP.ecap5_dproc.if_wb_we_o
 @1401200
+-IFM Wishbone
+@4022
+[color] 2
+^>1 /Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/filters/decode_instr_filter_process.py
+TOP.ecap5_dproc.if_instr[31:0]
+@22
+[color] 2
+TOP.ecap5_dproc.if_pc[31:0]
+@1000200
 -IFM
+@28
+TOP.ecap5_dproc.if_dec_valid
+TOP.ecap5_dproc.if_dec_ready
 @c00200
 -DECM
-@28
-TOP.ecap5_dproc.dec_alu_op[2:0]
 @22
+[color] 5
 TOP.ecap5_dproc.dec_alu_operand1[31:0]
+[color] 5
 TOP.ecap5_dproc.dec_alu_operand2[31:0]
 @28
-TOP.ecap5_dproc.dec_alu_shift_left
-TOP.ecap5_dproc.dec_alu_signed_shift
+[color] 5
+TOP.ecap5_dproc.dec_alu_op[2:0]
+[color] 5
 TOP.ecap5_dproc.dec_alu_sub
+[color] 5
+TOP.ecap5_dproc.dec_alu_shift_left
+[color] 5
+TOP.ecap5_dproc.dec_alu_signed_shift
+[color] 5
 TOP.ecap5_dproc.dec_branch_cond[2:0]
 @22
+[color] 5
 TOP.ecap5_dproc.dec_branch_offset[19:0]
 @28
-TOP.ecap5_dproc.dec_ex_ready
-TOP.ecap5_dproc.dec_ex_valid
+[color] 5
 TOP.ecap5_dproc.dec_ls_enable
 @22
+[color] 5
 TOP.ecap5_dproc.dec_ls_sel[3:0]
 @28
+[color] 5
 TOP.ecap5_dproc.dec_ls_unsigned_load
+[color] 5
 TOP.ecap5_dproc.dec_ls_write
 @22
+[color] 5
 TOP.ecap5_dproc.dec_ls_write_data[31:0]
+[color] 5
 TOP.ecap5_dproc.dec_pc[31:0]
+[color] 5
 TOP.ecap5_dproc.dec_reg_addr[4:0]
 @28
+[color] 5
 TOP.ecap5_dproc.dec_reg_write
 @1401200
 -DECM
+@28
+TOP.ecap5_dproc.dec_ex_valid
+TOP.ecap5_dproc.dec_ex_ready
 @c00200
 -EXM
 @28
+[color] 3
 TOP.ecap5_dproc.ex_ls_enable
-TOP.ecap5_dproc.ex_ls_ready
 @22
+[color] 3
 TOP.ecap5_dproc.ex_ls_sel[3:0]
 @28
+[color] 3
 TOP.ecap5_dproc.ex_ls_unsigned_load
-TOP.ecap5_dproc.ex_ls_valid
+[color] 3
 TOP.ecap5_dproc.ex_ls_write
 @22
+[color] 3
 TOP.ecap5_dproc.ex_ls_write_data[31:0]
+[color] 3
 TOP.ecap5_dproc.ex_reg_addr[4:0]
 @28
+[color] 3
 TOP.ecap5_dproc.ex_reg_write
 @22
+[color] 3
 TOP.ecap5_dproc.ex_result[31:0]
 @1401200
 -EXM
+@28
+TOP.ecap5_dproc.ex_ls_valid
+TOP.ecap5_dproc.ex_ls_ready
 @c00200
 -LSM
 -LSM Wishbone
-@1401200
--LSM Wishbone
-@22
-TOP.ecap5_dproc.ls_reg_addr[4:0]
-TOP.ecap5_dproc.ls_reg_data[31:0]
 @28
-TOP.ecap5_dproc.ls_reg_write
-TOP.ecap5_dproc.ls_valid
 TOP.ecap5_dproc.ls_wb_ack_i
 @22
 TOP.ecap5_dproc.ls_wb_adr_o[31:0]
@@ -179,19 +203,38 @@ TOP.ecap5_dproc.ls_wb_stall_i
 TOP.ecap5_dproc.ls_wb_stb_o
 TOP.ecap5_dproc.ls_wb_we_o
 @1401200
--LSM
-@c00200
--REGM
-@22
-TOP.ecap5_dproc.reg_raddr1[4:0]
-TOP.ecap5_dproc.reg_raddr2[4:0]
-TOP.ecap5_dproc.reg_rdata1[31:0]
-TOP.ecap5_dproc.reg_rdata2[31:0]
-TOP.ecap5_dproc.reg_waddr[4:0]
-TOP.ecap5_dproc.reg_wdata[31:0]
+-LSM Wishbone
 @28
-TOP.ecap5_dproc.reg_write
+[color] 7
+TOP.ecap5_dproc.ls_reg_write
+@22
+[color] 7
+TOP.ecap5_dproc.ls_reg_addr[4:0]
+[color] 7
+TOP.ecap5_dproc.ls_reg_data[31:0]
 @1401200
+-LSM
+@28
+TOP.ecap5_dproc.ls_valid
+@c00201
+-REGM
+@23
+[color] 1
+TOP.ecap5_dproc.reg_raddr1[4:0]
+[color] 1
+TOP.ecap5_dproc.reg_raddr2[4:0]
+[color] 1
+TOP.ecap5_dproc.reg_rdata1[31:0]
+[color] 1
+TOP.ecap5_dproc.reg_rdata2[31:0]
+[color] 1
+TOP.ecap5_dproc.reg_waddr[4:0]
+[color] 1
+TOP.ecap5_dproc.reg_wdata[31:0]
+@29
+[color] 1
+TOP.ecap5_dproc.reg_write
+@1401201
 -REGM
 @28
 TOP.ecap5_dproc.hzd_dec_stall_request
