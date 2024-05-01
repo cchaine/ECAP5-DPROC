@@ -185,19 +185,23 @@ _start:                                                                 \
 
 #define RVTEST_CODE_END                                                 \
 _end:                                                                   \
-        j _end
+        li t0, 0xFFEEBBCC; \
+        jr t0 
 
 //-----------------------------------------------------------------------
 // Pass/Fail Macro
 //-----------------------------------------------------------------------
 
-#define TESTNUM gp
+#define TESTNUM x3
+#define TESTRES x4
 
 #define RVTEST_PASS                                                     \
-        li TESTNUM, 1;                                                  \
+        li TESTRES, 1;                                                  \
+        j _end
 
 #define RVTEST_FAIL                                                     \
-        li TESTNUM, 0;
+        li TESTRES, 0;                                                  \
+        j _end
 
 //-----------------------------------------------------------------------
 // Data Section Macro

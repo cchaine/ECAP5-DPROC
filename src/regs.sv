@@ -52,6 +52,10 @@ assign rdata2_o = registers[raddr2_i];
   task automatic set_register_value(input logic[4:0] addr, input logic[31:0] value);
     registers[addr] = value;
   endtask
+  export "DPI-C" task get_register_value;
+  task automatic get_register_value(input logic[4:0] addr, output logic[31:0] out);
+    out = registers[addr];
+  endtask
 `endif
 
 endmodule // regs

@@ -401,7 +401,7 @@ void tb_decode_lui(TB_Decode * tb) {
 
   //`````````````````````````````````
   //      Checks 
-  tb->check(COND_alu,       (core->alu_operand1_o  ==  pc)                                &&
+  tb->check(COND_alu,       (core->alu_operand1_o  ==  0)                                 &&
                             (core->alu_operand2_o  ==  (imm << 12))                       &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_ADD) &&
                             (core->alu_sub_o       ==  0));
@@ -3311,10 +3311,10 @@ void tb_decode_hazard(TB_Decode * tb) {
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
                             (core->alu_operand2_o  ==  rdata2)  &&
-                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_OR));
+                            (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_AND));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
-  tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
-                            (core->reg_addr_o      ==  rd));
+  tb->check(COND_writeback, (core->reg_write_o     ==  0) &&
+                            (core->reg_addr_o      ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 0));
 

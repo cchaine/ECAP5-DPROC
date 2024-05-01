@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Mon Apr  1 14:48:23 2024
+[*] Thu May  2 06:35:18 2024
 [*]
 [dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/build/tests/waves/decode.vcd"
-[dumpfile_mtime] "Mon Apr  1 14:47:51 2024"
-[dumpfile_size] 56106
+[dumpfile_mtime] "Thu May  2 06:34:18 2024"
+[dumpfile_size] 65913
 [savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/proc/config/gtkwave/config/decode.gtkw"
-[timestart] 887
-[size] 2160 829
+[timestart] 2274
+[size] 2320 1043
 [pos] -1 -1
-*-4.654594 963 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-4.654594 2440 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -51,6 +51,8 @@ TOP.tb_decode.clk_i
 TOP.tb_decode.rst_i
 @200
 -Input
+@29
+TOP.tb_decode.stall_request_i
 @28
 TOP.tb_decode.input_valid_i
 TOP.tb_decode.input_ready_o

@@ -103,7 +103,13 @@ always_comb begin : state_machine
     MEMORY_STALL: begin
       if(!wb_stall_i) begin
         // The memory is unstalled
-        state_d = REQUEST;
+        if(wb_ack_i) begin
+          // The response has been received directly
+          state_d = DONE;
+        end else begin
+          // Wait for the response to be received
+          state_d = MEMORY_WAIT;
+        end
       end
     end
     REQUEST: begin
@@ -131,10 +137,19 @@ always_comb begin : state_machine
       end
     end
     PIPELINE_STALL: begin
+      // Either the output is ready or a jump was requested which cancels
+      // the output
       if(output_ready_i || pending_jump_q) begin
-        // Either the output is ready or a jump was requested which cancels
-        // the output
-        state_d = IDLE; 
+        if(fetch_request) begin
+          // A memory request shall be triggered
+          if(wb_stall_i) begin
+            // The memory is stalled
+            state_d = MEMORY_STALL;
+          end else begin
+            // The memory is ready
+            state_d = REQUEST;
+          end
+        end
       end
     end
     default: begin
@@ -150,9 +165,14 @@ always_comb begin : wishbone_read
   case(state_q)
     IDLE: begin
       if(fetch_request) begin
-        wb_adr_d = pc_q;
+        wb_adr_d = pc_d;
         wb_stb_d = 1;
         wb_cyc_d = 1;
+      end
+    end
+    MEMORY_STALL: begin
+      if(!wb_stall_i) begin
+        wb_stb_d = 0;
       end
     end
     REQUEST: begin
@@ -160,6 +180,15 @@ always_comb begin : wishbone_read
     end
     DONE: begin
       wb_cyc_d = 0;
+    end
+    PIPELINE_STALL: begin
+      if(output_ready_i || pending_jump_q) begin
+        if(fetch_request) begin
+          wb_adr_d = pc_d;
+          wb_stb_d = 1;
+          wb_cyc_d = 1;
+        end
+      end
     end
     default: begin
     end
@@ -177,6 +206,14 @@ always_comb begin : output_management
       if(fetch_request) begin
         output_valid_d = 0;
         pending_jump_d = 0;
+      end
+    end
+    MEMORY_STALL: begin
+      if(!wb_stall_i) begin
+        // The memory is unstalled
+        if(wb_ack_i) begin
+          instr_d = wb_dat_i;
+        end
       end
     end
     REQUEST: begin
@@ -199,6 +236,9 @@ always_comb begin : output_management
     PIPELINE_STALL: begin
       if(output_ready_i || pending_jump_q) begin
         output_valid_d = 0;
+        if(fetch_request) begin
+          pending_jump_d = 0;
+        end
       end
     end
     default: begin
@@ -216,7 +256,7 @@ end
 always_comb begin : pc_update
   pc_d = pc_q;
   // 3. Default increment
-  if (output_valid_d && output_ready_i) begin
+  if (output_valid_q && output_ready_i) begin
     pc_d = pc_q + 4;
   end
   // 2. Control flow change request
@@ -248,15 +288,16 @@ always_ff @(posedge clk_i) begin
     wb_adr_q        <=  wb_adr_d;
     wb_stb_q        <=  wb_stb_d;
     wb_cyc_q        <=  wb_cyc_d;
-    output_valid_q  <=  output_valid_d;
     instr_q         <=  instr_d;
     pc_q            <=  pc_d;
 
     // Jump triggering
     if(drq_i || irq_i || branch_i) begin
       pending_jump_q <=  1;
+      output_valid_q  <=  0;
     end else begin
       pending_jump_q <=  pending_jump_d;
+      output_valid_q  <=  output_valid_d;
     end
   end
   // Store a delayed rst to detect a falling edge for instruction fetch trigger
@@ -278,6 +319,6 @@ assign  wb_cyc_o  =  wb_cyc_q;
 
 assign  output_valid_o  =  output_valid_q;
 assign  instr_o         =  instr_q;
-assign  pc_o            =  pc_qq;
+assign  pc_o            =  pc_q;
 
 endmodule // fetch

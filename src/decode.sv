@@ -159,7 +159,7 @@ end
 
 always_comb begin : alu_interface
   case(opcode)
-    OPCODE_LUI, OPCODE_AUIPC, OPCODE_JAL:                  
+    OPCODE_AUIPC, OPCODE_JAL:                  
       alu_operand1_d = pc_i;
     OPCODE_JALR, OPCODE_BRANCH, OPCODE_OP, OPCODE_OP_IMM, OPCODE_LOAD, OPCODE_STORE:  
       alu_operand1_d = rdata1_i;
@@ -271,7 +271,7 @@ always_ff @(posedge clk_i) begin
 
     output_valid_q      <=   0;
   end else begin
-    if(output_ready_i) begin
+    if(output_ready_i && ~stall_request_i) begin
       pc_q                <=  pc_i;
 
       alu_operand1_q      <=  input_valid_i ? alu_operand1_d : '0;
@@ -292,6 +292,11 @@ always_ff @(posedge clk_i) begin
       ls_write_data_q     <=  ls_write_data_d;
       ls_sel_q            <=  ls_sel_d;
       ls_unsigned_load_q  <=  ls_unsigned_load_d;
+    end
+    if(stall_request_i) begin
+      ls_enable_q <= 0;
+      reg_write_q <= 0;
+      reg_addr_q <= 0;
     end
 
     output_valid_q    <= output_valid_d;

@@ -68,12 +68,17 @@ set(TARGETS simple
 set(ALL_TARGETS)
 foreach(TARGET IN LISTS TARGETS)
   set(FULL_TARGET ${TVM}-${TE}-${TARGET})
-  add_executable(${FULL_TARGET} ${SOURCE_DIR}/${TARGET}.S)
-  set_target_properties(${FULL_TARGET} PROPERTIES COMPILE_FLAGS "${CC_OPTS} -march=rv32g -mabi=ilp32"
-                                                  LINK_FLAGS    "${CC_OPTS} -march=rv32g -mabi=ilp32 -T${ENV_DIR}/link.ld")
-  target_include_directories(${FULL_TARGET} PRIVATE ${CC_INCS})
+  add_executable(${FULL_TARGET}.elf ${SOURCE_DIR}/${TARGET}.S)
+  set_target_properties(${FULL_TARGET}.elf PROPERTIES COMPILE_FLAGS "${CC_OPTS} -march=rv32g -mabi=ilp32"
+                                                      LINK_FLAGS    "${CC_OPTS} -march=rv32g -mabi=ilp32 -T${ENV_DIR}/link.ld")
+  target_include_directories(${FULL_TARGET}.elf PRIVATE ${CC_INCS})
 
-  list(APPEND ALL_TARGETS ${FULL_TARGET})
+  add_custom_command(
+    OUTPUT ${FULL_TARGET}.dump
+    COMMAND ${CROSS_COMPILE}objdump -d ${FULL_TARGET}.elf -Mno-aliases -Mnumeric > ${FULL_TARGET}.dump
+    VERBATIM)
+
+  list(APPEND ALL_TARGETS ${FULL_TARGET}.elf ${FULL_TARGET}.dump)
 endforeach()
 
 add_custom_target(riscv-tests-binaries DEPENDS ${ALL_TARGETS})
