@@ -19,7 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
-include(${CMAKE_SOURCE_DIR}/cmake/riscv.cmake)
+set(CROSS_COMPILE riscv64-unknown-elf-)
+set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
+set(CMAKE_AR ${CROSS_COMPILE}ar)
+set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
+set(CMAKE_C_COMPILER ${CROSS_COMPILE}gcc)
+set(CMAKE_CXX_COMPILER ${CROSS_COMPILE}g++)
 
 enable_language(ASM)
 
@@ -31,11 +36,11 @@ set(SOURCE_DIR ${riscv_tests_SOURCE_DIR}/isa/${TVM}/)
 set(ENV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/env/)
 
 # Compile options
-set(CC_OPTS -static
-            -mcmodel=medany
-            -fvisibility=hidden
-            -nostdlib
-            -nostartfiles)
+set(CC_OPTS "-static \
+            -mcmodel=medany \
+            -fvisibility=hidden \
+            -nostdlib \
+            -nostartfiles")
 set(CC_INCS ${riscv_tests_SOURCE_DIR}/env
             ${ENV_DIR}
             ${riscv_tests_SOURCE_DIR}/isa/macros/scalar)
@@ -64,9 +69,9 @@ set(ALL_TARGETS)
 foreach(TARGET IN LISTS TARGETS)
   set(FULL_TARGET ${TVM}-${TE}-${TARGET})
   add_executable(${FULL_TARGET} ${SOURCE_DIR}/${TARGET}.S)
-  add_compile_options(${CC_OPTS} -march=rv32g -mabi=ilp32)
+  set_target_properties(${FULL_TARGET} PROPERTIES COMPILE_FLAGS "${CC_OPTS} -march=rv32g -mabi=ilp32"
+                                                  LINK_FLAGS    "${CC_OPTS} -march=rv32g -mabi=ilp32 -T${ENV_DIR}/link.ld")
   target_include_directories(${FULL_TARGET} PRIVATE ${CC_INCS})
-  target_link_options(${FULL_TARGET} PRIVATE -T${ENV_DIR}/link.ld)
 
   list(APPEND ALL_TARGETS ${FULL_TARGET})
 endforeach()

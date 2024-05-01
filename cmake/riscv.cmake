@@ -13,8 +13,8 @@ FIND_FILE( RISCV_XPACK_NEW_GCC_COMPILER "riscv-none-elf-gcc" PATHS ENV INCLUDE)
 
 # Look for RISC-V github GCC
 # https://github.com/riscv/riscv-gnu-toolchain
-FIND_FILE( RISCV_XPACK_GCC_COMPILER_EXT "riscv32-unknown-elf-gcc.exe" PATHS ENV INCLUDE)
-FIND_FILE( RISCV_XPACK_GCC_COMPILER "riscv32-unknown-elf-gcc" PATHS ENV INCLUDE)
+FIND_FILE( RISCV_XPACK_GCC_COMPILER_EXT "riscv64-unknown-elf-gcc.exe" PATHS ENV INCLUDE)
+FIND_FILE( RISCV_XPACK_GCC_COMPILER "riscv64-unknown-elf-gcc" PATHS ENV INCLUDE)
 
 # Select which is found
 if (EXISTS ${RISCV_XPACK_NEW_GCC_COMPILER})
@@ -47,7 +47,6 @@ message(STATUS "RISC-V Cross Compile: ${CROSS_COMPILE}" )
 # The Generic system name is used for embedded targets (targets without OS) in
 # CMake
 set( CMAKE_SYSTEM_NAME          Generic )
-set( CMAKE_SYSTEM_PROCESSOR     rv32imac_zicsr )
 
 # specify the cross compiler. We force the compiler so that CMake doesn't
 # attempt to build a simple test program as this will fail without us using
@@ -68,15 +67,3 @@ set( CMAKE_OBJCOPY      ${RISCV_TOOLCHAIN_BIN_PATH}/${CROSS_COMPILE}objcopy
 
 set( CMAKE_OBJDUMP      ${RISCV_TOOLCHAIN_BIN_PATH}/${CROSS_COMPILE}objdump
      CACHE FILEPATH "The toolchain objdump command " FORCE )
-
-# Set the common build flags
-
-# Set the CMAKE C flags (which should also be used by the assembler!
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g" )
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${CMAKE_SYSTEM_PROCESSOR}" )
-
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
-set( CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
-set( CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}" CACHE STRING "" )
-set( CMAKE_EXE_LINKER_FLAGS   "${CMAKE_EXE_LINKER_FLAGS}  -march=${CMAKE_SYSTEM_PROCESSOR}    -nostartfiles   " )
-
