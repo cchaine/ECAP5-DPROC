@@ -34,6 +34,8 @@
 #define KO * 1024
 #define MAX_BINARY_SIZE (32 KO)
 
+#define MAX_TICKCOUNT 1000
+
 class TB_Riscv_tests: public Testbench<Vecap5_dproc> {
 public:
   uint8_t memory[MAX_BINARY_SIZE];
@@ -49,6 +51,51 @@ public:
     
     // Clear memory
     memset(memory, 0, MAX_BINARY_SIZE);
+  }
+
+  void tick() {
+    static uint8_t state = 0;
+
+    // handle wishbone bus
+    switch(state) {
+      case 0: {
+        if((this->core->wb_stb_o == 1) && (this->core->wb_cyc_o == 1)) {
+          // check overflow
+          uint32_t data;
+          if(this->core->wb_adr_o >= MAX_BINARY_SIZE) {
+            printf("Runtime memory overflow\n  Requested address : %08x, Memory end address : %08x\n\n", this->core->wb_adr_o, MAX_BINARY_SIZE-1);
+            data = 0;
+          } else {
+            memcpy(&data, memory + this->core->wb_adr_o, 4);
+            switch(this->core->wb_sel_o) {
+              case 0x1:
+                data &= 0xFF;
+                break;
+              case 0x3:
+                data &= 0xFFFF;
+                break;
+              case 0xF:
+                break;
+              default:
+                printf("Invalid wishbone sel signal : %08x\n", this->core->wb_sel_o);
+                break;
+            }
+          }
+          this->core->wb_dat_i = data;
+          this->core->wb_ack_i = 1;
+          state = 1;
+          break;
+        }
+      }
+      case 1: {
+        this->core->wb_dat_i = 0;
+        this->core->wb_ack_i = 0;
+        state = 0;
+        break;
+      }
+    }
+
+    Testbench<Vecap5_dproc>::tick();
   }
 
   void set_memory(std::string path) {
@@ -167,9 +214,11 @@ void tb_riscv_tests_simple(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->dump_memory(1024);
   tb->set_memory("riscv-tests/rv32ui-p-simple");
-  tb->dump_memory(1024);
+
+  while(tb->tickcount < MAX_TICKCOUNT) {
+    tb->tick();
+  }
 }
 
 int main(int argc, char ** argv, char ** env) {
