@@ -29,6 +29,7 @@
 
 #include "Vtb_decode.h"
 #include "testbench.h"
+#include "riscv.h"
 #include "Vtb_decode_ecap5_dproc_pkg.h"
 #include "Vtb_decode_riscv_pkg.h"
 
@@ -109,267 +110,6 @@ public:
     core->pc_i = 0;
     core->output_ready_i = 0;
   }
-
-  uint32_t sign_extend(uint32_t data, uint32_t nb_bits) {
-    data &= (1 << nb_bits)-1;
-    if((data >> (nb_bits-1)) & 0x1){
-      data |= (((1 << (32 - (nb_bits-1))) - 1) << nb_bits);
-    }
-    return data;
-  }
-
-  uint32_t instr_r(uint32_t opcode, uint32_t rd, uint32_t func3, uint32_t rs1, uint32_t rs2, uint32_t func7) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (rd & 0x1F) << 7;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (rs2 & 0x1F) << 20;
-    instr |= (func7 & 0x7F) << 25;
-    return instr;
-  }
-
-  uint32_t instr_i(uint32_t opcode, uint32_t rd, uint32_t func3, uint32_t rs1, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (rd & 0x1F) << 7;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (imm & 0xFFF) << 20;
-    return instr;
-  }
-
-  uint32_t instr_s(uint32_t opcode, uint32_t func3, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (imm & 0x1F) << 7;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (rs2 & 0x1F) << 20;
-    instr |= ((imm >> 5) & 0x7F) << 25;
-    return instr;
-  }
-
-  uint32_t instr_b(uint32_t opcode, uint32_t func3, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= ((imm >> 11) & 1) << 7;
-    instr |= ((imm >> 1) & 0xF) << 8;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (rs2 & 0x1F) << 20;
-    instr |= ((imm >> 5) & 0x3F) << 25;
-    instr |= ((imm >> 12) & 1) << 31;
-    return instr;
-  }
-
-  uint32_t instr_u(uint32_t opcode, uint32_t rd, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (rd & 0x1F) << 7;
-    instr |= ((imm >> 12) & 0xFFFFF) << 12;
-    return instr;
-  }
-
-  uint32_t instr_j(uint32_t opcode, uint32_t rd, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (rd & 0x1F) << 7;
-    instr |= ((imm >> 12) & 0xFF) << 12;
-    instr |= ((imm >> 11) & 1) << 20;
-    instr |= ((imm >> 1) & 0x3FF) << 21;
-    instr |= ((imm >> 20) & 1) << 31;
-    return instr;
-  }
-
-  void _lui(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_u(Vtb_decode_riscv_pkg::OPCODE_LUI, rd, imm << 12);
-    core->pc_i = pc;
-  }
-
-  void _auipc(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_u(Vtb_decode_riscv_pkg::OPCODE_AUIPC, rd, imm << 12);
-    core->pc_i = pc;
-  }
-
-  void _jal(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_j(Vtb_decode_riscv_pkg::OPCODE_JAL, rd, imm);
-    core->pc_i = pc;
-  }
-
-  void _jalr(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_JALR, rd, Vtb_decode_riscv_pkg::FUNC3_JALR, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _beq(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BEQ, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _bne(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BNE, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _blt(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BLT, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _bge(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BGE, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _bltu(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BLTU, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _bgeu(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BGEU, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _lb(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LB, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _lbu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LBU, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _lh(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LH, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _lhu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LHU, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _lw(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LW, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _sb(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SB, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _sh(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SH, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _sw(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SW, rs1, rs2, imm);
-    core->pc_i = pc;
-  }
-
-  void _addi(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _slti(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLT, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _sltiu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLTU, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _xori(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_XOR, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _ori(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_OR, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _andi(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_AND, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _slli(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLL, rs1, imm);
-    core->pc_i = pc;
-  }
-
-  void _srli(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    // set func7
-    uint32_t imm_w_func7 = (imm & 0x1F) | ((1 << 6) << 25);
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, imm_w_func7);
-    core->pc_i = pc;
-  }
-
-  void _srai(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    // set func7
-    uint32_t imm_w_func7 = (imm & 0x1F) | ((1 << 5) << 5);
-    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, imm_w_func7);
-    core->pc_i = pc;
-  }
-
-  void _add(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_ADD);
-    core->pc_i = pc;
-  }
-
-  void _sub(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SUB);
-    core->pc_i = pc;
-  }
-
-  void _slt(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLT, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _sltu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLTU, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _xor(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_XOR, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _or(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_OR, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _and(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_AND, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _sll(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLL, rs1, rs2, 0);
-    core->pc_i = pc;
-  }
-
-  void _srl(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SRL);
-    core->pc_i = pc;
-  }
-
-  void _sra(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SRA);
-    core->pc_i = pc;
-  }
 };
 
 void tb_decode_reset(TB_Decode * tb) {
@@ -414,9 +154,11 @@ void tb_decode_lui(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t imm = rand() % 32;
-  tb->_lui(pc, rd, imm);
+
+  core->instr_i = instr_lui(rd, imm);
 
   //=================================
   //      Tick (1)
@@ -479,9 +221,10 @@ void tb_decode_auipc(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFFF - 10));
-  tb->_auipc(pc, rd, imm);
+  core->instr_i = instr_auipc(rd, imm);
 
   //=================================
   //      Tick (1)
@@ -545,9 +288,10 @@ void tb_decode_jal(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFFFF - 10)) & ~(0x1);
-  tb->_jal(pc, rd, imm);
+  core->instr_i = instr_jal(rd, imm);
 
   //=================================
   //      Tick (1)
@@ -558,7 +302,7 @@ void tb_decode_jal(TB_Decode * tb) {
   //      Checks 
 
   tb->check(COND_alu,       (core->alu_operand1_o  ==  pc)                                &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 21))          &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 21))          &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_ADD) &&
                             (core->alu_sub_o       ==  0));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_UNCOND));
@@ -611,10 +355,11 @@ void tb_decode_jalr(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_jalr(pc, rd, rs1, imm);
+  core->instr_i = instr_jalr(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -628,7 +373,7 @@ void tb_decode_jalr(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)                            &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))          &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))          &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_ADD) &&
                             (core->alu_sub_o       ==  0));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_UNCOND));
@@ -681,10 +426,11 @@ void tb_decode_beq(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_beq(pc, rs1, rs2, imm);
+  core->instr_i = instr_beq(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -703,7 +449,7 @@ void tb_decode_beq(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BEQ) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -756,10 +502,11 @@ void tb_decode_bne(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_bne(pc, rs1, rs2, imm);
+  core->instr_i = instr_bne(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -778,7 +525,7 @@ void tb_decode_bne(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BNE) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -831,10 +578,11 @@ void tb_decode_blt(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_blt(pc, rs1, rs2, imm);
+  core->instr_i = instr_blt(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -853,7 +601,7 @@ void tb_decode_blt(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BLT) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -906,10 +654,11 @@ void tb_decode_bge(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_bge(pc, rs1, rs2, imm);
+  core->instr_i = instr_bge(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -928,7 +677,7 @@ void tb_decode_bge(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BGE) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -981,10 +730,11 @@ void tb_decode_bltu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_bltu(pc, rs1, rs2, imm);
+  core->instr_i = instr_bltu(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1003,7 +753,7 @@ void tb_decode_bltu(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BLTU) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -1056,10 +806,11 @@ void tb_decode_bgeu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0x1FFF - 10)) & ~(0x1) ;
-  tb->_bgeu(pc, rs1, rs2, imm);
+  core->instr_i = instr_bgeu(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1078,7 +829,7 @@ void tb_decode_bgeu(TB_Decode * tb) {
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)          &&
                             (core->alu_operand2_o  ==  rdata2));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::BRANCH_BGEU) &&
-                            (core->branch_offset_o ==  (tb->sign_extend(imm, 13) & 0xFFFFF)));
+                            (core->branch_offset_o ==  (sign_extend(imm, 13) & 0xFFFFF)));
   tb->check(COND_writeback, (core->reg_write_o     ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o     ==  0));
   tb->check(COND_output_valid, (core->output_valid_o == 1));
@@ -1131,10 +882,11 @@ void tb_decode_lb(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lb(pc, rd, rs1, imm);
+  core->instr_i = instr_lb(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1148,7 +900,7 @@ void tb_decode_lb(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
@@ -1202,10 +954,11 @@ void tb_decode_lbu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lbu(pc, rd, rs1, imm);
+  core->instr_i = instr_lbu(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1219,7 +972,7 @@ void tb_decode_lbu(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
@@ -1273,10 +1026,11 @@ void tb_decode_lh(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lh(pc, rd, rs1, imm);
+  core->instr_i = instr_lh(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1290,7 +1044,7 @@ void tb_decode_lh(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
@@ -1344,10 +1098,11 @@ void tb_decode_lhu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lhu(pc, rd, rs1, imm);
+  core->instr_i = instr_lhu(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1361,7 +1116,7 @@ void tb_decode_lhu(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
@@ -1415,10 +1170,11 @@ void tb_decode_lw(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lw(pc, rd, rs1, imm);
+  core->instr_i = instr_lw(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1432,7 +1188,7 @@ void tb_decode_lw(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  1) &&
                             (core->reg_addr_o         ==  rd));
@@ -1485,10 +1241,11 @@ void tb_decode_sb(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_sb(pc, rs1, rs2, imm);
+  core->instr_i = instr_sb(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1504,7 +1261,7 @@ void tb_decode_sb(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  1) &&
@@ -1557,10 +1314,11 @@ void tb_decode_sh(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_sh(pc, rs1, rs2, imm);
+  core->instr_i = instr_sh(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1576,7 +1334,7 @@ void tb_decode_sh(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  1) &&
@@ -1629,10 +1387,11 @@ void tb_decode_sw(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_sw(pc, rs1, rs2, imm);
+  core->instr_i = instr_sw(rs1, rs2, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1648,7 +1407,7 @@ void tb_decode_sw(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o     ==  rdata1)          &&
-                            (core->alu_operand2_o     ==  tb->sign_extend(imm, 12)));
+                            (core->alu_operand2_o     ==  sign_extend(imm, 12)));
   tb->check(COND_branch,    (core->branch_cond_o      ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o        ==  0));
   tb->check(COND_loadstore, (core->ls_enable_o        ==  1) &&
@@ -1701,10 +1460,11 @@ void tb_decode_addi(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_addi(pc, rd, rs1, imm);
+  core->instr_i = instr_addi(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1720,7 +1480,7 @@ void tb_decode_addi(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_ADD) &&
                             (core->alu_sub_o       ==  0));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
@@ -1773,10 +1533,11 @@ void tb_decode_slti(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_slti(pc, rd, rs1, imm);
+  core->instr_i = instr_slti(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1792,7 +1553,7 @@ void tb_decode_slti(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_SLT));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
@@ -1844,10 +1605,11 @@ void tb_decode_sltiu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_sltiu(pc, rd, rs1, imm);
+  core->instr_i = instr_sltiu(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1863,7 +1625,7 @@ void tb_decode_sltiu(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_SLTU));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
@@ -1915,10 +1677,11 @@ void tb_decode_xori(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_xori(pc, rd, rs1, imm);
+  core->instr_i = instr_xori(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -1934,7 +1697,7 @@ void tb_decode_xori(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_XOR));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
@@ -1986,10 +1749,11 @@ void tb_decode_ori(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_ori(pc, rd, rs1, imm);
+  core->instr_i = instr_ori(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2005,7 +1769,7 @@ void tb_decode_ori(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_OR));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
@@ -2057,10 +1821,11 @@ void tb_decode_andi(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_andi(pc, rd, rs1, imm);
+  core->instr_i = instr_andi(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2076,7 +1841,7 @@ void tb_decode_andi(TB_Decode * tb) {
   //      Checks 
   
   tb->check(COND_alu,       (core->alu_operand1_o  ==  rdata1)  &&
-                            (core->alu_operand2_o  ==  tb->sign_extend(imm, 12))  &&
+                            (core->alu_operand2_o  ==  sign_extend(imm, 12))  &&
                             (core->alu_op_o        ==  Vtb_decode_ecap5_dproc_pkg::ALU_AND));
   tb->check(COND_branch,    (core->branch_cond_o   ==  Vtb_decode_ecap5_dproc_pkg::NO_BRANCH));
   tb->check(COND_writeback, (core->reg_write_o     ==  1) &&
@@ -2128,10 +1893,11 @@ void tb_decode_slli(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = 1 + rand() % (0x1F - 1);
-  tb->_slli(pc, rd, rs1, imm);
+  core->instr_i = instr_slli(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2200,10 +1966,11 @@ void tb_decode_srli(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = 1 + rand() % (0x1F - 1);
-  tb->_srli(pc, rd, rs1, imm);
+  core->instr_i = instr_srli(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2273,10 +2040,11 @@ void tb_decode_srai(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = 1 + rand() % (0x1F - 1);
-  tb->_srai(pc, rd, rs1, imm);
+  core->instr_i = instr_srai(rd, rs1, imm);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2346,10 +2114,11 @@ void tb_decode_add(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_add(pc, rd, rs1, rs2);
+  core->instr_i = instr_add(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2418,10 +2187,11 @@ void tb_decode_sub(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_sub(pc, rd, rs1, rs2);
+  core->instr_i = instr_sub(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2490,10 +2260,11 @@ void tb_decode_slt(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_slt(pc, rd, rs1, rs2);
+  core->instr_i = instr_slt(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2561,10 +2332,11 @@ void tb_decode_sltu(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_sltu(pc, rd, rs1, rs2);
+  core->instr_i = instr_sltu(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2632,10 +2404,11 @@ void tb_decode_xor(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_xor(pc, rd, rs1, rs2);
+  core->instr_i = instr_xor(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2703,10 +2476,11 @@ void tb_decode_or(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_or(pc, rd, rs1, rs2);
+  core->instr_i = instr_or(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2774,10 +2548,11 @@ void tb_decode_and(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_and(pc, rd, rs1, rs2);
+  core->instr_i = instr_and(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2845,10 +2620,11 @@ void tb_decode_sll(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_sll(pc, rd, rs1, rs2);
+  core->instr_i = instr_sll(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2917,10 +2693,11 @@ void tb_decode_srl(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_srl(pc, rd, rs1, rs2);
+  core->instr_i = instr_srl(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -2990,10 +2767,11 @@ void tb_decode_sra(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_sra(pc, rd, rs1, rs2);
+  core->instr_i = instr_sra(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -3063,10 +2841,11 @@ void tb_decode_bubble(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t imm = (10 + rand() % (0xFFFF - 10));
-  tb->_lb(pc, rd, rs1, imm);
+  core->instr_i = instr_lb(rd, rs1, imm);
 
   //=================================
   //      Tick (1)
@@ -3133,10 +2912,11 @@ void tb_decode_pipeline_wait(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_and(pc, rd, rs1, rs2);
+  core->instr_i = instr_and(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -3164,7 +2944,7 @@ void tb_decode_pipeline_wait(TB_Decode * tb) {
   //      Set inputs
   
   core->output_ready_i = 0;
-  tb->_or(pc, rd, rs1, rs2);
+  core->instr_i = instr_or(rd, rs1, rs2);
 
   //=================================
   //      Tick (2)
@@ -3225,7 +3005,7 @@ void tb_decode_pipeline_wait(TB_Decode * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_and(pc, rd, rs1, rs2);
+  core->instr_i = instr_and(rd, rs1, rs2);
 
   //=================================
   //      Tick (5)
@@ -3292,10 +3072,11 @@ void tb_decode_hazard(TB_Decode * tb) {
   core->output_ready_i = 1;
 
   uint32_t pc = rand();
+  core->pc_i = pc;
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
   uint32_t rs2 = rand() % 32;
-  tb->_and(pc, rd, rs1, rs2);
+  core->instr_i = instr_and(rd, rs1, rs2);
 
   uint32_t rdata1 = rand() % 0x7FFFFFFF;
   core->rdata1_i = rdata1;
@@ -3323,7 +3104,7 @@ void tb_decode_hazard(TB_Decode * tb) {
   //      Set inputs
   
   core->stall_request_i = 1;
-  tb->_or(pc, rd, rs1, rs2);
+  core->instr_i = instr_or(rd, rs1, rs2);
 
   //=================================
   //      Tick (2)
@@ -3384,7 +3165,7 @@ void tb_decode_hazard(TB_Decode * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  tb->_and(pc, rd, rs1, rs2);
+  core->instr_i = instr_and(rd, rs1, rs2);
 
   //=================================
   //      Tick (5)
