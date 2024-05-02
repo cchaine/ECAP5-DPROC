@@ -110,10 +110,7 @@ add_testbench(memory)
 add_testbench(hazard)
 add_testbench(ecap5_dproc PUBLIC)
 
-# Main targets
-add_custom_target(build DEPENDS ${TEST_BINARIES})
-add_custom_target(tests DEPENDS ${TEST_TARGETS})
-
+# riscv-tests
 add_subdirectory(riscv-tests)
 add_executable(riscv-tests-executable ${CMAKE_CURRENT_SOURCE_DIR}/riscv-tests/riscv-tests.cpp)
 add_dependencies(riscv-tests-executable riscv-tests-binaries)
@@ -134,3 +131,8 @@ add_custom_command(
   DEPENDS riscv-tests-executable
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
 add_custom_target(riscv-tests DEPENDS ${TESTDATA_DIR}/riscv-tests.csv)
+
+# Main targets
+add_custom_target(build DEPENDS ${TEST_BINARIES} riscv-tests-executable)
+add_custom_target(tests DEPENDS ${TEST_TARGETS} riscv-tests)
+

@@ -244,6 +244,13 @@ public:
     svSetScope(scope);
     this->core->get_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)value);
   }
+
+  void close_trace() {
+    if(this->trace != NULL) {
+      this->trace->close();
+      this->trace = NULL;
+    }
+  }
 };
 
 void tb_riscv_tests_simple(TB_Riscv_tests * tb) {
