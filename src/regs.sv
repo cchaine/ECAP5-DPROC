@@ -44,13 +44,17 @@ always @ (posedge clk_i) begin
   end
 end
 
-assign rdata1_o = registers[raddr1_i];
-assign rdata2_o = registers[raddr2_i];
+assign rdata1_o = raddr1_i == '0 ? '0 : registers[raddr1_i];
+assign rdata2_o = raddr2_i == '0 ? '0 : registers[raddr2_i];
 
 `ifdef VERILATOR
   export "DPI-C" task set_register_value;
   task automatic set_register_value(input logic[4:0] addr, input logic[31:0] value);
     registers[addr] = value;
+  endtask
+  export "DPI-C" task get_register_value;
+  task automatic get_register_value(input logic[4:0] addr, output logic[31:0] out);
+    out = registers[addr];
   endtask
 `endif
 

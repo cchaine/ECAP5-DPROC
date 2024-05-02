@@ -1,6 +1,6 @@
 include(FindPackageHandleStandardArgs)
 
-find_package(PythonInterp)
+find_package(Python3)
 if(PYTHONINTERP_FOUND)
   get_filename_component(_PYTHON_DIR "${PYTHON_EXECUTABLE}" DIRECTORY)
   set(

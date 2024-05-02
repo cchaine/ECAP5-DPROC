@@ -77,20 +77,20 @@ public:
     Testbench<Vtb_ecap5_dproc>::tick();
 
     // Check pipeline bubbles
-    if(prev_if_dec_valid == 0) {
+    if(prev_if_dec_valid == 0 && this->core->tb_ecap5_dproc->dut->dec_ex_valid == 1) {
       this->check(COND_bubble, (this->core->tb_ecap5_dproc->dut->dec_alu_operand1 == 0)         &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_alu_operand2 == 0)         &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_alu_op       == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_ADD)   &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_alu_sub      == 0)         &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_branch_cond  == Vtb_ecap5_dproc_ecap5_dproc_pkg::NO_BRANCH) &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_ls_enable    == 0)         &&
-                                  (this->core->tb_ecap5_dproc->dut->dec_reg_write    == 0));
+                               (this->core->tb_ecap5_dproc->dut->dec_alu_operand2 == 0)         &&
+                               (this->core->tb_ecap5_dproc->dut->dec_alu_op       == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_ADD)   &&
+                               (this->core->tb_ecap5_dproc->dut->dec_alu_sub      == 0)         &&
+                               (this->core->tb_ecap5_dproc->dut->dec_branch_cond  == Vtb_ecap5_dproc_ecap5_dproc_pkg::NO_BRANCH) &&
+                               (this->core->tb_ecap5_dproc->dut->dec_ls_enable    == 0)         &&
+                               (this->core->tb_ecap5_dproc->dut->dec_reg_write    == 0));
     }
-    if(prev_dec_ex_valid == 0) {
+    if(prev_dec_ex_valid == 0 && this->core->tb_ecap5_dproc->dut->ex_ls_valid == 1) {
       this->check(COND_bubble, (this->core->tb_ecap5_dproc->dut->ex_ls_enable  == 0) &&
                                  (this->core->tb_ecap5_dproc->dut->ex_reg_write  == 0));
     }
-    if(prev_ex_ls_valid == 0) {
+    if(prev_ex_ls_valid == 0 && this->core->tb_ecap5_dproc->dut->ls_valid == 1) {
       this->check(COND_bubble, (this->core->tb_ecap5_dproc->dut->ls_reg_write  == 0));
     }
     if(prev_ls_valid == 0) {

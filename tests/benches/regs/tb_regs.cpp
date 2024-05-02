@@ -42,7 +42,8 @@ enum TestcaseId {
   T_WRITE_X0           =  3,
   T_WRITE              =  4,
   T_PARALLEL_READ      =  5,
-  T_READ_BEFORE_WRITE  =  6
+  T_READ_BEFORE_WRITE  =  6,
+  T_READ_X0            =  7
 };
 
 class TB_Regs : public Testbench<Vtb_regs> {
@@ -61,6 +62,43 @@ public:
   }
 };
 
+void tb_regs_read_x0(TB_Regs * tb) {
+  Vtb_regs * core = tb->core;
+  core->testcase = T_READ_X0;
+
+  // The following actions are performed in this test :
+  //    tick 0. Set the inputs to read x0 through port a
+  //    tick 1. Set the inputs to read x0 through port b
+  
+  tb->reset();
+
+  core->raddr1_i = 0;
+  core->write_i = 0;
+
+  //=================================
+  //      Tick (0)
+  
+  tb->tick();
+
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_read, (core->rdata1_o == 0));
+
+  //`````````````````````````````````
+  //      Set inputs
+    
+  core->raddr2_i = 0;
+  tb->check(COND_read, (core->rdata2_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
+  CHECK("tb_regs.read_x0.01",
+    tb->conditions[COND_read],
+    "Failed to read registers x0", tb->err_cycles[COND_read]);
+}
+
 void tb_regs_read_port_a(TB_Regs * tb) {
   Vtb_regs * core = tb->core;
   core->testcase = T_READ_PORTA;
@@ -70,7 +108,7 @@ void tb_regs_read_port_a(TB_Regs * tb) {
 
   tb->reset();
 
-  for(int i = 0; i < 32; i++) {
+  for(int i = 1; i < 32; i++) {
     //`````````````````````````````````
     //      Set inputs
     
@@ -108,7 +146,7 @@ void tb_regs_read_port_b(TB_Regs * tb) {
 
   tb->reset();
 
-  for(int i = 0; i < 32; i++) {
+  for(int i = 1; i < 32; i++) {
     //`````````````````````````````````
     //      Set inputs
     
@@ -342,6 +380,8 @@ int main(int argc, char ** argv, char ** env) {
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
+
+  tb_regs_read_x0(tb);
 
   tb_regs_read_port_a(tb);
   
