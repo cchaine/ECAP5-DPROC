@@ -59,3 +59,50 @@ ecap5_dproc dut (
 );
 
 endmodule // ecap5_dproc
+
+`verilator_config
+
+public -module "ecap5_dproc" -var "if_dec_ready"
+public -module "ecap5_dproc" -var "if_dec_valid"
+public -module "ecap5_dproc" -var "dec_ex_ready"
+public -module "ecap5_dproc" -var "dec_ex_valid"
+public -module "ecap5_dproc" -var "ex_ls_ready"
+public -module "ecap5_dproc" -var "ex_ls_valid"
+public -module "ecap5_dproc" -var "ls_valid"
+
+public -module "ecap5_dproc" -var "branch"
+public -module "ecap5_dproc" -var "branch_target"
+public -module "ecap5_dproc" -var "if_instr"
+public -module "ecap5_dproc" -var "if_pc"
+
+public -module "ecap5_dproc" -var "dec_pc"
+public -module "ecap5_dproc" -var "dec_alu_operand1"
+public -module "ecap5_dproc" -var "dec_alu_operand2"
+public -module "ecap5_dproc" -var "dec_alu_op"
+public -module "ecap5_dproc" -var "dec_alu_sub"
+public -module "ecap5_dproc" -var "dec_branch_cond"
+public -module "ecap5_dproc" -var "dec_branch_target"
+public -module "ecap5_dproc" -var "dec_ls_enable"
+public -module "ecap5_dproc" -var "dec_ls_write"
+public -module "ecap5_dproc" -var "dec_ls_unsigned_load"
+public -module "ecap5_dproc" -var "dec_ls_sel"
+public -module "ecap5_dproc" -var "dec_reg_write"
+public -module "ecap5_dproc" -var "dec_reg_addr"
+
+public -module "ecap5_dproc" -var "ex_ls_enable"
+public -module "ecap5_dproc" -var "ex_ls_write"
+public -module "ecap5_dproc" -var "ex_ls_unsigned_load"
+public -module "ecap5_dproc" -var "ex_ls_sel"
+public -module "ecap5_dproc" -var "ex_result"
+public -module "ecap5_dproc" -var "ex_reg_write"
+public -module "ecap5_dproc" -var "ex_reg_addr"
+
+public -module "ecap5_dproc" -var "ls_reg_write"
+public -module "ecap5_dproc" -var "ls_reg_addr"
+public -module "ecap5_dproc" -var "ls_reg_data"
+
+public -module "ecap5_dproc" -var "reg_write"
+public -module "ecap5_dproc" -var "reg_waddr"
+public -module "ecap5_dproc" -var "reg_wdata"
+
+public -module "ecap5_dproc" -var "hzd_ex_discard_request"

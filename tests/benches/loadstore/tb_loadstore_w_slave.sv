@@ -119,3 +119,15 @@ instr_wb_slave wb_slave (
 );
 
 endmodule // top
+
+`verilator_config
+
+public -module "tb_loadstore_w_slave" -var "wb_adr_o"
+public -module "tb_loadstore_w_slave" -var "wb_dat_i"
+public -module "tb_loadstore_w_slave" -var "wb_dat_o"
+public -module "tb_loadstore_w_slave" -var "wb_we_o"
+public -module "tb_loadstore_w_slave" -var "wb_stb_o"
+public -module "tb_loadstore_w_slave" -var "wb_ack_i"
+public -module "tb_loadstore_w_slave" -var "wb_cyc_o"
+public -module "tb_loadstore_w_slave" -var "wb_stall_i"
+public -module "tb_loadstore_w_slave" -var "wb_sel_o"
