@@ -46,21 +46,30 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/dependency.cmake)
 
 add_dependency(ECAP5_TREQ 
   GIT ecap5/ecap5-treq
-  TAG tags/v2.1.1
+  TAG release/v2.2.0
   BINARY ecap5-treq)
 
 add_dependency(ECAP5_DTLIB
   GIT ecap5/ecap5-dtlib
-  TAG 2-implement-an-instrumented-wishbone-slave)
+  TAG main)
 
 add_dependency(riscv-tests
   GIT ecap5/riscv-tests
   TAG master)
 
+add_dependency(sphinx-cmake
+  GIT ecap5/sphinx-cmake
+  TAG tags/v1.0.1)
+
+add_dependency(verilator-cmake
+  GIT ecap5/verilator-cmake
+  TAG tags/v1.0.1)
+
 # Configure dependencies
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/ecap5-treq.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/verilator-config.cmake)
+include(${verilator_cmake_SOURCE_DIR}/cmake/verilator-config.cmake)
+include(${ecap5_treq_SOURCE_DIR}/config.cmake)
+list(APPEND CMAKE_MODULE_PATH "${sphinx_cmake_SOURCE_DIR}/cmake")
 
 # Include subdirectories
 

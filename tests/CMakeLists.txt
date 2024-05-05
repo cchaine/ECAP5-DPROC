@@ -113,7 +113,6 @@ add_testbench(ecap5_dproc PUBLIC)
 # riscv-tests
 add_subdirectory(riscv-tests)
 add_executable(riscv-tests-executable ${CMAKE_CURRENT_SOURCE_DIR}/riscv-tests/riscv-tests.cpp)
-add_dependencies(riscv-tests-executable riscv-tests-binaries)
 target_include_directories(riscv-tests-executable PRIVATE ${TEST_INCLUDE_DIR})
 verilate(riscv-tests-executable
   PREFIX Vecap5_dproc
@@ -130,7 +129,7 @@ add_custom_command(
   OUTPUT ${TESTDATA_DIR}/riscv-tests.csv
   DEPENDS riscv-tests-executable
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
-add_custom_target(riscv-tests DEPENDS ${TESTDATA_DIR}/riscv-tests.csv)
+add_custom_target(riscv-tests DEPENDS riscv-tests-binaries ${TESTDATA_DIR}/riscv-tests.csv)
 
 # Main targets
 add_custom_target(build DEPENDS ${TEST_BINARIES} riscv-tests-executable)
