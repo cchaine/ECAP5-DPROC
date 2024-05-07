@@ -31,7 +31,6 @@
 
 #include "Vtb_loadstore_w_slave.h"
 #include "Vtb_loadstore_w_slave_tb_loadstore_w_slave.h"
-#include "Vtb_loadstore_w_slave_loadstore.h"
 #include "Vtb_loadstore_w_slave_ecap5_dproc_pkg.h"
 
 enum CondId {

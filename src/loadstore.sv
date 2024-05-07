@@ -83,7 +83,7 @@ typedef enum logic [2:0] {
   DONE,           // 3
   MEMORY_STALL    // 4
 } state_t;
-state_t state_d, state_q /* verilator public */;
+state_t state_d, state_q;
 
 logic memory_request;
 logic[31:0] write_data;

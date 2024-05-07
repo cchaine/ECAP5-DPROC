@@ -103,3 +103,7 @@ loadstore dut (
 );
 
 endmodule // top
+
+`verilator_config
+
+public -module "loadstore" -var "state_q"
