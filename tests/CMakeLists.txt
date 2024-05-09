@@ -120,6 +120,18 @@ add_custom_command(
   WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
 add_custom_target(riscv-tests DEPENDS riscv-tests-binaries ${TESTDATA_DIR}/riscv-tests.csv)
 
+# emulator
+add_subdirectory(emulator)
+add_executable(emulate ${CMAKE_CURRENT_SOURCE_DIR}/emulator/emulator.cpp)
+target_include_directories(emulate PRIVATE ${TEST_INCLUDE_DIR})
+verilate(emulate
+  PREFIX Vecap5_dproc
+  SOURCES ${SV_HEADERS}
+          ${SRC_DIR}/ecap5_dproc.sv
+  INCLUDE_DIRS ${SRC_DIR}
+  TRACE) 
+add_dependencies(emulate emulator-example-binaries)
+
 # Main targets
 add_custom_target(build DEPENDS ${TEST_BINARIES} riscv-tests-executable)
 add_custom_target(tests DEPENDS ${TEST_TARGETS} riscv-tests)
