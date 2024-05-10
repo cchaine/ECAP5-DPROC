@@ -5,7 +5,6 @@
 helloworld:      .ascii "Hello World!\n\0"
 
   .section .text
-  .align  6
   .globl _start
 _start:
   la s1, helloworld # char pointer

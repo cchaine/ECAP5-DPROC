@@ -3,8 +3,8 @@
 # / __/ __/ _ \/ _ `/ / _ \/ -_)
 # \__/\__/_//_/\_,_/_/_//_/\__/
 # 
-# Copyright (C) Clément Chain
-# This file is part of ECAP5-DPROC <https://github.com/cchaine/ECAP5-DPROC>
+# Copyright (C) Clément Chaine
+# This file is part of ECAP5-DPROC <https://github.com/ecap5/ECAP5-DPROC>
 # 
 # ECAP5-DPROC is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,36 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
-set(CROSS_COMPILE riscv64-unknown-elf-)
-set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
-set(CMAKE_AR ${CROSS_COMPILE}ar)
-set(CMAKE_ASM_COMPILER ${CROSS_COMPILE}gcc)
-set(CMAKE_C_COMPILER ${CROSS_COMPILE}gcc)
-set(CMAKE_CXX_COMPILER ${CROSS_COMPILE}g++)
+add_executable(emulator ${CMAKE_CURRENT_LIST_DIR}/emulator.cpp)
+target_include_directories(emulator PRIVATE ${TEST_INCLUDE_DIR})
+verilate(emulator
+  PREFIX Vecap5_dproc
+  SOURCES ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+          ${SRC_DIR}/ecap5_dproc.sv
+  INCLUDE_DIRS ${SRC_DIR}
+  TRACE) 
 
-enable_language(ASM)
-
-# Compile options
-set(CC_OPTS "-static \
-            -mcmodel=medany \
-            -fvisibility=hidden \
-            -nostdlib \
-            -nostartfiles")
-
-set(TARGETS helloworld)
-
-set(ALL_TARGETS)
-foreach(TARGET IN LISTS TARGETS)
-  add_executable(${TARGET}.elf ${CMAKE_CURRENT_LIST_DIR}/examples/${TARGET}.s)
-  set_target_properties(${TARGET}.elf PROPERTIES COMPILE_FLAGS "${CC_OPTS} -march=rv32g -mabi=ilp32"
-                                                 LINK_FLAGS    "${CC_OPTS} -march=rv32g -mabi=ilp32 -T${CMAKE_CURRENT_LIST_DIR}/env/link.ld")
-
-  add_custom_command(
-    OUTPUT ${TARGET}.dump
-    COMMAND ${CROSS_COMPILE}objdump -d ${TARGET}.elf -Mno-aliases -Mnumeric > ${TARGET}.dump
-    VERBATIM)
-
-  list(APPEND ALL_TARGETS ${TARGET}.elf ${TARGET}.dump)
-endforeach()
-
-add_custom_target(emulator-example-binaries DEPENDS ${ALL_TARGETS})
+add_subdirectory(examples)
