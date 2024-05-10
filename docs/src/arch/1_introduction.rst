@@ -19,32 +19,47 @@ ECAP5-DPROC is an implementation of the RISC-V instruction set architecture targ
 Conventions
 -----------
 
-.. todo::
-  Requirements shall be described here.
+Requirement format
+^^^^^^^^^^^^^^^^^^
 
-  Requirement relationships :
-   * Composition
-   * Derivation
-   * Refinement
-   * Satisfy
-   * Verify
-   * Copy
+This document details requirements with the following format :
 
-  The bit indexing shall be described somewhere.
+.. list-table:: Sample requirement
+  :width: 100%
+  :widths: 10 90
 
-  Byte size as well.
+  * - **ID**
+    - Requirement_ID
 
-  Inputs missing from timing diagrams are considered low or undefined.
+  * - **Description**
+    - Requirement description
 
-  Italic names are timing diagram parameters.
+  * - **Rationale**
+    - Requirement rationale
+
+  * - **DerivedFrom**
+    - Other_Requirement_ID
+
+with requirement IDs having the following format :
+
+  * ``U_*``: User requirements
+  * ``I_*``: External interface requirements
+  * ``F_*``: Functional requirements
+  * ``N_*``: Non-Functional requirements
+  * ``A_*``: Architecture requirements
+
+The requirement hierarchy and traceability scheme is detailed in the following figure.
+
+.. image:: ../assets/traceability.svg
 
 Definitions and Abbreviations
 -----------------------------
 
-.. todo::
-  hardware-configurable
+**hardware-configurable**
+  A hardware-configurable property shall be configurable during the design elaboration phase through the used of verilog module's parameters for instance.
 
-  software-configurable
+**software-configurable**
+  A software-configurable property shall be configurable with software through memory-mapped registers for instance.
 
 References
 ----------

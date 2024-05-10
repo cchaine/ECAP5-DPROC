@@ -970,12 +970,12 @@ The following requirements are extracted from the Wishbone specification.
 
   The clock input clk i shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of clk_i. All input signals of the memory interface shall be stable before the rising edge of clk_i.
 
-BLOCK cycles are not supported in revision 1.0.0
+.. note:: BLOCK cycles are not supported in revision 1.0.0
 
 Caches
 ``````
 
-Caches are not supported in revision 1.0.0
+.. note:: Caches are not supported in revision 1.0.0
 
 Debugging
 ^^^^^^^^^
