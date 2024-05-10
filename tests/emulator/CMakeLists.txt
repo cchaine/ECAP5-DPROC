@@ -19,24 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
-add_subdirectory(tests)
-
-# riscv-tests
-add_executable(riscv-tests-executable ${CMAKE_CURRENT_SOURCE_DIR}/riscv-tests.cpp)
-target_include_directories(riscv-tests-executable PRIVATE ${TEST_INCLUDE_DIR})
-verilate(riscv-tests-executable
+add_executable(emulator ${CMAKE_CURRENT_LIST_DIR}/emulator.cpp)
+target_include_directories(emulator PRIVATE ${TEST_INCLUDE_DIR})
+verilate(emulator
   PREFIX Vecap5_dproc
   SOURCES ${SRC_DIR}/include/ecap5_dproc_pkg.svh
           ${SRC_DIR}/ecap5_dproc.sv
   INCLUDE_DIRS ${SRC_DIR}
   TRACE) 
-get_target_property(RISCV_TESTS_EXECUTABLE riscv-tests-executable BINARY_DIR)
-if(${DEBUGLOG})
-  set(RUN_TARGET_ARGUMENT "-v")  
-endif()
-add_custom_command(
-  COMMAND ${RISCV_TESTS_EXECUTABLE}/riscv-tests-executable ${RUN_TARGET_ARGUMENT}
-  OUTPUT ${TESTDATA_DIR}/riscv-tests.csv
-  DEPENDS riscv-tests-executable
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/tests/)
-add_custom_target(riscv-tests DEPENDS riscv-tests-binaries ${TESTDATA_DIR}/riscv-tests.csv)
+
+add_subdirectory(examples)

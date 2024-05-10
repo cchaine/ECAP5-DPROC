@@ -4,7 +4,7 @@
  * \__/\__/_//_/\_,_/_/_//_/\__/
  * 
  * Copyright (C) Clément Chaine
- * This file is part of ECAP5-DPROC <https://github.com/cchaine/ECAP5-DPROC>
+ * This file is part of ECAP5-DPROC <https://github.com/ecap5/ECAP5-DPROC>
  *
  * ECAP5-DPROC is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ void tb_riscv_tests_simple(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-simple.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-simple.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -281,7 +281,7 @@ void tb_riscv_tests_add(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-add.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-add.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -309,7 +309,7 @@ void tb_riscv_tests_addi(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-addi.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-addi.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -337,7 +337,7 @@ void tb_riscv_tests_and(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-and.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-and.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -365,7 +365,7 @@ void tb_riscv_tests_andi(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-andi.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-andi.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -393,7 +393,7 @@ void tb_riscv_tests_auipc(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-auipc.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-auipc.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -421,7 +421,7 @@ void tb_riscv_tests_beq(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-beq.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-beq.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -449,7 +449,7 @@ void tb_riscv_tests_bge(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-bge.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-bge.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -477,7 +477,7 @@ void tb_riscv_tests_bgeu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-bgeu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-bgeu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -505,7 +505,7 @@ void tb_riscv_tests_blt(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-blt.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-blt.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -533,7 +533,7 @@ void tb_riscv_tests_bltu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-bltu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-bltu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -561,7 +561,7 @@ void tb_riscv_tests_bne(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-bne.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-bne.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -589,7 +589,7 @@ void tb_riscv_tests_fence_i(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-fence_i.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-fence_i.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -621,7 +621,7 @@ void tb_riscv_tests_jal(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-jal.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-jal.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -649,7 +649,7 @@ void tb_riscv_tests_jalr(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-jalr.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-jalr.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -677,7 +677,7 @@ void tb_riscv_tests_lb(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lb.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lb.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -705,7 +705,7 @@ void tb_riscv_tests_lbu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lbu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lbu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -733,7 +733,7 @@ void tb_riscv_tests_lh(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lh.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lh.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -761,7 +761,7 @@ void tb_riscv_tests_lhu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lhu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lhu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -789,7 +789,7 @@ void tb_riscv_tests_lw(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lw.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lw.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -817,7 +817,7 @@ void tb_riscv_tests_lui(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-lui.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-lui.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -845,7 +845,7 @@ void tb_riscv_tests_ma_data(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-ma_data.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-ma_data.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -877,7 +877,7 @@ void tb_riscv_tests_or(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-or.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-or.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -905,7 +905,7 @@ void tb_riscv_tests_ori(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-ori.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-ori.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -933,7 +933,7 @@ void tb_riscv_tests_sb(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sb.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sb.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -961,7 +961,7 @@ void tb_riscv_tests_sh(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sh.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sh.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -989,7 +989,7 @@ void tb_riscv_tests_sw(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sw.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sw.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1017,7 +1017,7 @@ void tb_riscv_tests_sll(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sll.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sll.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1045,7 +1045,7 @@ void tb_riscv_tests_slli(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-slli.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-slli.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1073,7 +1073,7 @@ void tb_riscv_tests_slt(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-slt.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-slt.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1101,7 +1101,7 @@ void tb_riscv_tests_slti(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-slti.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-slti.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1129,7 +1129,7 @@ void tb_riscv_tests_sltiu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sltiu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sltiu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1157,7 +1157,7 @@ void tb_riscv_tests_sltu(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sltu.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sltu.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1185,7 +1185,7 @@ void tb_riscv_tests_sra(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sra.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sra.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1213,7 +1213,7 @@ void tb_riscv_tests_srai(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-srai.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-srai.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1241,7 +1241,7 @@ void tb_riscv_tests_srl(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-srl.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-srl.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1269,7 +1269,7 @@ void tb_riscv_tests_srli(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-srli.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-srli.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1297,7 +1297,7 @@ void tb_riscv_tests_sub(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-sub.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-sub.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1325,7 +1325,7 @@ void tb_riscv_tests_xor(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-xor.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-xor.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();
@@ -1353,7 +1353,7 @@ void tb_riscv_tests_xori(TB_Riscv_tests * tb) {
   Vecap5_dproc * core = tb->core;
   tb->reset();  
 
-  tb->set_memory("riscv-tests/rv32ui-p-xori.elf");
+  tb->set_memory("riscv-tests/tests/rv32ui-p-xori.elf");
 
   while(!tb->is_done && tb->tickcount < MAX_TICKCOUNT) {
     tb->tick();

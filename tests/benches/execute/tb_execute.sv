@@ -4,7 +4,7 @@
  * \__/\__/_//_/\_,_/_/_//_/\__/
  * 
  * Copyright (C) Clément Chaine
- * This file is part of ECAP5-DPROC <https://github.com/cchaine/ECAP5-DPROC>
+ * This file is part of ECAP5-DPROC <https://github.com/ecap5/ECAP5-DPROC>
  *
  * ECAP5-DPROC is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
