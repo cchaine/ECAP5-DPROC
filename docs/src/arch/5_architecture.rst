@@ -6,7 +6,7 @@ Architecture Overview
 Clock domains
 -------------
 
-To simplify the design of revision 1.0.0, each module of ECAP5-DPROC belong to a unique clock domain.
+To simplify the design of version 1.0.0, each module of ECAP5-DPROC belong to a unique clock domain.
 
 Pipeline stages
 ---------------
@@ -53,7 +53,7 @@ For the scope of this document, are designated as structural hazards all cases w
 
 A pipeline stall is produced in case of structural hazards.
 
-.. note:: It shall be noted that the some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+.. note:: It shall be noted that the some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
 Data hazard
 ^^^^^^^^^^^
@@ -62,7 +62,7 @@ A data hazard occurs when an instruction (A) uses the result of a previous instr
 
 A pipeline stall is produced in case of data hazards so that B is able to finish before A uses its result.
 
-.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
 Control hazard
 ^^^^^^^^^^^^^^
@@ -71,7 +71,7 @@ A control hazard occurs when a jump or branch instruction is executed, as instru
 
 Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as bubble drop.
 
-.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
 Architecture specification
 --------------------------

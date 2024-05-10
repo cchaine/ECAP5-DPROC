@@ -26,29 +26,20 @@ External Interface Requirements
     - I
     - 1
     - External interrupt request.
-  * - drq_i
-    - I
-    - 1
-    - Debug request.
 
 .. requirement:: I_CLK_01
 
-   All inputs and outputs of ECAP5-DPROC shall belong to clk_i's clock domain.
+   ECAP5-DPROC's outputs shall be registered on the rising edge of clk_i.
 
 .. requirement:: I_RESET_01
    :derivedfrom: U_RESET_01
 
-   The rst i signal shall hold ECAP5-DPROC in a reset state while asserted.
+   The rst_i signal shall hold ECAP5-DPROC in a reset state while asserted.
 
 .. requirement:: I_IRQ_01
    :derivedfrom: U_HARDWARE_INTERRUPT_01
 
     ECAP5-DPROC shall interrupt its execution flow when input irq_i is asserted.
-
-.. requirement:: I_DRQ_01
-   :derivedfrom: U_DEBUG_01
-
-    ECAP5-DPROC shall interrupt its execution flow when input drq_i is asserted.
 
 .. list-table:: ECAP5-DPROC memory interface signals
   :header-rows: 1
@@ -60,14 +51,6 @@ External Interface Requirements
     - Width
     - Description
 
-  * - wb_clk_i
-    - I
-    - 1
-    - The clock input coordinates all activites for the internal logic within the wishbone interconnect. All wishbone output signals are registered at the rising edge of wb_clk_i. All wishbone input signals are stable before the rising edge of wb_clk_i.
-  * - wb_rst_i
-    - I
-    - 1
-    - The reset input forces the wishbone interface to restart. Furthermore, all internal wishbone self-starting state machines will be forced into an initial state. This signal only resets the wishbone interface.
   * - wb_adr_o
     - O
     - 32
@@ -108,7 +91,7 @@ External Interface Requirements
 .. requirement:: I_MEMORY_INTERFACE_01
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  Signals from table 3 shall be compliant with the Wishbone specification.
+  Signals from the above table shall be compliant with the Wishbone specification.
 
 Functional Requirements
 -----------------------
@@ -118,18 +101,13 @@ Functional Requirements
 
    ECAP5-DPROC shall jump to a hardware-configurable address when irq_i is asserted.
 
-.. requirement:: F_DRQ_HANDLER_01
-   :derivedfrom: U_DEBUG_01
-  
-   ECAP5-DPROC shall jump to a hardware-configurable address when drq_i is asserted.
-
 Register file
 ^^^^^^^^^^^^^
 
 .. requirement:: F_REGISTER_01
    :derivedfrom: U_INSTRUCTION_SET_01
   
-   ECAP5-DPROC shall implement 32 user-accessible general purpose regis- ters ranging from x0 to x31.
+   ECAP5-DPROC shall implement 32 user-accessible general purpose registers ranging from x0 to x31.
 
 .. requirement:: F_REGISTER_02
    :derivedfrom: U_INSTRUCTION_SET_01
@@ -149,14 +127,14 @@ Register file
 Instruction decoding
 ^^^^^^^^^^^^^^^^^^^^
 
-Figure 2 outlines the different instruction encodings for the RV32I instruction set. The opcode parameter is a unique identifier for each instruction. The instruction encoding is infered from the opcode as there can only be one encoding per opcode.
+The following figure outlines the different instruction encodings for the RV32I instruction set. The instruction encoding is infered from the opcode as there can only be one encoding per opcode.
 
-.. todo:: Add instruction encoding diagram
+.. image:: ../assets/riscv-encoding.svg
 
 Immediate encoding
 ^^^^^^^^^^^^^^^^^^
 
-Only one immediate value can be encoded in one instruction. The value can be re- constructed from fragments of the following format : imm[x] representing the x:sup:th bit or imm[x:y] representing bits from the xth to the yth both included.
+Only one immediate value can be encoded in one instruction. The value can be reconstructed from fragments of the following format : imm[x] representing the x :sup:`th` bit or imm[x:y] representing bits from the xth to the yth both included.
 
 .. requirement:: F_INSTR_IMMEDIATE_01
   :derivedfrom: U_INSTRUCTION_SET_01
@@ -172,8 +150,6 @@ Only one immediate value can be encoded in one instruction. The value can be re-
   :derivedfrom: U_INSTRUCTION_SET_01
 
   Missing immediate fragments shall be replaced by zeros.
-
-RV32I is called a Load/Store ISA, meaning that instructions inputs and outputs are passed through registers or through an instruction immediate. There are specific instructions for loading and storing data into memory.
 
 Instruction parameters
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -196,15 +172,15 @@ Instruction parameters
 .. requirement:: F_INSTR_SECOND_PARAM_02
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions encoded using the I-type shall take as its second parameter the immediate value encoded in the instruction.
+  Instructions encoded using the I-type shall take as their second parameter the immediate value encoded in the instruction.
 
 .. requirement:: F_INSTR_THIRD_PARAM_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
   Instructions encoded using the S-type and B-type shall take as their third parameter the immediate value encoded in the instruction.
 
-Instruction results
-^^^^^^^^^^^^^^^^^^^
+Behavior variants
+^^^^^^^^^^^^^^^^^
 
 .. requirement:: F_INSTR_VARIANT_01
   :derivedfrom: U_INSTRUCTION_SET_01
@@ -220,14 +196,16 @@ Instruction results
   :rationale: The SRLI and SRAI instructions use the I-type encoding but only the 5 LSBs of the immediate parameter are used for the behavior. The other 7 MSBs are assimilated to the func7 field of the R-type encoding.
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions encoded using the OP-IMM opcode and either SRLI-FUNC3 or SRAI-FUNC3 shall use the 7 MSBs of their second parameter as a secondary behavior variant selector.
+  The seven most-significant bits of the instruction's second parameter shall be used as a secondary behavior variant selector for instructions encoded using the OP-IMM opcode with  the func3 field is 0x5.
 
 Opcodes
 ^^^^^^^
 
-Table 4 outlines the different opcodes values of the RV32I instruction set. Cells marked as noimp are for opcodes that are not implemented in ECAP5-DPROC.
+The following table outlines the different opcodes values of the RV32I instruction set.
 
-.. todo:: Add opcode value table
+.. image:: ../assets/riscv-opcode.svg
+
+.. note:: Cells marked as noimp are for opcodes that are not implemented in version 1.0.0.
 
 .. requirement:: F_OPCODE_ENCODING_01
   :derivedfrom: U_INSTRUCTION_SET_01
@@ -849,17 +827,16 @@ AND
 FENCE
 `````
 
-.. todo:: Add requirements for the FENCE instruction
+.. warning:: The FENCE instructions are scoped for version 1.0.0 but are not implemented in version 1.0.0-alpha1.
 
 ECALL
 `````
-
-.. todo:: Add requirements for the ECALL instruction 
+.. warning:: The ECALL instruction is scoped for version 1.0.0 but is not implemented in version 1.0.0-alpha1.
 
 EBREAK
 ``````
 
-.. todo:: Add requirements for the EBREAK instruction
+.. warning:: The EBREAK instruction is scoped for version 1.0.0 but is not implemented in version 1.0.0-alpha1.
 
 Exceptions
 ^^^^^^^^^^
@@ -867,7 +844,7 @@ Exceptions
 .. requirement:: F_INSTR_ADDR_MISALIGNED_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  An Instruction Address Misaligned exception shall be raised when the target address of a taken branch or an unconditional jump if not four-byte aligned.
+  An Instruction Address Misaligned exception shall be raised when the target address of a taken branch or an unconditional jump is not four-byte aligned.
 
 .. requirement:: F_MISALIGNED_MEMORY_ACCESS_01
   :derivedfrom: U_INSTRUCTION_SET_01
@@ -936,7 +913,7 @@ The following requirements are extracted from the Wishbone specification.
 
   While initiating a request, the memory interface shall hold the state of its outputs until wb_stall_i is deasserted.
 
-.. todo:: Add timing diagram for the single read cycle
+.. image:: ../assets/wishbone-read.svg
 
 .. todo:: Add description table of the single read cycle
 
@@ -970,18 +947,17 @@ The following requirements are extracted from the Wishbone specification.
 
   The clock input clk i shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of clk_i. All input signals of the memory interface shall be stable before the rising edge of clk_i.
 
-.. note:: BLOCK cycles are not supported in revision 1.0.0
+.. note:: BLOCK cycles are not supported in version 1.0.0
 
 Caches
 ``````
 
-.. note:: Caches are not supported in revision 1.0.0
+.. note:: Caches are not supported in version 1.0.0
 
 Debugging
 ^^^^^^^^^
 
-.. todo:: Add requirements from the riscv debug
-
+.. warning:: RISC-V Debug Support is scoped for version 1.0.0 but is not supported in version 1.0.0-alpha1.
 
 Non-functional Requirements
 ---------------------------
