@@ -29,7 +29,7 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
 .. list-table:: Wishbone Datasheet for the memory interface
   :header-rows: 1
   :width: 100%
-  :widths: 80 20
+  :widths: 70 30
   
   * - Description
     - Specification
@@ -55,11 +55,9 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
   * - Data transfer ordering
     - Little Endian
   * - Sequence of data transfer
-    - TBC
+    - Undefined
   * - Clock constraints
-    - TBC
-
-.. todo:: Complete the wishbone datasheet
+    - Clocked on clk_i
 
 .. requirement:: U_RESET_01
 
@@ -87,16 +85,9 @@ The memory address at which ECAP5-DPROC shall jump to when interrupted is not sp
 
    ECAP5-DPROC shall be compliant with the RISC-V External Debug Support specification.
 
-   ergerg
-
-   erg
-
-There is no performance goal required by ECAP5 for ECAP5-DPROC as ECAP5 is an educational platform.
+.. note:: There is no performance goal required by ECAP5 for ECAP5-DPROC as ECAP5 is an educational platform.
 
 Assumptions and Dependencies
 ----------------------------
 
-.. todo:: Describe what the assumptions for the product are
-
-  Targeting the ecp5 family, based around opensource toolchains.
-
+N/A

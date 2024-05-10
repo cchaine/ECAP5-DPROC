@@ -51,21 +51,27 @@ Structural hazard
 
 For the scope of this document, are designated as structural hazards all cases when a stage is unable to finish its processing within the required time before the next clock cycle.
 
-A pipeline stall is produced in case of structural hazards. It shall be noted that the some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+A pipeline stall is produced in case of structural hazards.
+
+.. note:: It shall be noted that the some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
 
 Data hazard
 ^^^^^^^^^^^
 
 A data hazard occurs when an instruction (A) uses the result of a previous instruction (B) which is still being processed in the pipeline.
 
-A pipeline stall is produced in case of data hazards so that B is able to finish before A uses its result. It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+A pipeline stall is produced in case of data hazards so that B is able to finish before A uses its result.
+
+.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
 
 Control hazard
 ^^^^^^^^^^^^^^
 
 A control hazard occurs when a jump or branch instruction is executed, as instructions following the jump/branch are already being processes through the pipeline when the jump/branch happens.
 
-Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as bubble drop. It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
+Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as bubble drop.
+
+.. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in revision 1.0.0.
 
 Architecture specification
 --------------------------
