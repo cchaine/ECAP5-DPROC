@@ -43,6 +43,6 @@ add_subdirectory(emulator)
 add_subdirectory(riscv-tests)
 
 # Main targets
-add_custom_target(build DEPENDS benches-build riscv-tests-executable)
+add_custom_target(build DEPENDS emulator benches-build riscv-tests-executable)
 add_custom_target(tests DEPENDS benches riscv-tests)
 
