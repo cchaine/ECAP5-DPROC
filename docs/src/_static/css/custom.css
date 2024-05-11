@@ -105,3 +105,13 @@ footer a:visited {
   margin-inline-start: 0px;
   margin-inline-end: 0px;
 }
+
+.wy-side-nav-search>div.version {
+  background-color: color(srgb 0.24 0.1884 0.1978);
+  margin-left: 25%;
+  margin-right: 25%;
+  border-radius: 35px;
+  color: rgb(208, 208, 208);
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
