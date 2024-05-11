@@ -25,7 +25,6 @@ module ecap5_dproc (
   input  logic        rst_i,
 
   input  logic        irq_i,
-  input  logic        drq_i,
 
   output logic[31:0]  wb_adr_o,
   input  logic[31:0]  wb_dat_i,
@@ -134,7 +133,6 @@ fetch fetch_inst (
   .rst_i            (rst_i),
 
   .irq_i            (irq_i),
-  .drq_i            (drq_i),
 
   .branch_i         (branch),
   .branch_target_i  (branch_target),

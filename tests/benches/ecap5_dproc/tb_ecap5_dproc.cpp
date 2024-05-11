@@ -100,7 +100,6 @@ public:
 
   void _nop() {
     this->core->irq_i = 0;
-    this->core->drq_i = 0;
     this->core->wb_dat_i = 0;
     this->core->wb_ack_i = 0;
     this->core->wb_stall_i = 0;
@@ -277,7 +276,7 @@ void tb_ecap5_dproc_alu(TB_Ecap5_dproc * tb) {
   
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
-  uint32_t rs1_val = rand();
+  uint32_t rs1_val = rs1 == 0 ? 0 : rand();
   // Artificially set the source register value
   tb->set_register(rs1, rs1_val);
   uint32_t imm = rand() % 0xFFF;
@@ -441,7 +440,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   
   uint32_t rd = rand() % 32;
   uint32_t rs1 = rand() % 32;
-  uint32_t rs1_val = rand();
+  uint32_t rs1_val = rs1 == 0 ? 0 : rand();
   // Artificially set the source register value
   tb->set_register(rs1, rs1_val);
   uint32_t imm = rand() % 0xFFF;
@@ -785,7 +784,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
 
   CHECK("tb_ecap5_dproc.branch.04",
       tb->conditions[COND_fetch],
-      "Failed to implement the if", tb->err_cycles[COND_fetch]);
+      "Failed to implement the fetch stage", tb->err_cycles[COND_fetch]);
 
   CHECK("tb_ecap5_dproc.branch.05",
       tb->conditions[COND_decode],

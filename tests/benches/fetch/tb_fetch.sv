@@ -26,7 +26,6 @@ module tb_fetch (
   input   logic        clk_i,
   input   logic        rst_i,
   input   logic        irq_i,
-  input   logic        drq_i,
   input   logic        branch_i,
   input   logic[31:0]  branch_target_i,
   /* Memory */
@@ -49,7 +48,6 @@ fetch dut (
   .clk_i           (clk_i),
   .rst_i           (rst_i),
   .irq_i           (irq_i),
-  .drq_i           (drq_i),
   .branch_i        (branch_i),
   .branch_target_i (branch_target_i),
   .wb_adr_o        (wb_adr_o),

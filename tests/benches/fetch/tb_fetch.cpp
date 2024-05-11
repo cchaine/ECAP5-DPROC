@@ -53,10 +53,9 @@ enum TestcaseId {
   T_JUMP_ON_OUTPUT_HANDSHAKE        =  9,
   T_JUMP_DURING_PIPELINE_STALL      =  10,
   T_JUMP_BACK_TO_BACK               =  11,
-  T_PRECEDENCE_DEBUG                 =  12,
-  T_PRECEDENCE_INTERRUPT             =  13,
-  T_PRECEDENCE_BRANCH                =  14,
-  T_PRECEDENCE_INCREMENT             =  15
+  T_PRECEDENCE_INTERRUPT             =  12,
+  T_PRECEDENCE_BRANCH                =  13,
+  T_PRECEDENCE_INCREMENT             =  14
 };
 
 class TB_Fetch : public Testbench<Vtb_fetch> {
@@ -100,7 +99,7 @@ void tb_fetch_no_stall(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 0;
@@ -220,7 +219,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 1;
@@ -344,7 +343,7 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -450,7 +449,7 @@ void tb_fetch_pipeline_stall(TB_Fetch * tb) {
   tb->reset();
 
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 0;
@@ -567,7 +566,7 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
   core->testcase = T_JUMP_DURING_REQUEST;
 
   // The following actions are performed in this test :
-  //    tick 0. Set inputs for no stall with debug request
+  //    tick 0. Set inputs for no stall with interrupt request
   //    tick 1. Nothing (core makes request)
   
   //=================================
@@ -577,12 +576,12 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
 
   // Leave the reset state
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
 
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (1)
@@ -592,7 +591,7 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -612,7 +611,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
-  //    tick 1. Acknowledge request with response data and debug request (core makes request)
+  //    tick 1. Acknowledge request with response data and interrupt request (core makes request)
   //    tick 2. Nothing (core latches response)
   //    tick 3. Nothing (core outputs response)
   //    tick 4. Nothing (core makes request)
@@ -626,7 +625,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //      Set inputs
 
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -639,7 +638,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
 
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   uint32_t data = rand();
   core->wb_dat_i = data;
@@ -653,7 +652,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
 
-  core->drq_i = 0;
+  core->irq_i = 0;
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
@@ -676,7 +675,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -713,7 +712,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -731,7 +730,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (3)
@@ -741,7 +740,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
 
   //=================================
   //      Tick (4)
@@ -784,7 +783,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -822,7 +821,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 1;
@@ -840,7 +839,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (3)
@@ -850,7 +849,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
 
   //=================================
   //      Tick (4)
@@ -903,7 +902,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -937,7 +936,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -965,7 +964,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
 
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (3)
@@ -975,7 +974,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
 
   //`````````````````````````````````
   //      Checks 
@@ -990,7 +989,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -1026,7 +1025,7 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 0;
   core->wb_stall_i = 0;
@@ -1062,7 +1061,7 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (4)
@@ -1072,7 +1071,7 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
 
   //=================================
   //      Tick (5)
@@ -1092,7 +1091,7 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1112,7 +1111,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for no stall not interrupt
-  //    tick 1. Acknowledge request with response data and debug request (core makes request)
+  //    tick 1. Acknowledge request with response data and interrupt request (core makes request)
   //    tick 2. Debug request (core latches response)
   //    tick 3. Nothing (core cancels output)
   //    tick 4. Nothing (core makes request)
@@ -1126,7 +1125,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //      Set inputs
   
   core->irq_i = 0;
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -1142,7 +1141,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   uint32_t data = rand();
   core->wb_dat_i = data;
   core->wb_ack_i = 1;
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   //=================================
   //      Tick (2)
@@ -1152,7 +1151,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 1;
+  core->irq_i = 1;
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
@@ -1170,7 +1169,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
   
   //=================================
   //      Tick (4)
@@ -1180,7 +1179,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1192,90 +1191,6 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   CHECK("tb_fetch.jump_back_to_back.02",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
-}
-
-void tb_fetch_precedence_debug(TB_Fetch * tb) {
-  Vtb_fetch * core = tb->core;
-  core->testcase = T_PRECEDENCE_DEBUG;
-
-  // The following actions are performed in this test :
-  //    tick 0. Set inputs for no stall not interrupt
-  //    tick 1. Acknowledge request with response data (core makes request)
-  //    tick 2. Debug, Interrupt and Branch request (core latches response)
-  //    tick 3. Nothing (core cancels output)
-  //    tick 4. Nothing (core makes request)
-  
-  //=================================
-  //      Tick (0)
-  
-  tb->reset();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->drq_i = 0;
-  core->irq_i = 0;
-  core->branch_i = 0;
-  core->output_ready_i = 1;
-  core->wb_stall_i = 0;
-
-  //=================================
-  //      Tick (1)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  uint32_t data = rand();
-  core->wb_dat_i = data;
-  core->wb_ack_i = 1;
-
-  //=================================
-  //      Tick (2)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->wb_dat_i = 0;
-  core->wb_ack_i = 0;
-
-  core->drq_i = 1;
-  core->irq_i = 1;
-  core->branch_i = 1;
-  core->branch_target_i = rand() % 0x7FFFFFFF;
-
-  //=================================
-  //      Tick (3)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->branch_i = 0;
-  core->irq_i = 0;
-  core->drq_i = 0;
-  
-  //=================================
-  //      Tick (4)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-
-
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::DEBUG_ADDRESS));
-
-  //`````````````````````````````````
-  //      Formal Checks 
-
-  CHECK("tb_fetch.precedence_debug.01",
-      tb->conditions[COND_wishbone],
-      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 }
 
 void tb_fetch_precedence_interrupt(TB_Fetch * tb) {
@@ -1297,7 +1212,7 @@ void tb_fetch_precedence_interrupt(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
@@ -1378,7 +1293,7 @@ void tb_fetch_precedence_branch(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
@@ -1458,7 +1373,7 @@ void tb_fetch_precedence_increment(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->drq_i = 0;
+  core->irq_i = 0;
   core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
@@ -1540,7 +1455,6 @@ int main(int argc, char ** argv, char ** env) {
   tb_fetch_jump_during_pipeline_stall(tb);
   tb_fetch_jump_back_to_back(tb);
 
-  tb_fetch_precedence_debug(tb);
   tb_fetch_precedence_interrupt(tb);
   tb_fetch_precedence_branch(tb);
   tb_fetch_precedence_increment(tb);
