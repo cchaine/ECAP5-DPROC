@@ -51,6 +51,7 @@ with requirement IDs having the following format :
 The requirement hierarchy and traceability scheme is detailed in the following figure.
 
 .. image:: ../assets/traceability.svg
+   :align: center
 
 Definitions and Abbreviations
 -----------------------------

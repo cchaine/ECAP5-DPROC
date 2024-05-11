@@ -92,6 +92,16 @@ footer a:visited {
   color: #a3A3A3;
 }
 
-svg {
-  width: 100%;
+.custom-title p{
+  margin-bottom: 24px;
+  font-size: 150%;
+  margin-top: 0;
+  font-weight: 700;
+  font-family: Roboto Slab,ff-tisa-web-pro,Georgia,Arial,sans-serif;
+  box-sizing: border-box;
+  display: block;
+  margin-block-start: 0.83em;
+  margin-block-end: 0.83em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
 }

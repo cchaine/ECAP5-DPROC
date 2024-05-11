@@ -129,7 +129,10 @@ Instruction decoding
 
 The following figure outlines the different instruction encodings for the RV32I instruction set. The instruction encoding is infered from the opcode as there can only be one encoding per opcode.
 
-.. image:: ../assets/riscv-encoding.svg
+.. figure:: ../assets/riscv-encoding.svg
+   :align: center
+
+   RISC-V instruction encodings
 
 Immediate encoding
 ^^^^^^^^^^^^^^^^^^
@@ -203,7 +206,10 @@ Opcodes
 
 The following table outlines the different opcodes values of the RV32I instruction set.
 
-.. image:: ../assets/riscv-opcode.svg
+.. figure:: ../assets/riscv-opcode.svg
+   :align: center
+
+   RISC-V instruction opcodes
 
 .. note:: Cells marked as noimp are for opcodes that are not implemented in version 1.0.0.
 
@@ -875,12 +881,12 @@ The following requirements are extracted from the Wishbone specification.
 .. requirement:: F_WISHBONE_RESET_01
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  The memory interface shall initialize itself at the rising edge of wb_clk_i following the assertion of wb_rst_i.
+  The memory interface shall initialize itself at the rising edge of clk_i following the assertion of rst_i.
 
 .. requirement:: F_WISHBONE_RESET_02
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  The memory interface shall stay in the initialization state until the rising edge of wb_clk_i following the deassertion of wb_rst_i.
+  The memory interface shall stay in the initialization state until the rising edge of clk_i following the deassertion of rst_i.
 
 .. requirement:: F_WISHBONE_RESET_03
   :derivedfrom: U_MEMORY_INTERFACE_02
@@ -895,12 +901,12 @@ The following requirements are extracted from the Wishbone specification.
 .. requirement:: F_WISHBONE_TRANSFER_CYCLE_02
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  Signal wb_cyc_o shall be asserted no later than the rising edge of wb_clk_i that qualifies the assertion of wb_stb_o.
+  Signal wb_cyc_o shall be asserted no later than the rising edge of clk_i that qualifies the assertion of wb_stb_o.
 
 .. requirement:: F_WISHBONE_TRANSFER_CYCLE_03
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  Signal wb_cyc_o shall be deasserted no earlier than the rising edge of wb_clk_i that qualifies the deassertion of wb_stb_o.
+  Signal wb_cyc_o shall be deasserted no earlier than the rising edge of clk_i that qualifies the deassertion of wb_stb_o.
 
 .. requirement:: F_WISHBONE_HANDSHAKE_02
   :derivedfrom: U_MEMORY_INTERFACE_02
@@ -913,10 +919,6 @@ The following requirements are extracted from the Wishbone specification.
 
   While initiating a request, the memory interface shall hold the state of its outputs until wb_stall_i is deasserted.
 
-.. image:: ../assets/wishbone-read.svg
-
-.. todo:: Add description table of the single read cycle
-
 .. requirement:: F_WISHBONE_READ_CYCLE_01
   :derivedfrom: U_MEMORY_INTERFACE_02
 
@@ -925,11 +927,12 @@ The following requirements are extracted from the Wishbone specification.
 .. requirement:: F_WISHBONE_READ_CYCLE_02
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  The memory interface shall conform to the READ cycle detailed in figure 3.
+  The memory interface shall conform to the READ cycle detailed in the figure below.
 
-.. todo:: Add timing diagram for the single write cycle
-
-.. todo:: Add description table of the single write cycle
+.. figure:: ../assets/wishbone-read.svg
+   :align: center
+   
+   Timing diagram of the wishbone read cycle
 
 .. requirement:: F_WISHBONE_WRITE_CYCLE_01
   :derivedfrom: U_MEMORY_INTERFACE_02
@@ -939,13 +942,18 @@ The following requirements are extracted from the Wishbone specification.
 .. requirement:: F_WISHBONE_WRITE_CYCLE_02
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  The memory interface shall conform to the WRITE cycle detailed in figure 4.
+  The memory interface shall conform to the WRITE cycle detailed in figure below.
+
+.. figure:: ../assets/wishbone-write.svg
+   :align: center
+   
+   Timing diagram of the wishbone write cycle
 
 .. requirement:: F_WISHBONE_TIMING_01
   :rationale: As long as the memory interface is designed within the clock domain of clk_i, the requirement will be satisfied by using the place and route tool.
   :derivedfrom: U_MEMORY_INTERFACE_02
 
-  The clock input clk i shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of clk_i. All input signals of the memory interface shall be stable before the rising edge of clk_i.
+  The clock input clk_i shall coordinate all activites for the internal logic within the memory interface. All output signals of the memory interface shall be registered at the rising edge of clk_i. All input signals of the memory interface shall be stable before the rising edge of clk_i.
 
 .. note:: BLOCK cycles are not supported in version 1.0.0
 

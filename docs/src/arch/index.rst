@@ -2,6 +2,7 @@ Architecture Document
 =====================
 
 .. image:: ../assets/architecture.svg
+   :align: center
 
 .. container:: custom-title
 
