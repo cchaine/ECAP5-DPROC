@@ -1,7 +1,10 @@
 Architecture Overview
 =====================
 
-.. image:: ../assets/architecture.svg
+.. figure:: ../assets/architecture.svg
+   :align: center
+
+   Diagram of the ECAP5-DPROC architecture
 
 Clock domains
 -------------
@@ -64,7 +67,7 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_08
 
-  The hazard module shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
+  The hazard module shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and pipeline drops.
 
 Hazard management
 -----------------
@@ -148,7 +151,16 @@ Control hazard
 
 A control hazard occurs when a jump or branch instruction is executed, as instructions following the jump/branch are already being processes through the pipeline when the jump/branch happens.
 
-Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as bubble drop.
+Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as pipeline drop.
+
+.. requirement:: A_PIPELINE_DROP_01
+   :rationale: The pipeline drop is held asserted for two cycles to flush both the fetch and decode outputs.
+
+   The hazard module shall issue a pipeline drop request to the execute module on the rising edge of clk_i after the execute module has issued a branch request to the fetch module. The pipeline drop request shall be held asserted for two cycles.
+
+.. requirement:: A_PIPELINE_DROP_02
+
+   The execute module shall discard the decode module's output and output a pipeline bubble upon drop request from the hazard module.
 
 .. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
