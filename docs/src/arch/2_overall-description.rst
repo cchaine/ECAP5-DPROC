@@ -21,8 +21,6 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
 
    ECAP5-DPROC's unique memory interface shall be compliant with the Wishbone specification.
 
-.. todo:: Update the wishbone datasheet's signal names
-
 .. list-table:: Wishbone Datasheet for the memory interface
   :header-rows: 1
   :width: 100%
@@ -36,7 +34,7 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
   * - Type of interface
     - MASTER
   * - Signal names for the WISHBONE interface
-    - TBC
+    - Wishbone signals are prefixed with ``wb_``.
   * - ERR_I support
     - No
   * - RTY_I support

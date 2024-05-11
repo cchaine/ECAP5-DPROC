@@ -164,14 +164,7 @@ Instructions following the jump/branch are replaced by a nop instruction through
 
 .. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
-
 Module interfaces
 -----------------
 
-.. requirement:: A_MEMORY_BUS_01
-
-   The bus interface between the fetch module and memory module shall be compliant with the pipelined wishbone B4 specification.
-
-.. requirement:: A_MEMORY_BUS_02
-
-   The bus interface between the loadstore module and memory module shall be compliant with the pipelined wishbone B4 specification.
+.. note:: The module's interfaces and functional behaviors are not described further in this document and are left to the designer's judgement.
