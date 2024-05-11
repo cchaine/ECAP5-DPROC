@@ -26,7 +26,6 @@ module fetch
   input   logic        rst_i,
   // Jump inputs
   input   logic        irq_i,
-  input   logic        drq_i,
   input   logic        branch_i,
   input   logic[31:0]  branch_target_i,
   // Wishbone master
@@ -248,28 +247,23 @@ end
 
 /*
  * The next value of PC comes from (in order of precedence):
- *  0. Debug
- *  1. External interrupt
- *  2. Control flow change request (branch)
- *  3. Default increment
+ *  0. External interrupt
+ *  1. Control flow change request (branch)
+ *  2. Default increment
  */
 always_comb begin : pc_update
   pc_d = pc_q;
-  // 3. Default increment
+  // 2. Default increment
   if (output_valid_q && output_ready_i) begin
     pc_d = pc_q + 4;
   end
-  // 2. Control flow change request
+  // 1. Control flow change request
   if (branch_i && !pending_jump_q) begin
     pc_d = branch_target_i;
   end
-  // 1. External interrupt
+  // 0. External interrupt
   if (irq_i) begin
     pc_d = ecap5_dproc_pkg::INTERRUPT_ADDRESS;
-  end
-  // 0. Debug
-  if (drq_i) begin
-    pc_d = ecap5_dproc_pkg::DEBUG_ADDRESS;
   end
 end
 
@@ -292,7 +286,7 @@ always_ff @(posedge clk_i) begin
     pc_q            <=  pc_d;
 
     // Jump triggering
-    if(drq_i || irq_i || branch_i) begin
+    if(irq_i || branch_i) begin
       pending_jump_q <=  1;
       output_valid_q  <=  0;
     end else begin

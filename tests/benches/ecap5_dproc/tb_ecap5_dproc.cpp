@@ -100,7 +100,6 @@ public:
 
   void _nop() {
     this->core->irq_i = 0;
-    this->core->drq_i = 0;
     this->core->wb_dat_i = 0;
     this->core->wb_ack_i = 0;
     this->core->wb_stall_i = 0;
