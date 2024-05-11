@@ -20,7 +20,10 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module ecap5_dproc (
+module ecap5_dproc #(
+  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000,
+  parameter logic[31:0] INTERRUPT_ADDRESS = 32'h00000000
+)(
   input  logic        clk_i,
   input  logic        rst_i,
 
@@ -128,7 +131,10 @@ regs regs_inst (
   .wdata_i   (reg_wdata)
 );
 
-fetch fetch_inst (
+fetch #(
+ .BOOT_ADDRESS      (BOOT_ADDRESS),
+ .INTERRUPT_ADDRESS (INTERRUPT_ADDRESS)
+) fetch_inst (
   .clk_i            (clk_i),
   .rst_i            (rst_i),
 

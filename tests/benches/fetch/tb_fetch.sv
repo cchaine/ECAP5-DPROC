@@ -65,3 +65,8 @@ fetch dut (
 );
 
 endmodule // tb_fetch
+
+`verilator_config
+
+public -module "fetch" -var "BOOT_ADDRESS"
+public -module "fetch" -var "INTERRUPT_ADDRESS"

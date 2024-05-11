@@ -20,8 +20,10 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module fetch
-(
+module fetch #(
+  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000,
+  parameter logic[31:0] INTERRUPT_ADDRESS = 32'h00000000
+)(
   input   logic        clk_i,
   input   logic        rst_i,
   // Jump inputs
@@ -263,7 +265,7 @@ always_comb begin : pc_update
   end
   // 0. External interrupt
   if (irq_i) begin
-    pc_d = ecap5_dproc_pkg::INTERRUPT_ADDRESS;
+    pc_d = INTERRUPT_ADDRESS;
   end
 end
 
@@ -275,7 +277,7 @@ always_ff @(posedge clk_i) begin
     wb_cyc_q        <=  0;
     output_valid_q  <=  0;
     instr_q         <=  0;
-    pc_q            <=  ecap5_dproc_pkg::BOOT_ADDRESS;
+    pc_q            <=  BOOT_ADDRESS;
     pending_jump_q  <=  0;
   end else begin
     state_q         <=  state_d;
