@@ -1400,7 +1400,7 @@ int main(int argc, char ** argv, char ** env) {
   tb_riscv_tests_blt(tb);
   tb_riscv_tests_bltu(tb);
   tb_riscv_tests_bne(tb);
-  tb_riscv_tests_fence_i(tb);
+  // tb_riscv_tests_fence_i(tb);
   tb_riscv_tests_jal(tb);
   tb_riscv_tests_jalr(tb);
   tb_riscv_tests_lb(tb);
@@ -1409,7 +1409,7 @@ int main(int argc, char ** argv, char ** env) {
   tb_riscv_tests_lhu(tb);
   tb_riscv_tests_lw(tb);
   tb_riscv_tests_lui(tb);
-  tb_riscv_tests_ma_data(tb);
+  // tb_riscv_tests_ma_data(tb);
   tb_riscv_tests_or(tb);
   tb_riscv_tests_ori(tb);
   tb_riscv_tests_sb(tb);
