@@ -13,7 +13,7 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
   REPORT_ARTIFACT_NAME: ecap5-dproc-report-${{github.run_number}}-${{github.run_attempt}}
-  ARCH_ARTIFACT_NAME: ecap5-dproc-arch-${{github.run_number}}-${{github.run_attempt}}
+  DOCUMENTATION_ARTIFACT_NAME: ecap5-dproc-docs-${{github.run_number}}-${{github.run_attempt}}
   BUILD_CACHE_KEY: build-directory-${{ github.run_id }}-${{ github.run_attempt }}
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
     - name: Upload documentation
       uses: actions/upload-artifact@v4
       with:
-        name: ${{env.ARCH_ARTIFACT_NAME}}
+        name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
         path: ${{github.workspace}}/build/docs/documentation/build/html
 
   lint:
@@ -199,3 +199,24 @@ jobs:
         gist_id: 32195ea7fa70c0218ef3f9952504c59e
         file_path: build/traceability-result-badge.json
         file_type: text 
+
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: self-hosted
+
+    needs: documentation
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - uses: actions/deploy-pages@v4.0.4
+      id: deployment
+      with:
+        artifact_name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
+        preview: true

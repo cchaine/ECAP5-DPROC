@@ -1,3 +1,7 @@
+.wy-nav-content {
+  max-width: 1000px;
+}
+
 .wy-table-responsive table td, .wy-table-responsive table th {
     white-space: inherit;
 }
@@ -89,8 +93,8 @@ footer a:visited {
 }
 
 .custom-title p{
-  font-size: 150%;
   margin-bottom: 24px;
+  font-size: 150%;
   margin-top: 0;
   font-weight: 700;
   font-family: Roboto Slab,ff-tisa-web-pro,Georgia,Arial,sans-serif;
@@ -100,5 +104,14 @@ footer a:visited {
   margin-block-end: 0.83em;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
-  color: #404040;
+}
+
+.wy-side-nav-search>div.version {
+  background-color: color(srgb 0.24 0.1884 0.1978);
+  margin-left: 25%;
+  margin-right: 25%;
+  border-radius: 35px;
+  color: rgb(208, 208, 208);
+  padding-top: 3px;
+  padding-bottom: 3px;
 }

@@ -21,11 +21,6 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
 
    ECAP5-DPROC's unique memory interface shall be compliant with the Wishbone specification.
 
-
-.. requirement:: U_MEMORY_INTERFACE_03
-
-   ECAP5-DPROC's unique memory interface shall be designed such that memory protocols can be interchanged at compile time.
-
 .. list-table:: Wishbone Datasheet for the memory interface
   :header-rows: 1
   :width: 100%
@@ -39,7 +34,7 @@ In order to improve the usability of ECAP5-DPROC, it shall have a von Neumann ar
   * - Type of interface
     - MASTER
   * - Signal names for the WISHBONE interface
-    - TBC
+    - Wishbone signals are prefixed with ``wb_``.
   * - ERR_I support
     - No
   * - RTY_I support
@@ -67,9 +62,7 @@ The polarity of the reset signal mentionned in :req:ref:`U_RESET_01` is not spec
 
 .. requirement:: U_BOOT_ADDRESS_01
 
-   The address at which ECAP5-DPROC jumps after the reset signal is de- asserted shall be hardware-configurable.
-
-The address mentionned in :req:ref:`U_BOOT_ADDRESS_01` can be either configured through hardware signals or can be selected at compile time.
+   The address at which ECAP5-DPROC jumps after the reset signal is deasserted shall be hardware-configurable.
 
 .. requirement:: U_HARDWARE_INTERRUPT_01
 
@@ -77,9 +70,7 @@ The address mentionned in :req:ref:`U_BOOT_ADDRESS_01` can be either configured 
 
 .. requirement:: U_HARDWARE_INTERRUPT_02
 
-   ECAP5-DPROC shall jump to a software-configurable address when it is interrupted.
-
-The memory address at which ECAP5-DPROC shall jump to when interrupted is not specified by the user.
+   ECAP5-DPROC shall jump to a hardware-configurable address when it is interrupted.
 
 .. requirement:: U_DEBUG_01
 

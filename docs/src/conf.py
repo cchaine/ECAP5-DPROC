@@ -11,7 +11,7 @@ import os, sys
 project = 'ECAP5-DPROC'
 copyright = '2024, Clément Chaine'
 author = 'Clément Chaine'
-release = '1.0.0-alpha1'
+version = '1.0.0-alpha1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
