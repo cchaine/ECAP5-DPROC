@@ -314,7 +314,7 @@ void tb_ecap5_dproc_alu(TB_Ecap5_dproc * tb) {
   
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_valid == 1));
   tb->check(COND_fetch, (core->tb_ecap5_dproc->dut->if_instr == instr) &&
-                      (core->tb_ecap5_dproc->dut->if_pc == Vtb_ecap5_dproc_ecap5_dproc_pkg::BOOT_ADDRESS));
+                      (core->tb_ecap5_dproc->dut->if_pc == core->tb_ecap5_dproc->dut->BOOT_ADDRESS));
 
   //=================================
   //      Tick (4)
@@ -325,7 +325,7 @@ void tb_ecap5_dproc_alu(TB_Ecap5_dproc * tb) {
   //      Checks 
   
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_valid   == 0));
-  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_pc           == Vtb_ecap5_dproc_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_pc           == core->tb_ecap5_dproc->dut->BOOT_ADDRESS) &&
                        (core->tb_ecap5_dproc->dut->dec_alu_operand1 == rs1_val)                               &&
                        (core->tb_ecap5_dproc->dut->dec_alu_operand2 == tb->sign_extend(imm, 12))              &&
                        (core->tb_ecap5_dproc->dut->dec_alu_op       == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_XOR)      &&
@@ -702,7 +702,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_valid == 1));
   tb->check(COND_fetch, (core->tb_ecap5_dproc->dut->if_instr == instr) &&
-                      (core->tb_ecap5_dproc->dut->if_pc == Vtb_ecap5_dproc_ecap5_dproc_pkg::BOOT_ADDRESS));
+                      (core->tb_ecap5_dproc->dut->if_pc == core->tb_ecap5_dproc->dut->BOOT_ADDRESS));
 
   //=================================
   //      Tick (4)
@@ -713,7 +713,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   //      Checks 
   
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_valid   == 0));
-  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_pc           == Vtb_ecap5_dproc_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_pc           == core->tb_ecap5_dproc->dut->BOOT_ADDRESS) &&
                        (core->tb_ecap5_dproc->dut->dec_alu_operand1 == val)                                   &&
                        (core->tb_ecap5_dproc->dut->dec_alu_operand2 == val)                                   &&
                        (core->tb_ecap5_dproc->dut->dec_alu_op       == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_ADD)      &&
@@ -738,7 +738,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   tb->check(COND_execute, (core->tb_ecap5_dproc->dut->ex_ls_enable == 0)      &&
                       (core->tb_ecap5_dproc->dut->ex_reg_write == 0) &&
                       (core->tb_ecap5_dproc->dut->branch == 1) &&
-                      (core->tb_ecap5_dproc->dut->branch_target == tb->sign_extend(imm, 13)));
+                      (core->tb_ecap5_dproc->dut->branch_target == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + tb->sign_extend(imm, 13))));
   tb->check(COND_hazard, (core->tb_ecap5_dproc->dut->hzd_ex_discard_request == 1));
 
   //`````````````````````````````````
@@ -765,7 +765,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_fetch, (core->wb_adr_o == tb->sign_extend(imm, 13)));
+  tb->check(COND_fetch, (core->wb_adr_o == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + tb->sign_extend(imm, 13))));
 
   //`````````````````````````````````
   //      Formal Checks 

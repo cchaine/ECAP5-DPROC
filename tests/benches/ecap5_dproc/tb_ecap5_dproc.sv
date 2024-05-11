@@ -104,3 +104,5 @@ public -module "ecap5_dproc" -var "reg_waddr"
 public -module "ecap5_dproc" -var "reg_wdata"
 
 public -module "ecap5_dproc" -var "hzd_ex_discard_request"
+
+public -module "ecap5_dproc" -var "BOOT_ADDRESS"

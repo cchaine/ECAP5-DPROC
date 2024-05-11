@@ -115,7 +115,7 @@ void tb_fetch_no_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
@@ -159,7 +159,7 @@ void tb_fetch_no_stall(TB_Fetch * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS));
+                                (core->pc_o                  ==  core->tb_fetch->dut->BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //=================================
@@ -171,7 +171,7 @@ void tb_fetch_no_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS + 4) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS + 4) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
@@ -235,7 +235,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  4));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -249,7 +249,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  4));
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -268,7 +268,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  2));
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
@@ -502,7 +502,7 @@ void tb_fetch_pipeline_stall(TB_Fetch * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS));
+                                (core->pc_o                  ==  core->tb_fetch->dut->BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //=================================
@@ -517,7 +517,7 @@ void tb_fetch_pipeline_stall(TB_Fetch * tb) {
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
   tb->check(COND_output,        (core->instr_o               ==  data) &&
-                                (core->pc_o                  ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS));
+                                (core->pc_o                  ==  core->tb_fetch->dut->BOOT_ADDRESS));
   tb->check(COND_output_valid,  (core->output_valid_o        ==  1));         
 
   //`````````````````````````````````
@@ -534,7 +534,7 @@ void tb_fetch_pipeline_stall(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  1));         
-  tb->check(COND_wishbone,      (core->wb_adr_o              ==  Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS + 4) &&
+  tb->check(COND_wishbone,      (core->wb_adr_o              ==  core->tb_fetch->dut->BOOT_ADDRESS + 4) &&
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_sel_o              ==  0xF)  &&
                                 (core->wb_stb_o              ==  1)    &&
@@ -591,7 +591,7 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -675,7 +675,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -783,7 +783,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -902,7 +902,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -989,7 +989,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -1091,7 +1091,7 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1179,7 +1179,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1264,7 +1264,7 @@ void tb_fetch_precedence_interrupt(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -1415,7 +1415,7 @@ void tb_fetch_precedence_increment(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == Vtb_fetch_ecap5_dproc_pkg::BOOT_ADDRESS + 4));
+  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->BOOT_ADDRESS + 4));
   
   //`````````````````````````````````
   //      Formal Checks 

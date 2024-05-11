@@ -608,10 +608,6 @@ void tb_riscv_tests_fence_i(TB_Riscv_tests * tb) {
       result == 1,
       "Failed during testcase", testcase);
 
-  CHECK("riscv-tests.fence_i.TODO",
-      0,
-      "TODO");
-
   tb->close_trace();
 }
 
@@ -863,10 +859,6 @@ void tb_riscv_tests_ma_data(TB_Riscv_tests * tb) {
   CHECK("riscv-tests.ma_data.02",
       result == 1,
       "Failed during testcase", testcase);
-
-  CHECK("riscv-tests.ma_data.TODO",
-      0,
-      "TODO");
 
   tb->close_trace();
 }

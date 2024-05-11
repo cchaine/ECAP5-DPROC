@@ -22,9 +22,6 @@
 
 package ecap5_dproc_pkg;
 
-localparam  logic[31:0]  BOOT_ADDRESS       /* verilator public */ =  32'h00000000;
-localparam  logic[31:0]  INTERRUPT_ADDRESS  /* verilator public */ =  32'hFF00000A;
-
 localparam  logic[2:0]  ALU_ADD    /* verilator public */ = 3'h0;
 localparam  logic[2:0]  ALU_XOR    /* verilator public */ = 3'h1;
 localparam  logic[2:0]  ALU_OR     /* verilator public */ = 3'h2;
