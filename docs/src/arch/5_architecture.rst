@@ -24,40 +24,44 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_01
 
-  The Memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
+  The memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
+
+.. requirement:: A_MEMORY_01
+
+   The memory module shall give priority access to the external memory bus for the fetch module.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_02
   
-  The Fetch module shall implement the instruction fetch stage of the pipeline.
+  The fetch module shall implement the instruction fetch stage of the pipeline.
 
 .. requirement:: A_INSTRUCTION_FETCH_01
-  :rationale: Pipeline stages are all run in parallel, refer to section 5.2.
+  :rationale: Pipeline stages are all run in parallel.
 
-  The fetch module shall fetch instructions continuously starting on the clock cycle after rst i is deasserted, providing them to the decode module one after the other.
+  The fetch module shall fetch instructions continuously starting on the clock cycle after rst_i is deasserted, providing them to the decode module one after the other.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_03
 
-  The Decode module shall implement the decode stage of the pipeline.
+  The decode module shall implement the decode stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_04
 
-   The Register module shall implement the internal general-purpose registers.
+   The register module shall implement the internal general-purpose registers.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_05
 
-   The Execute module shall implement the execute stage of the pipeline.
+   The execute module shall implement the execute stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_06
 
-   The Loadstore module shall implement the load/store stage of the pipeline.
+   The loadstore module shall implement the load/store stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_07
 
-   The Writeback module shall implement the write-back stage of the pipeline.
+   The writeback module shall implement the write-back stage of the pipeline.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_08
 
-  The Hazard module shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
+  The hazard module shall handle the detection of data and control hazards as well as trigger the associated pipeline stalls and bubble drops.
 
 Hazard management
 -----------------
