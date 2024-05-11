@@ -21,6 +21,7 @@ sys.path.append(os.path.abspath('./_ext'))
 extensions = [
     'sphinx_rtd_theme', 
     'sphinx.ext.todo',
+    'sphinxcontrib.wavedrom',
     'requirement']
 templates_path = ['_templates']
 exclude_patterns = []

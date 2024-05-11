@@ -1,0 +1,26 @@
+{signal: [
+  {name: 'clk_i', wave: 'P........'},
+  {name: 'rst_i', wave: 'x0......x'},
+  ["stage1",
+   {name: 'stage1_instr', wave: 'x234...5x', data: ["a", "b", "c", "d"]},
+   {name: 'stage1_valid', wave: 'x1......x'}],
+  ["stage2",
+   {name: 'stage2_ready', wave: 'x1.0..1.x'},
+   {name: 'stage2_instr', wave: 'x.23...45', data: ["a", "b", "c", "d"]},
+   {name: 'stage2_valid', wave: 'x1.......'}],
+  ["stage3", 
+   {name: 'stage3_ready', wave: 'x1.0..1..'},
+   {name: 'stage3_instr', wave: 'x..2...34', data: ["a", "b", "c"]},
+   {name: 'stage3_valid', wave: 'x1.0..1..'}],
+  ["stage4",
+   {name: 'stage4_ready', wave: 'x1.......'},
+   {name: 'stage4_instr', wave: 'x...9..23', data: ["nop", "a", "b"]},
+   {name: 'stage4_valid', wave: 'x1.......'}],
+  ["stage5",
+   {name: 'stage5_ready', wave: 'x1.......'},
+   {name: 'stage5_instr', wave: 'x....9..2', data: ["nop", "a"]}]
+],
+head:{
+   tock: 0,
+ }
+}

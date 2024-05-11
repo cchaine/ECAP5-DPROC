@@ -14,6 +14,8 @@ if(Sphinx_FOUND)
       "${CMAKE_CURRENT_LIST_DIR}/src/assets/riscv-opcode.svg"
       "${CMAKE_CURRENT_LIST_DIR}/src/assets/wishbone-read.svg"
       "${CMAKE_CURRENT_LIST_DIR}/src/assets/wishbone-write.svg"
+      "${CMAKE_CURRENT_LIST_DIR}/src/assets/pipeline-stall.svg"
+      "${CMAKE_CURRENT_LIST_DIR}/src/assets/pipeline-stall-timing.svg"
       "${CMAKE_CURRENT_LIST_DIR}/src/index.rst"
       "${CMAKE_CURRENT_LIST_DIR}/src/arch/index.rst"
       "${CMAKE_CURRENT_LIST_DIR}/src/arch/1_introduction.rst"

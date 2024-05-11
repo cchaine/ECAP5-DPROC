@@ -15,7 +15,6 @@ Functional partitioning
 -----------------------
 
 ECAP5-DPROC is built around a pipelined architecture with the following stages :
-
  * The **instruction fetch** stage loads the next instruction from memory.
  * The **decode** stage handles the instruction decoding to provide the next stage with the different instruction input values including reading from internal registers.
  * The **execute** stage implements all arithmetic and logic operations.
@@ -47,6 +46,10 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 
    The register module shall implement the internal general-purpose registers.
 
+.. requirement:: A_REGISTER_01
+
+   The register module shall perform its operation in a single cycle.
+
 .. requirement:: A_FUNCTIONAL_PARTITIONING_05
 
    The execute module shall implement the execute stage of the pipeline.
@@ -71,7 +74,10 @@ Pipeline stall
 
 In order to handle pipeline stalls, a handshaking mechanism is implemented between each stages, allowing the execution flow to be stopped. A stall can be either triggered by a stage itself or requested by the hazard module.
 
-.. todo:: Add pipeline state diagram
+.. figure:: ../assets/pipeline-stall.svg
+   :align: center
+
+   Diagram of the pipeline stall behavior
 
 Pipeline stages located at the start and end of the pipeline do not implement the bubble and wait modes respectively.
 
@@ -81,22 +87,36 @@ The following points describe the behavior of the different modes :
  * A stage in bubble mode shall operate as normal but taking a nop instruction as input instead of the data provided by the preceding stage.
  * A stage in wait mode shall deassert its input ready signal and wait until going back to normal mode.
 
-In case of a stall, the stalling stage deasserts its input ready signal leading to preced- ing stages waiting for completion. The stalling stage deasserts its output valid signal leading to following stages taking a bubble as their input.
+In case of a stall, the stalling stage deasserts its input ready signal leading to preceding stages waiting for completion. The stalling stage deasserts its output valid signal leading to following stages taking a bubble as their input.
 
-The figure 7 is a diagram of the stall behavior on a 5-stage pipeline. By stalling the 3rd stage, this example provides a representative visualisation of all the stalling cases of a 4-stage pipeline.
+The following figure is a timing diagram of the stall behavior of a 5-stage pipeline where the 3 :sup:`rd` stage is stalled on the 4 :sup:`th` cycle. By stalling the 3 :sup:`rd` stage, this example provides a representative visualisation of all the stalling states of the pipeline stages.
 
-.. todo:: Add pipeline stall diagram
+.. figure:: ../assets/pipeline-stall-timing.svg
+   :align: center
+    
+   Timing diagram of the pipeline stall behavior
 
- Figure 8 outlines the resolution of a pipeline stall on stage 3. By stalling the 3rd stage, this example provides a representative visualisation of all the stalling cases of a 4- stage pipeline.
+.. requirement:: A_PIPELINE_WAIT_01
+   :rationale: The loadstore module doesn't need to implement the pipeline wait state as the register module performs its operation in a single cycle (refer to A_REGISTER_01).
 
-.. todo:: Add pipeline stall timing-diagram
+   The following modules shall implement the pipeline wait state : fetch, decode, execute.
+
+.. requirement:: A_PIPELINE_BUBBLE_01
+
+   The following modules shall implement the pipeline bubble state : decode, execute, loadstore and register.
 
 Structural hazard
 ^^^^^^^^^^^^^^^^^
 
 For the scope of this document, are designated as structural hazards all cases when a stage is unable to finish its processing within the required time before the next clock cycle.
 
-A pipeline stall is produced in case of structural hazards.
+.. requirement:: A_PIPELINE_STALL_01
+
+   The fetch module shall stall the pipeline while performing the memory request. The pipeline shall be unstalled after completing the request.
+
+.. requirement:: A_PIPELINE_STALL_02
+
+   The loadstore module shall stall the pipeline while performing the memory request. The pipeline shall be unstalled after completing the request.
 
 .. note:: It shall be noted that the some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
@@ -106,6 +126,20 @@ Data hazard
 A data hazard occurs when an instruction (A) uses the result of a previous instruction (B) which is still being processed in the pipeline.
 
 A pipeline stall is produced in case of data hazards so that B is able to finish before A uses its result.
+
+.. requirement:: A_HAZARD_01
+   :rationale: Stalling the decode module inserts pipeline bubbles to the subsequent modules.
+
+   The hazard module shall issue a stall request to the decode module while a write operation to one of the next registers to be read by decode is to be performed by the following modules : decode (current output), execute, loadstore and register.
+
+.. requirement:: A_PIPELINE_STALL_03
+
+   The decode module shall stall the pipeline upon stall request from the hazard module.
+
+.. requirement:: A_PIPELINE_STALL_04
+   :rationale: In the case where the data hazard is cause by the current decode output, not clearing the decode module's outputs will lead to the hazard module stalling the decode module indefinitely.
+
+   While stalling the pipeline due to a stall request from the hazard module, the decode module shall clear its outputs.
 
 .. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
