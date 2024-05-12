@@ -20,7 +20,7 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module memory import ecap5_dproc_pkg::*;
+module memory
 (
   input   logic        clk_i,
   input   logic        rst_i,

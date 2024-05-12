@@ -20,7 +20,7 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module execute import ecap5_dproc_pkg::*;
+module execute
 (
   input   logic        clk_i,
   input   logic        rst_i,
@@ -99,6 +99,7 @@ module execute import ecap5_dproc_pkg::*;
 
   input   logic  discard_request_i
 );
+import ecap5_dproc_pkg::*;
 
 /*****************************************/
 /*         ALU internal signals          */

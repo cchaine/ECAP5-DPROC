@@ -27,7 +27,7 @@
 #include <verilated_vcd_c.h>
 #include <svdpi.h>
 
-#include "Vtb_regs.h"
+#include "Vtb_registers.h"
 #include "testbench.h"
 
 enum CondId {
@@ -46,24 +46,24 @@ enum TestcaseId {
   T_READ_X0            =  7
 };
 
-class TB_Regs : public Testbench<Vtb_regs> {
+class TB_Registers : public Testbench<Vtb_registers> {
 public:
   void reset() {
     this->set_register(0, 0);
 
-    Testbench<Vtb_regs>::reset();
+    Testbench<Vtb_registers>::reset();
   }
 
   void set_register(uint8_t addr, uint32_t value) {
-    const svScope scope = svGetScopeFromName("TOP.tb_regs.dut");
+    const svScope scope = svGetScopeFromName("TOP.tb_registers.dut");
     assert(scope);
     svSetScope(scope);
     this->core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
   }
 };
 
-void tb_regs_read_x0(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_read_x0(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_READ_X0;
 
   // The following actions are performed in this test :
@@ -94,13 +94,13 @@ void tb_regs_read_x0(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.read_x0.01",
+  CHECK("tb_registers.read_x0.01",
     tb->conditions[COND_read],
     "Failed to read registers x0", tb->err_cycles[COND_read]);
 }
 
-void tb_regs_read_port_a(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_read_port_a(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_READ_PORTA;
 
   // The following actions are performed in this test :
@@ -132,13 +132,13 @@ void tb_regs_read_port_a(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.read_port_a.01",
+  CHECK("tb_registers.read_port_a.01",
     tb->conditions[COND_read],
     "Failed to read registers from port A", tb->err_cycles[COND_read]);
 }
 
-void tb_regs_read_port_b(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_read_port_b(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_READ_PORTB;
 
   // The following actions are performed in this test :
@@ -170,13 +170,13 @@ void tb_regs_read_port_b(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.read_port_b.01",
+  CHECK("tb_registers.read_port_b.01",
     tb->conditions[COND_read],
     "Failed to read registers from port B", tb->err_cycles[COND_read]);
 }
 
-void tb_regs_write_x0(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_write_x0(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_WRITE_X0;
 
   // The following actions are performed in this test :
@@ -216,13 +216,13 @@ void tb_regs_write_x0(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.write_x0.01",
+  CHECK("tb_registers.write_x0.01",
     tb->conditions[COND_write],
     "Failed to prevent writing to x0", tb->err_cycles[COND_write]);
 }
 
-void tb_regs_write(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_write(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_WRITE;
 
   // The following actions are performed in this test :
@@ -265,13 +265,13 @@ void tb_regs_write(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.write.01",
+  CHECK("tb_registers.write.01",
     tb->conditions[COND_read],
     "Failed writing to registers", tb->err_cycles[COND_read]);
 }
 
-void tb_regs_parallel_read(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_parallel_read(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_PARALLEL_READ;
 
   // The following actions are performed in this test :
@@ -303,13 +303,13 @@ void tb_regs_parallel_read(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.parallel_read.01",
+  CHECK("tb_registers.parallel_read.01",
     tb->conditions[COND_read],
     "Failed reading both port A and B in parallel", tb->err_cycles[COND_read]);
 }
 
-void tb_regs_read_before_write(TB_Regs * tb) {
-  Vtb_regs * core = tb->core;
+void tb_registers_read_before_write(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
   core->testcase = T_READ_BEFORE_WRITE;
 
   // The following actions are performed in this test :
@@ -361,7 +361,7 @@ void tb_regs_read_before_write(TB_Regs * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_regs.read_before_write.01",
+  CHECK("tb_registers.read_before_write.01",
     tb->conditions[COND_read],
     "Failed writing to registers", tb->err_cycles[COND_read]);
 }
@@ -373,31 +373,31 @@ int main(int argc, char ** argv, char ** env) {
   // Check arguments
   bool verbose = parse_verbose(argc, argv);
 
-  TB_Regs * tb = new TB_Regs();
-  tb->open_trace("waves/regs.vcd");
-  tb->open_testdata("testdata/regs.csv");
+  TB_Registers * tb = new TB_Registers();
+  tb->open_trace("waves/registers.vcd");
+  tb->open_testdata("testdata/registers.csv");
   tb->set_debug_log(verbose);
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
 
-  tb_regs_read_x0(tb);
+  tb_registers_read_x0(tb);
 
-  tb_regs_read_port_a(tb);
+  tb_registers_read_port_a(tb);
   
-  tb_regs_read_port_b(tb);
+  tb_registers_read_port_b(tb);
 
-  tb_regs_write_x0(tb);
+  tb_registers_write_x0(tb);
 
-  tb_regs_write(tb);
+  tb_registers_write(tb);
 
-  tb_regs_parallel_read(tb);
+  tb_registers_parallel_read(tb);
 
-  tb_regs_read_before_write(tb);
+  tb_registers_read_before_write(tb);
 
   /************************************************************/
 
-  printf("[REGS]: ");
+  printf("[REGISTERS]: ");
   if(tb->success) {
     printf("Done\n");
   } else {

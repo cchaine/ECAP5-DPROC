@@ -40,7 +40,7 @@ module ecap5_dproc #(
   input  logic        wb_stall_i
 );
 
-// regs
+// registers interface
 logic[4:0]  reg_raddr1, reg_raddr2, reg_waddr;
 logic[31:0] reg_rdata1, reg_rdata2, reg_wdata;
 logic       reg_write;
@@ -117,7 +117,7 @@ logic  if_dec_ready,  if_dec_valid,
        ex_ls_ready,   ex_ls_valid,   
        ls_valid;                        
 
-regs regs_inst (
+registers registers_inst (
   .clk_i     (clk_i),
 
   .raddr1_i  (reg_raddr1),

@@ -239,7 +239,7 @@ public:
   }
 
   void get_register(uint8_t addr, uint32_t * value) {
-    const svScope scope = svGetScopeFromName("TOP.ecap5_dproc.regs_inst");
+    const svScope scope = svGetScopeFromName("TOP.ecap5_dproc.registers_inst");
     assert(scope);
     svSetScope(scope);
     this->core->get_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)value);

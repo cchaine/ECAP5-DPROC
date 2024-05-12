@@ -30,6 +30,7 @@
 #include "Vtb_decode.h"
 #include "testbench.h"
 #include "Vtb_decode_ecap5_dproc_pkg.h"
+#include "Vtb_decode_riscv_pkg.h"
 
 enum CondId {
   COND_input_ready,
@@ -181,191 +182,191 @@ public:
   }
 
   void _lui(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_u(Vtb_decode_ecap5_dproc_pkg::OPCODE_LUI, rd, imm << 12);
+    core->instr_i = instr_u(Vtb_decode_riscv_pkg::OPCODE_LUI, rd, imm << 12);
     core->pc_i = pc;
   }
 
   void _auipc(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_u(Vtb_decode_ecap5_dproc_pkg::OPCODE_AUIPC, rd, imm << 12);
+    core->instr_i = instr_u(Vtb_decode_riscv_pkg::OPCODE_AUIPC, rd, imm << 12);
     core->pc_i = pc;
   }
 
   void _jal(uint32_t pc, uint32_t rd, uint32_t imm) {
-    core->instr_i = instr_j(Vtb_decode_ecap5_dproc_pkg::OPCODE_JAL, rd, imm);
+    core->instr_i = instr_j(Vtb_decode_riscv_pkg::OPCODE_JAL, rd, imm);
     core->pc_i = pc;
   }
 
   void _jalr(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_JALR, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_JALR, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_JALR, rd, Vtb_decode_riscv_pkg::FUNC3_JALR, rs1, imm);
     core->pc_i = pc;
   }
 
   void _beq(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BEQ, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BEQ, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _bne(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BNE, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BNE, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _blt(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BLT, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BLT, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _bge(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BGE, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BGE, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _bltu(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BLTU, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BLTU, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _bgeu(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_b(Vtb_decode_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_decode_ecap5_dproc_pkg::FUNC3_BGEU, rs1, rs2, imm);
+    core->instr_i = instr_b(Vtb_decode_riscv_pkg::OPCODE_BRANCH, Vtb_decode_riscv_pkg::FUNC3_BGEU, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _lb(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_LB, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LB, rs1, imm);
     core->pc_i = pc;
   }
 
   void _lbu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_LBU, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LBU, rs1, imm);
     core->pc_i = pc;
   }
 
   void _lh(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_LH, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LH, rs1, imm);
     core->pc_i = pc;
   }
 
   void _lhu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_LHU, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LHU, rs1, imm);
     core->pc_i = pc;
   }
 
   void _lw(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_LW, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_LOAD, rd, Vtb_decode_riscv_pkg::FUNC3_LW, rs1, imm);
     core->pc_i = pc;
   }
 
   void _sb(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_ecap5_dproc_pkg::OPCODE_STORE, Vtb_decode_ecap5_dproc_pkg::FUNC3_SB, rs1, rs2, imm);
+    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SB, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _sh(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_ecap5_dproc_pkg::OPCODE_STORE, Vtb_decode_ecap5_dproc_pkg::FUNC3_SH, rs1, rs2, imm);
+    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SH, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _sw(uint32_t pc, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    core->instr_i = instr_s(Vtb_decode_ecap5_dproc_pkg::OPCODE_STORE, Vtb_decode_ecap5_dproc_pkg::FUNC3_SW, rs1, rs2, imm);
+    core->instr_i = instr_s(Vtb_decode_riscv_pkg::OPCODE_STORE, Vtb_decode_riscv_pkg::FUNC3_SW, rs1, rs2, imm);
     core->pc_i = pc;
   }
 
   void _addi(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_ADD, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, imm);
     core->pc_i = pc;
   }
 
   void _slti(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLT, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLT, rs1, imm);
     core->pc_i = pc;
   }
 
   void _sltiu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLTU, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLTU, rs1, imm);
     core->pc_i = pc;
   }
 
   void _xori(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_XOR, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_XOR, rs1, imm);
     core->pc_i = pc;
   }
 
   void _ori(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_OR, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_OR, rs1, imm);
     core->pc_i = pc;
   }
 
   void _andi(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_AND, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_AND, rs1, imm);
     core->pc_i = pc;
   }
 
   void _slli(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLL, rs1, imm);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SLL, rs1, imm);
     core->pc_i = pc;
   }
 
   void _srli(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
     // set func7
     uint32_t imm_w_func7 = (imm & 0x1F) | ((1 << 6) << 25);
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SRL, rs1, imm_w_func7);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, imm_w_func7);
     core->pc_i = pc;
   }
 
   void _srai(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t imm) {
     // set func7
     uint32_t imm_w_func7 = (imm & 0x1F) | ((1 << 5) << 5);
-    core->instr_i = instr_i(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SRL, rs1, imm_w_func7);
+    core->instr_i = instr_i(Vtb_decode_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, imm_w_func7);
     core->pc_i = pc;
   }
 
   void _add(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_ecap5_dproc_pkg::FUNC7_ADD);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_ADD);
     core->pc_i = pc;
   }
 
   void _sub(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_ecap5_dproc_pkg::FUNC7_SUB);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_ADD, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SUB);
     core->pc_i = pc;
   }
 
   void _slt(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLT, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLT, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _sltu(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLTU, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLTU, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _xor(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_XOR, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_XOR, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _or(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_OR, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_OR, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _and(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_AND, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_AND, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _sll(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SLL, rs1, rs2, 0);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SLL, rs1, rs2, 0);
     core->pc_i = pc;
   }
 
   void _srl(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_ecap5_dproc_pkg::FUNC7_SRL);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SRL);
     core->pc_i = pc;
   }
 
   void _sra(uint32_t pc, uint32_t rd, uint32_t rs1, uint32_t rs2) {
-    core->instr_i = instr_r(Vtb_decode_ecap5_dproc_pkg::OPCODE_OP, rd, Vtb_decode_ecap5_dproc_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_ecap5_dproc_pkg::FUNC7_SRA);
+    core->instr_i = instr_r(Vtb_decode_riscv_pkg::OPCODE_OP, rd, Vtb_decode_riscv_pkg::FUNC3_SRL, rs1, rs2, Vtb_decode_riscv_pkg::FUNC7_SRA);
     core->pc_i = pc;
   }
 };

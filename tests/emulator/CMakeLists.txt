@@ -19,11 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
+set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+               ${SRC_DIR}/include/riscv_pkg.svh)
+
 add_executable(emulator ${CMAKE_CURRENT_LIST_DIR}/emulator.cpp)
 target_include_directories(emulator PRIVATE ${TEST_INCLUDE_DIR})
 verilate(emulator
   PREFIX Vecap5_dproc
-  SOURCES ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+  SOURCES ${SV_HEADERS}
           ${SRC_DIR}/ecap5_dproc.sv
   INCLUDE_DIRS ${SRC_DIR}
   TRACE) 

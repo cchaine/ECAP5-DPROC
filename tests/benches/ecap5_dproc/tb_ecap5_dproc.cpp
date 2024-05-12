@@ -28,6 +28,7 @@
 #include <svdpi.h>
 
 #include "Vtb_ecap5_dproc_ecap5_dproc_pkg.h"
+#include "Vtb_ecap5_dproc_riscv_pkg.h"
 #include "Vtb_ecap5_dproc.h"
 #include "Vtb_ecap5_dproc_ecap5_dproc.h"
 #include "Vtb_ecap5_dproc_tb_ecap5_dproc.h"
@@ -137,23 +138,23 @@ public:
   }
 
   uint32_t _xori(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_ecap5_dproc_pkg::FUNC3_XOR, rs1, imm);
+    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_XOR, rs1, imm);
   }
 
   uint32_t _lb(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_ecap5_dproc_pkg::OPCODE_LOAD, rd, Vtb_ecap5_dproc_ecap5_dproc_pkg::FUNC3_LB, rs1, imm);
+    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_LOAD, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_LB, rs1, imm);
   }
 
   uint32_t _addi(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_ecap5_dproc_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_ecap5_dproc_pkg::FUNC3_ADD, rs1, imm);
+    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_ADD, rs1, imm);
   }
 
   uint32_t _beq(uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    return instr_b(Vtb_ecap5_dproc_ecap5_dproc_pkg::OPCODE_BRANCH, Vtb_ecap5_dproc_ecap5_dproc_pkg::FUNC3_BEQ, rs1, rs2, imm);
+    return instr_b(Vtb_ecap5_dproc_riscv_pkg::OPCODE_BRANCH, Vtb_ecap5_dproc_riscv_pkg::FUNC3_BEQ, rs1, rs2, imm);
   }
 
   void set_register(uint8_t addr, uint32_t value) {
-    const svScope scope = svGetScopeFromName("TOP.tb_ecap5_dproc.dut.regs_inst");
+    const svScope scope = svGetScopeFromName("TOP.tb_ecap5_dproc.dut.registers_inst");
     assert(scope);
     svSetScope(scope);
     this->core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
