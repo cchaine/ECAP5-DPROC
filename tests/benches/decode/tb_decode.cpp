@@ -82,7 +82,7 @@ enum TestcaseId {
   T_SRL             =  35,
   T_SRA             =  36,
   T_BUBBLE          =  37,
-  T_PIPELINE_STALL  =  38,
+  T_PIPELINE_WAIT  =  38,
   T_HAZARD          =  39
 };
 
@@ -3086,9 +3086,9 @@ void tb_decode_bubble(TB_Decode * tb) {
       "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_decode_pipeline_stall(TB_Decode * tb) {
+void tb_decode_pipeline_wait(TB_Decode * tb) {
   Vtb_decode * core = tb->core;
-  core->testcase = T_PIPELINE_STALL;
+  core->testcase = T_PIPELINE_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for AND
@@ -3224,23 +3224,23 @@ void tb_decode_pipeline_stall(TB_Decode * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_decode.pipeline_stall.01",
+  CHECK("tb_decode.pipeline_wait.01",
       tb->conditions[COND_alu],
       "Failed to implement the alu protocol", tb->err_cycles[COND_alu]);
 
-  CHECK("tb_decode.pipeline_stall.02",
+  CHECK("tb_decode.pipeline_wait.02",
       tb->conditions[COND_branch],
       "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
-  CHECK("tb_decode.pipeline_stall.03",
+  CHECK("tb_decode.pipeline_wait.03",
       tb->conditions[COND_writeback],
       "Failed to implement the writeback protocol", tb->err_cycles[COND_writeback]);
 
-  CHECK("tb_decode.pipeline_stall.04",
+  CHECK("tb_decode.pipeline_wait.04",
       tb->conditions[COND_loadstore],
       "Failed to implement the load-store protocol", tb->err_cycles[COND_loadstore]);
 
-  CHECK("tb_decode.pipeline_stall.05",
+  CHECK("tb_decode.pipeline_wait.05",
       tb->conditions[COND_output_valid],
       "Failed to implement the output valid signal", tb->err_cycles[COND_output_valid]);
 }
@@ -3458,7 +3458,7 @@ int main(int argc, char ** argv, char ** env) {
 
   tb_decode_bubble(tb);
 
-  tb_decode_pipeline_stall(tb);
+  tb_decode_pipeline_wait(tb);
 
   tb_decode_hazard(tb);
 

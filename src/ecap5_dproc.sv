@@ -285,6 +285,7 @@ loadstore loadstore_inst (
 
 writeback writeback_inst (
   .clk_i          (clk_i),
+  .rst_i          (rst_i),
 
   .input_valid_i  (ls_valid),
 
