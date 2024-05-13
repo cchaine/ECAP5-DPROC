@@ -88,11 +88,6 @@ External Interface Requirements
     - 1
     - The pipeline stall input indicates that current slave is not able to accept the transfer in the transaction queue.
 
-.. requirement:: I_MEMORY_INTERFACE_01
-  :derivedfrom: U_MEMORY_INTERFACE_02
-
-  Signals from the above table shall be compliant with the Wishbone specification.
-
 Functional Requirements
 -----------------------
 

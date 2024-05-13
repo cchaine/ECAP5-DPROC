@@ -25,8 +25,9 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
  * The **write-back** stage which handles storing instructions outputs to internal registers.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_01
+   :derivedfrom: U_MEMORY_INTERFACE_01
 
-  The memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
+   The memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
 
 .. requirement:: A_MEMORY_01
 
@@ -35,11 +36,6 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 .. requirement:: A_FUNCTIONAL_PARTITIONING_02
   
   The fetch module shall implement the instruction fetch stage of the pipeline.
-
-.. requirement:: A_INSTRUCTION_FETCH_01
-  :rationale: Pipeline stages are all run in parallel.
-
-  The fetch module shall fetch instructions continuously starting on the clock cycle after rst_i is deasserted, providing them to the decode module one after the other.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_03
 
@@ -142,7 +138,7 @@ A pipeline stall is produced in case of data hazards so that B is able to finish
 .. requirement:: A_PIPELINE_STALL_04
    :rationale: In the case where the data hazard is cause by the current decode output, not clearing the decode module's outputs will lead to the hazard module stalling the decode module indefinitely.
 
-   While stalling the pipeline due to a stall request from the hazard module, the decode module shall clear its outputs.
+   While stalling the pipeline due to a stall request from the hazard module, the decode module shall clear its register outputs.
 
 .. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
