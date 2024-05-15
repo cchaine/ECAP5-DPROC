@@ -22,10 +22,6 @@ External Interface Requirements
     - I
     - 1
     - Hardware reset.
-  * - irq_i
-    - I
-    - 1
-    - External interrupt request.
 
 .. requirement:: I_CLK_01
 
@@ -35,11 +31,6 @@ External Interface Requirements
    :derivedfrom: U_RESET_01
 
    The rst_i signal shall hold ECAP5-DPROC in a reset state while asserted.
-
-.. requirement:: I_IRQ_01
-   :derivedfrom: U_HARDWARE_INTERRUPT_01, U_HARDWARE_INTERRUPT_02
-
-    ECAP5-DPROC shall interrupt its execution flow when input irq_i is asserted and jump to a hardware-configurable address.
 
 .. list-table:: ECAP5-DPROC memory interface signals
   :header-rows: 1

@@ -21,13 +21,10 @@
  */
 
 module ecap5_dproc #(
-  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000,
-  parameter logic[31:0] INTERRUPT_ADDRESS = 32'h00000000
+  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000
 )(
   input  logic        clk_i,
   input  logic        rst_i,
-
-  input  logic        irq_i,
 
   output logic[31:0]  wb_adr_o,
   input  logic[31:0]  wb_dat_i,
@@ -132,13 +129,10 @@ registers registers_inst (
 );
 
 fetch #(
- .BOOT_ADDRESS      (BOOT_ADDRESS),
- .INTERRUPT_ADDRESS (INTERRUPT_ADDRESS)
+ .BOOT_ADDRESS      (BOOT_ADDRESS)
 ) fetch_inst (
   .clk_i            (clk_i),
   .rst_i            (rst_i),
-
-  .irq_i            (irq_i),
 
   .branch_i         (branch),
   .branch_target_i  (branch_target),

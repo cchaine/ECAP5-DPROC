@@ -136,11 +136,33 @@ void tb_memory_reset(TB_Memory * tb) {
   Vtb_memory * core = tb->core;
   core->testcase = T_RESET;
 
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_s1_stall, (core->s1_wb_stall_o == 0));
+  tb->check(COND_s2_stall, (core->s2_wb_stall_o == 1));
+  tb->check(COND_m_wb, (core->m_wb_stb_o == core->s1_wb_stb_i)  &&
+                       (core->m_wb_cyc_o == core->s1_wb_cyc_i));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+  
   CHECK("tb_memory.reset.01",
-      false,
-      "TODO");
+      tb->conditions[COND_s1_stall],
+      "Failed to implement s1 stalling", tb->err_cycles[COND_s1_stall]);
+  
+  CHECK("tb_memory.reset.02",
+      tb->conditions[COND_s2_stall],
+      "Failed to implement s2 stalling", tb->err_cycles[COND_s2_stall]);
+
+  CHECK("tb_memory.reset.03",
+      tb->conditions[COND_m_wb],
+      "Failed to implement master muxing", tb->err_cycles[COND_m_wb]);
 }
 
 void tb_memory_port1_read(TB_Memory * tb) {

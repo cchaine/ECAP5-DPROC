@@ -192,11 +192,28 @@ void tb_loadstore_reset(TB_Loadstore * tb) {
   Vtb_loadstore * core = tb->core;
   core->testcase = T_RESET;
 
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
 
+  //`````````````````````````````````
+  //      Checks 
+  
+  tb->check(COND_wishbone,     (core->wb_stb_o        ==  0)        &&
+                               (core->wb_cyc_o        ==  0));
+  tb->check(COND_output_valid, (core->output_valid_o  ==  0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+   
   CHECK("tb_loadstore.reset.01",
-      false,
-      "TODO");
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_loadstore.reset.02",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_loadstore_no_stall_lb(TB_Loadstore * tb) {

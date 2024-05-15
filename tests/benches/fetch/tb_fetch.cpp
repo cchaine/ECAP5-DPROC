@@ -53,7 +53,6 @@ enum TestcaseId {
   T_JUMP_ON_OUTPUT_HANDSHAKE        =  9,
   T_JUMP_DURING_PIPELINE_WAIT      =  10,
   T_JUMP_BACK_TO_BACK               =  11,
-  T_PRECEDENCE_INTERRUPT             =  12,
   T_PRECEDENCE_BRANCH                =  13,
   T_PRECEDENCE_INCREMENT             =  14,
   T_RESET                            =  15
@@ -78,9 +77,28 @@ void tb_fetch_reset(TB_Fetch * tb) {
 
   tb->reset();
 
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  0));         
+  tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
+                                (core->wb_cyc_o              ==  0));  
+  tb->check(COND_output_valid,  (core->output_valid_o        ==  0));         
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
   CHECK("tb_fetch.reset.01",
-      false,
-      "TODO");
+      tb->conditions[COND_state],
+      "Failed to implement the state machine", tb->err_cycles[COND_state]);
+
+  CHECK("tb_fetch.reset.02",
+      tb->conditions[COND_wishbone],
+      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_fetch.reset.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_fetch_no_stall(TB_Fetch * tb) {
@@ -110,8 +128,6 @@ void tb_fetch_no_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 0;
@@ -230,8 +246,6 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 1;
@@ -363,8 +377,6 @@ void tb_fetch_memory_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -478,8 +490,6 @@ void tb_fetch_pipeline_wait(TB_Fetch * tb) {
   
   tb->reset();
 
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
 
   core->wb_stall_i = 0;
@@ -605,13 +615,13 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
   tb->reset();
 
   // Leave the reset state
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
 
-  core->irq_i = 1;
+  core->branch_i = 1;
 
   //=================================
   //      Tick (1)
@@ -621,7 +631,7 @@ void tb_fetch_jump_after_reset(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -654,8 +664,6 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
 
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -668,7 +676,9 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
 
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
 
   uint32_t data = rand();
   core->wb_dat_i = data;
@@ -682,7 +692,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
 
-  core->irq_i = 0;
+  core->branch_i = 0;
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
@@ -705,7 +715,7 @@ void tb_fetch_jump_during_ack(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -741,8 +751,6 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -760,7 +768,9 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -770,7 +780,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
+  core->branch_i = 0;
 
   //=================================
   //      Tick (4)
@@ -813,7 +823,7 @@ void tb_fetch_jump_during_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -850,8 +860,6 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 1;
@@ -869,7 +877,9 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -879,7 +889,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
+  core->branch_i = 0;
 
   //=================================
   //      Tick (4)
@@ -932,7 +942,7 @@ void tb_fetch_jump_during_memory_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -965,8 +975,6 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -994,7 +1002,9 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
 
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (3)
@@ -1004,7 +1014,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
+  core->branch_i = 0;
 
   //`````````````````````````````````
   //      Checks 
@@ -1019,7 +1029,7 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks
@@ -1054,8 +1064,6 @@ void tb_fetch_jump_during_pipeline_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 0;
   core->wb_stall_i = 0;
@@ -1091,7 +1099,9 @@ void tb_fetch_jump_during_pipeline_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target = rand();
+  core->branch_target_i = branch_target;
 
   //=================================
   //      Tick (4)
@@ -1101,7 +1111,7 @@ void tb_fetch_jump_during_pipeline_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
+  core->branch_i = 0;
 
   //=================================
   //      Tick (5)
@@ -1121,7 +1131,7 @@ void tb_fetch_jump_during_pipeline_wait(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1154,8 +1164,6 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -1171,7 +1179,9 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   uint32_t data = rand();
   core->wb_dat_i = data;
   core->wb_ack_i = 1;
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target_1 = rand();
+  core->branch_target_i = branch_target_1;
 
   //=================================
   //      Tick (2)
@@ -1181,7 +1191,9 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 1;
+  core->branch_i = 1;
+  uint32_t branch_target_2 = rand();
+  core->branch_target_i = branch_target_2;
 
   core->wb_dat_i = 0;
   core->wb_ack_i = 0;
@@ -1199,7 +1211,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
+  core->branch_i = 0;
   
   //=================================
   //      Tick (4)
@@ -1209,7 +1221,7 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Checks 
 
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
+  tb->check(COND_wishbone, (core->wb_adr_o == branch_target_1));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -1221,87 +1233,6 @@ void tb_fetch_jump_back_to_back(TB_Fetch * tb) {
   CHECK("tb_fetch.jump_back_to_back.02",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
-}
-
-void tb_fetch_precedence_interrupt(TB_Fetch * tb) {
-  Vtb_fetch * core = tb->core;
-  core->testcase = T_PRECEDENCE_INTERRUPT;
-
-  // The following actions are performed in this test :
-  //    tick 0. Set inputs for no stall not interrupt
-  //    tick 1. Acknowledge request with response data (core makes request)
-  //    tick 2. Interrupt and Branch request (core latches response)
-  //    tick 3. Nothing (core cancels output)
-  //    tick 4. Nothing (core makes request)
-  
-  //=================================
-  //      Tick (0)
-  
-  tb->reset();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->irq_i = 0;
-  core->irq_i = 0;
-  core->branch_i = 0;
-  core->output_ready_i = 1;
-  core->wb_stall_i = 0;
-
-  //=================================
-  //      Tick (1)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  uint32_t data = rand();
-  core->wb_dat_i = data;
-  core->wb_ack_i = 1;
-
-  //=================================
-  //      Tick (2)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->wb_dat_i = 0;
-  core->wb_ack_i = 0;
-
-  core->irq_i = 1;
-  core->branch_i = 1;
-  core->branch_target_i = rand() % 0x7FFFFFFF;
-
-  //=================================
-  //      Tick (3)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Set inputs
-  
-  core->branch_i = 0;
-  core->irq_i = 0;
-  
-  //=================================
-  //      Tick (4)
-  
-  tb->tick();
-
-  //`````````````````````````````````
-  //      Checks 
-
-  tb->check(COND_wishbone, (core->wb_adr_o == core->tb_fetch->dut->INTERRUPT_ADDRESS));
-
-  //`````````````````````````````````
-  //      Formal Checks 
-
-  CHECK("tb_fetch.precedence_interrupt.01",
-      tb->conditions[COND_wishbone],
-      "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 }
 
 void tb_fetch_precedence_branch(TB_Fetch * tb) {
@@ -1323,8 +1254,6 @@ void tb_fetch_precedence_branch(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -1403,8 +1332,6 @@ void tb_fetch_precedence_increment(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->irq_i = 0;
-  core->irq_i = 0;
   core->branch_i = 0;
   core->output_ready_i = 1;
   core->wb_stall_i = 0;
@@ -1487,7 +1414,6 @@ int main(int argc, char ** argv, char ** env) {
   tb_fetch_jump_during_pipeline_wait(tb);
   tb_fetch_jump_back_to_back(tb);
 
-  tb_fetch_precedence_interrupt(tb);
   tb_fetch_precedence_branch(tb);
   tb_fetch_precedence_increment(tb);
 
