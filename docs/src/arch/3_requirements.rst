@@ -37,9 +37,9 @@ External Interface Requirements
    The rst_i signal shall hold ECAP5-DPROC in a reset state while asserted.
 
 .. requirement:: I_IRQ_01
-   :derivedfrom: U_HARDWARE_INTERRUPT_01
+   :derivedfrom: U_HARDWARE_INTERRUPT_01, U_HARDWARE_INTERRUPT_02
 
-    ECAP5-DPROC shall interrupt its execution flow when input irq_i is asserted.
+    ECAP5-DPROC shall interrupt its execution flow when input irq_i is asserted and jump to a hardware-configurable address.
 
 .. list-table:: ECAP5-DPROC memory interface signals
   :header-rows: 1
@@ -90,11 +90,6 @@ External Interface Requirements
 
 Functional Requirements
 -----------------------
-
-.. requirement:: F_IRQ_HANDLER_01
-   :derivedfrom: U_HARDWARE_INTERRUPT_02
-
-   ECAP5-DPROC shall jump to a hardware-configurable address when irq_i is asserted.
 
 Register file
 ^^^^^^^^^^^^^
@@ -149,53 +144,6 @@ Only one immediate value can be encoded in one instruction. The value can be rec
 
   Missing immediate fragments shall be replaced by zeros.
 
-Instruction parameters
-^^^^^^^^^^^^^^^^^^^^^^
-
-.. requirement:: F_INSTR_FIRST_PARAM_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-   Instructions encoded using the R-type, I-type, S-type and B-type shall take as their first parameter the value stored in the register designated by the rs1 field.
-
-.. requirement:: F_INSTR_FIRST_PARAM_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the U-type and J-type shall take as their first parameter the immediate value encoded in the instruction.
-
-.. requirement:: F_INSTR_SECOND_PARAM_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the R-type, S-type and B-type shall take as their second parameter the value stored in the register designated by the rs2 field.
-
-.. requirement:: F_INSTR_SECOND_PARAM_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the I-type shall take as their second parameter the immediate value encoded in the instruction.
-
-.. requirement:: F_INSTR_THIRD_PARAM_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the S-type and B-type shall take as their third parameter the immediate value encoded in the instruction.
-
-Behavior variants
-^^^^^^^^^^^^^^^^^
-
-.. requirement:: F_INSTR_VARIANT_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the R-type, I-type, S-type and B-type shall use the func3 field as a behavior variant selector.
-
-.. requirement:: F_INSTR_VARIANT_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions encoded using the R-type shall use the func7 field as a secondary behavior variant selector.
-
-.. requirement:: F_INSTR_VARIANT_03
-  :rationale: The SRLI and SRAI instructions use the I-type encoding but only the 5 LSBs of the immediate parameter are used for the behavior. The other 7 MSBs are assimilated to the func7 field of the R-type encoding.
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The seven most-significant bits of the instruction's second parameter shall be used as a secondary behavior variant selector for instructions encoded using the OP-IMM opcode with  the func3 field is 0x5.
-
 Opcodes
 ^^^^^^^
 
@@ -206,62 +154,37 @@ The following table outlines the different opcodes values of the RV32I instructi
 
    RISC-V instruction opcodes
 
-.. note:: Cells marked as noimp are for opcodes that are not implemented in version 1.0.0.
+.. note:: Cells marked as *noimp* are for opcodes that are not implemented in version 1.0.0.
 
 .. requirement:: F_OPCODE_ENCODING_01
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the LUI opcode shall be decoded as an U-type in- struction.
+   Instructions with the following opcodes shall be decoded as an R-type instruction : OP.
 
 .. requirement:: F_OPCODE_ENCODING_02
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the AUIPC opcode shall be decoded as an U-type instruction.
+   Instructions with the following opcodes shall be decoded as an I-type instruction : JALR, LOAD, OP-IMM, MISC-MEM and SYSTEM.
 
 .. requirement:: F_OPCODE_ENCODING_03
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the JAL opcode shall be decoded as a J-type instruc- tion.
+   Instructions with the following opcodes shall be decoded as an S-type instruction : STORE.
 
 .. requirement:: F_OPCODE_ENCODING_04
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the JALR opcode shall be decoded as an I-type in- struction.
+   Instructions with the following opcodes shall be decoded as an B-type instruction : BRANCH.
 
 .. requirement:: F_OPCODE_ENCODING_05
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the BRANCH opcode shall be decoded as a B-type instruction.
+   Instructions with the following opcodes shall be decoded as an U-type instruction : LUI and AUIPC.
 
 .. requirement:: F_OPCODE_ENCODING_06
-  :derivedfrom: U_INSTRUCTION_SET_01
+   :derivedfrom: U_INSTRUCTION_SET_01
 
-  Instructions which use the LOAD opcode shall be decoded as an I-type in- struction.
-
-.. requirement:: F_OPCODE_ENCODING_07
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions which use the STORE opcode shall be decoded as a S-type instruction.
-
-.. requirement:: F_OPCODE_ENCODING_08
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions which use the OP-IMM opcode shall be decoded as an I-type instruction.
-
-.. requirement:: F_OPCODE_ENCODING_09
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions which use the OP opcode shall be decoded as a R-type instruction.
-
-.. requirement:: F_OPCODE_ENCODING_10
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions which use the MISC-MEM opcode shall be decoded as an I-type instruction.
-
-.. requirement:: F_OPCODE_ENCODING_11
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Instructions which use the SYSTEM opcode shall be decoded as an I-type instruction.
+   Instructions with the following opcodes shall be decoded as an J-type instruction : JAL.
 
 Instruction behaviors
 ^^^^^^^^^^^^^^^^^^^^^
@@ -270,15 +193,10 @@ LUI
 ```
 
 .. requirement:: F_LUI_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The LUI behavior shall be applied when the opcode is LUI.
-
-.. requirement:: F_LUI_02
   :rationale: The LUI instruction shall load the 20 upper bits of the instruction immediate into the destination register and fill the remaining bits with zeros. This is the default behavior for instruction immediates as stated in F_INSTR_IMMEDIATE_02 and F_INSTR_IMMEDIATE_03.
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The result of LUI shall be the value of its first parameter.
+  When the opcode is LUI, the register pointed by the rd field shall be loaded with the immediate value.
 
 AUIPC
 `````
@@ -286,12 +204,7 @@ AUIPC
 .. requirement:: F_AUIPC_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The AUIPC behavior shall be applied when the opcode is AUIPC.
-
-.. requirement:: F_AUIPC_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of AUIPC shall be the sum of its first parameter and the address of the AUIPC instruction.
+  When the opcode is AUIPC, the register pointed by the rd field shall be the signed sum of the immediate value and the address of the instruction.
 
 JAL
 ```
@@ -299,18 +212,13 @@ JAL
 .. requirement:: F_JAL_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The JAL behavior shall be applied when the opcode is JAL.
+  When the opcode is JAL, the pc register shall be loaded with the signed sum of the immediate value and the address of the instruction.
 
 .. requirement:: F_JAL_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The pc register shall be updated with the sum of the address of the JAL instruction with the first instruction parameter.
-
-.. requirement:: F_JAL_03
   :rationale: The JAL instruction shall output the address to the following instruction for it to be used as a *return address* in the case of a function call.
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The result of JAL shall be the address of the JAL instruction incremented by 4.
+  When the opcode is JAL, the register pointed by the rd field shall be loaded with the address of the instruction incremented by 4.
 
 JALR
 ````
@@ -318,31 +226,21 @@ JALR
 .. requirement:: F_JALR_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The JALR behavior shall be applied when the opcode is JALR and func3 is 0x0.
+  When the opcode is JALR and the func3 field is 0x0, the pc register shall be loaded with the signed sum of the register pointed by the rs1 field and the immediate value.
 
 .. requirement:: F_JALR_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The pc register shall be updated with the sum of the first and second param- eters of the JALR instruction.
-
-.. requirement:: F_JALR_03
   :rationale: The JALR instruction shall output the address to the following instruction for it to be used as a *return address* in the case of a function call.
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The result of JALR shall be the address of the JALR instruction incremented by 4.
+  When the opcode is JALR and the func3 field is 0x0, the register pointed by the rd field shall be loaded with the address of the instruction incremented by 4.
 
 BEQ
 ```
 
-.. requirement:: F_BEQ_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The BEQ behavior shall be applied when the opcode is BRANCH and func3 is 0x0.
-
 .. requirement:: F_BEQ_02
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  When the first and second instruction parameters are equal, the pc register shall be updated with the signed sum of the address of the BEQ instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x0, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the registers pointed by the rs1 field and the rs2 field are equal.
 
 BNE
 ```
@@ -350,12 +248,7 @@ BNE
 .. requirement:: F_BNE_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The BNE behavior shall be applied when the opcode is BRANCH and func3 is 0x1.
-
-.. requirement:: F_BNE_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  When the first and second parameters are not equal, the pc register shall be updated with the signed sum of the address of the BNE instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x1, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the registers pointed by the rs1 field and the rs2 field are equal.
 
 BLT
 ```
@@ -363,12 +256,7 @@ BLT
 .. requirement:: F_BLT_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The BLT behavior shall be applied when the opcode is BRANCH and func3 is 0x4.
-
-.. requirement:: F_BLT_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  When the first parameter is lower than the second parameter using a signed comparison, the pc register shall be updated with the signed sum of the address of the BLT instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x4, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the register pointed by the rs1 field is lower than the register pointed by the rs2 field using a signed comparison.
 
 BGE
 ```
@@ -376,12 +264,7 @@ BGE
 .. requirement:: F_BGE_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The BGE behavior shall be applied when the opcode is BRANCH and func3 is 0x5.
-
-.. requirement:: F_BGE_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  When the first parameter is greater or equal to the second parameter using a signed comparison, the pc register shall be updated with the signed sum of the address of the BGE instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x5, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the register pointed by the rs1 field is greater than the register pointed by the rs2 field using a signed comparison.
 
 BLTU
 ````
@@ -389,12 +272,7 @@ BLTU
 .. requirement:: F_BLTU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The BLTU behavior shall be applied when the opcode is BRANCH and func3 is 0x6.
-
-.. requirement:: F_BLTU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  When the first parameter is lower than the second parameter using an unsigned comparison, the pc register shall be updated with the signed sum of the address of the BLTU instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x6, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the register pointed by the rs1 field is lower than the register pointed by the rs2 field using an unsigned comparison.
 
 BGEU
 ````
@@ -402,12 +280,7 @@ BGEU
 .. requirement:: F_BGEU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The BGEU behavior shall be applied when the opcode is BRANCH and func3 is 0x7.
-
-.. requirement:: F_BGEU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  When the first parameter is greater or equal to the second parameter using an unsigned comparison, the pc register shall be updated with the signed sum of the address of the BGEU instruction with the third parameter.
+  When the opcode is BRANCH and the func3 field is 0x7, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the register pointed by the rs1 field is greater than the register pointed by the rs2 field using an unsigned comparison.
 
 LB
 ``
@@ -415,17 +288,7 @@ LB
 .. requirement:: F_LB_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The LB behavior shall be applied when the opcode is LOAD and func3 is 0x0.
-
-.. requirement:: F_LB_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of LB shall be the 8-bit value stored in memory at the address determined by the signed sum of its first and second parameters.
-
-.. requirement:: F_LB_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The remaining bits of the loaded value shall be filled with the value of its 7th bit.
+  When the opcode is LOAD and the func3 field is 0x0, the register pointed by the rd field shall be the 32 bits sign-extended 8-bit value stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 LH
 ``
@@ -433,17 +296,7 @@ LH
 .. requirement:: F_LH_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The LH behavior shall be applied when the opcode is LOAD and func3 is 0x1.
-
-.. requirement:: F_LH_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of LH shall be the 16-bit value stored in memory at the address determined by the signed sum of its first and second parameters.
-
-.. requirement:: F_LH_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The remaining bits of the loaded value shall be filled with the value of its 15th bit.
+  When the opcode is LOAD and the func3 field is 0x1, the register pointed by the rd field shall be the 32 bits sign-extended 16-bit value stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 LW
 ``
@@ -451,12 +304,7 @@ LW
 .. requirement:: F_LW_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The LW behavior shall be applied when the opcode is LOAD and func3 is 0x2.
-
-.. requirement:: F_LW_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of LW shall be the 32-bit value stored in memory at the address determined by the signed sum of its first and second parameters.
+  When the opcode is LOAD and the func3 field is 0x2, the register pointed by the rd field shall be the 32-bit value stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 LBU
 ```
@@ -464,17 +312,7 @@ LBU
 .. requirement:: F_LBU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The LBU behavior shall be applied when the opcode is LOAD and func3 is 0x4.
-
-.. requirement:: F_LBU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of LBU shall be the 8-bit value stored in memory at the address determined by the signed sum of its first and second parameters.
-
-.. requirement:: F_LBU_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The remaining bits of the loaded value shall be filled with zeros.
+  When the opcode is LOAD and the func3 field is 0x4, the register pointed by the rd field shall be the 32 bits zero-extended 8-bit value stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 LHU
 ```
@@ -482,17 +320,7 @@ LHU
 .. requirement:: F_LHU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The LHU behavior shall be applied when the opcode is LOAD and func3 is 0x5.
-
-.. requirement:: F_LHU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of LHU shall be the 16-bit value stored in memory at the address determined by the signed sum of its first and second parameters.
-
-.. requirement:: F_LHU_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The remaining bits of the loaded value shall be filled with zeros.
+  When the opcode is LOAD and the func3 field is 0x5, the register pointed by the rd field shall be the 32 bits zero-extended 16-bit value stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 SB
 ``
@@ -500,12 +328,7 @@ SB
 .. requirement:: F_SB_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SB behavior shall be applied when the opcode is STORE and func3 is 0x0.
-
-.. requirement:: F_SB_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The lowest byte of the second parameter of SB shall be stored in memory at the address determined by the signed sum of its first and third parameters.
+  When the opcode is STORE and the func3 field is 0x0, the least-significant byte of the register pointed by the rs2 field shall be stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 SH
 ``
@@ -513,12 +336,7 @@ SH
 .. requirement:: F_SH_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SH behavior shall be applied when the opcode is STORE and func3 is 0x1.
-
-.. requirement:: F_SH_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The two lowest bytes of the second parameter of SB shall be stored in memory at the address determined by the signed sum of its first and third param- eters.
+  When the opcode is STORE and the func3 field is 0x1, the two least-significant bytes of the register pointed by the rs2 field shall be stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 SW
 ``
@@ -526,12 +344,7 @@ SW
 .. requirement:: F_SW_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SW behavior shall be applied when the opcode is STORE and func3 is 0x2.
-
-.. requirement:: F_SW_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The value of the second parameter of SB shall be stored in memory at the address determined by the signed sum of its first and third parameters.
+  When the opcode is STORE and the func3 field is 0x2, the register pointed by the rs2 field shall be stored in memory at the address specified by the signed sum of the register pointed by the rs1 field and the immediate value.
 
 ADDI
 ````
@@ -539,17 +352,7 @@ ADDI
 .. requirement:: F_ADDI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The ADDI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x0.
-
-.. requirement:: F_ADDI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ADDI shall be the signed integer sum of its two parameters.
-
-.. requirement:: F_ADDI_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ADDI shall be truncated to 32-bits.
+  When the opcode is OP-IMM and the func3 field is 0x0, the register pointed by the rd field shall be loaded with the signed sum of the register pointed by the rs1 field and the immediate value.
 
 SLTI
 ````
@@ -557,12 +360,7 @@ SLTI
 .. requirement:: F_SLTI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SLTI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x2.
-
-.. requirement:: F_SLTI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLTI shall be 1 when the signed value of its first parameter is lower that the signed value of its second parameter. It shall be 0 otherwise.
+  When the opcode is OP-IMM and the func3 field is 0x1, the register pointed by the rd field shall be 1 if the register pointed by the rs1 field is lower than the immediate value using a signed comparison, 0 otherwise.
 
 SLTIU
 `````
@@ -570,12 +368,7 @@ SLTIU
 .. requirement:: F_SLTIU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SLTIU behavior shall be applied when the opcode is OP-IMM and when func3 is 0x3.
-
-.. requirement:: F_SLTIU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLTI shall be 1 when the unsigned value of its first parameter is lower that the unsigned value of its second parameter. It shall be 0 otherwise.
+  When the opcode is OP-IMM and the func3 field is 0x3, the register pointed by the rd field shall be 1 if the register pointed by the rs1 field is lower than the immediate value using an unsigned comparison, 0 otherwise.
 
 XORI
 ````
@@ -583,12 +376,7 @@ XORI
 .. requirement:: F_XORI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The XORI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x4.
-
-.. requirement:: F_XORI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of XORI shall be the result of a bitwise xor between its two pa- rameters.
+  When the opcode is OP-IMM and the func3 field is 0x4, the register pointed by the rd field shall be the result of a bitwise xor of the register pointed by the rs1 field and the immediate value.
 
 ORI
 ```
@@ -596,12 +384,7 @@ ORI
 .. requirement:: F_ORI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The ORI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x6.
-
-.. requirement:: F_ORI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ORI shall be the result of a bitwise or between its two parameters.
+  When the opcode is OP-IMM and the func3 field is 0x6, the register pointed by the rd field shall be the result of a bitwise or of the register pointed by the rs1 field and the immediate value.
 
 ANDI
 ````
@@ -609,12 +392,7 @@ ANDI
 .. requirement:: F_ANDI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The ANDI behavior shall be applied when the opcode is OP-IMM and when func3 is 0x7.
-
-.. requirement:: F_ANDI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ANDI shall be the result of a bitwise and between its two parameters.
+  When the opcode is OP-IMM and the func3 field is 0x7, the register pointed by the rd field shall be the result of a bitwise and of the register pointed by the rs1 field and immediate value.
 
 SLLI
 ````
@@ -622,17 +400,7 @@ SLLI
 .. requirement:: F_SLLI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SLLI behavior shall be applied when the opcode is OP-IMM and func3 is 0x1.
-
-.. requirement:: F_SLLI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLLI shall be its first parameter shifted left by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SLLI_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Zeros shall be inserted in the lower bits when shifting.
+  When the opcode is OP-IMM and the func3 field is 0x1, the register pointed by the rd field shall be the register pointed by the rs1 field shited left by the number of bits specified in the 5 lowest-significant bits of the immediate value, filling lower bits with zeros.
 
 SRLI
 ````
@@ -640,17 +408,7 @@ SRLI
 .. requirement:: F_SRLI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SRLI behavior shall be applied when the opcode is OP-IMM, func3 is 0x5 and the 30th bit of its second input is 0.
-
-.. requirement:: F_SRLI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SRLI shall be its first parameter shifted right by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SRLI_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Zeros shall be inserted in the upper bits when shifting.
+  When the opcode is OP-IMM, the func3 field is 0x5 and the 30th bit of the immediate value is 0, the register pointed by the rd field shall be the register pointed by the rs1 field shited right by the number of bits specified in the 5 lowest-significant bits of the immediate value, filling upper bits with zeros.
 
 SRAI
 ````
@@ -658,17 +416,7 @@ SRAI
 .. requirement:: F_SRAI_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SRAI behavior shall be applied when the opcode is OP-IMM, func3 is 0x5 and the 30th bit of its second input is 1.
-
-.. requirement:: F_SRAI_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SRAI shall be its first parameter shifted right by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SRAI_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The most significant bit of the first parameter shall be inserted in the upper bits when shifting.
+  When the opcode is OP-IMM, the func3 field is 0x5 and the 30th bit of the immediate value is 1, the register pointed by the rd field shall be the register pointed by the rs1 field shited right by the number of bits specified in the 5 lowest-significant bits of the immediate value, filling upper bits with the most-significant bit of the register pointed by the rs1 field.
 
 ADD
 ```
@@ -676,17 +424,7 @@ ADD
 .. requirement:: F_ADD_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The ADD behavior shall be applied when the opcode is OP, func3 is 0x0 and func7 is 0x0.
-
-.. requirement:: F_ADD_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ADD shall be the signed integer sum of its two parameters.
-
-.. requirement:: F_ADD_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of ADD shall be truncated to 32-bits.
+  When the opcode is OP, the func3 field is 0x0 and the func7 field is 0x0, the register pointed by the rd field shall be the signed sum of the registers pointed by the rs1 and rs2 fields.
 
 SUB
 ```
@@ -694,35 +432,7 @@ SUB
 .. requirement:: F_SUB_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SUB behavior shall be applied when the opcode is OP, func3 is 0x0 and func7 is 0x20.
-
-.. requirement:: F_SUB_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SUB shall be the signed integer difference of its first parameter minus its second parameter.
-
-.. requirement:: F_SUB_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SUB shall be truncated to 32-bits.
-
-SLL
-```
-
-.. requirement:: F_SLL_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The SLL behavior shall be applied when the opcode is OP and func3 is 0x1.
-
-.. requirement:: F_SLL_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLL shall be its first parameter shifted left by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SLL_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Zeros shall be inserted in the lower bits when shifting.
+  When the opcode is OP, the func3 field is 0x0 and the func7 field is 0x20, the register pointed by the rd field shall be the difference of the register pointed by the rs1 field minus the register pointed by the rs2 fields.
 
 SLT
 ```
@@ -730,12 +440,7 @@ SLT
 .. requirement:: F_SLT_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SLT behavior shall be applied when the opcode is OP and func3 is 0x2.
-
-.. requirement:: F_SLT_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLT shall be 1 when the signed value of its first parameter is lower that the signed value of its second parameter. It shall be 0 otherwise.
+  When the opcode is OP and the func3 field is 0x2, the register pointed by the rd field shall be 1 if the register pointed by the rs1 field is lower than the register pointed by the rs2 field using a signed comparison, 0 otherwise.
 
 SLTU
 ````
@@ -743,12 +448,7 @@ SLTU
 .. requirement:: F_SLTU_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The SLTU behavior shall be applied when the opcode is OP and func3 is 0x3.
-
-.. requirement:: F_SLTU_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SLTU shall be 1 when the unsigned value of its first parameter is lower that the unsigned value of its second parameter. It shall be 0 other- wise.
+  When the opcode is OP and the func3 field is 0x3, the register pointed by the rd field shall be 1 if the register pointed by the rs1 field is lower than the register pointed by the rs2 field using an unsigned comparison, 0 otherwise.
 
 XOR
 ```
@@ -756,48 +456,7 @@ XOR
 .. requirement:: F_XOR_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The XOR behavior shall be applied when the opcode is OP and func3 is 0x4.
-
-.. requirement:: F_XOR_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of XOR shall be the result of a bitwise xor between its two parameters.
-
-SRL
-```
-
-.. requirement:: F_SRL_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The SRL behavior shall be applied when the opcode is OP, func3 is 0x5 and func7 is 0x0.
-
-.. requirement:: F_SRL_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SRL shall be its first parameter shifted right by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SRL_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  Zeros shall be inserted in the upper bits when shifting.
-
-SRA
-```
-
-.. requirement:: F_SRA_01
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The SRA behavior shall be applied when the opcode is OP, func3 is 0x5 and func7 is 0x20.
-
-.. requirement:: F_SRA_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of SRA shall be its first parameter shifted right by the amount specified by the first 5 bits of its second parameter.
-
-.. requirement:: F_SRA_03
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The most significant bit of the first parameter shall be inserted in the upper bits when shifting.
+  When the opcode is OP and the func3 field is 0x4, the register pointed by the rd field shall be the result of a bitwise xor of the registers pointed by the rs1 and rs2 fields.
 
 OR
 ``
@@ -805,12 +464,7 @@ OR
 .. requirement:: F_OR_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The OR behavior shall be applied when the opcode is OP and func3 is 0x6.
-
-.. requirement:: F_OR_02
-  :derivedfrom: U_INSTRUCTION_SET_01
-
-  The result of OR shall be the result of a bitwise or between its two parame- ters.
+  When the opcode is OP and the func3 field is 0x6, the register pointed by the rd field shall be the result of a bitwise or of the registers pointed by the rs1 and rs2 fields.
 
 AND
 ```
@@ -818,12 +472,31 @@ AND
 .. requirement:: F_AND_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The AND behavior shall be applied when the opcode is OP and func3 is 0x7.
+  When the opcode is OP and the func3 field is 0x7, the register pointed by the rd field shall be the result of a bitwise and of the registers pointed by the rs1 and rs2 fields.
 
-.. requirement:: F_AND_02
+SLL
+```
+
+.. requirement:: F_SLL_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
-  The result of AND shall be the result of a bitwise and between its two parameters.
+  When the opcode is OP and the func3 field is 0x1, the register pointed by the rd field shall be the register pointed by the rs1 field shited left by the number of bits specified by the register pointed by the rs2 field, filling lower bits with zeros.
+
+SRL
+```
+
+.. requirement:: F_SRL_01
+  :derivedfrom: U_INSTRUCTION_SET_01
+
+  When the opcode is OP, the func3 field is 0x5 and the func7 field is 0x0, the register pointed by the rd field shall be the register pointed by the rs1 field shited right by the number of bits specified by the register pointed by the rs2 field, filling upper bits with zeros.
+
+SRA
+```
+
+.. requirement:: F_SRA_01
+  :derivedfrom: U_INSTRUCTION_SET_01
+
+  When the opcode is OP, the func3 field is 0x5 and the func7 field is 0x0, the register pointed by the rd field shall be the register pointed by the rs1 field shited right by the number of bits specified in the register pointed by the rs2 field, filling upper bits with the most-significant bit of the register pointed by the rs1 field.
 
 FENCE
 `````
@@ -832,6 +505,7 @@ FENCE
 
 ECALL
 `````
+
 .. warning:: The ECALL instruction is scoped for version 1.0.0 but is not implemented in version 1.0.0-alpha1.
 
 EBREAK

@@ -82,8 +82,9 @@ enum TestcaseId {
   T_SRL             =  35,
   T_SRA             =  36,
   T_BUBBLE          =  37,
-  T_PIPELINE_WAIT  =  38,
-  T_HAZARD          =  39
+  T_PIPELINE_WAIT   =  38,
+  T_HAZARD          =  39,
+  T_RESET           =  40
 };
 
 class TB_Decode : public Testbench<Vtb_decode> {
@@ -370,6 +371,17 @@ public:
     core->pc_i = pc;
   }
 };
+
+void tb_decode_reset(TB_Decode * tb) {
+  Vtb_decode * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_decode.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_decode_lui(TB_Decode * tb) {
   Vtb_decode * core = tb->core;
@@ -3417,6 +3429,8 @@ int main(int argc, char ** argv, char ** env) {
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
+
+  tb_decode_reset(tb);
 
   tb_decode_lui(tb);
   tb_decode_auipc(tb);

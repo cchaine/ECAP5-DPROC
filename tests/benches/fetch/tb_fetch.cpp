@@ -55,7 +55,8 @@ enum TestcaseId {
   T_JUMP_BACK_TO_BACK               =  11,
   T_PRECEDENCE_INTERRUPT             =  12,
   T_PRECEDENCE_BRANCH                =  13,
-  T_PRECEDENCE_INCREMENT             =  14
+  T_PRECEDENCE_INCREMENT             =  14,
+  T_RESET                            =  15
 };
 
 class TB_Fetch : public Testbench<Vtb_fetch> {
@@ -70,6 +71,17 @@ public:
     Testbench<Vtb_fetch>::reset();
   }
 };
+
+void tb_fetch_reset(TB_Fetch * tb) {
+  Vtb_fetch * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_fetch.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_fetch_no_stall(TB_Fetch * tb) {
   Vtb_fetch * core = tb->core;
@@ -1457,6 +1469,8 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
   
+  tb_fetch_reset(tb);
+
   tb_fetch_no_stall(tb);
 
   tb_fetch_memory_stall(tb);

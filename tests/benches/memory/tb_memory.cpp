@@ -50,7 +50,8 @@ enum TestcaseId {
   T_PRIORITY        =  7,
   T_MASTER_STALL_S1 =  8,
   T_MASTER_STALL_S2 =  9,
-  T_BACK_TO_BACK    =  10
+  T_BACK_TO_BACK    =  10,
+  T_RESET           =  11
 };
 
 class TB_Memory : public Testbench<Vtb_memory> {
@@ -130,6 +131,17 @@ public:
     this->core->s2_wb_cyc_i = 1;
   }
 };
+
+void tb_memory_reset(TB_Memory * tb) {
+  Vtb_memory * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_memory.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_memory_port1_read(TB_Memory * tb) {
   Vtb_memory * core = tb->core;
@@ -2283,6 +2295,8 @@ int main(int argc, char ** argv, char ** env) {
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
+
+  tb_memory_reset(tb);
 
   tb_memory_port1_read(tb);
   tb_memory_port1_write(tb);

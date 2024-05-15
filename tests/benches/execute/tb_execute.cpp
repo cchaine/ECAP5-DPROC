@@ -2077,6 +2077,8 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
+  tb_execute_reset(tb);
+
   tb_execute_alu_add(tb);
   tb_execute_alu_sub(tb);
   tb_execute_alu_xor(tb);
@@ -2099,7 +2101,6 @@ int main(int argc, char ** argv, char ** env) {
 
   tb_execute_back_to_back(tb);
   tb_execute_bubble(tb);
-  tb_execute_reset(tb);
   tb_execute_pipeline_wait_after_reset(tb);
   tb_execute_pipeline_wait(tb);
 

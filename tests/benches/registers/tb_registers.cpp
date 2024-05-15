@@ -43,7 +43,8 @@ enum TestcaseId {
   T_WRITE              =  4,
   T_PARALLEL_READ      =  5,
   T_READ_BEFORE_WRITE  =  6,
-  T_READ_X0            =  7
+  T_READ_X0            =  7,
+  T_RESET              =  8
 };
 
 class TB_Registers : public Testbench<Vtb_registers> {
@@ -61,6 +62,17 @@ public:
     this->core->set_register_value((svLogicVecVal*)&addr, (svLogicVecVal*)&value); 
   }
 };
+
+void tb_registers_reset(TB_Registers * tb) {
+  Vtb_registers * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_registers.reset.01",
+      false,
+    "TODO");
+}
 
 void tb_registers_read_x0(TB_Registers * tb) {
   Vtb_registers * core = tb->core;
@@ -381,14 +393,13 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
-  tb_registers_read_x0(tb);
+  tb_registers_reset(tb);
 
+  tb_registers_read_x0(tb);
   tb_registers_read_port_a(tb);
-  
   tb_registers_read_port_b(tb);
 
   tb_registers_write_x0(tb);
-
   tb_registers_write(tb);
 
   tb_registers_parallel_read(tb);
