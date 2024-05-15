@@ -237,7 +237,7 @@ JALR
 BEQ
 ```
 
-.. requirement:: F_BEQ_02
+.. requirement:: F_BEQ_01
   :derivedfrom: U_INSTRUCTION_SET_01
 
   When the opcode is BRANCH and the func3 field is 0x0, the pc register shall be loaded with the signed sum of the address of the instruction and the immediate value, if the registers pointed by the rs1 field and the rs2 field are equal.
