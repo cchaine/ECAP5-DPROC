@@ -20,28 +20,42 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module tb_regs (
-  input   int          testcase,
-
+module registers (
   input   logic        clk_i,     
+  // First reading port
   input   logic[4:0]   raddr1_i,  
   output  logic[31:0]  rdata1_o,  
+  // Second reading port
   input   logic[4:0]   raddr2_i,  
   output  logic[31:0]  rdata2_o,  
+  // Writing port       
   input   logic        write_i,   
   input   logic[4:0]   waddr_i,   
   input   logic[31:0]  wdata_i    
 );
 
-regs dut (
-  .clk_i     (clk_i),
-  .raddr1_i  (raddr1_i),
-  .rdata1_o  (rdata1_o),
-  .raddr2_i  (raddr2_i),
-  .rdata2_o  (rdata2_o),
-  .write_i   (write_i),
-  .waddr_i   (waddr_i),
-  .wdata_i   (wdata_i)   
-);
+logic[31:0] registers [32];
 
-endmodule // top
+always @ (posedge clk_i) begin
+  if (write_i & (waddr_i != 0)) begin
+    registers[waddr_i] <= wdata_i;
+  end else begin
+    registers[waddr_i] <= registers[waddr_i];
+  end
+end
+
+assign rdata1_o = raddr1_i == '0 ? '0 : registers[raddr1_i];
+assign rdata2_o = raddr2_i == '0 ? '0 : registers[raddr2_i];
+
+`ifdef VERILATOR
+  export "DPI-C" task set_register_value;
+  task automatic set_register_value(input logic[4:0] addr, input logic[31:0] value);
+    registers[addr] = value;
+  endtask
+  export "DPI-C" task get_register_value;
+  task automatic get_register_value(input logic[4:0] addr, output logic[31:0] out);
+    out = registers[addr];
+  endtask
+`endif
+
+endmodule // registers

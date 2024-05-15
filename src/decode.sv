@@ -20,7 +20,7 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module decode import ecap5_dproc_pkg::*;
+module decode 
 (
   input   logic         clk_i,
   input   logic         rst_i,
@@ -85,6 +85,8 @@ module decode import ecap5_dproc_pkg::*;
   input    logic   stall_request_i
 
 );
+import ecap5_dproc_pkg::*;
+import riscv_pkg::*;
 
 /*****************************************/
 /*           Internal signals            */

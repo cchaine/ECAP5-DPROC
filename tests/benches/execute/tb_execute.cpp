@@ -58,8 +58,8 @@ enum TestcaseId {
   T_BRANCH_BGEU                 =  16,
   T_BACK_TO_BACK                =  17,
   T_BUBBLE                      =  18,
-  T_PIPELINE_STALL_AFTER_RESET  =  19,
-  T_PIPELINE_STALL              =  20,
+  T_PIPELINE_WAIT_AFTER_RESET  =  19,
+  T_PIPELINE_WAIT              =  20,
   T_RESET                       =  21,
   T_BRANCH_JALR                 =  22,
   T_HAZARD                      =  23
@@ -1585,9 +1585,9 @@ void tb_execute_bubble(TB_Execute * tb) {
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_execute_pipeline_stall_after_reset(TB_Execute * tb) {
+void tb_execute_pipeline_wait_after_reset(TB_Execute * tb) {
   Vtb_execute * core = tb->core;
-  core->testcase = T_PIPELINE_STALL_AFTER_RESET;
+  core->testcase = T_PIPELINE_WAIT_AFTER_RESET;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD with unready output
@@ -1688,26 +1688,26 @@ void tb_execute_pipeline_stall_after_reset(TB_Execute * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_execute.wait_after_reset.01",
+  CHECK("tb_execute.pipeline_wait_after_reset.01",
       tb->conditions[COND_input_ready],
       "Failed to implement the input_ready_o", tb->err_cycles[COND_input_ready]);
     
-  CHECK("tb_execute.wait_after_reset.02",
+  CHECK("tb_execute.pipeline_wait_after_reset.02",
       tb->conditions[COND_result],
       "Failed to implement the result protocol", tb->err_cycles[COND_result]);
 
-  CHECK("tb_execute.wait_after_reset.03",
+  CHECK("tb_execute.pipeline_wait_after_reset.03",
       tb->conditions[COND_branch],
       "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
-  CHECK("tb_execute.wait_after_reset.04",
+  CHECK("tb_execute.pipeline_wait_after_reset.04",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_execute_pipeline_stall(TB_Execute * tb) {
+void tb_execute_pipeline_wait(TB_Execute * tb) {
   Vtb_execute * core = tb->core;
-  core->testcase = T_PIPELINE_STALL;
+  core->testcase = T_PIPELINE_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for ADD
@@ -1811,19 +1811,19 @@ void tb_execute_pipeline_stall(TB_Execute * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_execute.wait.01",
+  CHECK("tb_execute.pipeline_wait.01",
       tb->conditions[COND_input_ready],
       "Failed to implement the input_ready_o", tb->err_cycles[COND_input_ready]);
     
-  CHECK("tb_execute.wait.02",
+  CHECK("tb_execute.pipeline_wait.02",
       tb->conditions[COND_result],
       "Failed to implement the result protocol", tb->err_cycles[COND_result]);
 
-  CHECK("tb_execute.wait.03",
+  CHECK("tb_execute.pipeline_wait.03",
       tb->conditions[COND_branch],
       "Failed to implement the branch protocol", tb->err_cycles[COND_branch]);
 
-  CHECK("tb_execute.wait.04",
+  CHECK("tb_execute.pipeline_wait.04",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o", tb->err_cycles[COND_output_valid]);
 }
@@ -2077,6 +2077,8 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
+  tb_execute_reset(tb);
+
   tb_execute_alu_add(tb);
   tb_execute_alu_sub(tb);
   tb_execute_alu_xor(tb);
@@ -2099,9 +2101,8 @@ int main(int argc, char ** argv, char ** env) {
 
   tb_execute_back_to_back(tb);
   tb_execute_bubble(tb);
-  tb_execute_reset(tb);
-  tb_execute_pipeline_stall_after_reset(tb);
-  tb_execute_pipeline_stall(tb);
+  tb_execute_pipeline_wait_after_reset(tb);
+  tb_execute_pipeline_wait(tb);
 
   tb_execute_hazard(tb);
 

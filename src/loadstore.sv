@@ -20,7 +20,7 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module loadstore import ecap5_dproc_pkg::*;
+module loadstore
 (
   input   logic        clk_i,
   input   logic        rst_i,

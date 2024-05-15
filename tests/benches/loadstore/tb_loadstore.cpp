@@ -56,7 +56,8 @@ enum TestcaseId {
   T_MEMORY_WAIT   =  9,
   T_BYPASS        =  10,
   T_BUBBLE        =  11,
-  T_BACK_TO_BACK  =  12
+  T_BACK_TO_BACK  =  12,
+  T_RESET = 13
 };
 
 class TB_Loadstore : public Testbench<Vtb_loadstore> {
@@ -186,6 +187,17 @@ public:
     return data;
   }
 };
+
+void tb_loadstore_reset(TB_Loadstore * tb) {
+  Vtb_loadstore * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_loadstore.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_loadstore_no_stall_lb(TB_Loadstore * tb) {
   Vtb_loadstore * core = tb->core;
@@ -2080,6 +2092,8 @@ int main(int argc, char ** argv, char ** env) {
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
+
+  tb_loadstore_reset(tb);
 
   tb_loadstore_no_stall_lb(tb);
   tb_loadstore_no_stall_lbu(tb);

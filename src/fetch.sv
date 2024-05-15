@@ -46,7 +46,6 @@ module fetch #(
   output  logic[31:0]  instr_o,
   output  logic[31:0]  pc_o
 );
-import ecap5_dproc_pkg::*; 
 
 typedef enum logic [2:0] {
   IDLE,          // 0

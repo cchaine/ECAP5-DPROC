@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
 
-set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh)
+set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+               ${SRC_DIR}/include/riscv_pkg.svh)
 
 # Testbench
 set(TEST_BINARIES)
@@ -70,12 +71,13 @@ macro(add_testbench module)
   list(APPEND TEST_OUTPUTS ${TEST_OUTPUT})
 endmacro()
 
-add_testbench(regs)
+add_testbench(registers)
 add_testbench(fetch)
 add_testbench(decode)
 add_testbench(execute)
 add_testbench(loadstore)
 add_testbench(loadstore BENCH loadstore_w_slave LIBS instr_wb_slave)
+add_testbench(writeback)
 add_testbench(memory)
 add_testbench(hazard)
 add_testbench(ecap5_dproc)

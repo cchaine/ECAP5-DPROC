@@ -20,9 +20,12 @@
  * along with ECAP5-DPROC.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module writeback (
+module tb_writeback import ecap5_dproc_pkg::*;
+(
+  input   int          testcase,
+
   input   logic        clk_i,     
-  input   logic        rst_i,     
+  input   logic        rst_i,
 
   input   logic        input_valid_i,
 
@@ -35,20 +38,19 @@ module writeback (
   output  logic[31:0]  reg_data_o    
 );
 
-logic reg_write_q;
-logic[4:0] reg_addr_q;
-logic[31:0] reg_data_q;
+writeback dut (
+  .clk_i (clk_i),
+  .rst_i (rst_i),
 
-always_ff @(posedge clk_i) begin
-  reg_write_q <= input_valid_i
-                    ? reg_write_i
-                    : 0;
-  reg_addr_q <= reg_addr_i;
-  reg_data_q <= reg_data_i;
-end
+  .input_valid_i (input_valid_i),
+  
+  .reg_write_i (reg_write_i),
+  .reg_addr_i  (reg_addr_i),
+  .reg_data_i  (reg_data_i),
 
-assign reg_write_o = reg_write_q;
-assign reg_addr_o = reg_addr_q;
-assign reg_data_o = reg_data_q;
+  .reg_write_o (reg_write_o),
+  .reg_addr_o  (reg_addr_o),
+  .reg_data_o  (reg_data_o)
+);
 
-endmodule // writeback
+endmodule // tb_writeback

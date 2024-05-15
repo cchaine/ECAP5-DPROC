@@ -42,7 +42,8 @@ enum TestcaseId {
   T_DATA_X0 = 2,
   T_DATA_PORT1 = 3,
   T_DATA_PORT2 = 4,
-  T_DATA_MULTIPLE = 5
+  T_DATA_MULTIPLE = 5,
+  T_RESET = 6
 };
 
 class TB_Hazard : public Testbench<Vtb_hazard> {
@@ -71,6 +72,17 @@ public:
   }
 
 };
+
+void tb_hazard_reset(TB_Hazard * tb) {
+  Vtb_hazard * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+  
+  CHECK("tb_hazard.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_hazard_control(TB_Hazard * tb) {
   Vtb_hazard * core = tb->core;
@@ -531,7 +543,10 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
 
+  tb_hazard_reset(tb);
+
   tb_hazard_control(tb);
+
   tb_hazard_data_x0(tb);
   tb_hazard_data_port1(tb);
   tb_hazard_data_port2(tb);

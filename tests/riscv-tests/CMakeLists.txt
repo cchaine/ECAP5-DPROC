@@ -21,12 +21,15 @@
 
 add_subdirectory(tests)
 
+set(SV_HEADERS ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+               ${SRC_DIR}/include/riscv_pkg.svh)
+
 # riscv-tests
 add_executable(riscv-tests-executable ${CMAKE_CURRENT_SOURCE_DIR}/riscv-tests.cpp)
 target_include_directories(riscv-tests-executable PRIVATE ${TEST_INCLUDE_DIR})
 verilate(riscv-tests-executable
   PREFIX Vecap5_dproc
-  SOURCES ${SRC_DIR}/include/ecap5_dproc_pkg.svh
+  SOURCES ${SV_HEADERS}
           ${SRC_DIR}/ecap5_dproc.sv
   INCLUDE_DIRS ${SRC_DIR}
   TRACE) 

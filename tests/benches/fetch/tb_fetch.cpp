@@ -45,17 +45,18 @@ enum TestcaseId {
   T_NO_STALL                         =  1,
   T_MEMORY_STALL                     =  2,
   T_MEMORY_WAIT                      =  3,
-  T_PIPELINE_STALL                   =  4,
+  T_PIPELINE_WAIT                   =  4,
   T_JUMP_DURING_REQUEST             =  5,
   T_JUMP_DURING_ACK                 =  6,
   T_JUMP_DURING_WAIT                =  7,
   T_JUMP_DURING_MEMORY_STALL        =  8,
   T_JUMP_ON_OUTPUT_HANDSHAKE        =  9,
-  T_JUMP_DURING_PIPELINE_STALL      =  10,
+  T_JUMP_DURING_PIPELINE_WAIT      =  10,
   T_JUMP_BACK_TO_BACK               =  11,
   T_PRECEDENCE_INTERRUPT             =  12,
   T_PRECEDENCE_BRANCH                =  13,
-  T_PRECEDENCE_INCREMENT             =  14
+  T_PRECEDENCE_INCREMENT             =  14,
+  T_RESET                            =  15
 };
 
 class TB_Fetch : public Testbench<Vtb_fetch> {
@@ -70,6 +71,17 @@ public:
     Testbench<Vtb_fetch>::reset();
   }
 };
+
+void tb_fetch_reset(TB_Fetch * tb) {
+  Vtb_fetch * core = tb->core;
+  core->testcase = T_RESET;
+
+  tb->reset();
+
+  CHECK("tb_fetch.reset.01",
+      false,
+      "TODO");
+}
 
 void tb_fetch_no_stall(TB_Fetch * tb) {
   Vtb_fetch * core = tb->core;
@@ -239,6 +251,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //=================================
   //      Tick (2)
@@ -253,6 +266,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  1)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -272,6 +286,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
                                 (core->wb_we_o               ==  0)    &&
                                 (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -291,6 +306,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  3));
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -309,6 +325,7 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  0));
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 1));
   
   //`````````````````````````````````
   //      Formal Checks 
@@ -320,9 +337,13 @@ void tb_fetch_memory_stall(TB_Fetch * tb) {
   CHECK("tb_fetch.memory_stall.02",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_fetch.memory_stall.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_fetch_memory_wait_state(TB_Fetch * tb) {
+void tb_fetch_memory_wait(TB_Fetch * tb) {
   Vtb_fetch * core = tb->core;
   core->testcase = T_MEMORY_WAIT;
 
@@ -357,6 +378,7 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   //      Checks 
 
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  1));         
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
   
   //=================================
   //      Tick (2)
@@ -369,6 +391,7 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  2));         
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //=================================
   //      Tick (3)
@@ -381,6 +404,7 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  2));         
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -400,6 +424,7 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  3));         
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  1));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 0));
 
   //`````````````````````````````````
   //      Set inputs
@@ -418,22 +443,27 @@ void tb_fetch_memory_wait_state(TB_Fetch * tb) {
   tb->check(COND_state,         (core->tb_fetch->dut->state_q  ==  0));         
   tb->check(COND_wishbone,      (core->wb_stb_o              ==  0)    &&
                                 (core->wb_cyc_o              ==  0));  
+  tb->check(COND_output_valid,  (core->output_valid_o == 1));
   
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_fetch.memory_wait_state.01",
+  CHECK("tb_fetch.memory_wait.01",
       tb->conditions[COND_state],
       "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_fetch.memory_wait_state.02",
+  CHECK("tb_fetch.memory_wait.02",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
+
+  CHECK("tb_fetch.memory_wait.03",
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_fetch_pipeline_stall(TB_Fetch * tb) {
+void tb_fetch_pipeline_wait(TB_Fetch * tb) {
   Vtb_fetch * core = tb->core;
-  core->testcase = T_PIPELINE_STALL;
+  core->testcase = T_PIPELINE_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall, no interrupt
@@ -544,19 +574,19 @@ void tb_fetch_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_fetch.pipeline_stall.01",
+  CHECK("tb_fetch.pipeline_wait.01",
       tb->conditions[COND_state],
       "Failed to implement the state machine", tb->err_cycles[COND_state]);
 
-  CHECK("tb_fetch.pipeline_stall.02",
+  CHECK("tb_fetch.pipeline_wait.02",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_fetch.pipeline_stall.03",
+  CHECK("tb_fetch.pipeline_wait.03",
       tb->conditions[COND_output],
       "Failed to implement the output signals", tb->err_cycles[COND_output]);
 
-  CHECK("tb_fetch.pipeline_stall.04",
+  CHECK("tb_fetch.pipeline_wait.04",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
@@ -1003,9 +1033,9 @@ void tb_fetch_jump_on_output_handshake(TB_Fetch * tb) {
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
 
-void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
+void tb_fetch_jump_during_pipeline_wait(TB_Fetch * tb) {
   Vtb_fetch * core = tb->core;
-  core->testcase = T_JUMP_DURING_PIPELINE_STALL;
+  core->testcase = T_JUMP_DURING_PIPELINE_WAIT;
 
   // The following actions are performed in this test :
   //    tick 0. Set inputs for pipeline stall not interrupt
@@ -1096,11 +1126,11 @@ void tb_fetch_jump_during_pipeline_stall(TB_Fetch * tb) {
   //`````````````````````````````````
   //      Formal Checks 
   
-  CHECK("tb_fetch.jump_during_pipeline_stall.01",
+  CHECK("tb_fetch.jump_during_pipeline_wait.01",
       tb->conditions[COND_wishbone],
       "Failed to implement the wishbone protocol", tb->err_cycles[COND_wishbone]);
 
-  CHECK("tb_fetch.jump_during_pipeline_stall.02",
+  CHECK("tb_fetch.jump_during_pipeline_wait.02",
       tb->conditions[COND_output_valid],
       "Failed to implement the output_valid_o signal", tb->err_cycles[COND_output_valid]);
 }
@@ -1439,20 +1469,22 @@ int main(int argc, char ** argv, char ** env) {
 
   /************************************************************/
   
+  tb_fetch_reset(tb);
+
   tb_fetch_no_stall(tb);
 
   tb_fetch_memory_stall(tb);
 
-  tb_fetch_memory_wait_state(tb);
+  tb_fetch_memory_wait(tb);
 
-  tb_fetch_pipeline_stall(tb);
+  tb_fetch_pipeline_wait(tb);
 
   tb_fetch_jump_after_reset(tb);
   tb_fetch_jump_during_ack(tb);
   tb_fetch_jump_during_wait(tb);
   tb_fetch_jump_during_memory_stall(tb);
   tb_fetch_jump_on_output_handshake(tb);
-  tb_fetch_jump_during_pipeline_stall(tb);
+  tb_fetch_jump_during_pipeline_wait(tb);
   tb_fetch_jump_back_to_back(tb);
 
   tb_fetch_precedence_interrupt(tb);

@@ -25,8 +25,9 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
  * The **write-back** stage which handles storing instructions outputs to internal registers.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_01
+   :derivedfrom: U_MEMORY_INTERFACE_01
 
-  The memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
+   The memory module shall arbitrate memory requests from both the fetch module and the loadstore module.
 
 .. requirement:: A_MEMORY_01
 
@@ -36,11 +37,6 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
   
   The fetch module shall implement the instruction fetch stage of the pipeline.
 
-.. requirement:: A_INSTRUCTION_FETCH_01
-  :rationale: Pipeline stages are all run in parallel.
-
-  The fetch module shall fetch instructions continuously starting on the clock cycle after rst_i is deasserted, providing them to the decode module one after the other.
-
 .. requirement:: A_FUNCTIONAL_PARTITIONING_03
 
   The decode module shall implement the decode stage of the pipeline.
@@ -48,10 +44,6 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 .. requirement:: A_FUNCTIONAL_PARTITIONING_04
 
    The register module shall implement the internal general-purpose registers.
-
-.. requirement:: A_REGISTER_01
-
-   The register module shall perform its operation in a single cycle.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_05
 
@@ -64,6 +56,10 @@ ECAP5-DPROC is built around a pipelined architecture with the following stages :
 .. requirement:: A_FUNCTIONAL_PARTITIONING_07
 
    The writeback module shall implement the write-back stage of the pipeline.
+
+.. requirement:: A_WRITEBACK_01
+
+   The writeback module shall perform its operation in a single cycle.
 
 .. requirement:: A_FUNCTIONAL_PARTITIONING_08
 
@@ -100,13 +96,13 @@ The following figure is a timing diagram of the stall behavior of a 5-stage pipe
    Timing diagram of the pipeline stall behavior
 
 .. requirement:: A_PIPELINE_WAIT_01
-   :rationale: The loadstore module doesn't need to implement the pipeline wait state as the register module performs its operation in a single cycle (refer to A_REGISTER_01).
+   :rationale: The loadstore module doesn't need to implement the pipeline wait state as the writeback module performs its operation in a single cycle (refer to A_REGISTER_01).
 
    The following modules shall implement the pipeline wait state : fetch, decode, execute.
 
 .. requirement:: A_PIPELINE_BUBBLE_01
 
-   The following modules shall implement the pipeline bubble state : decode, execute, loadstore and register.
+   The following modules shall implement the pipeline bubble state : decode, execute, loadstore and writeback.
 
 Structural hazard
 ^^^^^^^^^^^^^^^^^
@@ -133,7 +129,7 @@ A pipeline stall is produced in case of data hazards so that B is able to finish
 .. requirement:: A_HAZARD_01
    :rationale: Stalling the decode module inserts pipeline bubbles to the subsequent modules.
 
-   The hazard module shall issue a stall request to the decode module while a write operation to one of the next registers to be read by decode is to be performed by the following modules : decode (current output), execute, loadstore and register.
+   The hazard module shall issue a stall request to the decode module while a write operation to one of the next registers to be read by decode is to be performed by the following modules : decode (current output), execute, loadstore and writeback.
 
 .. requirement:: A_PIPELINE_STALL_03
 
@@ -142,7 +138,7 @@ A pipeline stall is produced in case of data hazards so that B is able to finish
 .. requirement:: A_PIPELINE_STALL_04
    :rationale: In the case where the data hazard is cause by the current decode output, not clearing the decode module's outputs will lead to the hazard module stalling the decode module indefinitely.
 
-   While stalling the pipeline due to a stall request from the hazard module, the decode module shall clear its outputs.
+   While stalling the pipeline due to a stall request from the hazard module, the decode module shall clear its register outputs.
 
 .. note:: It shall be noted that some of the performance impact of this kind of hazard could be mitigated but this feature is not included in version 1.0.0.
 
@@ -153,12 +149,12 @@ A control hazard occurs when a jump or branch instruction is executed, as instru
 
 Instructions following the jump/branch are replaced by a nop instruction through the use of the bubble mode of the pipeline stages. This operation is designated as pipeline drop.
 
-.. requirement:: A_PIPELINE_DROP_01
+.. requirement:: A_HAZARD_02
    :rationale: The pipeline drop is held asserted for two cycles to flush both the fetch and decode outputs.
 
    The hazard module shall issue a pipeline drop request to the execute module on the rising edge of clk_i after the execute module has issued a branch request to the fetch module. The pipeline drop request shall be held asserted for two cycles.
 
-.. requirement:: A_PIPELINE_DROP_02
+.. requirement:: A_PIPELINE_DROP_01
 
    The execute module shall discard the decode module's output and output a pipeline bubble upon drop request from the hazard module.
 
