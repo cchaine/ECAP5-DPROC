@@ -46,11 +46,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/dependency.cmake)
 
 add_dependency(ECAP5_TREQ 
   GIT ecap5/ecap5-treq
-  TAG release/v2.2.0
+  TAG tags/v2.2.0
   BINARY ecap5-treq)
 
-add_dependency(ECAP5_DTLIB
-  GIT ecap5/ecap5-dtlib
+add_dependency(ECAP5_DTESTLIB
+  GIT ecap5/ecap5-dtestlib
   TAG main)
 
 add_dependency(riscv-tests
