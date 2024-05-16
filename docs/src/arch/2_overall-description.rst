@@ -64,14 +64,6 @@ The polarity of the reset signal mentionned in :req:ref:`U_RESET_01` is not spec
 
    The address at which ECAP5-DPROC jumps after the reset signal is deasserted shall be hardware-configurable.
 
-.. requirement:: U_HARDWARE_INTERRUPT_01
-
-  ECAP5-DPROC shall provide a signal which shall interrupt ECAP5-DPROC's execution flow while asserted.
-
-.. requirement:: U_HARDWARE_INTERRUPT_02
-
-   ECAP5-DPROC shall jump to a hardware-configurable address when it is interrupted.
-
 .. requirement:: U_DEBUG_01
 
    ECAP5-DPROC shall be compliant with the RISC-V External Debug Support specification.

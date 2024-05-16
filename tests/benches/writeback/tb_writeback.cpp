@@ -39,8 +39,7 @@ enum CondId {
 enum TestcaseId {
   T_WRITE = 1,
   T_BYPASS = 2,
-  T_BUBBLE = 3,
-  T_RESET = 4
+  T_BUBBLE = 3
 };
 
 class TB_Writeback : public Testbench<Vtb_writeback> {
@@ -62,17 +61,6 @@ public:
     core->reg_data_i = 0;
   }
 };
-
-void tb_writeback_reset(TB_Writeback * tb) {
-  Vtb_writeback * core = tb->core;
-  core->testcase = T_RESET;
-
-  tb->reset();
-
-  CHECK("tb_writeback.reset.01",
-      false,
-      "TODO");
-}
 
 void tb_writeback_write(TB_Writeback * tb) {
   Vtb_writeback * core = tb->core;
@@ -203,8 +191,6 @@ int main(int argc, char ** argv, char ** env) {
   tb->init_conditions(__CondIdEnd);
 
   /************************************************************/
-
-  tb_writeback_reset(tb);
 
   tb_writeback_write(tb);
 

@@ -25,10 +25,10 @@ module tb_fetch (
   
   input   logic        clk_i,
   input   logic        rst_i,
-  input   logic        irq_i,
+  // Jump inputs
   input   logic        branch_i,
   input   logic[31:0]  branch_target_i,
-  /* Memory */
+  // Wishbone master
   output  logic[31:0]  wb_adr_o,
   input   logic[31:0]  wb_dat_i, 
   output  logic        wb_we_o,
@@ -37,17 +37,17 @@ module tb_fetch (
   input   logic        wb_ack_i, 
   output  logic        wb_cyc_o, 
   input   logic        wb_stall_i,
-  /* Output */
-  output  logic[31:0]  instr_o,
-  output  logic[31:0]  pc_o,
+  // Output Handshake
   input   logic        output_ready_i,
-  output  logic        output_valid_o
+  output  logic        output_valid_o,
+  // DECM outputs
+  output  logic[31:0]  instr_o,
+  output  logic[31:0]  pc_o
 );
 
 fetch dut (
   .clk_i           (clk_i),
   .rst_i           (rst_i),
-  .irq_i           (irq_i),
   .branch_i        (branch_i),
   .branch_target_i (branch_target_i),
   .wb_adr_o        (wb_adr_o),

@@ -376,11 +376,22 @@ void tb_decode_reset(TB_Decode * tb) {
   Vtb_decode * core = tb->core;
   core->testcase = T_RESET;
 
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
 
+  //`````````````````````````````````
+  //      Checks 
+   
+  tb->check(COND_output_valid, (core->output_valid_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+   
   CHECK("tb_decode.reset.01",
-      false,
-      "TODO");
+      tb->conditions[COND_output_valid],
+      "Failed to implement the output handshake", tb->err_cycles[COND_output_valid]);
 }
 
 void tb_decode_lui(TB_Decode * tb) {

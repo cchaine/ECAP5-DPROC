@@ -21,13 +21,11 @@
  */
 
 module fetch #(
-  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000,
-  parameter logic[31:0] INTERRUPT_ADDRESS = 32'h00000000
+  parameter logic[31:0] BOOT_ADDRESS      = 32'h00001000
 )(
   input   logic        clk_i,
   input   logic        rst_i,
   // Jump inputs
-  input   logic        irq_i,
   input   logic        branch_i,
   input   logic[31:0]  branch_target_i,
   // Wishbone master
@@ -248,23 +246,18 @@ end
 
 /*
  * The next value of PC comes from (in order of precedence):
- *  0. External interrupt
- *  1. Control flow change request (branch)
- *  2. Default increment
+ *  0. Control flow change request (branch)
+ *  1. Default increment
  */
 always_comb begin : pc_update
   pc_d = pc_q;
-  // 2. Default increment
+  // 1. Default increment
   if (output_valid_q && output_ready_i) begin
     pc_d = pc_q + 4;
   end
-  // 1. Control flow change request
+  // 0. Control flow change request
   if (branch_i && !pending_jump_q) begin
     pc_d = branch_target_i;
-  end
-  // 0. External interrupt
-  if (irq_i) begin
-    pc_d = INTERRUPT_ADDRESS;
   end
 end
 
@@ -287,7 +280,7 @@ always_ff @(posedge clk_i) begin
     pc_q            <=  pc_d;
 
     // Jump triggering
-    if(irq_i || branch_i) begin
+    if(branch_i) begin
       pending_jump_q <=  1;
       output_valid_q  <=  0;
     end else begin

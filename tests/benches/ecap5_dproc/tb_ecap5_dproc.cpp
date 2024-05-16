@@ -53,9 +53,7 @@ enum TestcaseId {
   T_LSM_ENABLE    =  3,
   T_BRANCH        =  4,
   T_BACK_TO_BACK  =  5,
-  T_DATA_HAZARD   =  6,
-  T_RESET         =  7,
-  T_IRQ           =  8
+  T_DATA_HAZARD   =  6
 };
 
 class TB_Ecap5_dproc : public Testbench<Vtb_ecap5_dproc> {
@@ -102,7 +100,6 @@ public:
   }
 
   void _nop() {
-    this->core->irq_i = 0;
     this->core->wb_dat_i = 0;
     this->core->wb_ack_i = 0;
     this->core->wb_stall_i = 0;
@@ -987,28 +984,6 @@ void tb_ecap5_dproc_back_to_back(TB_Ecap5_dproc * tb) {
   tb->reset();
 }
 
-void tb_ecap5_dproc_reset(TB_Ecap5_dproc * tb) {
-  Vtb_ecap5_dproc * core = tb->core;
-  core->testcase = T_RESET;
-
-  tb->reset();
-
-  CHECK("tb_ecap5_dproc.reset.01",
-      false,
-      "TODO");
-}
-
-void tb_ecap5_dproc_irq(TB_Ecap5_dproc * tb) {
-  Vtb_ecap5_dproc * core = tb->core;
-  core->testcase = T_IRQ;
-
-  tb->reset();
-
-  CHECK("tb_ecap5_dproc.irq.01",
-      false,
-      "TODO");
-}
-
 int main(int argc, char ** argv, char ** env) {
   srand(time(NULL));
   Verilated::traceEverOn(true);
@@ -1032,10 +1007,6 @@ int main(int argc, char ** argv, char ** env) {
   tb_ecap5_dproc_data_hazard(tb);
 
   tb_ecap5_dproc_back_to_back(tb);
-
-  tb_ecap5_dproc_reset(tb);
-
-  tb_ecap5_dproc_irq(tb);
 
   /************************************************************/
 

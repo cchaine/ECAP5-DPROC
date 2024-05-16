@@ -22,8 +22,3 @@ ECAP5-DPROC can be parameterized at build-time through instanciation parameters.
     - 32
     - Boot address loaded after reset
     - 0000_1000h
-  * - IRQ_HANDLER_ADDR
-    - logic
-    - 32
-    - Address of the interrupt request handler
-    - 0000_0000h

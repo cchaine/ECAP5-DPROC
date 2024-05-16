@@ -26,8 +26,6 @@ module tb_ecap5_dproc (
   input  logic        clk_i,
   input  logic        rst_i,
 
-  input  logic        irq_i,
-
   output logic[31:0]  wb_adr_o,
   input  logic[31:0]  wb_dat_i,
   output logic[31:0]  wb_dat_o,
@@ -42,8 +40,6 @@ module tb_ecap5_dproc (
 ecap5_dproc dut (
   .clk_i      (clk_i),
   .rst_i      (rst_i),
-
-  .irq_i      (irq_i),
 
   .wb_adr_o   (wb_adr_o),
   .wb_dat_i   (wb_dat_i),

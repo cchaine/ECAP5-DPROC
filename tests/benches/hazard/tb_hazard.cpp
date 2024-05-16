@@ -77,11 +77,27 @@ void tb_hazard_reset(TB_Hazard * tb) {
   Vtb_hazard * core = tb->core;
   core->testcase = T_RESET;
 
+  //=================================
+  //      Tick (0)
+  
   tb->reset();
   
+  //`````````````````````````````````
+  //      Checks 
+
+  tb->check(COND_control, (core->ex_discard_request_o == 0));
+  tb->check(COND_data, (core->dec_stall_request_o == 0));
+
+  //`````````````````````````````````
+  //      Formal Checks 
+
   CHECK("tb_hazard.reset.01",
-      false,
-      "TODO");
+      tb->conditions[COND_control],
+      "Failed to reset the module", tb->err_cycles[COND_control]);
+
+  CHECK("tb_hazard.reset.02",
+      tb->conditions[COND_data],
+      "Failed to reset the module", tb->err_cycles[COND_data]);
 }
 
 void tb_hazard_control(TB_Hazard * tb) {
