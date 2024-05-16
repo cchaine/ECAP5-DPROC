@@ -33,6 +33,7 @@
 #include "Vtb_ecap5_dproc_ecap5_dproc.h"
 #include "Vtb_ecap5_dproc_tb_ecap5_dproc.h"
 #include "testbench.h"
+#include "riscv.h"
 
 enum CondId {
   COND_ready,
@@ -103,53 +104,6 @@ public:
     this->core->wb_dat_i = 0;
     this->core->wb_ack_i = 0;
     this->core->wb_stall_i = 0;
-  }
-
-  uint32_t sign_extend(uint32_t data, uint32_t nb_bits) {
-    data &= (1 << nb_bits)-1;
-    if((data >> (nb_bits-1)) & 0x1){
-      data |= (((1 << (32 - (nb_bits-1))) - 1) << nb_bits);
-    }
-    return data;
-  }
-
-  uint32_t instr_i(uint32_t opcode, uint32_t rd, uint32_t func3, uint32_t rs1, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= (rd & 0x1F) << 7;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (imm & 0xFFF) << 20;
-    return instr;
-  }
-
-  uint32_t instr_b(uint32_t opcode, uint32_t func3, uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    uint32_t instr = 0;
-    instr |= opcode & 0x7F;
-    instr |= ((imm >> 11) & 1) << 7;
-    instr |= ((imm >> 1) & 0xF) << 8;
-    instr |= (func3 & 0x7) << 12;
-    instr |= (rs1 & 0x1F) << 15;
-    instr |= (rs2 & 0x1F) << 20;
-    instr |= ((imm >> 5) & 0x3F) << 25;
-    instr |= ((imm >> 12) & 1) << 31;
-    return instr;
-  }
-
-  uint32_t _xori(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_XOR, rs1, imm);
-  }
-
-  uint32_t _lb(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_LOAD, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_LB, rs1, imm);
-  }
-
-  uint32_t _addi(uint32_t rd, uint32_t rs1, uint32_t imm) {
-    return instr_i(Vtb_ecap5_dproc_riscv_pkg::OPCODE_OP_IMM, rd, Vtb_ecap5_dproc_riscv_pkg::FUNC3_ADD, rs1, imm);
-  }
-
-  uint32_t _beq(uint32_t rs1, uint32_t rs2, uint32_t imm) {
-    return instr_b(Vtb_ecap5_dproc_riscv_pkg::OPCODE_BRANCH, Vtb_ecap5_dproc_riscv_pkg::FUNC3_BEQ, rs1, rs2, imm);
   }
 
   void set_register(uint8_t addr, uint32_t value) {
@@ -280,8 +234,8 @@ void tb_ecap5_dproc_alu(TB_Ecap5_dproc * tb) {
   // Artificially set the source register value
   tb->set_register(rs1, rs1_val);
   uint32_t imm = rand() % 0xFFF;
-  uint32_t instr = tb->_xori(rd, rs1, imm);
-  uint32_t result = rs1_val ^ tb->sign_extend(imm, 12);
+  uint32_t instr = instr_xori(rd, rs1, imm);
+  uint32_t result = rs1_val ^ sign_extend(imm, 12);
 
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;
@@ -327,7 +281,7 @@ void tb_ecap5_dproc_alu(TB_Ecap5_dproc * tb) {
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->if_dec_valid   == 0));
   tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_pc           == core->tb_ecap5_dproc->dut->BOOT_ADDRESS) &&
                        (core->tb_ecap5_dproc->dut->dec_alu_operand1 == rs1_val)                               &&
-                       (core->tb_ecap5_dproc->dut->dec_alu_operand2 == tb->sign_extend(imm, 12))              &&
+                       (core->tb_ecap5_dproc->dut->dec_alu_operand2 == sign_extend(imm, 12))              &&
                        (core->tb_ecap5_dproc->dut->dec_alu_op       == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_XOR)      &&
                        (core->tb_ecap5_dproc->dut->dec_alu_sub      == 0)                                     &&
                        (core->tb_ecap5_dproc->dut->dec_branch_cond  == Vtb_ecap5_dproc_ecap5_dproc_pkg::NO_BRANCH)    &&
@@ -444,7 +398,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   // Artificially set the source register value
   tb->set_register(rs1, rs1_val);
   uint32_t imm = rand() % 0xFFF;
-  uint32_t instr = tb->_lb(rd, rs1, imm);
+  uint32_t instr = instr_lb(rd, rs1, imm);
 
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;
@@ -479,7 +433,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   //      Checks 
   
   tb->check(COND_decode, (core->tb_ecap5_dproc->dut->dec_alu_operand1 == rs1_val) &&
-                       (core->tb_ecap5_dproc->dut->dec_alu_operand2 == tb->sign_extend(imm, 12)) &&
+                       (core->tb_ecap5_dproc->dut->dec_alu_operand2 == sign_extend(imm, 12)) &&
                        (core->tb_ecap5_dproc->dut->dec_alu_op == Vtb_ecap5_dproc_ecap5_dproc_pkg::ALU_ADD) &&
                        (core->tb_ecap5_dproc->dut->dec_alu_sub == 0) &&
                        (core->tb_ecap5_dproc->dut->dec_ls_enable == 1) &&
@@ -499,7 +453,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   
   tb->check(COND_ready, (core->tb_ecap5_dproc->dut->ex_ls_ready == 1));
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->ls_valid == 1));
-  tb->check(COND_execute, (core->tb_ecap5_dproc->dut->ex_result == rs1_val + tb->sign_extend(imm, 12)) &&
+  tb->check(COND_execute, (core->tb_ecap5_dproc->dut->ex_result == rs1_val + sign_extend(imm, 12)) &&
                       (core->tb_ecap5_dproc->dut->ex_ls_enable == 1) &&
                       (core->tb_ecap5_dproc->dut->ex_ls_write == 0) &&
                       (core->tb_ecap5_dproc->dut->ex_ls_unsigned_load == 0) &&
@@ -510,7 +464,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->wb_dat_i = tb->_addi(0, 0, 0);
+  core->wb_dat_i = instr_addi(0, 0, 0);
   core->wb_ack_i = 1;
 
   //=================================
@@ -588,7 +542,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   tb->check(COND_valid, (core->tb_ecap5_dproc->dut->ls_valid == 1));
   tb->check(COND_loadstore, (core->tb_ecap5_dproc->dut->ls_reg_write == 1) &&
                       (core->tb_ecap5_dproc->dut->ls_reg_addr == rd) &&
-                      (core->tb_ecap5_dproc->dut->ls_reg_data == tb->sign_extend(lb_data & 0xFF, 8)));
+                      (core->tb_ecap5_dproc->dut->ls_reg_data == sign_extend(lb_data & 0xFF, 8)));
 
   //=================================
   //      Tick (11)
@@ -600,7 +554,7 @@ void tb_ecap5_dproc_ls_enable(TB_Ecap5_dproc * tb) {
   
   tb->check(COND_writeback, (core->tb_ecap5_dproc->dut->reg_write == 1) &&
                       (core->tb_ecap5_dproc->dut->reg_waddr == rd) &&
-                      (core->tb_ecap5_dproc->dut->reg_wdata == tb->sign_extend(lb_data & 0xFF, 8)));
+                      (core->tb_ecap5_dproc->dut->reg_wdata == sign_extend(lb_data & 0xFF, 8)));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -671,7 +625,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   // Artificially set the second source register value
   tb->set_register(rs2, val);
   uint32_t imm = (rand() % 0x1FFF) & ~(0x1);
-  uint32_t instr = tb->_beq(rs1, rs2, imm);
+  uint32_t instr = instr_beq(rs1, rs2, imm);
 
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;
@@ -724,7 +678,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  core->wb_dat_i = tb->_addi(0, 0, 0);
+  core->wb_dat_i = instr_addi(0, 0, 0);
   core->wb_ack_i = 1;
 
   //=================================
@@ -738,7 +692,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   tb->check(COND_execute, (core->tb_ecap5_dproc->dut->ex_ls_enable == 0)      &&
                       (core->tb_ecap5_dproc->dut->ex_reg_write == 0) &&
                       (core->tb_ecap5_dproc->dut->branch == 1) &&
-                      (core->tb_ecap5_dproc->dut->branch_target == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + tb->sign_extend(imm, 13))));
+                      (core->tb_ecap5_dproc->dut->branch_target == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + sign_extend(imm, 13))));
   tb->check(COND_hazard, (core->tb_ecap5_dproc->dut->hzd_ex_discard_request == 1));
 
   //`````````````````````````````````
@@ -765,7 +719,7 @@ void tb_ecap5_dproc_branch(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Checks 
   
-  tb->check(COND_fetch, (core->wb_adr_o == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + tb->sign_extend(imm, 13))));
+  tb->check(COND_fetch, (core->wb_adr_o == (core->tb_ecap5_dproc->dut->BOOT_ADDRESS + sign_extend(imm, 13))));
 
   //`````````````````````````````````
   //      Formal Checks 
@@ -836,7 +790,7 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  uint32_t instr = tb->_addi(1, 0, 1);
+  uint32_t instr = instr_addi(1, 0, 1);
 
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;
@@ -865,7 +819,7 @@ void tb_ecap5_dproc_data_hazard(TB_Ecap5_dproc * tb) {
   //`````````````````````````````````
   //      Set inputs
   
-  instr = tb->_addi(2, 1, 1);
+  instr = instr_addi(2, 1, 1);
 
   core->wb_dat_i = instr;
   core->wb_ack_i = 1;

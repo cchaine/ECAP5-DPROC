@@ -51,7 +51,7 @@ add_dependency(ECAP5_TREQ
 
 add_dependency(ECAP5_DTESTLIB
   GIT ecap5/ecap5-dtestlib
-  TAG main)
+  TAG tags/v1.0.0)
 
 add_dependency(riscv-tests
   GIT ecap5/riscv-tests
