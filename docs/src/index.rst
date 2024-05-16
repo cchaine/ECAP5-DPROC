@@ -35,3 +35,10 @@ License
    :caption: Specifications
 
    arch/index
+
+.. toctree::
+   :hidden:
+   :maxdepth: 4
+   :caption: Reports
+
+   report
