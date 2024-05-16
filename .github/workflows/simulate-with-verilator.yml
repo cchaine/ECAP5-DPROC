@@ -35,29 +35,6 @@ jobs:
         path: ${{ env.cache-folder-path }}
         key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
 
-  documentation:
-    runs-on: self-hosted
-    needs: prepare
-
-    steps:
-    - uses: actions/checkout@v4.1.1
-
-    - name: Import build directory
-      uses: actions/cache/restore@v4.0.1
-      env:
-        cache-folder-path: ${{github.workspace}}/build
-      with:
-        path: ${{ env.cache-folder-path }}
-        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
-
-    - name: Generate documentation
-      run: ninja -C ${{github.workspace}}/build docs
-
-    - uses: actions/upload-pages-artifact@v3.0.1
-      with: 
-        name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
-        path: ${{github.workspace}}/build/docs/documentation/build/html
-
   lint:
     runs-on: self-hosted
     needs: prepare
@@ -145,6 +122,7 @@ jobs:
     - uses: actions/checkout@v4.1.1
 
     - name: Import build directory
+      id: import-build
       uses: actions/cache/restore@v4.0.1
       env:
         cache-folder-path: ${{github.workspace}}/build
@@ -198,6 +176,44 @@ jobs:
         gist_id: 32195ea7fa70c0218ef3f9952504c59e
         file_path: build/traceability-result-badge.json
         file_type: text 
+
+    - name: Delete Previous Cache
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
+      run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.0.1
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  documentation:
+    runs-on: self-hosted
+    needs: report
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      uses: actions/cache/restore@v4.0.1
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Generate documentation
+      run: ninja -C ${{github.workspace}}/build docs
+
+    - uses: actions/upload-pages-artifact@v3.0.1
+      with: 
+        name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
+        path: ${{github.workspace}}/build/docs/documentation/build/html
 
   deploy:
     if: ${{ github.ref == 'refs/heads/main' }}
