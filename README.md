@@ -33,6 +33,11 @@
       <td><a href="https://github.com/ECAP5/ECAP5-DPROC/milestone/1"><samp>v1.0.0</samp></a></td>
       <td>Ongoing</td>
     </tr>
+    <tr>
+      <td>RISC-V External Debug Support compliance</td>
+      <td></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
 
