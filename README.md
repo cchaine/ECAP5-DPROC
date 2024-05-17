@@ -1,6 +1,6 @@
 <p float="left">
-<img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fcchaine%2F32195ea7fa70c0218ef3f9952504c59e%2Fraw%2Ftest-result-badge.json?"/>
-<img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fcchaine%2F32195ea7fa70c0218ef3f9952504c59e%2Fraw%2Ftraceability-result-badge.json?"/>
+<a href="https://ecap5.github.io/ECAP5-DPROC/report.html"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fcchaine%2F32195ea7fa70c0218ef3f9952504c59e%2Fraw%2Ftest-result-badge.json?"/></a>
+<a href="https://ecap5.github.io/ECAP5-DPROC/report.html"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fcchaine%2F32195ea7fa70c0218ef3f9952504c59e%2Fraw%2Ftraceability-result-badge.json?"/></a>
 </p>
 
 <br />
